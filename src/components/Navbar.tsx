@@ -1,8 +1,36 @@
-import { Search, Plus, Bell, User } from "lucide-react";
+import { Search, Plus, Bell, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import { User as SupabaseUser } from "@supabase/supabase-js";
+import { toast } from "sonner";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    toast.success("Signed out successfully");
+    navigate("/");
+  };
+
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-sm">
       <div className="container mx-auto px-4">
@@ -24,16 +52,27 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon">
-              <Bell className="h-5 w-5" />
-            </Button>
-            <Button className="bg-gradient-to-r from-accent to-accent hover:opacity-90">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Post
-            </Button>
-            <Button variant="ghost" size="icon">
-              <User className="h-5 w-5" />
-            </Button>
+            {user ? (
+              <>
+                <Button variant="ghost" size="icon">
+                  <Bell className="h-5 w-5" />
+                </Button>
+                <Button className="bg-gradient-to-r from-accent to-accent hover:opacity-90">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Post
+                </Button>
+                <Button variant="ghost" size="icon">
+                  <User className="h-5 w-5" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={handleSignOut}>
+                  <LogOut className="h-5 w-5" />
+                </Button>
+              </>
+            ) : (
+              <Button onClick={() => navigate("/auth")}>
+                Sign In
+              </Button>
+            )}
           </div>
         </div>
       </div>
