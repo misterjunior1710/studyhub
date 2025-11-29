@@ -6,10 +6,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { toast } from "sonner";
+import CreatePostDialog from "./CreatePostDialog";
+import NotificationsPopover from "./NotificationsPopover";
 
-const Navbar = () => {
+interface NavbarProps {
+  onPostCreated?: () => void;
+  onSearch?: (query: string) => void;
+}
+
+const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -31,6 +39,11 @@ const Navbar = () => {
     navigate("/");
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSearch?.(searchQuery);
+  };
+
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-sm">
       <div className="container mx-auto px-4">
@@ -42,25 +55,22 @@ const Navbar = () => {
           </div>
 
           <div className="flex-1 max-w-2xl">
-            <div className="relative">
+            <form onSubmit={handleSearch} className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search for questions, topics, or subjects..."
                 className="w-full pl-10 bg-background"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-            </div>
+            </form>
           </div>
 
           <div className="flex items-center gap-2">
             {user ? (
               <>
-                <Button variant="ghost" size="icon">
-                  <Bell className="h-5 w-5" />
-                </Button>
-                <Button className="bg-gradient-to-r from-accent to-accent hover:opacity-90">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Post
-                </Button>
+                <NotificationsPopover />
+                <CreatePostDialog onPostCreated={onPostCreated} />
                 <Button variant="ghost" size="icon">
                   <User className="h-5 w-5" />
                 </Button>

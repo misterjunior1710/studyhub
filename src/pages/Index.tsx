@@ -2,81 +2,103 @@ import Navbar from "@/components/Navbar";
 import FilterSidebar from "@/components/FilterSidebar";
 import StudyPost from "@/components/StudyPost";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Clock, Star } from "lucide-react";
+import { TrendingUp, Clock, Star, Loader2 } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  subject: string;
+  grade: string;
+  stream: string;
+  country: string;
+  upvotes: number;
+  downvotes: number;
+  created_at: string;
+  profiles: {
+    username: string;
+  };
+  comments: { count: number }[];
+}
 
 const Index = () => {
-  const samplePosts = [
-    {
-      id: "1",
-      title: "How to solve quadratic equations with complex roots?",
-      content: "I'm struggling with understanding how to handle quadratic equations when the discriminant is negative. Can someone explain the concept of complex roots and provide some examples?",
-      author: "mathstudent123",
-      upvotes: 42,
-      comments: 18,
-      subject: "Mathematics",
-      grade: "Grade 11",
-      stream: "CBSE",
-      country: "India",
-      timeAgo: "2 hours ago",
-    },
-    {
-      id: "2",
-      title: "Need help with Newton's Laws of Motion practical applications",
-      content: "We have an exam coming up on Newton's Laws. I understand the theory but struggle with real-world problem-solving. Any tips or resources?",
-      author: "physicslover",
-      upvotes: 35,
-      comments: 12,
-      subject: "Physics",
-      grade: "Grade 10",
-      stream: "IGCSE",
-      country: "United Kingdom",
-      timeAgo: "4 hours ago",
-    },
-    {
-      id: "3",
-      title: "Best way to memorize organic chemistry reactions?",
-      content: "There are so many reactions in organic chemistry! What techniques do you use to remember reaction mechanisms and conditions?",
-      author: "chemwhiz",
-      upvotes: 28,
-      comments: 23,
-      subject: "Chemistry",
-      grade: "Grade 12",
-      stream: "AP",
-      country: "United States",
-      timeAgo: "5 hours ago",
-    },
-    {
-      id: "4",
-      title: "Can someone explain photosynthesis in simple terms?",
-      content: "I'm having trouble understanding the light-dependent and light-independent reactions. Looking for a clear explanation with examples.",
-      author: "biogeek",
-      upvotes: 51,
-      comments: 15,
-      subject: "Biology",
-      grade: "Grade 10",
-      stream: "CBSE",
-      country: "India",
-      timeAgo: "7 hours ago",
-    },
-    {
-      id: "5",
-      title: "Data structures vs algorithms - which to learn first?",
-      content: "I'm new to computer science and wondering if I should master data structures before algorithms or learn them together?",
-      author: "coder101",
-      upvotes: 38,
-      comments: 27,
-      subject: "Computer Science",
-      grade: "Undergraduate",
-      stream: "University",
-      country: "Canada",
-      timeAgo: "8 hours ago",
-    },
-  ];
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState("hot");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    loadPosts();
+
+    const channel = supabase
+      .channel("posts")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "posts",
+        },
+        () => {
+          loadPosts();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [sortBy, searchQuery]);
+
+  const loadPosts = async () => {
+    setLoading(true);
+
+    let query = supabase
+      .from("posts")
+      .select("*, profiles(username), comments(count)");
+
+    if (searchQuery) {
+      query = query.or(`title.ilike.%${searchQuery}%,content.ilike.%${searchQuery}%`);
+    }
+
+    if (sortBy === "new") {
+      query = query.order("created_at", { ascending: false });
+    } else if (sortBy === "top") {
+      query = query.order("upvotes", { ascending: false });
+    } else {
+      // Hot: combination of votes and recency
+      query = query.order("upvotes", { ascending: false }).order("created_at", { ascending: false });
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      toast.error("Failed to load posts");
+    } else {
+      setPosts(data || []);
+    }
+
+    setLoading(false);
+  };
+
+  const getTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (seconds < 60) return `${seconds} seconds ago`;
+    if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+    return `${Math.floor(seconds / 86400)} days ago`;
+  };
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      <Navbar onPostCreated={loadPosts} onSearch={setSearchQuery} />
       
       <div 
         className="relative h-48 bg-cover bg-center overflow-hidden"
@@ -100,26 +122,65 @@ const Index = () => {
           <main className="flex-1 space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex gap-2">
-                <Button variant="default" className="gap-2">
+                <Button
+                  variant={sortBy === "hot" ? "default" : "ghost"}
+                  className="gap-2"
+                  onClick={() => setSortBy("hot")}
+                >
                   <TrendingUp className="h-4 w-4" />
                   Hot
                 </Button>
-                <Button variant="ghost" className="gap-2">
+                <Button
+                  variant={sortBy === "new" ? "default" : "ghost"}
+                  className="gap-2"
+                  onClick={() => setSortBy("new")}
+                >
                   <Clock className="h-4 w-4" />
                   New
                 </Button>
-                <Button variant="ghost" className="gap-2">
+                <Button
+                  variant={sortBy === "top" ? "default" : "ghost"}
+                  className="gap-2"
+                  onClick={() => setSortBy("top")}
+                >
                   <Star className="h-4 w-4" />
                   Top
                 </Button>
               </div>
             </div>
 
-            <div className="space-y-4">
-              {samplePosts.map((post) => (
-                <StudyPost key={post.id} {...post} />
-              ))}
-            </div>
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : posts.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">
+                  No posts yet. Be the first to create one!
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {posts.map((post) => (
+                  <StudyPost
+                    key={post.id}
+                    id={post.id}
+                    title={post.title}
+                    content={post.content}
+                    author={post.profiles.username}
+                    upvotes={post.upvotes}
+                    downvotes={post.downvotes}
+                    comments={post.comments.length}
+                    subject={post.subject}
+                    grade={post.grade}
+                    stream={post.stream}
+                    country={post.country}
+                    timeAgo={getTimeAgo(post.created_at)}
+                    onVoteChange={loadPosts}
+                  />
+                ))}
+              </div>
+            )}
           </main>
         </div>
       </div>
