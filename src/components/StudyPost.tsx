@@ -160,7 +160,10 @@ const StudyPost = ({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <p className="text-foreground leading-relaxed whitespace-pre-wrap">{content}</p>
+        <div 
+          className="prose prose-sm max-w-none text-foreground leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
 
         {fileUrl && (
           <div className="border border-border rounded-lg p-4 bg-muted/50">

@@ -53,7 +53,7 @@ const Post = () => {
   const loadPost = async () => {
     const { data, error } = await supabase
       .from("posts")
-      .select("*, profiles!posts_user_id_fkey(username)")
+      .select("*, profiles(username)")
       .eq("id", id)
       .single();
 
@@ -70,7 +70,7 @@ const Post = () => {
   const loadComments = async () => {
     const { data } = await supabase
       .from("comments")
-      .select("*, profiles!comments_user_id_fkey(username)")
+      .select("*, profiles(username)")
       .eq("post_id", id)
       .order("created_at", { ascending: false });
 
@@ -205,9 +205,10 @@ const Post = () => {
                   {new Date(post.created_at).toLocaleDateString()}
                 </p>
 
-                <div className="prose prose-sm max-w-none">
-                  <p className="whitespace-pre-wrap">{post.content}</p>
-                </div>
+                <div 
+                  className="prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
 
                 <div className="flex items-center gap-2 pt-4 border-t">
                   <Button variant="ghost" size="sm" className="gap-2">

@@ -64,7 +64,7 @@ const Index = () => {
 
     let query = supabase
       .from("posts")
-      .select("*, profiles!posts_user_id_fkey(username), comments(count)");
+      .select("*, profiles(username), comments(count)");
 
     if (searchQuery) {
       query = query.or(`title.ilike.%${searchQuery}%,content.ilike.%${searchQuery}%`);
