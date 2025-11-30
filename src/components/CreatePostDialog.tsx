@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -22,11 +22,72 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   const [grade, setGrade] = useState("");
   const [stream, setStream] = useState("");
   const [country, setCountry] = useState("");
+  const [postType, setPostType] = useState("doubt");
+  const [file, setFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
 
   const subjects = ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "History", "Geography"];
   const grades = ["Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate"];
   const streams = ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "State Board"];
   const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Other"];
+  const postTypes = [
+    { value: "doubt", label: "Ask a Doubt" },
+    { value: "meme", label: "Share a Meme" },
+    { value: "general", label: "General Post" }
+  ];
+
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("country, grade, stream")
+          .eq("id", user.id)
+          .single();
+        
+        if (profile) {
+          setCountry(profile.country || "");
+          setGrade(profile.grade || "");
+          setStream(profile.stream || "");
+        }
+      }
+    };
+    
+    if (open) {
+      loadUserProfile();
+    }
+  }, [open]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      const fileType = selectedFile.type;
+      const validTypes = ["application/pdf", "image/jpeg", "image/jpg"];
+      
+      if (!validTypes.includes(fileType)) {
+        toast.error("Only PDF and JPG files are allowed");
+        return;
+      }
+
+      setFile(selectedFile);
+      
+      if (fileType.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setFilePreview(reader.result as string);
+        };
+        reader.readAsDataURL(selectedFile);
+      } else {
+        setFilePreview(null);
+      }
+    }
+  };
+
+  const removeFile = () => {
+    setFile(null);
+    setFilePreview(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +107,25 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         return;
       }
 
+      let fileUrl = null;
+
+      if (file) {
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from("post-files")
+          .upload(fileName, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from("post-files")
+          .getPublicUrl(fileName);
+
+        fileUrl = publicUrl;
+      }
+
       const { error } = await supabase.from("posts").insert({
         user_id: user.id,
         title,
@@ -54,6 +134,8 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         grade,
         stream,
         country,
+        post_type: postType,
+        file_url: fileUrl,
       });
 
       if (error) throw error;
@@ -62,9 +144,9 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       setTitle("");
       setContent("");
       setSubject("");
-      setGrade("");
-      setStream("");
-      setCountry("");
+      setFile(null);
+      setFilePreview(null);
+      setPostType("doubt");
       setOpen(false);
       onPostCreated?.();
     } catch (error: any) {
@@ -91,6 +173,22 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
+            <Label htmlFor="postType">Post Type</Label>
+            <Select value={postType} onValueChange={setPostType}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {postTypes.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="title">Title</Label>
             <Input
               id="title"
@@ -111,6 +209,36 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
               rows={6}
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="file">Upload File (PDF or JPG only)</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="file"
+                type="file"
+                accept=".pdf,.jpg,.jpeg"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => document.getElementById("file")?.click()}
+                className="w-full"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {file ? file.name : "Choose File"}
+              </Button>
+              {file && (
+                <Button type="button" variant="ghost" size="icon" onClick={removeFile}>
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+            {filePreview && (
+              <img src={filePreview} alt="Preview" className="mt-2 max-h-40 rounded-md" />
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">

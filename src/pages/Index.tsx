@@ -19,6 +19,7 @@ interface Post {
   upvotes: number;
   downvotes: number;
   created_at: string;
+  file_url: string | null;
   profiles: {
     username: string;
   };
@@ -214,6 +215,7 @@ const Index = () => {
                     stream={post.stream}
                     country={post.country}
                     timeAgo={getTimeAgo(post.created_at)}
+                    fileUrl={post.file_url}
                     onVoteChange={loadPosts}
                   />
                 ))}
