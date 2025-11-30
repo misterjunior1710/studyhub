@@ -122,8 +122,10 @@ export type Database = {
           country: string
           created_at: string
           downvotes: number
+          file_url: string | null
           grade: string
           id: string
+          post_type: string
           stream: string
           subject: string
           title: string
@@ -136,8 +138,10 @@ export type Database = {
           country: string
           created_at?: string
           downvotes?: number
+          file_url?: string | null
           grade: string
           id?: string
+          post_type?: string
           stream: string
           subject: string
           title: string
@@ -150,8 +154,10 @@ export type Database = {
           country?: string
           created_at?: string
           downvotes?: number
+          file_url?: string | null
           grade?: string
           id?: string
+          post_type?: string
           stream?: string
           subject?: string
           title?: string

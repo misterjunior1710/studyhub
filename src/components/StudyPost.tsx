@@ -20,6 +20,7 @@ interface StudyPostProps {
   stream: string;
   country: string;
   timeAgo: string;
+  fileUrl?: string;
   onVoteChange?: () => void;
 }
 
@@ -36,6 +37,7 @@ const StudyPost = ({
   stream,
   country,
   timeAgo,
+  fileUrl,
   onVoteChange,
 }: StudyPostProps) => {
   const navigate = useNavigate();
@@ -158,7 +160,28 @@ const StudyPost = ({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <p className="text-foreground leading-relaxed">{content}</p>
+        <p className="text-foreground leading-relaxed whitespace-pre-wrap">{content}</p>
+
+        {fileUrl && (
+          <div className="border border-border rounded-lg p-4 bg-muted/50">
+            {fileUrl.endsWith('.pdf') ? (
+              <a
+                href={fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-primary hover:underline"
+              >
+                📄 View PDF
+              </a>
+            ) : (
+              <img
+                src={fileUrl}
+                alt="Attached image"
+                className="max-w-full rounded-lg"
+              />
+            )}
+          </div>
+        )}
 
         <div className="flex items-center gap-2 pt-2 border-t border-border">
           <Button

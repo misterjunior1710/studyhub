@@ -1,13 +1,14 @@
-import { Search, User, LogOut } from "lucide-react";
+import { Search, User, LogOut, Home, HelpCircle, Laugh } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import CreatePostDialog from "./CreatePostDialog";
 import NotificationsPopover from "./NotificationsPopover";
+import ThemeToggle from "./ThemeToggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -18,9 +19,12 @@ interface NavbarProps {
 
 const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [username, setUsername] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const isActive = (path: string) => location.pathname === path;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -72,9 +76,38 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between gap-4">
           <div className="flex items-center gap-6">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <h1 
+              className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent cursor-pointer"
+              onClick={() => navigate("/")}
+            >
               StudyHub
             </h1>
+            <div className="hidden md:flex items-center gap-2">
+              <Button
+                variant={isActive("/") ? "default" : "ghost"}
+                size="sm"
+                onClick={() => navigate("/")}
+              >
+                <Home className="h-4 w-4 mr-2" />
+                Home
+              </Button>
+              <Button
+                variant={isActive("/ask-doubt") ? "default" : "ghost"}
+                size="sm"
+                onClick={() => navigate("/ask-doubt")}
+              >
+                <HelpCircle className="h-4 w-4 mr-2" />
+                Ask Doubt
+              </Button>
+              <Button
+                variant={isActive("/memes") ? "default" : "ghost"}
+                size="sm"
+                onClick={() => navigate("/memes")}
+              >
+                <Laugh className="h-4 w-4 mr-2" />
+                Memes
+              </Button>
+            </div>
           </div>
 
           <div className="flex-1 max-w-2xl">
@@ -90,6 +123,7 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
           </div>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             {user ? (
               <>
                 <NotificationsPopover />
