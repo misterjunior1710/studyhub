@@ -5,9 +5,30 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Badge } from "@/components/ui/badge";
 
-const FilterSidebar = () => {
+interface FilterSidebarProps {
+  selectedCountry: string | null;
+  selectedSubject: string | null;
+  selectedGrade: string | null;
+  selectedStream: string | null;
+  onCountryChange: (country: string | null) => void;
+  onSubjectChange: (subject: string | null) => void;
+  onGradeChange: (grade: string | null) => void;
+  onStreamChange: (stream: string | null) => void;
+  onClearAll: () => void;
+}
+
+const FilterSidebar = ({
+  selectedCountry,
+  selectedSubject,
+  selectedGrade,
+  selectedStream,
+  onCountryChange,
+  onSubjectChange,
+  onGradeChange,
+  onStreamChange,
+  onClearAll,
+}: FilterSidebarProps) => {
   const countries = ["United States", "United Kingdom", "India", "Canada", "Australia"];
   const subjects = ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English"];
   const grades = ["Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate"];
@@ -30,8 +51,9 @@ const FilterSidebar = () => {
           {countries.map((country) => (
             <Button
               key={country}
-              variant="ghost"
+              variant={selectedCountry === country ? "secondary" : "ghost"}
               className="w-full justify-start text-sm"
+              onClick={() => onCountryChange(selectedCountry === country ? null : country)}
             >
               {country}
             </Button>
@@ -50,8 +72,9 @@ const FilterSidebar = () => {
           {subjects.map((subject) => (
             <Button
               key={subject}
-              variant="ghost"
+              variant={selectedSubject === subject ? "secondary" : "ghost"}
               className="w-full justify-start text-sm"
+              onClick={() => onSubjectChange(selectedSubject === subject ? null : subject)}
             >
               {subject}
             </Button>
@@ -70,8 +93,9 @@ const FilterSidebar = () => {
           {grades.map((grade) => (
             <Button
               key={grade}
-              variant="ghost"
+              variant={selectedGrade === grade ? "secondary" : "ghost"}
               className="w-full justify-start text-sm"
+              onClick={() => onGradeChange(selectedGrade === grade ? null : grade)}
             >
               {grade}
             </Button>
@@ -90,8 +114,9 @@ const FilterSidebar = () => {
           {streams.map((stream) => (
             <Button
               key={stream}
-              variant="ghost"
+              variant={selectedStream === stream ? "secondary" : "ghost"}
               className="w-full justify-start text-sm"
+              onClick={() => onStreamChange(selectedStream === stream ? null : stream)}
             >
               {stream}
             </Button>
@@ -100,7 +125,7 @@ const FilterSidebar = () => {
       </Collapsible>
 
       <div className="pt-4 border-t border-border">
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full" onClick={onClearAll}>
           Clear All Filters
         </Button>
       </div>
