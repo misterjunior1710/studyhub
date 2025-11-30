@@ -117,4 +117,45 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Prose styles for rich text content */
+  .prose {
+    @apply text-foreground;
+  }
+  
+  .prose h2 {
+    @apply text-xl font-bold mt-4 mb-2;
+  }
+  
+  .prose p {
+    @apply mb-3;
+  }
+  
+  .prose strong {
+    @apply font-semibold;
+  }
+  
+  .prose em {
+    @apply italic;
+  }
+  
+  .prose ul {
+    @apply list-disc list-inside mb-3;
+  }
+  
+  .prose ol {
+    @apply list-decimal list-inside mb-3;
+  }
+  
+  .prose li {
+    @apply mb-1;
+  }
+  
+  .prose blockquote {
+    @apply border-l-4 border-primary pl-4 italic my-3;
+  }
+  
+  .prose code {
+    @apply bg-muted px-1 py-0.5 rounded text-sm;
+  }
 }

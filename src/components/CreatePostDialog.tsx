@@ -3,11 +3,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Loader2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import RichTextEditor from "./RichTextEditor";
 
 interface CreatePostDialogProps {
   onPostCreated?: () => void;
@@ -201,13 +201,10 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
 
           <div className="space-y-2">
             <Label htmlFor="content">Content</Label>
-            <Textarea
-              id="content"
+            <RichTextEditor
+              content={content}
+              onChange={setContent}
               placeholder="Provide details, context, or your thoughts..."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={6}
-              required
             />
           </div>
 

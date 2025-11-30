@@ -13,11 +13,7 @@ const AskDoubt = () => {
     try {
       const { data, error } = await supabase
         .from("posts")
-        .select(`
-          *,
-          profiles!posts_user_id_fkey(username),
-          comments(count)
-        ` as any)
+        .select("*, profiles(username), comments(count)")
         .eq("post_type", "doubt")
         .order("created_at", { ascending: false });
 
