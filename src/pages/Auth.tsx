@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
@@ -15,6 +16,13 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [country, setCountry] = useState("");
+  const [grade, setGrade] = useState("");
+  const [stream, setStream] = useState("");
+
+  const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Other"];
+  const grades = ["Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate"];
+  const streams = ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "State Board"];
 
   useEffect(() => {
     // Check if user is already logged in
@@ -27,6 +35,12 @@ const Auth = () => {
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!country || !grade || !stream) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -37,6 +51,9 @@ const Auth = () => {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
             username,
+            country,
+            grade,
+            stream,
           },
         },
       });
@@ -47,6 +64,9 @@ const Auth = () => {
       setEmail("");
       setPassword("");
       setUsername("");
+      setCountry("");
+      setGrade("");
+      setStream("");
     } catch (error: any) {
       toast.error(error.message || "Failed to create account");
     } finally {
@@ -215,6 +235,57 @@ const Auth = () => {
                     minLength={6}
                   />
                 </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-country">Country</Label>
+                    <Select value={country} onValueChange={setCountry} required>
+                      <SelectTrigger id="signup-country">
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {countries.map((c) => (
+                          <SelectItem key={c} value={c}>
+                            {c}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-grade">Grade</Label>
+                    <Select value={grade} onValueChange={setGrade} required>
+                      <SelectTrigger id="signup-grade">
+                        <SelectValue placeholder="Select grade" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {grades.map((g) => (
+                          <SelectItem key={g} value={g}>
+                            {g}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signup-stream">Stream</Label>
+                  <Select value={stream} onValueChange={setStream} required>
+                    <SelectTrigger id="signup-stream">
+                      <SelectValue placeholder="Select stream" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {streams.map((s) => (
+                        <SelectItem key={s} value={s}>
+                          {s}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? (
                     <>

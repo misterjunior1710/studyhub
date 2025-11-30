@@ -30,6 +30,10 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("hot");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
+  const [selectedStream, setSelectedStream] = useState<string | null>(null);
 
   useEffect(() => {
     loadPosts();
@@ -52,17 +56,33 @@ const Index = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [sortBy, searchQuery]);
+  }, [sortBy, searchQuery, selectedCountry, selectedSubject, selectedGrade, selectedStream]);
 
   const loadPosts = async () => {
     setLoading(true);
 
     let query = supabase
       .from("posts")
-      .select("*, profiles(username), comments(count)");
+      .select("*, profiles!posts_user_id_fkey(username), comments(count)");
 
     if (searchQuery) {
       query = query.or(`title.ilike.%${searchQuery}%,content.ilike.%${searchQuery}%`);
+    }
+
+    if (selectedCountry) {
+      query = query.eq("country", selectedCountry);
+    }
+
+    if (selectedSubject) {
+      query = query.eq("subject", selectedSubject);
+    }
+
+    if (selectedGrade) {
+      query = query.eq("grade", selectedGrade);
+    }
+
+    if (selectedStream) {
+      query = query.eq("stream", selectedStream);
     }
 
     if (sortBy === "new") {
@@ -78,11 +98,19 @@ const Index = () => {
 
     if (error) {
       toast.error("Failed to load posts");
+      console.error(error);
     } else {
-      setPosts(data || []);
+      setPosts(data as any || []);
     }
 
     setLoading(false);
+  };
+
+  const handleClearFilters = () => {
+    setSelectedCountry(null);
+    setSelectedSubject(null);
+    setSelectedGrade(null);
+    setSelectedStream(null);
   };
 
   const getTimeAgo = (dateString: string) => {
@@ -117,7 +145,17 @@ const Index = () => {
 
       <div className="container mx-auto px-4 py-6">
         <div className="flex gap-6">
-          <FilterSidebar />
+          <FilterSidebar
+            selectedCountry={selectedCountry}
+            selectedSubject={selectedSubject}
+            selectedGrade={selectedGrade}
+            selectedStream={selectedStream}
+            onCountryChange={setSelectedCountry}
+            onSubjectChange={setSelectedSubject}
+            onGradeChange={setSelectedGrade}
+            onStreamChange={setSelectedStream}
+            onClearAll={handleClearFilters}
+          />
           
           <main className="flex-1 space-y-6">
             <div className="flex items-center justify-between">
