@@ -10,17 +10,37 @@ const AskDoubt = () => {
 
   const loadPosts = async () => {
     setLoading(true);
-    try {
-      const { data, error } = await supabase
+    const buildQuery = (withRelations: boolean) => {
+      let query = supabase
         .from("posts")
-        .select("*, profiles!posts_user_id_fkey(username), comments(count)")
+        .select(
+          withRelations
+            ? "*, profiles!posts_user_id_fkey(username), comments(count)"
+            : "*"
+        )
         .eq("post_type", "doubt")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      setPosts(data || []);
-    } catch (error) {
-      console.error("Error loading doubts:", error);
+      return query;
+    };
+
+    try {
+      const { data, error } = await buildQuery(true);
+
+      if (error) {
+        console.error("Error loading doubts with relations:", error);
+        const { data: fallbackData, error: fallbackError } = await buildQuery(false);
+
+        if (fallbackError) {
+          console.error("Error loading doubts without relations:", fallbackError);
+        } else {
+          setPosts(fallbackData || []);
+        }
+      } else {
+        setPosts(data || []);
+      }
+    } catch (err) {
+      console.error("Unexpected error loading doubts:", err);
     } finally {
       setLoading(false);
     }
@@ -73,10 +93,10 @@ const AskDoubt = () => {
                 id={post.id}
                 title={post.title}
                 content={post.content}
-                author={post.profiles.username}
+                author={post.profiles?.username ?? "Anonymous"}
                 upvotes={post.upvotes}
                 downvotes={post.downvotes}
-                comments={post.comments.length}
+                comments={Array.isArray(post.comments) ? post.comments.length : 0}
                 subject={post.subject}
                 grade={post.grade}
                 stream={post.stream}

@@ -20,7 +20,7 @@ interface Post {
   upvotes: number;
   downvotes: number;
   created_at: string;
-  profiles: {
+  profiles?: {
     username: string;
   };
 }
@@ -29,7 +29,7 @@ interface Comment {
   id: string;
   content: string;
   created_at: string;
-  profiles: {
+  profiles?: {
     username: string;
   };
 }
@@ -51,30 +51,92 @@ const Post = () => {
   }, [id]);
 
   const loadPost = async () => {
-    const { data, error } = await supabase
-      .from("posts")
-      .select("*, profiles!posts_user_id_fkey(username)")
-      .eq("id", id)
-      .single();
+    setLoading(true);
 
-    if (error) {
+    const buildQuery = (withRelations: boolean) => {
+      let query = supabase
+        .from("posts")
+        .select(
+          withRelations
+            ? "*, profiles!posts_user_id_fkey(username)"
+            : "*"
+        )
+        .eq("id", id);
+
+      return query;
+    };
+
+    try {
+      const { data, error } = await buildQuery(true).maybeSingle();
+
+      if (error) {
+        console.error("Error loading post with relations:", error);
+        const { data: fallbackData, error: fallbackError } = await buildQuery(false).maybeSingle();
+
+        if (fallbackError) {
+          console.error("Error loading post without relations:", fallbackError);
+          toast.error("Post not found");
+          navigate("/");
+          return;
+        } else {
+          if (!fallbackData) {
+            toast.error("Post not found");
+            navigate("/");
+            return;
+          }
+          setPost(fallbackData as any);
+        }
+      } else {
+        if (!data) {
+          toast.error("Post not found");
+          navigate("/");
+          return;
+        }
+        setPost(data as any);
+      }
+    } catch (err) {
+      console.error("Unexpected error loading post:", err);
       toast.error("Post not found");
       navigate("/");
       return;
+    } finally {
+      setLoading(false);
     }
-
-    setPost(data as any);
-    setLoading(false);
   };
 
   const loadComments = async () => {
-    const { data } = await supabase
-      .from("comments")
-      .select("*, profiles!comments_user_id_fkey(username)")
-      .eq("post_id", id)
-      .order("created_at", { ascending: false });
+    const buildQuery = (withRelations: boolean) => {
+      let query = supabase
+        .from("comments")
+        .select(
+          withRelations
+            ? "*, profiles!comments_user_id_fkey(username)"
+            : "*"
+        )
+        .eq("post_id", id)
+        .order("created_at", { ascending: false });
 
-    if (data) setComments(data as any);
+      return query;
+    };
+
+    try {
+      const { data, error } = await buildQuery(true);
+
+      if (error) {
+        console.error("Error loading comments with relations:", error);
+        const { data: fallbackData, error: fallbackError } = await buildQuery(false);
+
+        if (fallbackError) {
+          console.error("Error loading comments without relations:", fallbackError);
+        } else if (fallbackData) {
+          setComments(fallbackData as any);
+        }
+      } else if (data) {
+        setComments(data as any);
+      }
+    } catch (err) {
+      console.error("Unexpected error loading comments:", err);
+    }
   };
 
   const checkUserVote = async () => {
