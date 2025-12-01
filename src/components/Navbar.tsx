@@ -74,7 +74,13 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch?.(searchQuery);
+    if (searchQuery.trim()) {
+      onSearch?.(searchQuery);
+      // Navigate to home to show all search results
+      if (location.pathname !== "/") {
+        navigate("/");
+      }
+    }
   };
 
   return (
