@@ -138,7 +138,10 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         file_url: fileUrl,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Post creation error:", error);
+        throw error;
+      }
 
       toast.success("Post created successfully!");
       setTitle("");
