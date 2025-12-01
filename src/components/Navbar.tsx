@@ -22,6 +22,7 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
   const location = useLocation();
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [username, setUsername] = useState<string>("");
+  const [profileData, setProfileData] = useState<{ country?: string; grade?: string; stream?: string }>({});
   const [searchQuery, setSearchQuery] = useState("");
 
   const isActive = (path: string) => location.pathname === path;
@@ -51,12 +52,17 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
   const fetchUsername = async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
-      .select("username")
+      .select("username, country, grade, stream")
       .eq("id", userId)
       .single();
     
-    if (data?.username) {
-      setUsername(data.username);
+    if (data) {
+      setUsername(data.username || "");
+      setProfileData({
+        country: data.country || undefined,
+        grade: data.grade || undefined,
+        stream: data.stream || undefined,
+      });
     }
   };
 
@@ -147,6 +153,24 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
                         </p>
                       </div>
                     </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <div className="px-2 py-2 space-y-1">
+                      {profileData.grade && (
+                        <p className="text-xs text-muted-foreground">
+                          <span className="font-medium">Grade:</span> {profileData.grade}
+                        </p>
+                      )}
+                      {profileData.stream && (
+                        <p className="text-xs text-muted-foreground">
+                          <span className="font-medium">Stream:</span> {profileData.stream}
+                        </p>
+                      )}
+                      {profileData.country && (
+                        <p className="text-xs text-muted-foreground">
+                          <span className="font-medium">Country:</span> {profileData.country}
+                        </p>
+                      )}
+                    </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4" />
