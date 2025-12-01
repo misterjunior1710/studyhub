@@ -1,4 +1,4 @@
-import { Search, User, LogOut, Home, HelpCircle, Laugh } from "lucide-react";
+import { Search, User, LogOut, Home, HelpCircle, Laugh, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -129,6 +129,14 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
               >
                 <Laugh className="h-4 w-4 mr-2" />
                 Memes
+              </Button>
+              <Button
+                variant={isActive("/groups") ? "default" : "ghost"}
+                size="sm"
+                onClick={() => navigate("/groups")}
+              >
+                <Users className="h-4 w-4 mr-2" />
+                Groups
               </Button>
             </div>
           </div>
