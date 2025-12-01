@@ -20,10 +20,10 @@ interface Post {
   downvotes: number;
   created_at: string;
   file_url: string | null;
-  profiles: {
+  profiles?: {
     username: string;
   };
-  comments: { count: number }[];
+  comments?: { count: number }[];
 }
 
 const Index = () => {
@@ -62,49 +62,68 @@ const Index = () => {
   const loadPosts = async () => {
     setLoading(true);
 
-    let query = supabase
-      .from("posts")
-      .select("*, profiles!posts_user_id_fkey(username), comments(count)");
+    const buildQuery = (withRelations: boolean) => {
+      let query = supabase
+        .from("posts")
+        .select(
+          withRelations
+            ? "*, profiles!posts_user_id_fkey(username), comments(count)"
+            : "*"
+        );
 
-    if (searchQuery) {
-      query = query.or(`title.ilike.%${searchQuery}%,content.ilike.%${searchQuery}%`);
-    }
+      if (searchQuery) {
+        query = query.or(`title.ilike.%${searchQuery}%,content.ilike.%${searchQuery}%`);
+      }
 
-    if (selectedCountry) {
-      query = query.eq("country", selectedCountry);
-    }
+      if (selectedCountry) {
+        query = query.eq("country", selectedCountry);
+      }
 
-    if (selectedSubject) {
-      query = query.eq("subject", selectedSubject);
-    }
+      if (selectedSubject) {
+        query = query.eq("subject", selectedSubject);
+      }
 
-    if (selectedGrade) {
-      query = query.eq("grade", selectedGrade);
-    }
+      if (selectedGrade) {
+        query = query.eq("grade", selectedGrade);
+      }
 
-    if (selectedStream) {
-      query = query.eq("stream", selectedStream);
-    }
+      if (selectedStream) {
+        query = query.eq("stream", selectedStream);
+      }
 
-    if (sortBy === "new") {
-      query = query.order("created_at", { ascending: false });
-    } else if (sortBy === "top") {
-      query = query.order("upvotes", { ascending: false });
-    } else {
-      // Hot: combination of votes and recency
-      query = query.order("upvotes", { ascending: false }).order("created_at", { ascending: false });
-    }
+      if (sortBy === "new") {
+        query = query.order("created_at", { ascending: false });
+      } else if (sortBy === "top") {
+        query = query.order("upvotes", { ascending: false });
+      } else {
+        query = query.order("upvotes", { ascending: false }).order("created_at", { ascending: false });
+      }
 
-    const { data, error } = await query;
+      return query;
+    };
 
-    if (error) {
+    try {
+      const { data, error } = await buildQuery(true);
+
+      if (error) {
+        console.error("Error loading posts with relations:", error);
+        const { data: fallbackData, error: fallbackError } = await buildQuery(false);
+
+        if (fallbackError) {
+          console.error("Error loading posts without relations:", fallbackError);
+          toast.error("Failed to load posts");
+        } else {
+          setPosts((fallbackData as any) || []);
+        }
+      } else {
+        setPosts((data as any) || []);
+      }
+    } catch (err) {
+      console.error("Unexpected error loading posts:", err);
       toast.error("Failed to load posts");
-      console.error(error);
-    } else {
-      setPosts(data as any || []);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleClearFilters = () => {
@@ -206,10 +225,10 @@ const Index = () => {
                     id={post.id}
                     title={post.title}
                     content={post.content}
-                    author={post.profiles.username}
+                    author={post.profiles?.username ?? "Anonymous"}
                     upvotes={post.upvotes}
                     downvotes={post.downvotes}
-                    comments={post.comments.length}
+                    comments={Array.isArray(post.comments) ? post.comments.length : 0}
                     subject={post.subject}
                     grade={post.grade}
                     stream={post.stream}
