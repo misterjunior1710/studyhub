@@ -53,7 +53,7 @@ const Post = () => {
   const loadPost = async () => {
     const { data, error } = await supabase
       .from("posts")
-      .select("*, profiles(username)")
+      .select("*, profiles!posts_user_id_fkey(username)")
       .eq("id", id)
       .single();
 
@@ -70,7 +70,7 @@ const Post = () => {
   const loadComments = async () => {
     const { data } = await supabase
       .from("comments")
-      .select("*, profiles(username)")
+      .select("*, profiles!comments_user_id_fkey(username)")
       .eq("post_id", id)
       .order("created_at", { ascending: false });
 

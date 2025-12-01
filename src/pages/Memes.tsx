@@ -13,7 +13,7 @@ const Memes = () => {
     try {
       const { data, error } = await supabase
         .from("posts")
-        .select("*, profiles(username), comments(count)")
+        .select("*, profiles!posts_user_id_fkey(username), comments(count)")
         .eq("post_type", "meme")
         .order("created_at", { ascending: false });
 
