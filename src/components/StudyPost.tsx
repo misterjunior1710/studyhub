@@ -1,4 +1,4 @@
-import { ArrowUp, ArrowDown, MessageSquare, Share2, Bookmark, BookmarkCheck } from "lucide-react";
+import { ArrowUp, ArrowDown, MessageSquare, Share2, Bookmark, BookmarkCheck, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -6,6 +6,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface StudyPostProps {
   id: string;
@@ -44,6 +55,7 @@ const StudyPost = ({
   const [userVote, setUserVote] = useState<string | null>(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     checkUserStatus();
@@ -54,6 +66,16 @@ const StudyPost = ({
     setUser(user);
     
     if (!user) return;
+
+    // Check if user is admin
+    const { data: roleData } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+    
+    setIsAdmin(!!roleData);
 
     const { data: voteData } = await supabase
       .from("votes")
@@ -110,6 +132,22 @@ const StudyPost = ({
       await supabase.from("bookmarks").insert({ post_id: id, user_id: user.id });
       setIsBookmarked(true);
       toast.success("Post bookmarked!");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from("posts")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      toast.success("Post deleted successfully");
+      onVoteChange?.();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete post");
     }
   };
 
@@ -213,6 +251,31 @@ const StudyPost = ({
             )}
             {isBookmarked ? "Saved" : "Save"}
           </Button>
+          
+          {isAdmin && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete this post?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete the post and all its comments.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
       </CardContent>
     </Card>

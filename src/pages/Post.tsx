@@ -6,8 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowUp, ArrowDown, Share2, Bookmark, ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowUp, ArrowDown, Share2, Bookmark, ArrowLeft, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Post {
   id: string;
@@ -43,11 +54,13 @@ const Post = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [userVote, setUserVote] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     loadPost();
     loadComments();
     checkUserVote();
+    checkAdminStatus();
   }, [id]);
 
   const loadPost = async () => {
@@ -153,6 +166,20 @@ const Post = () => {
     if (data) setUserVote(data.vote_type);
   };
 
+  const checkAdminStatus = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: roleData } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+    
+    setIsAdmin(!!roleData);
+  };
+
   const handleVote = async (voteType: "up" | "down") => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -203,6 +230,38 @@ const Post = () => {
     }
 
     setSubmitting(false);
+  };
+
+  const handleDeletePost = async () => {
+    try {
+      const { error } = await supabase
+        .from("posts")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      toast.success("Post deleted successfully");
+      navigate("/");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete post");
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      const { error } = await supabase
+        .from("comments")
+        .delete()
+        .eq("id", commentId);
+
+      if (error) throw error;
+
+      toast.success("Comment deleted successfully");
+      loadComments();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete comment");
+    }
   };
 
   if (loading) {
@@ -281,6 +340,31 @@ const Post = () => {
                     <Bookmark className="h-4 w-4" />
                     Save
                   </Button>
+                  
+                  {isAdmin && (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive ml-auto">
+                          <Trash2 className="h-4 w-4" />
+                          Delete Post
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete this post?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the post and all its comments.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleDeletePost} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
                 </div>
               </div>
             </div>
@@ -307,11 +391,39 @@ const Post = () => {
             {comments.map((comment) => (
               <Card key={comment.id}>
                 <CardContent className="pt-4">
-                  <p className="text-sm text-muted-foreground mb-2">
-                    u/{comment.profiles.username} •{" "}
-                    {new Date(comment.created_at).toLocaleDateString()}
-                  </p>
-                  <p className="whitespace-pre-wrap">{comment.content}</p>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground mb-2">
+                        u/{comment.profiles?.username ?? "User"} •{" "}
+                        {new Date(comment.created_at).toLocaleDateString()}
+                      </p>
+                      <p className="whitespace-pre-wrap">{comment.content}</p>
+                    </div>
+                    
+                    {isAdmin && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete this comment?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete the comment.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDeleteComment(comment.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))}
