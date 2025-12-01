@@ -24,6 +24,7 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
   const [username, setUsername] = useState<string>("");
   const [profileData, setProfileData] = useState<{ country?: string; grade?: string; stream?: string }>({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -64,6 +65,16 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
         stream: data.stream || undefined,
       });
     }
+
+    // Check if user is admin
+    const { data: roleData } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    
+    setIsAdmin(!!roleData);
   };
 
   const handleSignOut = async () => {
@@ -153,7 +164,14 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuLabel>
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{username || "User"}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium leading-none">{username || "User"}</p>
+                          {isAdmin && (
+                            <span className="text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded-full font-semibold">
+                              ADMIN
+                            </span>
+                          )}
+                        </div>
                         <p className="text-xs leading-none text-muted-foreground">
                           {user.email}
                         </p>
