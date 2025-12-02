@@ -278,30 +278,90 @@ export type Database = {
       }
       profiles: {
         Row: {
+          allow_dms: boolean | null
+          app_language: string | null
           avatar_url: string | null
+          bio: string | null
+          blocked_subjects: string[] | null
           country: string | null
           created_at: string
+          date_format: string | null
           grade: string | null
+          hide_memes: boolean | null
           id: string
+          is_public: boolean | null
+          last_active_date: string | null
+          notify_announcements: boolean | null
+          notify_doubt_replies: boolean | null
+          notify_group_updates: boolean | null
+          notify_mentions: boolean | null
+          notify_mock_tests: boolean | null
+          notify_weekly_report: boolean | null
+          points: number | null
+          safe_mode: boolean | null
+          show_online_status: boolean | null
+          show_verified_only: boolean | null
+          streak_days: number | null
           stream: string | null
+          timezone: string | null
           username: string | null
         }
         Insert: {
+          allow_dms?: boolean | null
+          app_language?: string | null
           avatar_url?: string | null
+          bio?: string | null
+          blocked_subjects?: string[] | null
           country?: string | null
           created_at?: string
+          date_format?: string | null
           grade?: string | null
+          hide_memes?: boolean | null
           id: string
+          is_public?: boolean | null
+          last_active_date?: string | null
+          notify_announcements?: boolean | null
+          notify_doubt_replies?: boolean | null
+          notify_group_updates?: boolean | null
+          notify_mentions?: boolean | null
+          notify_mock_tests?: boolean | null
+          notify_weekly_report?: boolean | null
+          points?: number | null
+          safe_mode?: boolean | null
+          show_online_status?: boolean | null
+          show_verified_only?: boolean | null
+          streak_days?: number | null
           stream?: string | null
+          timezone?: string | null
           username?: string | null
         }
         Update: {
+          allow_dms?: boolean | null
+          app_language?: string | null
           avatar_url?: string | null
+          bio?: string | null
+          blocked_subjects?: string[] | null
           country?: string | null
           created_at?: string
+          date_format?: string | null
           grade?: string | null
+          hide_memes?: boolean | null
           id?: string
+          is_public?: boolean | null
+          last_active_date?: string | null
+          notify_announcements?: boolean | null
+          notify_doubt_replies?: boolean | null
+          notify_group_updates?: boolean | null
+          notify_mentions?: boolean | null
+          notify_mock_tests?: boolean | null
+          notify_weekly_report?: boolean | null
+          points?: number | null
+          safe_mode?: boolean | null
+          show_online_status?: boolean | null
+          show_verified_only?: boolean | null
+          streak_days?: number | null
           stream?: string | null
+          timezone?: string | null
           username?: string | null
         }
         Relationships: []
