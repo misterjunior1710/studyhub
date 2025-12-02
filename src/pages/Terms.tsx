@@ -2,10 +2,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Users, BookOpen, AlertTriangle, Scale, Ban, RefreshCw, Mail } from "lucide-react";
-
 const Terms = () => {
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
+  return <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">
         <div className="space-y-8 animate-fade-in">
@@ -21,7 +19,9 @@ const Terms = () => {
             </p>
           </div>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.1s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-primary" />
@@ -35,7 +35,9 @@ const Terms = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.2s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-primary" />
@@ -53,7 +55,9 @@ const Terms = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.3s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.3s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Scale className="h-5 w-5 text-primary" />
@@ -73,7 +77,9 @@ const Terms = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.4s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" />
@@ -93,7 +99,9 @@ const Terms = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.5s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.5s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Ban className="h-5 w-5 text-primary" />
@@ -112,7 +120,9 @@ const Terms = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.6s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.6s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-primary" />
@@ -126,7 +136,9 @@ const Terms = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.7s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.7s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <RefreshCw className="h-5 w-5 text-primary" />
@@ -140,7 +152,9 @@ const Terms = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.8s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.8s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Mail className="h-5 w-5 text-primary" />
@@ -150,8 +164,8 @@ const Terms = () => {
             <CardContent>
               <p className="text-muted-foreground">
                 For questions about these Terms, contact us at{" "}
-                <a href="mailto:legal@studyhub.com" className="text-primary hover:underline">
-                  legal@studyhub.com
+                <a className="text-primary hover:underline" href="mailto:studyhub.community.web@gmail.com">
+                  ​studyhub.community.web@gmail.com
                 </a>
               </p>
             </CardContent>
@@ -159,8 +173,6 @@ const Terms = () => {
         </div>
       </main>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Terms;
