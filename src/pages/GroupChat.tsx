@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ArrowLeft, Send, Users, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import GroupMembersDialog from "@/components/GroupMembersDialog";
 
 interface Message {
   id: string;
@@ -202,6 +203,9 @@ const GroupChat = () => {
                 </p>
               )}
             </div>
+            {id && (
+              <GroupMembersDialog groupId={id} onMemberChange={loadGroupInfo} />
+            )}
           </div>
         </div>
       </div>
