@@ -39,20 +39,21 @@ const Index = () => {
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
   const [selectedStream, setSelectedStream] = useState<string | null>(null);
   const [userGrade, setUserGrade] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const fetchUserGrade = async () => {
+    const fetchUserData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("grade")
-          .eq("id", user.id)
-          .single();
-        setUserGrade(profile?.grade || null);
+        const [profileResult, roleResult] = await Promise.all([
+          supabase.from("profiles").select("grade").eq("id", user.id).single(),
+          supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").single()
+        ]);
+        setUserGrade(profileResult.data?.grade || null);
+        setIsAdmin(!!roleResult.data);
       }
     };
-    fetchUserGrade();
+    fetchUserData();
   }, []);
 
   useEffect(() => {
@@ -76,7 +77,7 @@ const Index = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [sortBy, searchQuery, selectedCountry, selectedSubject, selectedGrade, selectedStream, userGrade]);
+  }, [sortBy, searchQuery, selectedCountry, selectedSubject, selectedGrade, selectedStream, userGrade, isAdmin]);
 
   const loadPosts = async () => {
     setLoading(true);
@@ -111,8 +112,8 @@ const Index = () => {
         query = query.eq("stream", selectedStream);
       }
 
-      // Hide Adult (18+) content from non-adult users
-      if (userGrade !== "Adult (18+)") {
+      // Hide Adult (18+) content from non-adult users (admins can see all)
+      if (!isAdmin && userGrade !== "Adult (18+)") {
         query = query.neq("grade", "Adult (18+)");
       }
 
