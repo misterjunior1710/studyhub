@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import { Heart, Github, Twitter, Mail } from "lucide-react";
-
 const Footer = () => {
-  return (
-    <footer className="border-t border-border bg-card/50 backdrop-blur-sm">
+  return <footer className="border-t border-border bg-card/50 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -14,17 +12,7 @@ const Footer = () => {
             <p className="text-sm text-muted-foreground">
               Your collaborative learning community. Connect, learn, and grow together.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Github className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Mail className="h-5 w-5" />
-              </a>
-            </div>
+            
           </div>
 
           {/* Quick Links */}
@@ -103,8 +91,6 @@ const Footer = () => {
           </p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
