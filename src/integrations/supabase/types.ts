@@ -339,6 +339,7 @@ export type Database = {
           app_language: string | null
           auto_start_focus_timer: boolean | null
           avatar_url: string | null
+          banned_until: string | null
           bio: string | null
           blocked_subjects: string[] | null
           country: string | null
@@ -349,6 +350,7 @@ export type Database = {
           grade: string | null
           hide_memes: boolean | null
           id: string
+          is_banned: boolean | null
           is_public: boolean | null
           last_active_date: string | null
           notify_announcements: boolean | null
@@ -363,6 +365,7 @@ export type Database = {
           show_verified_only: boolean | null
           streak_days: number | null
           stream: string | null
+          strike_count: number | null
           theme_color: string | null
           timezone: string | null
           username: string | null
@@ -373,6 +376,7 @@ export type Database = {
           app_language?: string | null
           auto_start_focus_timer?: boolean | null
           avatar_url?: string | null
+          banned_until?: string | null
           bio?: string | null
           blocked_subjects?: string[] | null
           country?: string | null
@@ -383,6 +387,7 @@ export type Database = {
           grade?: string | null
           hide_memes?: boolean | null
           id: string
+          is_banned?: boolean | null
           is_public?: boolean | null
           last_active_date?: string | null
           notify_announcements?: boolean | null
@@ -397,6 +402,7 @@ export type Database = {
           show_verified_only?: boolean | null
           streak_days?: number | null
           stream?: string | null
+          strike_count?: number | null
           theme_color?: string | null
           timezone?: string | null
           username?: string | null
@@ -407,6 +413,7 @@ export type Database = {
           app_language?: string | null
           auto_start_focus_timer?: boolean | null
           avatar_url?: string | null
+          banned_until?: string | null
           bio?: string | null
           blocked_subjects?: string[] | null
           country?: string | null
@@ -417,6 +424,7 @@ export type Database = {
           grade?: string | null
           hide_memes?: boolean | null
           id?: string
+          is_banned?: boolean | null
           is_public?: boolean | null
           last_active_date?: string | null
           notify_announcements?: boolean | null
@@ -431,12 +439,57 @@ export type Database = {
           show_verified_only?: boolean | null
           streak_days?: number | null
           stream?: string | null
+          strike_count?: number | null
           theme_color?: string | null
           timezone?: string | null
           username?: string | null
           weekly_study_goal?: number | null
         }
         Relationships: []
+      }
+      reports: {
+        Row: {
+          created_at: string
+          details: string | null
+          id: string
+          post_id: string
+          reason: string
+          reporter_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          post_id: string
+          reason: string
+          reporter_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          post_id?: string
+          reason?: string
+          reporter_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -458,6 +511,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_warnings: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          issued_by: string | null
+          post_id: string | null
+          reason: string
+          user_id: string
+          warning_type: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          issued_by?: string | null
+          post_id?: string | null
+          reason: string
+          user_id: string
+          warning_type: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          issued_by?: string | null
+          post_id?: string | null
+          reason?: string
+          user_id?: string
+          warning_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_warnings_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       votes: {
         Row: {

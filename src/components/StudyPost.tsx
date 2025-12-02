@@ -17,6 +17,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import ReportPostDialog from "./ReportPostDialog";
 
 interface StudyPostProps {
   id: string;
@@ -291,6 +292,11 @@ const StudyPost = ({
             )}
             {isBookmarked ? "Saved" : "Save"}
           </Button>
+          
+          {/* Report button for all logged-in users (non-admin) */}
+          {user && !isAdmin && (
+            <ReportPostDialog postId={id} postTitle={title} />
+          )}
           
           {isAdmin && (
             <>
