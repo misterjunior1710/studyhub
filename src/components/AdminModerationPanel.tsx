@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { 
   AlertTriangle, Eye, EyeOff, Flag, Check, X, Loader2, 
-  FileWarning, UserX, AlertCircle, Ban, Scale 
+  FileWarning, UserX, AlertCircle, Ban, Scale, Bell 
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -75,6 +76,7 @@ interface BanAppeal {
 }
 
 const AdminModerationPanel = () => {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<FlaggedPost[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   const [warnings, setWarnings] = useState<UserWarning[]>([]);
@@ -381,10 +383,21 @@ const AdminModerationPanel = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5 text-destructive" />
-          Content Moderation
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-destructive" />
+            Content Moderation
+          </CardTitle>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate("/admin/notifications")}
+            className="gap-2"
+          >
+            <Bell className="h-4 w-4" />
+            Notifications
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="reports">
