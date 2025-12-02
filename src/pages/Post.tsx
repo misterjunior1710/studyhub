@@ -123,7 +123,7 @@ const Post = () => {
         .from("comments")
         .select(
           withRelations
-            ? "*, profiles!comments_user_id_fkey(username)"
+            ? "*, profiles!comments_user_id_fkey_profiles(username)"
             : "*"
         )
         .eq("post_id", id)
