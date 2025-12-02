@@ -12,7 +12,6 @@ import { Loader2, Sparkles } from "lucide-react";
 import { z } from "zod";
 import AgeVerificationDialog from "@/components/AgeVerificationDialog";
 import Footer from "@/components/Footer";
-import { incrementDailyStat } from "@/lib/emailAlerts";
 
 // List of allowed email domains (popular providers + educational)
 const allowedDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "live.com", "icloud.com", "protonmail.com", "aol.com", "mail.com", "zoho.com", "edu", "ac.in", "edu.in", "ac.uk", "edu.au", "edu.sg"];
@@ -122,10 +121,6 @@ const Auth = () => {
         }
       });
       if (error) throw error;
-      
-      // Increment daily stats for new user
-      await incrementDailyStat('total_users');
-      
       toast.success("Account created! You can now log in.");
       setEmail("");
       setPassword("");

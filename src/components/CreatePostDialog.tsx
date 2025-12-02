@@ -8,7 +8,6 @@ import { Plus, Loader2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import RichTextEditor from "./RichTextEditor";
-import { incrementDailyStat } from "@/lib/emailAlerts";
 
 interface CreatePostDialogProps {
   onPostCreated?: () => void;
@@ -182,9 +181,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         console.error("Post creation error:", error);
         throw error;
       }
-
-      // Increment daily stats for new post
-      await incrementDailyStat('total_posts');
 
       toast.success("Post created successfully!");
       setTitle("");

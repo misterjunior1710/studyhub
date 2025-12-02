@@ -17,7 +17,6 @@ import Leaderboard from "./pages/Leaderboard";
 import Friends from "./pages/Friends";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import AdminNotifications from "./pages/AdminNotifications";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,7 +47,6 @@ const App = () => (
               <Route path="/friends" element={<Friends />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
-              <Route path="/admin/notifications" element={<AdminNotifications />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

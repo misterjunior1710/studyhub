@@ -14,7 +14,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Flag, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { sendFlaggedPostAlert } from "@/lib/emailAlerts";
 
 interface ReportPostDialogProps {
   postId: string;
@@ -76,9 +75,6 @@ const ReportPostDialog = ({ postId, postTitle }: ReportPostDialogProps) => {
       });
 
       if (error) throw error;
-
-      // Send email alert for flagged post
-      await sendFlaggedPostAlert(postId, `${reason}${details ? ` - ${details}` : ''}`);
 
       toast.success("Report submitted. Thank you for helping keep our community safe!");
       setReason("");

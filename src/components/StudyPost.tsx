@@ -18,7 +18,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import ReportPostDialog from "./ReportPostDialog";
-import { incrementDailyStat } from "@/lib/emailAlerts";
 
 interface StudyPostProps {
   id: string;
@@ -166,9 +165,6 @@ const StudyPost = ({
         .eq("id", id);
 
       if (error) throw error;
-
-      // Increment daily stats for flagged post
-      await incrementDailyStat('total_flagged');
 
       toast.success("Post flagged for review");
       onVoteChange?.();
