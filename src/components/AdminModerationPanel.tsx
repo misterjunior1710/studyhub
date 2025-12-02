@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { 
   AlertTriangle, Eye, EyeOff, Flag, Check, X, Loader2, 
-  FileWarning, UserX, AlertCircle, Ban 
+  FileWarning, UserX, AlertCircle, Ban, Scale 
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -64,10 +64,21 @@ interface UserWarning {
   profiles: { username: string; strike_count: number } | null;
 }
 
+interface BanAppeal {
+  id: string;
+  user_id: string;
+  reason: string;
+  status: string;
+  admin_response: string | null;
+  created_at: string;
+  profiles: { username: string; is_banned: boolean; banned_until: string | null } | null;
+}
+
 const AdminModerationPanel = () => {
   const [posts, setPosts] = useState<FlaggedPost[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   const [warnings, setWarnings] = useState<UserWarning[]>([]);
+  const [appeals, setAppeals] = useState<BanAppeal[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
@@ -77,7 +88,7 @@ const AdminModerationPanel = () => {
 
   const loadAllData = async () => {
     setLoading(true);
-    await Promise.all([loadFlaggedPosts(), loadReports(), loadWarnings()]);
+    await Promise.all([loadFlaggedPosts(), loadReports(), loadWarnings(), loadAppeals()]);
     setLoading(false);
   };
 
@@ -137,6 +148,66 @@ const AdminModerationPanel = () => {
         })
       );
       setWarnings(warningsWithProfiles);
+    }
+  };
+
+  const loadAppeals = async () => {
+    const { data, error } = await supabase
+      .from("ban_appeals")
+      .select("id, user_id, reason, status, admin_response, created_at")
+      .eq("status", "pending")
+      .order("created_at", { ascending: false });
+
+    if (!error) {
+      // Fetch user profiles
+      const appealsWithProfiles = await Promise.all(
+        (data || []).map(async (appeal) => {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("username, is_banned, banned_until")
+            .eq("id", appeal.user_id)
+            .single();
+          return { ...appeal, profiles: profile };
+        })
+      );
+      setAppeals(appealsWithProfiles);
+    }
+  };
+
+  const handleAppealDecision = async (appealId: string, userId: string, approve: boolean, response: string) => {
+    setActionLoading(appealId);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      // Update appeal status
+      await supabase
+        .from("ban_appeals")
+        .update({
+          status: approve ? "approved" : "rejected",
+          admin_response: response,
+          reviewed_by: user?.id,
+          reviewed_at: new Date().toISOString()
+        })
+        .eq("id", appealId);
+
+      // If approved, lift the ban
+      if (approve) {
+        await supabase
+          .from("profiles")
+          .update({
+            is_banned: false,
+            banned_until: null,
+            strike_count: 0
+          })
+          .eq("id", userId);
+      }
+
+      toast.success(approve ? "Appeal approved - user unbanned" : "Appeal rejected");
+      loadAppeals();
+    } catch (error: any) {
+      toast.error("Failed to process appeal");
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -317,7 +388,7 @@ const AdminModerationPanel = () => {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="reports">
-          <TabsList className="mb-4">
+          <TabsList className="mb-4 flex-wrap">
             <TabsTrigger value="reports" className="flex items-center gap-2">
               <FileWarning className="h-4 w-4" />
               Reports ({reports.length})
@@ -333,6 +404,10 @@ const AdminModerationPanel = () => {
             <TabsTrigger value="warnings" className="flex items-center gap-2">
               <UserX className="h-4 w-4" />
               Warnings ({warnings.length})
+            </TabsTrigger>
+            <TabsTrigger value="appeals" className="flex items-center gap-2">
+              <Scale className="h-4 w-4" />
+              Appeals ({appeals.length})
             </TabsTrigger>
           </TabsList>
 
@@ -402,6 +477,22 @@ const AdminModerationPanel = () => {
                   key={warning.id}
                   warning={warning}
                   onBan={(days) => handleBanUser(warning.user_id, days)}
+                />
+              ))
+            )}
+          </TabsContent>
+
+          {/* Appeals Tab */}
+          <TabsContent value="appeals" className="space-y-4">
+            {appeals.length === 0 ? (
+              <p className="text-muted-foreground text-center py-4">No pending appeals</p>
+            ) : (
+              appeals.map((appeal) => (
+                <AppealCard
+                  key={appeal.id}
+                  appeal={appeal}
+                  actionLoading={actionLoading}
+                  onDecision={(approve, response) => handleAppealDecision(appeal.id, appeal.user_id, approve, response)}
                 />
               ))
             )}
@@ -606,6 +697,95 @@ const WarningCard = ({ warning, onBan }: WarningCardProps) => {
           Ban 30 Days
         </Button>
       </div>
+    </div>
+  );
+};
+
+// Appeal Card Component
+interface AppealCardProps {
+  appeal: BanAppeal;
+  actionLoading: string | null;
+  onDecision: (approve: boolean, response: string) => void;
+}
+
+const AppealCard = ({ appeal, actionLoading, onDecision }: AppealCardProps) => {
+  const isLoading = actionLoading === appeal.id;
+  const [responseDialogOpen, setResponseDialogOpen] = useState(false);
+  const [adminResponse, setAdminResponse] = useState("");
+  const [isApproving, setIsApproving] = useState(false);
+
+  const handleSubmit = () => {
+    onDecision(isApproving, adminResponse);
+    setResponseDialogOpen(false);
+    setAdminResponse("");
+  };
+
+  const openDialog = (approve: boolean) => {
+    setIsApproving(approve);
+    setResponseDialogOpen(true);
+  };
+
+  return (
+    <div className="border rounded-lg p-4 space-y-3">
+      <div className="flex items-start justify-between">
+        <div>
+          <h4 className="font-medium flex items-center gap-2">
+            {appeal.profiles?.username || "Unknown User"}
+            {appeal.profiles?.is_banned && (
+              <Badge variant="destructive">Banned</Badge>
+            )}
+          </h4>
+          <p className="text-sm text-muted-foreground">
+            Submitted {format(new Date(appeal.created_at), "MMM d, yyyy")}
+            {appeal.profiles?.banned_until && (
+              <> • Ban expires {format(new Date(appeal.profiles.banned_until), "MMM d, yyyy")}</>
+            )}
+          </p>
+        </div>
+      </div>
+      
+      <div className="space-y-2">
+        <Label className="text-xs text-muted-foreground">Appeal Reason:</Label>
+        <p className="text-sm bg-muted p-2 rounded">{appeal.reason}</p>
+      </div>
+      
+      <div className="flex gap-2">
+        <Button size="sm" variant="outline" onClick={() => openDialog(true)} disabled={isLoading}>
+          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4 mr-1" />}
+          Approve
+        </Button>
+        <Button size="sm" variant="destructive" onClick={() => openDialog(false)} disabled={isLoading}>
+          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4 mr-1" />}
+          Reject
+        </Button>
+      </div>
+
+      <Dialog open={responseDialogOpen} onOpenChange={setResponseDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{isApproving ? "Approve Appeal" : "Reject Appeal"}</DialogTitle>
+            <DialogDescription>
+              {isApproving 
+                ? "This will unban the user and reset their strike count."
+                : "The user will remain banned."
+              }
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Response to User (optional)</Label>
+              <Textarea 
+                value={adminResponse} 
+                onChange={(e) => setAdminResponse(e.target.value)}
+                placeholder="Explain your decision..."
+              />
+            </div>
+            <Button onClick={handleSubmit} className="w-full" variant={isApproving ? "default" : "destructive"}>
+              {isApproving ? "Approve & Unban" : "Reject Appeal"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

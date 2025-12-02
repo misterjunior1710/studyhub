@@ -33,10 +33,12 @@ import {
   Loader2, User, MapPin, GraduationCap, BookOpen, Save, ArrowLeft, 
   Camera, Bell, Shield, Globe, Filter, Lock, Eye, EyeOff, MessageSquare,
   Users, FileText, Megaphone, BarChart3, Smartphone, Monitor, Tablet,
-  Download, Trash2, RefreshCw, Clock, Target, Timer, Palette, LogOut, AlertTriangle
+  Download, Trash2, RefreshCw, Clock, Target, Timer, Palette, LogOut, AlertTriangle, Ban
 } from "lucide-react";
 import { toast } from "sonner";
 import AdminModerationPanel from "@/components/AdminModerationPanel";
+import BanAppealDialog from "@/components/BanAppealDialog";
+import { applyThemeColor } from "@/hooks/useThemePersistence";
 
 interface ProfileData {
   username: string;
@@ -88,6 +90,8 @@ const Settings = () => {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isBanned, setIsBanned] = useState(false);
+  const [bannedUntil, setBannedUntil] = useState<string | null>(null);
   
   const [profile, setProfile] = useState<ProfileData>({
     username: "",
@@ -141,13 +145,8 @@ const Settings = () => {
   }, []);
 
   useEffect(() => {
-    // Apply theme color
-    const selectedTheme = themeColors.find(t => t.name === profile.theme_color);
-    if (selectedTheme) {
-      document.documentElement.style.setProperty('--primary', selectedTheme.primary);
-      document.documentElement.style.setProperty('--accent', selectedTheme.accent);
-      document.documentElement.style.setProperty('--ring', selectedTheme.primary);
-    }
+    // Apply theme color using shared function
+    applyThemeColor(profile.theme_color);
   }, [profile.theme_color]);
 
   const checkAuthAndLoadProfile = async () => {
@@ -178,6 +177,10 @@ const Settings = () => {
       .maybeSingle();
 
     if (profileData) {
+      // Check ban status
+      setIsBanned(profileData.is_banned ?? false);
+      setBannedUntil(profileData.banned_until);
+
       setProfile({
         username: profileData.username || "",
         bio: profileData.bio || "",
@@ -409,6 +412,27 @@ const Settings = () => {
               Manage your account and preferences
             </p>
           </div>
+
+          {/* Ban Notice */}
+          {isBanned && userId && (
+            <Card className="border-destructive bg-destructive/10">
+              <CardContent className="flex items-center justify-between py-4">
+                <div className="flex items-center gap-3">
+                  <Ban className="h-5 w-5 text-destructive" />
+                  <div>
+                    <p className="font-medium text-destructive">Your account has been banned</p>
+                    <p className="text-sm text-muted-foreground">
+                      {bannedUntil 
+                        ? `Ban expires: ${new Date(bannedUntil).toLocaleDateString()}`
+                        : "This ban is permanent"
+                      }
+                    </p>
+                  </div>
+                </div>
+                <BanAppealDialog userId={userId} bannedUntil={bannedUntil} />
+              </CardContent>
+            </Card>
+          )}
 
           <Tabs defaultValue="profile" className="space-y-6">
             <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-5 lg:grid-cols-9' : 'grid-cols-4 lg:grid-cols-8'} lg:w-auto`}>
