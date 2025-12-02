@@ -29,7 +29,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   const subjects = ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "History", "Geography"];
   const grades = ["Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate"];
   const streams = ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "State Board"];
-  const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Other"];
+  const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria", "Other"];
   const postTypes = [
     { value: "doubt", label: "Ask a Doubt" },
     { value: "meme", label: "Share a Meme" },
