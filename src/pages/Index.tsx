@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FilterSidebar from "@/components/FilterSidebar";
+import MobileFilterSheet from "@/components/MobileFilterSheet";
 import StudyPost from "@/components/StudyPost";
 import CookieConsent from "@/components/CookieConsent";
 import { Button } from "@/components/ui/button";
@@ -180,21 +181,21 @@ const Index = () => {
       >
         <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-accent/80 to-primary/90 animate-gradient-shift" style={{ backgroundSize: "200% 200%" }} />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent)]" />
-        <div className="relative container mx-auto px-4 py-12 md:py-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 animate-fade-in">
+        <div className="relative container mx-auto px-4 py-8 sm:py-12 md:py-16">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 animate-fade-in leading-tight">
             Study Together, Learn Better
           </h1>
-          <p className="text-white/90 text-lg md:text-xl mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <p className="text-white/90 text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 animate-fade-in max-w-2xl" style={{ animationDelay: "0.1s" }}>
             Connect with students worldwide, share knowledge, and ace your exams ✨
           </p>
           
           {/* Search Bar in Hero */}
           <div className="max-w-2xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-3 sm:left-4 top-1/2 h-4 w-4 sm:h-5 sm:w-5 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search for questions, topics, or subjects..."
-                className="w-full pl-12 pr-4 py-6 text-lg bg-background/95 backdrop-blur-sm border-0 shadow-xl rounded-xl focus:ring-2 focus:ring-white/50"
+                placeholder="Search questions, topics..."
+                className="w-full pl-10 sm:pl-12 pr-4 py-4 sm:py-6 text-sm sm:text-base md:text-lg bg-background/95 backdrop-blur-sm border-0 shadow-xl rounded-xl focus:ring-2 focus:ring-white/50"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -203,48 +204,67 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6 flex-1">
-        <div className="flex gap-6">
-          <FilterSidebar
-            selectedCountry={selectedCountry}
-            selectedSubject={selectedSubject}
-            selectedGrade={selectedGrade}
-            selectedStream={selectedStream}
-            onCountryChange={setSelectedCountry}
-            onSubjectChange={setSelectedSubject}
-            onGradeChange={setSelectedGrade}
-            onStreamChange={setSelectedStream}
-            onClearAll={handleClearFilters}
-          />
+      <div className="container mx-auto px-4 py-4 sm:py-6 flex-1">
+        <div className="flex gap-4 lg:gap-6">
+          {/* Desktop sidebar */}
+          <div className="hidden lg:block">
+            <FilterSidebar
+              selectedCountry={selectedCountry}
+              selectedSubject={selectedSubject}
+              selectedGrade={selectedGrade}
+              selectedStream={selectedStream}
+              onCountryChange={setSelectedCountry}
+              onSubjectChange={setSelectedSubject}
+              onGradeChange={setSelectedGrade}
+              onStreamChange={setSelectedStream}
+              onClearAll={handleClearFilters}
+            />
+          </div>
           
-          <main className="flex-1 space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex gap-2">
+          <main className="flex-1 space-y-4 sm:space-y-6 min-w-0">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex gap-1 sm:gap-2">
                 <Button
                   variant={sortBy === "hot" ? "default" : "ghost"}
-                  className="gap-2 transition-all duration-200 hover:scale-105"
+                  size="sm"
+                  className="gap-1 sm:gap-2 transition-all duration-200 hover:scale-105 text-xs sm:text-sm"
                   onClick={() => setSortBy("hot")}
                 >
-                  <TrendingUp className="h-4 w-4" />
+                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
                   Hot
                 </Button>
                 <Button
                   variant={sortBy === "new" ? "default" : "ghost"}
-                  className="gap-2 transition-all duration-200 hover:scale-105"
+                  size="sm"
+                  className="gap-1 sm:gap-2 transition-all duration-200 hover:scale-105 text-xs sm:text-sm"
                   onClick={() => setSortBy("new")}
                 >
-                  <Clock className="h-4 w-4" />
+                  <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
                   New
                 </Button>
                 <Button
                   variant={sortBy === "top" ? "default" : "ghost"}
-                  className="gap-2 transition-all duration-200 hover:scale-105"
+                  size="sm"
+                  className="gap-1 sm:gap-2 transition-all duration-200 hover:scale-105 text-xs sm:text-sm"
                   onClick={() => setSortBy("top")}
                 >
-                  <Star className="h-4 w-4" />
+                  <Star className="h-3 w-3 sm:h-4 sm:w-4" />
                   Top
                 </Button>
               </div>
+              
+              {/* Mobile filter button */}
+              <MobileFilterSheet
+                selectedCountry={selectedCountry}
+                selectedSubject={selectedSubject}
+                selectedGrade={selectedGrade}
+                selectedStream={selectedStream}
+                onCountryChange={setSelectedCountry}
+                onSubjectChange={setSelectedSubject}
+                onGradeChange={setSelectedGrade}
+                onStreamChange={setSelectedStream}
+                onClearAll={handleClearFilters}
+              />
             </div>
 
             {loading ? (

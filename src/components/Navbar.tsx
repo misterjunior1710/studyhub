@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import CreatePostDialog from "./CreatePostDialog";
 import NotificationsPopover from "./NotificationsPopover";
 import ThemeToggle from "./ThemeToggle";
+import MobileNav from "./MobileNav";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -83,10 +84,11 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-sm">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
+        <div className="flex h-14 sm:h-16 items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-6">
+            <MobileNav />
             <h1 
-              className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent cursor-pointer"
+              className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent cursor-pointer"
               onClick={() => navigate("/")}
             >
               StudyHub
@@ -143,12 +145,14 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <ThemeToggle />
             {user ? (
               <>
                 <NotificationsPopover />
-                <CreatePostDialog onPostCreated={onPostCreated} />
+                <div className="hidden sm:block">
+                  <CreatePostDialog onPostCreated={onPostCreated} />
+                </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="relative">
