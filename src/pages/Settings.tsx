@@ -122,12 +122,17 @@ const Settings = () => {
   const [showPasswords, setShowPasswords] = useState(false);
 
   const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria", "Other"];
-  const grades = ["Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate", "Postgraduate"];
-  const streams = ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Other"];
+  const isAdult = profile.grade === "Adult (18+)" || profile.grade === "Working Professional";
+  const grades = ["Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate", "Postgraduate", "Adult (18+)", "Working Professional"];
+  const streams = isAdult 
+    ? ["Not Applicable", "Self-Learning", "Professional Development", "Other"]
+    : ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Other"];
   const languages = ["English", "Spanish", "French", "German", "Hindi", "Chinese", "Japanese", "Portuguese", "Arabic", "Russian"];
   const timezones = ["UTC", "America/New_York", "America/Los_Angeles", "Europe/London", "Europe/Paris", "Europe/Berlin", "Asia/Tokyo", "Asia/Shanghai", "Asia/Kolkata", "Australia/Sydney"];
   const dateFormats = ["MM/DD/YYYY", "DD/MM/YYYY", "YYYY-MM-DD"];
-  const subjects = ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "History", "Geography"];
+  const subjects = isAdult
+    ? ["General", "Career Advice", "Finance", "Technology", "Business", "Personal Development", "Health & Wellness", "Other", "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "History", "Geography"]
+    : ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "History", "Geography", "General"];
 
   useEffect(() => {
     checkAuthAndLoadProfile();
@@ -497,7 +502,15 @@ const Settings = () => {
                     </div>
                     <div className="space-y-2">
                       <Label className="flex items-center gap-2"><GraduationCap className="h-4 w-4" />Grade</Label>
-                      <Select value={profile.grade} onValueChange={(v) => setProfile(prev => ({ ...prev, grade: v }))}>
+                      <Select value={profile.grade} onValueChange={(v) => {
+                        const wasAdult = profile.grade === "Adult (18+)" || profile.grade === "Working Professional";
+                        const nowAdult = v === "Adult (18+)" || v === "Working Professional";
+                        if (wasAdult !== nowAdult) {
+                          setProfile(prev => ({ ...prev, grade: v, stream: "" }));
+                        } else {
+                          setProfile(prev => ({ ...prev, grade: v }));
+                        }
+                      }}>
                         <SelectTrigger><SelectValue placeholder="Select grade" /></SelectTrigger>
                         <SelectContent>{grades.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent>
                       </Select>

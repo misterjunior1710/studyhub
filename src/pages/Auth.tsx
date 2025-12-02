@@ -34,8 +34,12 @@ const Auth = () => {
   const [grade, setGrade] = useState("");
   const [stream, setStream] = useState("");
   const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria", "Other"];
-  const grades = ["Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate", "Postgraduate"];
-  const streams = ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Other"];
+  
+  const isAdult = grade === "Adult (18+)" || grade === "Working Professional";
+  const grades = ["Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate", "Postgraduate", "Adult (18+)", "Working Professional"];
+  const streams = isAdult 
+    ? ["Not Applicable", "Self-Learning", "Professional Development", "Other"]
+    : ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Other"];
   useEffect(() => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({
@@ -217,7 +221,13 @@ const Auth = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="signup-grade">Grade</Label>
-                    <Select value={grade} onValueChange={setGrade} required>
+                    <Select value={grade} onValueChange={(value) => {
+                      setGrade(value);
+                      // Reset stream when switching between student/adult
+                      const wasAdult = grade === "Adult (18+)" || grade === "Working Professional";
+                      const nowAdult = value === "Adult (18+)" || value === "Working Professional";
+                      if (wasAdult !== nowAdult) setStream("");
+                    }} required>
                       <SelectTrigger id="signup-grade">
                         <SelectValue placeholder="Select grade" />
                       </SelectTrigger>
