@@ -94,11 +94,23 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     setFilePreview(null);
   };
 
+  // Check for links in text
+  const containsLinks = (text: string): boolean => {
+    const urlPattern = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|([a-zA-Z0-9-]+\.(com|org|net|edu|gov|io|co|xyz|info|biz|tv|me|app|dev)[^\s]*)/gi;
+    return urlPattern.test(text);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!title || !content || !subject || !grade || !stream || !country) {
       toast.error("Please fill in all fields");
+      return;
+    }
+
+    // Quick client-side link check
+    if (containsLinks(title) || containsLinks(content)) {
+      toast.error("Links are not allowed in posts. Please remove any URLs.");
       return;
     }
 
@@ -109,6 +121,21 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       
       if (!user) {
         toast.error("You must be logged in to create a post");
+        return;
+      }
+
+      // Content moderation check
+      toast.info("Checking content...");
+      const moderationResponse = await supabase.functions.invoke('moderate-content', {
+        body: { title, content }
+      });
+
+      if (moderationResponse.error) {
+        console.error("Moderation error:", moderationResponse.error);
+        // Continue anyway if moderation fails
+      } else if (moderationResponse.data && !moderationResponse.data.isAppropriate) {
+        toast.error(moderationResponse.data.reason || "Content not allowed");
+        setLoading(false);
         return;
       }
 

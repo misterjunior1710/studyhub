@@ -33,9 +33,10 @@ import {
   Loader2, User, MapPin, GraduationCap, BookOpen, Save, ArrowLeft, 
   Camera, Bell, Shield, Globe, Filter, Lock, Eye, EyeOff, MessageSquare,
   Users, FileText, Megaphone, BarChart3, Smartphone, Monitor, Tablet,
-  Download, Trash2, RefreshCw, Clock, Target, Timer, Palette, LogOut
+  Download, Trash2, RefreshCw, Clock, Target, Timer, Palette, LogOut, AlertTriangle
 } from "lucide-react";
 import { toast } from "sonner";
+import AdminModerationPanel from "@/components/AdminModerationPanel";
 
 interface ProfileData {
   username: string;
@@ -86,6 +87,7 @@ const Settings = () => {
   const [userEmail, setUserEmail] = useState("");
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   
   const [profile, setProfile] = useState<ProfileData>({
     username: "",
@@ -158,6 +160,16 @@ const Settings = () => {
 
     setUserId(user.id);
     setUserEmail(user.email || "");
+
+    // Check if user is admin
+    const { data: roleData } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+    
+    setIsAdmin(!!roleData);
 
     const { data: profileData } = await supabase
       .from("profiles")
@@ -399,7 +411,7 @@ const Settings = () => {
           </div>
 
           <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 lg:w-auto">
+            <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-5 lg:grid-cols-9' : 'grid-cols-4 lg:grid-cols-8'} lg:w-auto`}>
               <TabsTrigger value="profile" className="gap-1">
                 <User className="h-4 w-4" />
                 <span className="hidden lg:inline">Profile</span>
@@ -432,6 +444,12 @@ const Settings = () => {
                 <Download className="h-4 w-4" />
                 <span className="hidden lg:inline">Data</span>
               </TabsTrigger>
+              {isAdmin && (
+                <TabsTrigger value="moderation" className="gap-1 text-destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <span className="hidden lg:inline">Moderation</span>
+                </TabsTrigger>
+              )}
             </TabsList>
 
             {/* Profile Tab */}
@@ -911,6 +929,13 @@ const Settings = () => {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            {/* Admin Moderation Tab */}
+            {isAdmin && (
+              <TabsContent value="moderation">
+                <AdminModerationPanel />
+              </TabsContent>
+            )}
           </Tabs>
         </div>
       </div>

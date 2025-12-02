@@ -266,8 +266,13 @@ export type Database = {
           created_at: string
           downvotes: number
           file_url: string | null
+          flag_reason: string | null
+          flagged_at: string | null
+          flagged_by: string | null
           grade: string
           id: string
+          is_flagged: boolean | null
+          is_hidden: boolean | null
           post_type: string
           stream: string
           subject: string
@@ -282,8 +287,13 @@ export type Database = {
           created_at?: string
           downvotes?: number
           file_url?: string | null
+          flag_reason?: string | null
+          flagged_at?: string | null
+          flagged_by?: string | null
           grade: string
           id?: string
+          is_flagged?: boolean | null
+          is_hidden?: boolean | null
           post_type?: string
           stream: string
           subject: string
@@ -298,8 +308,13 @@ export type Database = {
           created_at?: string
           downvotes?: number
           file_url?: string | null
+          flag_reason?: string | null
+          flagged_at?: string | null
+          flagged_by?: string | null
           grade?: string
           id?: string
+          is_flagged?: boolean | null
+          is_hidden?: boolean | null
           post_type?: string
           stream?: string
           subject?: string
