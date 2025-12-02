@@ -11,134 +11,102 @@ import ThemeToggle from "./ThemeToggle";
 import MobileNav from "./MobileNav";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-
 interface NavbarProps {
   onPostCreated?: () => void;
 }
-
-const Navbar = ({ onPostCreated }: NavbarProps) => {
+const Navbar = ({
+  onPostCreated
+}: NavbarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [username, setUsername] = useState<string>("");
-  const [profileData, setProfileData] = useState<{ country?: string; grade?: string; stream?: string }>({});
+  const [profileData, setProfileData] = useState<{
+    country?: string;
+    grade?: string;
+    stream?: string;
+  }>({});
   const [isAdmin, setIsAdmin] = useState(false);
-
   const isActive = (path: string) => location.pathname === path;
-
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({
+      data: {
+        session
+      }
+    }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchUsername(session.user.id);
       }
     });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          fetchUsername(session.user.id);
-        } else {
-          setUsername("");
-        }
+    const {
+      data: {
+        subscription
       }
-    );
-
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchUsername(session.user.id);
+      } else {
+        setUsername("");
+      }
+    });
     return () => subscription.unsubscribe();
   }, []);
-
   const fetchUsername = async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("username, country, grade, stream")
-      .eq("id", userId)
-      .single();
-    
+    const {
+      data
+    } = await supabase.from("profiles").select("username, country, grade, stream").eq("id", userId).single();
     if (data) {
       setUsername(data.username || "");
       setProfileData({
         country: data.country || undefined,
         grade: data.grade || undefined,
-        stream: data.stream || undefined,
+        stream: data.stream || undefined
       });
     }
 
     // Check if user is admin
-    const { data: roleData } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId)
-      .eq("role", "admin")
-      .maybeSingle();
-    
+    const {
+      data: roleData
+    } = await supabase.from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
     setIsAdmin(!!roleData);
   };
-
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     toast.success("Signed out successfully");
     navigate("/");
   };
-
-  return (
-    <nav className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-sm">
+  return <nav className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-sm">
       <div className="container mx-auto px-4">
         <div className="flex h-14 sm:h-16 items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-2 sm:gap-6">
             <MobileNav />
-            <h1 
-              className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent cursor-pointer"
-              onClick={() => navigate("/")}
-            >
+            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent cursor-pointer" onClick={() => navigate("/")}>
               StudyHub
             </h1>
             <div className="hidden md:flex items-center gap-2">
-              <Button
-                variant={isActive("/") ? "default" : "ghost"}
-                size="sm"
-                onClick={() => navigate("/")}
-              >
+              <Button variant={isActive("/") ? "default" : "ghost"} size="sm" onClick={() => navigate("/")}>
                 <Home className="h-4 w-4 mr-2" />
                 Home
               </Button>
-              <Button
-                variant={isActive("/ask-doubt") ? "default" : "ghost"}
-                size="sm"
-                onClick={() => navigate("/ask-doubt")}
-              >
+              <Button variant={isActive("/ask-doubt") ? "default" : "ghost"} size="sm" onClick={() => navigate("/ask-doubt")}>
                 <HelpCircle className="h-4 w-4 mr-2" />
-                Ask Doubt
+                Doubts
               </Button>
-              <Button
-                variant={isActive("/memes") ? "default" : "ghost"}
-                size="sm"
-                onClick={() => navigate("/memes")}
-              >
+              <Button variant={isActive("/memes") ? "default" : "ghost"} size="sm" onClick={() => navigate("/memes")}>
                 <Laugh className="h-4 w-4 mr-2" />
                 Memes
               </Button>
-              <Button
-                variant={isActive("/groups") ? "default" : "ghost"}
-                size="sm"
-                onClick={() => navigate("/groups")}
-              >
+              <Button variant={isActive("/groups") ? "default" : "ghost"} size="sm" onClick={() => navigate("/groups")}>
                 <Users className="h-4 w-4 mr-2" />
                 Groups
               </Button>
-              <Button
-                variant={isActive("/leaderboard") ? "default" : "ghost"}
-                size="sm"
-                onClick={() => navigate("/leaderboard")}
-              >
+              <Button variant={isActive("/leaderboard") ? "default" : "ghost"} size="sm" onClick={() => navigate("/leaderboard")}>
                 <Trophy className="h-4 w-4 mr-2" />
                 Leaderboard
               </Button>
-              <Button
-                variant={isActive("/friends") ? "default" : "ghost"}
-                size="sm"
-                onClick={() => navigate("/friends")}
-              >
+              <Button variant={isActive("/friends") ? "default" : "ghost"} size="sm" onClick={() => navigate("/friends")}>
                 <UserPlus className="h-4 w-4 mr-2" />
                 Friends
               </Button>
@@ -147,8 +115,7 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
 
           <div className="flex items-center gap-1 sm:gap-2">
             <ThemeToggle />
-            {user ? (
-              <>
+            {user ? <>
                 <NotificationsPopover />
                 <div className="hidden sm:block">
                   <CreatePostDialog onPostCreated={onPostCreated} />
@@ -168,11 +135,9 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
                       <div className="flex flex-col space-y-1">
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-medium leading-none">{username || "User"}</p>
-                          {isAdmin && (
-                            <span className="text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded-full font-semibold">
+                          {isAdmin && <span className="text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded-full font-semibold">
                               ADMIN
-                            </span>
-                          )}
+                            </span>}
                         </div>
                         <p className="text-xs leading-none text-muted-foreground">
                           {user.email}
@@ -181,21 +146,15 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <div className="px-2 py-2 space-y-1">
-                      {profileData.grade && (
-                        <p className="text-xs text-muted-foreground">
+                      {profileData.grade && <p className="text-xs text-muted-foreground">
                           <span className="font-medium">Grade:</span> {profileData.grade}
-                        </p>
-                      )}
-                      {profileData.stream && (
-                        <p className="text-xs text-muted-foreground">
+                        </p>}
+                      {profileData.stream && <p className="text-xs text-muted-foreground">
                           <span className="font-medium">Stream:</span> {profileData.stream}
-                        </p>
-                      )}
-                      {profileData.country && (
-                        <p className="text-xs text-muted-foreground">
+                        </p>}
+                      {profileData.country && <p className="text-xs text-muted-foreground">
                           <span className="font-medium">Country:</span> {profileData.country}
-                        </p>
-                      )}
+                        </p>}
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => navigate("/settings")}>
@@ -208,17 +167,12 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </>
-            ) : (
-              <Button onClick={() => navigate("/auth")}>
+              </> : <Button onClick={() => navigate("/auth")}>
                 Sign In
-              </Button>
-            )}
+              </Button>}
           </div>
         </div>
       </div>
-    </nav>
-  );
+    </nav>;
 };
-
 export default Navbar;
