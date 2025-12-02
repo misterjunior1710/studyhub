@@ -2,10 +2,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Eye, Lock, Database, Bell, Users, Trash2, Mail } from "lucide-react";
-
 const Privacy = () => {
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
+  return <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">
         <div className="space-y-8 animate-fade-in">
@@ -21,7 +19,9 @@ const Privacy = () => {
             </p>
           </div>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.1s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Eye className="h-5 w-5 text-primary" />
@@ -39,7 +39,9 @@ const Privacy = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.2s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Database className="h-5 w-5 text-primary" />
@@ -57,7 +59,9 @@ const Privacy = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.3s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.3s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Lock className="h-5 w-5 text-primary" />
@@ -77,7 +81,9 @@ const Privacy = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.4s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-primary" />
@@ -97,7 +103,9 @@ const Privacy = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.5s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.5s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Bell className="h-5 w-5 text-primary" />
@@ -118,7 +126,9 @@ const Privacy = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.6s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.6s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Trash2 className="h-5 w-5 text-primary" />
@@ -132,7 +142,9 @@ const Privacy = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.7s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{
+          animationDelay: "0.7s"
+        }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Mail className="h-5 w-5 text-primary" />
@@ -142,8 +154,8 @@ const Privacy = () => {
             <CardContent>
               <p className="text-muted-foreground">
                 If you have questions about this Privacy Policy, please contact us at{" "}
-                <a href="mailto:privacy@studyhub.com" className="text-primary hover:underline">
-                  privacy@studyhub.com
+                <a className="text-primary hover:underline" href="mailto:studyhub.community.web@gmail.com">
+                  ​studyhub.community.web@gmail.com
                 </a>
               </p>
             </CardContent>
@@ -151,8 +163,6 @@ const Privacy = () => {
         </div>
       </main>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Privacy;
