@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ArrowLeft, Send, Users, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import GroupMembersDialog from "@/components/GroupMembersDialog";
+import EditGroupDialog from "@/components/EditGroupDialog";
 
 interface Message {
   id: string;
@@ -203,8 +204,16 @@ const GroupChat = () => {
                 </p>
               )}
             </div>
-            {id && (
-              <GroupMembersDialog groupId={id} onMemberChange={loadGroupInfo} />
+            {id && groupInfo && (
+              <>
+                <EditGroupDialog
+                  groupId={id}
+                  currentName={groupInfo.name}
+                  currentDescription={groupInfo.description || ""}
+                  onGroupUpdated={loadGroupInfo}
+                />
+                <GroupMembersDialog groupId={id} onMemberChange={loadGroupInfo} />
+              </>
             )}
           </div>
         </div>
