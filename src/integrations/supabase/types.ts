@@ -85,6 +85,48 @@ export type Database = {
           },
         ]
       }
+      friends: {
+        Row: {
+          created_at: string
+          friend_id: string
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          friend_id: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          friend_id?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "friends_friend_id_fkey"
+            columns: ["friend_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friends_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_chats: {
         Row: {
           created_at: string | null
@@ -280,11 +322,14 @@ export type Database = {
         Row: {
           allow_dms: boolean | null
           app_language: string | null
+          auto_start_focus_timer: boolean | null
           avatar_url: string | null
           bio: string | null
           blocked_subjects: string[] | null
           country: string | null
           created_at: string
+          daily_hours_target: number | null
+          daily_reminder_time: string | null
           date_format: string | null
           grade: string | null
           hide_memes: boolean | null
@@ -303,17 +348,22 @@ export type Database = {
           show_verified_only: boolean | null
           streak_days: number | null
           stream: string | null
+          theme_color: string | null
           timezone: string | null
           username: string | null
+          weekly_study_goal: number | null
         }
         Insert: {
           allow_dms?: boolean | null
           app_language?: string | null
+          auto_start_focus_timer?: boolean | null
           avatar_url?: string | null
           bio?: string | null
           blocked_subjects?: string[] | null
           country?: string | null
           created_at?: string
+          daily_hours_target?: number | null
+          daily_reminder_time?: string | null
           date_format?: string | null
           grade?: string | null
           hide_memes?: boolean | null
@@ -332,17 +382,22 @@ export type Database = {
           show_verified_only?: boolean | null
           streak_days?: number | null
           stream?: string | null
+          theme_color?: string | null
           timezone?: string | null
           username?: string | null
+          weekly_study_goal?: number | null
         }
         Update: {
           allow_dms?: boolean | null
           app_language?: string | null
+          auto_start_focus_timer?: boolean | null
           avatar_url?: string | null
           bio?: string | null
           blocked_subjects?: string[] | null
           country?: string | null
           created_at?: string
+          daily_hours_target?: number | null
+          daily_reminder_time?: string | null
           date_format?: string | null
           grade?: string | null
           hide_memes?: boolean | null
@@ -361,8 +416,10 @@ export type Database = {
           show_verified_only?: boolean | null
           streak_days?: number | null
           stream?: string | null
+          theme_color?: string | null
           timezone?: string | null
           username?: string | null
+          weekly_study_goal?: number | null
         }
         Relationships: []
       }
