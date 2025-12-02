@@ -2,8 +2,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FilterSidebar from "@/components/FilterSidebar";
 import StudyPost from "@/components/StudyPost";
+import CookieConsent from "@/components/CookieConsent";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Clock, Star, Loader2, Sparkles } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { TrendingUp, Clock, Star, Loader2, Sparkles, Search } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
@@ -148,21 +150,34 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Navbar onPostCreated={loadPosts} onSearch={setSearchQuery} />
+      <Navbar onPostCreated={loadPosts} />
       
       <div 
-        className="relative h-56 bg-cover bg-center overflow-hidden"
+        className="relative bg-cover bg-center overflow-hidden"
         style={{ backgroundImage: `url(${heroImage})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-accent/80 to-primary/90 animate-gradient-shift" style={{ backgroundSize: "200% 200%" }} />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent)]" />
-        <div className="relative container mx-auto px-4 h-full flex flex-col justify-center">
+        <div className="relative container mx-auto px-4 py-12 md:py-16">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 animate-fade-in">
             Study Together, Learn Better
           </h1>
-          <p className="text-white/90 text-lg md:text-xl animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <p className="text-white/90 text-lg md:text-xl mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
             Connect with students worldwide, share knowledge, and ace your exams ✨
           </p>
+          
+          {/* Search Bar in Hero */}
+          <div className="max-w-2xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search for questions, topics, or subjects..."
+                className="w-full pl-12 pr-4 py-6 text-lg bg-background/95 backdrop-blur-sm border-0 shadow-xl rounded-xl focus:ring-2 focus:ring-white/50"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -255,6 +270,7 @@ const Index = () => {
         </div>
       </div>
       <Footer />
+      <CookieConsent />
     </div>
   );
 };

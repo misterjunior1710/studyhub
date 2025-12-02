@@ -1,6 +1,5 @@
-import { Search, User, LogOut, Home, HelpCircle, Laugh, Users, Settings, Trophy, UserPlus } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Laugh, Users, Settings, Trophy, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
@@ -11,22 +10,18 @@ import NotificationsPopover from "./NotificationsPopover";
 import ThemeToggle from "./ThemeToggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
 
 interface NavbarProps {
   onPostCreated?: () => void;
-  onSearch?: (query: string) => void;
 }
 
-const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
+const Navbar = ({ onPostCreated }: NavbarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [username, setUsername] = useState<string>("");
   const [profileData, setProfileData] = useState<{ country?: string; grade?: string; stream?: string }>({});
-  const [searchQuery, setSearchQuery] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -83,17 +78,6 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
     await supabase.auth.signOut();
     toast.success("Signed out successfully");
     navigate("/");
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      onSearch?.(searchQuery);
-      // Navigate to home to show all search results
-      if (location.pathname !== "/") {
-        navigate("/");
-      }
-    }
   };
 
   return (
@@ -157,29 +141,6 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
                 Friends
               </Button>
             </div>
-          </div>
-
-          <div className={cn(
-            "transition-all duration-300 ease-out",
-            searchFocused ? "flex-1 max-w-3xl" : "flex-1 max-w-md lg:max-w-xl"
-          )}>
-            <form onSubmit={handleSearch} className="relative">
-              <Search className={cn(
-                "absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors",
-                searchFocused ? "text-primary" : "text-muted-foreground"
-              )} />
-              <Input
-                placeholder="Search for questions, topics, or subjects..."
-                className={cn(
-                  "w-full pl-10 bg-background transition-all duration-300",
-                  searchFocused && "ring-2 ring-primary/50 shadow-lg"
-                )}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => setSearchFocused(false)}
-              />
-            </form>
           </div>
 
           <div className="flex items-center gap-2">
