@@ -11,6 +11,7 @@ import AskDoubt from "./pages/AskDoubt";
 import Memes from "./pages/Memes";
 import Groups from "./pages/Groups";
 import GroupChat from "./pages/GroupChat";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/memes" element={<Memes />} />
             <Route path="/groups" element={<Groups />} />
             <Route path="/groups/:id" element={<GroupChat />} />
+            <Route path="/settings" element={<Settings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
