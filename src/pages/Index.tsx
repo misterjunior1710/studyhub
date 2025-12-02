@@ -38,6 +38,22 @@ const Index = () => {
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
   const [selectedStream, setSelectedStream] = useState<string | null>(null);
+  const [userGrade, setUserGrade] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserGrade = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("grade")
+          .eq("id", user.id)
+          .single();
+        setUserGrade(profile?.grade || null);
+      }
+    };
+    fetchUserGrade();
+  }, []);
 
   useEffect(() => {
     loadPosts();
@@ -60,7 +76,7 @@ const Index = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [sortBy, searchQuery, selectedCountry, selectedSubject, selectedGrade, selectedStream]);
+  }, [sortBy, searchQuery, selectedCountry, selectedSubject, selectedGrade, selectedStream, userGrade]);
 
   const loadPosts = async () => {
     setLoading(true);
@@ -93,6 +109,11 @@ const Index = () => {
 
       if (selectedStream) {
         query = query.eq("stream", selectedStream);
+      }
+
+      // Hide Adult (18+) content from non-adult users
+      if (userGrade !== "Adult (18+)") {
+        query = query.neq("grade", "Adult (18+)");
       }
 
       if (sortBy === "new") {
