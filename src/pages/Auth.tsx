@@ -9,6 +9,34 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { z } from "zod";
+
+// List of allowed email domains (popular providers + educational)
+const allowedDomains = [
+  "gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "live.com",
+  "icloud.com", "protonmail.com", "aol.com", "mail.com", "zoho.com",
+  "edu", "ac.in", "edu.in", "ac.uk", "edu.au", "edu.sg"
+];
+
+const isValidEmailDomain = (email: string): boolean => {
+  const domain = email.split("@")[1]?.toLowerCase();
+  if (!domain) return false;
+  
+  // Check if domain matches any allowed domain or ends with educational TLDs
+  return allowedDomains.some(allowed => 
+    domain === allowed || domain.endsWith(`.${allowed}`)
+  );
+};
+
+const emailSchema = z.string()
+  .email("Please enter a valid email address")
+  .refine(isValidEmailDomain, {
+    message: "Please use a valid email from a known provider (Gmail, Yahoo, Outlook, etc.) or educational institution"
+  });
+
+const passwordSchema = z.string()
+  .min(6, "Password must be at least 6 characters")
+  .max(72, "Password must be less than 72 characters");
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -38,6 +66,20 @@ const Auth = () => {
     
     if (!country || !grade || !stream) {
       toast.error("Please fill in all fields");
+      return;
+    }
+
+    // Validate email
+    const emailResult = emailSchema.safeParse(email);
+    if (!emailResult.success) {
+      toast.error(emailResult.error.errors[0].message);
+      return;
+    }
+
+    // Validate password
+    const passwordResult = passwordSchema.safeParse(password);
+    if (!passwordResult.success) {
+      toast.error(passwordResult.error.errors[0].message);
       return;
     }
     
@@ -76,6 +118,14 @@ const Auth = () => {
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate email format
+    const emailResult = emailSchema.safeParse(email);
+    if (!emailResult.success) {
+      toast.error(emailResult.error.errors[0].message);
+      return;
+    }
+
     setLoading(true);
 
     try {
