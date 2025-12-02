@@ -26,9 +26,14 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
 
-  const subjects = ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "History", "Geography"];
-  const grades = ["Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate", "Postgraduate"];
-  const streams = ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Other"];
+  const isAdult = grade === "Adult (18+)" || grade === "Working Professional";
+  const subjects = isAdult 
+    ? ["General", "Career Advice", "Finance", "Technology", "Business", "Personal Development", "Health & Wellness", "Other", "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "History", "Geography"]
+    : ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "History", "Geography", "General"];
+  const grades = ["Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate", "Postgraduate", "Adult (18+)", "Working Professional"];
+  const streams = isAdult 
+    ? ["Not Applicable", "Self-Learning", "Professional Development", "Other"]
+    : ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Other"];
   const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria", "Other"];
   const postTypes = [
     { value: "doubt", label: "Ask a Doubt" },
@@ -260,7 +265,15 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
 
             <div className="space-y-2">
               <Label htmlFor="grade">Grade</Label>
-              <Select value={grade} onValueChange={setGrade} required>
+              <Select value={grade} onValueChange={(value) => {
+                const wasAdult = grade === "Adult (18+)" || grade === "Working Professional";
+                const nowAdult = value === "Adult (18+)" || value === "Working Professional";
+                if (wasAdult !== nowAdult) {
+                  setStream("");
+                  setSubject("");
+                }
+                setGrade(value);
+              }} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Select grade" />
                 </SelectTrigger>
