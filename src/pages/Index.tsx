@@ -157,12 +157,6 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-accent/80 to-primary/90 animate-gradient-shift" style={{ backgroundSize: "200% 200%" }} />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent)]" />
         <div className="relative container mx-auto px-4 h-full flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="h-6 w-6 text-white animate-bounce-soft" />
-            <span className="text-white/90 text-sm font-medium bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
-              Join 10,000+ learners
-            </span>
-          </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 animate-fade-in">
             Study Together, Learn Better
           </h1>

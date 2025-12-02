@@ -11,6 +11,7 @@ import NotificationsPopover from "./NotificationsPopover";
 import ThemeToggle from "./ThemeToggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 
 interface NavbarProps {
   onPostCreated?: () => void;
@@ -25,6 +26,7 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
   const [profileData, setProfileData] = useState<{ country?: string; grade?: string; stream?: string }>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -157,14 +159,25 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
             </div>
           </div>
 
-          <div className="flex-1 max-w-2xl">
+          <div className={cn(
+            "transition-all duration-300 ease-out",
+            searchFocused ? "flex-1 max-w-3xl" : "flex-1 max-w-md lg:max-w-xl"
+          )}>
             <form onSubmit={handleSearch} className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className={cn(
+                "absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors",
+                searchFocused ? "text-primary" : "text-muted-foreground"
+              )} />
               <Input
                 placeholder="Search for questions, topics, or subjects..."
-                className="w-full pl-10 bg-background"
+                className={cn(
+                  "w-full pl-10 bg-background transition-all duration-300",
+                  searchFocused && "ring-2 ring-primary/50 shadow-lg"
+                )}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
               />
             </form>
           </div>
