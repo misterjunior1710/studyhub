@@ -1,4 +1,4 @@
-import { Search, User, LogOut, Home, HelpCircle, Laugh, Users } from "lucide-react";
+import { Search, User, LogOut, Home, HelpCircle, Laugh, Users, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -204,6 +204,10 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
                       )}
                     </div>
                     <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate("/settings")}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Sign out</span>
