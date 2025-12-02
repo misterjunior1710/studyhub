@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_settings: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       ban_appeals: {
         Row: {
           admin_response: string | null
@@ -120,6 +144,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      daily_stats: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          total_errors: number
+          total_flagged: number
+          total_payments: number
+          total_posts: number
+          total_users: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          id?: string
+          total_errors?: number
+          total_flagged?: number
+          total_payments?: number
+          total_posts?: number
+          total_users?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          total_errors?: number
+          total_flagged?: number
+          total_payments?: number
+          total_posts?: number
+          total_users?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       friends: {
         Row: {
