@@ -69,7 +69,8 @@ const Index = () => {
           withRelations
             ? "*, profiles!posts_user_id_fkey(username), comments(count)"
             : "*"
-        );
+        )
+        .eq("post_type", "general");
 
       if (searchQuery) {
         query = query.or(`title.ilike.%${searchQuery}%,content.ilike.%${searchQuery}%`);
