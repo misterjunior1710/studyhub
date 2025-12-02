@@ -1,4 +1,4 @@
-import { Search, User, LogOut, Home, HelpCircle, Laugh, Users, Settings, Trophy } from "lucide-react";
+import { Search, User, LogOut, Home, HelpCircle, Laugh, Users, Settings, Trophy, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -145,6 +145,14 @@ const Navbar = ({ onPostCreated, onSearch }: NavbarProps) => {
               >
                 <Trophy className="h-4 w-4 mr-2" />
                 Leaderboard
+              </Button>
+              <Button
+                variant={isActive("/friends") ? "default" : "ghost"}
+                size="sm"
+                onClick={() => navigate("/friends")}
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                Friends
               </Button>
             </div>
           </div>

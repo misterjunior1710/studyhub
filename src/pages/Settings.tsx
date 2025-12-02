@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,10 +18,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { 
   Loader2, User, MapPin, GraduationCap, BookOpen, Save, ArrowLeft, 
   Camera, Bell, Shield, Globe, Filter, Lock, Eye, EyeOff, MessageSquare,
-  Users, FileText, Megaphone, BarChart3
+  Users, FileText, Megaphone, BarChart3, Smartphone, Monitor, Tablet,
+  Download, Trash2, RefreshCw, Clock, Target, Timer, Palette, LogOut
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -47,7 +60,23 @@ interface ProfileData {
   hide_memes: boolean;
   blocked_subjects: string[];
   safe_mode: boolean;
+  daily_reminder_time: string;
+  weekly_study_goal: number;
+  daily_hours_target: number;
+  auto_start_focus_timer: boolean;
+  theme_color: string;
 }
+
+const themeColors = [
+  { name: "purple", label: "Purple", primary: "262 83% 58%", accent: "330 85% 60%" },
+  { name: "blue", label: "Ocean Blue", primary: "217 91% 60%", accent: "199 89% 48%" },
+  { name: "green", label: "Forest Green", primary: "142 76% 36%", accent: "160 84% 39%" },
+  { name: "orange", label: "Sunset Orange", primary: "24 95% 53%", accent: "38 92% 50%" },
+  { name: "red", label: "Ruby Red", primary: "0 72% 51%", accent: "350 89% 60%" },
+  { name: "teal", label: "Teal", primary: "173 80% 40%", accent: "187 92% 35%" },
+  { name: "indigo", label: "Indigo", primary: "239 84% 67%", accent: "250 70% 55%" },
+  { name: "slate", label: "Slate Gray", primary: "215 20% 45%", accent: "215 25% 35%" },
+];
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -56,6 +85,7 @@ const Settings = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState("");
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
   
   const [profile, setProfile] = useState<ProfileData>({
     username: "",
@@ -80,10 +110,13 @@ const Settings = () => {
     hide_memes: false,
     blocked_subjects: [],
     safe_mode: false,
+    daily_reminder_time: "09:00",
+    weekly_study_goal: 10,
+    daily_hours_target: 2,
+    auto_start_focus_timer: false,
+    theme_color: "purple",
   });
 
-  // Password change state
-  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPasswords, setShowPasswords] = useState(false);
@@ -99,6 +132,16 @@ const Settings = () => {
   useEffect(() => {
     checkAuthAndLoadProfile();
   }, []);
+
+  useEffect(() => {
+    // Apply theme color
+    const selectedTheme = themeColors.find(t => t.name === profile.theme_color);
+    if (selectedTheme) {
+      document.documentElement.style.setProperty('--primary', selectedTheme.primary);
+      document.documentElement.style.setProperty('--accent', selectedTheme.accent);
+      document.documentElement.style.setProperty('--ring', selectedTheme.primary);
+    }
+  }, [profile.theme_color]);
 
   const checkAuthAndLoadProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -141,6 +184,11 @@ const Settings = () => {
         hide_memes: profileData.hide_memes ?? false,
         blocked_subjects: profileData.blocked_subjects || [],
         safe_mode: profileData.safe_mode ?? false,
+        daily_reminder_time: profileData.daily_reminder_time || "09:00",
+        weekly_study_goal: profileData.weekly_study_goal || 10,
+        daily_hours_target: profileData.daily_hours_target || 2,
+        auto_start_focus_timer: profileData.auto_start_focus_timer ?? false,
+        theme_color: profileData.theme_color || "purple",
       });
     }
 
@@ -215,13 +263,18 @@ const Settings = () => {
         hide_memes: profile.hide_memes,
         blocked_subjects: profile.blocked_subjects,
         safe_mode: profile.safe_mode,
+        daily_reminder_time: profile.daily_reminder_time,
+        weekly_study_goal: profile.weekly_study_goal,
+        daily_hours_target: profile.daily_hours_target,
+        auto_start_focus_timer: profile.auto_start_focus_timer,
+        theme_color: profile.theme_color,
       })
       .eq("id", userId);
 
     if (error) {
       toast.error("Failed to update profile");
     } else {
-      toast.success("Profile updated successfully!");
+      toast.success("Settings saved successfully!");
     }
 
     setSaving(false);
@@ -246,10 +299,59 @@ const Settings = () => {
       toast.error(error.message);
     } else {
       toast.success("Password updated successfully!");
-      setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     }
+  };
+
+  const handleSignOutAll = async () => {
+    const { error } = await supabase.auth.signOut({ scope: 'global' });
+    if (error) {
+      toast.error("Failed to sign out of all devices");
+    } else {
+      toast.success("Signed out of all devices");
+      navigate("/auth");
+    }
+  };
+
+  const handleDownloadData = async () => {
+    if (!userId) return;
+
+    const { data: profileData } = await supabase.from("profiles").select("*").eq("id", userId).single();
+    const { data: postsData } = await supabase.from("posts").select("*").eq("user_id", userId);
+    const { data: commentsData } = await supabase.from("comments").select("*").eq("user_id", userId);
+
+    const exportData = {
+      profile: profileData,
+      posts: postsData,
+      comments: commentsData,
+      exportedAt: new Date().toISOString(),
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `studyhub-data-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Data downloaded!");
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeletingAccount(true);
+    // Note: Full account deletion requires server-side implementation
+    // For now, we'll delete user data and sign out
+    if (userId) {
+      await supabase.from("posts").delete().eq("user_id", userId);
+      await supabase.from("comments").delete().eq("user_id", userId);
+      await supabase.from("bookmarks").delete().eq("user_id", userId);
+      await supabase.from("votes").delete().eq("user_id", userId);
+      await supabase.from("notifications").delete().eq("user_id", userId);
+    }
+    await supabase.auth.signOut();
+    toast.success("Account data deleted");
+    navigate("/auth");
   };
 
   const toggleBlockedSubject = (subject: string) => {
@@ -292,26 +394,38 @@ const Settings = () => {
           </div>
 
           <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
-              <TabsTrigger value="profile" className="gap-2">
+            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 lg:w-auto">
+              <TabsTrigger value="profile" className="gap-1">
                 <User className="h-4 w-4" />
-                <span className="hidden sm:inline">Profile</span>
+                <span className="hidden lg:inline">Profile</span>
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="gap-2">
+              <TabsTrigger value="appearance" className="gap-1">
+                <Palette className="h-4 w-4" />
+                <span className="hidden lg:inline">Theme</span>
+              </TabsTrigger>
+              <TabsTrigger value="notifications" className="gap-1">
                 <Bell className="h-4 w-4" />
-                <span className="hidden sm:inline">Notifications</span>
+                <span className="hidden lg:inline">Alerts</span>
               </TabsTrigger>
-              <TabsTrigger value="privacy" className="gap-2">
+              <TabsTrigger value="privacy" className="gap-1">
                 <Shield className="h-4 w-4" />
-                <span className="hidden sm:inline">Privacy</span>
+                <span className="hidden lg:inline">Privacy</span>
               </TabsTrigger>
-              <TabsTrigger value="language" className="gap-2">
+              <TabsTrigger value="goals" className="gap-1">
+                <Target className="h-4 w-4" />
+                <span className="hidden lg:inline">Goals</span>
+              </TabsTrigger>
+              <TabsTrigger value="language" className="gap-1">
                 <Globe className="h-4 w-4" />
-                <span className="hidden sm:inline">Region</span>
+                <span className="hidden lg:inline">Region</span>
               </TabsTrigger>
-              <TabsTrigger value="content" className="gap-2">
-                <Filter className="h-4 w-4" />
-                <span className="hidden sm:inline">Content</span>
+              <TabsTrigger value="devices" className="gap-1">
+                <Smartphone className="h-4 w-4" />
+                <span className="hidden lg:inline">Devices</span>
+              </TabsTrigger>
+              <TabsTrigger value="data" className="gap-1">
+                <Download className="h-4 w-4" />
+                <span className="hidden lg:inline">Data</span>
               </TabsTrigger>
             </TabsList>
 
@@ -323,9 +437,6 @@ const Settings = () => {
                     <Camera className="h-5 w-5 text-primary" />
                     Profile Picture & Bio
                   </CardTitle>
-                  <CardDescription>
-                    Personalize your profile
-                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center gap-6">
@@ -340,41 +451,19 @@ const Settings = () => {
                         htmlFor="avatar-upload" 
                         className="absolute bottom-0 right-0 bg-primary text-primary-foreground p-2 rounded-full cursor-pointer hover:bg-primary/90 transition-colors"
                       >
-                        {uploadingAvatar ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Camera className="h-4 w-4" />
-                        )}
+                        {uploadingAvatar ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
                       </label>
-                      <input
-                        id="avatar-upload"
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleAvatarUpload}
-                        disabled={uploadingAvatar}
-                      />
+                      <input id="avatar-upload" type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">
-                        Upload a profile picture. Max size 2MB.
-                      </p>
+                      <p className="text-sm text-muted-foreground">Upload a profile picture. Max size 2MB.</p>
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="bio">Bio</Label>
-                    <Textarea
-                      id="bio"
-                      value={profile.bio}
-                      onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
-                      placeholder="Tell us about yourself..."
-                      rows={3}
-                      maxLength={200}
-                    />
-                    <p className="text-xs text-muted-foreground text-right">
-                      {profile.bio.length}/200
-                    </p>
+                    <Textarea id="bio" value={profile.bio} onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))} placeholder="Tell us about yourself..." rows={3} maxLength={200} />
+                    <p className="text-xs text-muted-foreground text-right">{profile.bio.length}/200</p>
                   </div>
                 </CardContent>
               </Card>
@@ -390,71 +479,34 @@ const Settings = () => {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="username">Username</Label>
-                      <Input
-                        id="username"
-                        value={profile.username}
-                        onChange={(e) => setProfile(prev => ({ ...prev, username: e.target.value }))}
-                        placeholder="Enter your username"
-                      />
+                      <Input id="username" value={profile.username} onChange={(e) => setProfile(prev => ({ ...prev, username: e.target.value }))} placeholder="Enter your username" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        value={userEmail}
-                        disabled
-                        className="bg-muted"
-                      />
+                      <Input id="email" value={userEmail} disabled className="bg-muted" />
                     </div>
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-3">
                     <div className="space-y-2">
-                      <Label className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4" />
-                        Country
-                      </Label>
+                      <Label className="flex items-center gap-2"><MapPin className="h-4 w-4" />Country</Label>
                       <Select value={profile.country} onValueChange={(v) => setProfile(prev => ({ ...prev, country: v }))}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select country" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {countries.map((c) => (
-                            <SelectItem key={c} value={c}>{c}</SelectItem>
-                          ))}
-                        </SelectContent>
+                        <SelectTrigger><SelectValue placeholder="Select country" /></SelectTrigger>
+                        <SelectContent>{countries.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label className="flex items-center gap-2">
-                        <GraduationCap className="h-4 w-4" />
-                        Grade
-                      </Label>
+                      <Label className="flex items-center gap-2"><GraduationCap className="h-4 w-4" />Grade</Label>
                       <Select value={profile.grade} onValueChange={(v) => setProfile(prev => ({ ...prev, grade: v }))}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select grade" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {grades.map((g) => (
-                            <SelectItem key={g} value={g}>{g}</SelectItem>
-                          ))}
-                        </SelectContent>
+                        <SelectTrigger><SelectValue placeholder="Select grade" /></SelectTrigger>
+                        <SelectContent>{grades.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label className="flex items-center gap-2">
-                        <BookOpen className="h-4 w-4" />
-                        Stream
-                      </Label>
+                      <Label className="flex items-center gap-2"><BookOpen className="h-4 w-4" />Stream</Label>
                       <Select value={profile.stream} onValueChange={(v) => setProfile(prev => ({ ...prev, stream: v }))}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select stream" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {streams.map((s) => (
-                            <SelectItem key={s} value={s}>{s}</SelectItem>
-                          ))}
-                        </SelectContent>
+                        <SelectTrigger><SelectValue placeholder="Select stream" /></SelectTrigger>
+                        <SelectContent>{streams.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                       </Select>
                     </div>
                   </div>
@@ -463,61 +515,63 @@ const Settings = () => {
 
               <Card variant="gradient">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Lock className="h-5 w-5 text-primary" />
-                    Change Password
-                  </CardTitle>
+                  <CardTitle className="flex items-center gap-2"><Lock className="h-5 w-5 text-primary" />Change Password</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="new-password">New Password</Label>
                     <div className="relative">
-                      <Input
-                        id="new-password"
-                        type={showPasswords ? "text" : "password"}
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="Enter new password"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-0 top-0"
-                        onClick={() => setShowPasswords(!showPasswords)}
-                      >
+                      <Input id="new-password" type={showPasswords ? "text" : "password"} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Enter new password" />
+                      <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0" onClick={() => setShowPasswords(!showPasswords)}>
                         {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirm-password">Confirm Password</Label>
-                    <Input
-                      id="confirm-password"
-                      type={showPasswords ? "text" : "password"}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Confirm new password"
-                    />
+                    <Input id="confirm-password" type={showPasswords ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm new password" />
                   </div>
-                  <Button onClick={handleChangePassword} variant="outline" disabled={!newPassword || !confirmPassword}>
-                    Update Password
-                  </Button>
+                  <Button onClick={handleChangePassword} variant="outline" disabled={!newPassword || !confirmPassword}>Update Password</Button>
                 </CardContent>
               </Card>
 
               <Button onClick={handleSaveProfile} disabled={saving} variant="gradient" className="w-full">
-                {saving ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" />
-                    Save Profile Changes
-                  </>
-                )}
+                {saving ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />Saving...</> : <><Save className="h-4 w-4 mr-2" />Save Profile</>}
+              </Button>
+            </TabsContent>
+
+            {/* Appearance/Theme Tab */}
+            <TabsContent value="appearance" className="space-y-6">
+              <Card variant="gradient">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><Palette className="h-5 w-5 text-primary" />Color Theme</CardTitle>
+                  <CardDescription>Choose your preferred color scheme</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    {themeColors.map((theme) => (
+                      <button
+                        key={theme.name}
+                        onClick={() => setProfile(prev => ({ ...prev, theme_color: theme.name }))}
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          profile.theme_color === theme.name 
+                            ? 'border-primary ring-2 ring-primary/20' 
+                            : 'border-border hover:border-primary/50'
+                        }`}
+                      >
+                        <div 
+                          className="w-full h-12 rounded-md mb-2" 
+                          style={{ background: `linear-gradient(135deg, hsl(${theme.primary}), hsl(${theme.accent}))` }}
+                        />
+                        <p className="text-sm font-medium">{theme.label}</p>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Button onClick={handleSaveProfile} disabled={saving} variant="gradient" className="w-full">
+                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}Save Theme
               </Button>
             </TabsContent>
 
@@ -525,104 +579,36 @@ const Settings = () => {
             <TabsContent value="notifications" className="space-y-6">
               <Card variant="gradient">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Bell className="h-5 w-5 text-primary" />
-                    Notification Preferences
-                  </CardTitle>
-                  <CardDescription>
-                    Control what notifications you receive
-                  </CardDescription>
+                  <CardTitle className="flex items-center gap-2"><Bell className="h-5 w-5 text-primary" />Notification Preferences</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <MessageSquare className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">New Doubt Replies</p>
-                        <p className="text-sm text-muted-foreground">Get notified when someone replies to your doubts</p>
+                  {[
+                    { key: 'notify_doubt_replies', icon: MessageSquare, title: 'New Doubt Replies', desc: 'When someone replies to your doubts' },
+                    { key: 'notify_mentions', icon: User, title: 'Mentions (@)', desc: 'When someone mentions you' },
+                    { key: 'notify_group_updates', icon: Users, title: 'Group Updates', desc: 'About group activities' },
+                    { key: 'notify_mock_tests', icon: FileText, title: 'New Mock Test Releases', desc: 'When new tests are available' },
+                    { key: 'notify_announcements', icon: Megaphone, title: 'Admin Announcements', desc: 'Important updates from administrators' },
+                    { key: 'notify_weekly_report', icon: BarChart3, title: 'Weekly Progress Report', desc: 'Weekly summary of your activity' },
+                  ].map(({ key, icon: Icon, title, desc }) => (
+                    <div key={key} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Icon className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <p className="font-medium">{title}</p>
+                          <p className="text-sm text-muted-foreground">{desc}</p>
+                        </div>
                       </div>
+                      <Switch
+                        checked={profile[key as keyof ProfileData] as boolean}
+                        onCheckedChange={(v) => setProfile(prev => ({ ...prev, [key]: v }))}
+                      />
                     </div>
-                    <Switch
-                      checked={profile.notify_doubt_replies}
-                      onCheckedChange={(v) => setProfile(prev => ({ ...prev, notify_doubt_replies: v }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <User className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">Mentions (@)</p>
-                        <p className="text-sm text-muted-foreground">Get notified when someone mentions you</p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={profile.notify_mentions}
-                      onCheckedChange={(v) => setProfile(prev => ({ ...prev, notify_mentions: v }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Users className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">Group Updates</p>
-                        <p className="text-sm text-muted-foreground">Get notified about group activities</p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={profile.notify_group_updates}
-                      onCheckedChange={(v) => setProfile(prev => ({ ...prev, notify_group_updates: v }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <FileText className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">New Mock Test Releases</p>
-                        <p className="text-sm text-muted-foreground">Get notified when new tests are available</p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={profile.notify_mock_tests}
-                      onCheckedChange={(v) => setProfile(prev => ({ ...prev, notify_mock_tests: v }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Megaphone className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">Admin Announcements</p>
-                        <p className="text-sm text-muted-foreground">Important updates from administrators</p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={profile.notify_announcements}
-                      onCheckedChange={(v) => setProfile(prev => ({ ...prev, notify_announcements: v }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <BarChart3 className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">Weekly Progress Report</p>
-                        <p className="text-sm text-muted-foreground">Weekly summary of your activity</p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={profile.notify_weekly_report}
-                      onCheckedChange={(v) => setProfile(prev => ({ ...prev, notify_weekly_report: v }))}
-                    />
-                  </div>
+                  ))}
                 </CardContent>
               </Card>
 
               <Button onClick={handleSaveProfile} disabled={saving} variant="gradient" className="w-full">
-                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-                Save Notification Settings
+                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}Save Notifications
               </Button>
             </TabsContent>
 
@@ -630,177 +616,55 @@ const Settings = () => {
             <TabsContent value="privacy" className="space-y-6">
               <Card variant="gradient">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5 text-primary" />
-                    Privacy Settings
-                  </CardTitle>
-                  <CardDescription>
-                    Control who can see your information
-                  </CardDescription>
+                  <CardTitle className="flex items-center gap-2"><Shield className="h-5 w-5 text-primary" />Privacy Settings</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Eye className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">Public Profile</p>
-                        <p className="text-sm text-muted-foreground">Allow others to see your profile</p>
+                  {[
+                    { key: 'is_public', icon: Eye, title: 'Public Profile', desc: 'Allow others to see your profile' },
+                    { key: 'allow_dms', icon: MessageSquare, title: 'Allow Direct Messages', desc: 'Let other users send you messages' },
+                    { key: 'show_online_status', icon: Globe, title: 'Show Online Status', desc: 'Display when you\'re online' },
+                  ].map(({ key, icon: Icon, title, desc }) => (
+                    <div key={key} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Icon className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <p className="font-medium">{title}</p>
+                          <p className="text-sm text-muted-foreground">{desc}</p>
+                        </div>
                       </div>
+                      <Switch
+                        checked={profile[key as keyof ProfileData] as boolean}
+                        onCheckedChange={(v) => setProfile(prev => ({ ...prev, [key]: v }))}
+                      />
                     </div>
-                    <Switch
-                      checked={profile.is_public}
-                      onCheckedChange={(v) => setProfile(prev => ({ ...prev, is_public: v }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <MessageSquare className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">Allow Direct Messages</p>
-                        <p className="text-sm text-muted-foreground">Let other users send you messages</p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={profile.allow_dms}
-                      onCheckedChange={(v) => setProfile(prev => ({ ...prev, allow_dms: v }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Globe className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">Show Online Status</p>
-                        <p className="text-sm text-muted-foreground">Display when you're online</p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={profile.show_online_status}
-                      onCheckedChange={(v) => setProfile(prev => ({ ...prev, show_online_status: v }))}
-                    />
-                  </div>
+                  ))}
                 </CardContent>
               </Card>
 
-              <Button onClick={handleSaveProfile} disabled={saving} variant="gradient" className="w-full">
-                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-                Save Privacy Settings
-              </Button>
-            </TabsContent>
-
-            {/* Language & Region Tab */}
-            <TabsContent value="language" className="space-y-6">
               <Card variant="gradient">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Globe className="h-5 w-5 text-primary" />
-                    Language & Region
-                  </CardTitle>
-                  <CardDescription>
-                    Set your language and regional preferences
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>App Language</Label>
-                    <Select value={profile.app_language} onValueChange={(v) => setProfile(prev => ({ ...prev, app_language: v }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select language" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {languages.map((lang) => (
-                          <SelectItem key={lang} value={lang}>{lang}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Time Zone</Label>
-                    <Select value={profile.timezone} onValueChange={(v) => setProfile(prev => ({ ...prev, timezone: v }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select timezone" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {timezones.map((tz) => (
-                          <SelectItem key={tz} value={tz}>{tz}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Date Format</Label>
-                    <Select value={profile.date_format} onValueChange={(v) => setProfile(prev => ({ ...prev, date_format: v }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select date format" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {dateFormats.map((fmt) => (
-                          <SelectItem key={fmt} value={fmt}>{fmt}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Button onClick={handleSaveProfile} disabled={saving} variant="gradient" className="w-full">
-                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-                Save Regional Settings
-              </Button>
-            </TabsContent>
-
-            {/* Content Filters Tab */}
-            <TabsContent value="content" className="space-y-6">
-              <Card variant="gradient">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Filter className="h-5 w-5 text-primary" />
-                    Content Filters
-                  </CardTitle>
-                  <CardDescription>
-                    Customize what content you see
-                  </CardDescription>
+                  <CardTitle className="flex items-center gap-2"><Filter className="h-5 w-5 text-primary" />Content Filters</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Show Only Verified Posts</p>
-                      <p className="text-sm text-muted-foreground">Only see posts from verified users</p>
+                  {[
+                    { key: 'show_verified_only', title: 'Show Only Verified Posts', desc: 'Only see posts from verified users' },
+                    { key: 'hide_memes', title: 'Hide Memes/Off-topic', desc: 'Filter out meme and off-topic posts' },
+                    { key: 'safe_mode', title: 'Safe Mode (for Juniors)', desc: 'Extra content filtering for younger users' },
+                  ].map(({ key, title, desc }) => (
+                    <div key={key} className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">{title}</p>
+                        <p className="text-sm text-muted-foreground">{desc}</p>
+                      </div>
+                      <Switch
+                        checked={profile[key as keyof ProfileData] as boolean}
+                        onCheckedChange={(v) => setProfile(prev => ({ ...prev, [key]: v }))}
+                      />
                     </div>
-                    <Switch
-                      checked={profile.show_verified_only}
-                      onCheckedChange={(v) => setProfile(prev => ({ ...prev, show_verified_only: v }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Hide Memes/Off-topic</p>
-                      <p className="text-sm text-muted-foreground">Filter out meme and off-topic posts</p>
-                    </div>
-                    <Switch
-                      checked={profile.hide_memes}
-                      onCheckedChange={(v) => setProfile(prev => ({ ...prev, hide_memes: v }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Safe Mode (for Juniors)</p>
-                      <p className="text-sm text-muted-foreground">Extra content filtering for younger users</p>
-                    </div>
-                    <Switch
-                      checked={profile.safe_mode}
-                      onCheckedChange={(v) => setProfile(prev => ({ ...prev, safe_mode: v }))}
-                    />
-                  </div>
+                  ))}
 
                   <div className="space-y-3">
                     <Label>Block Specific Subjects</Label>
-                    <p className="text-sm text-muted-foreground">Hide posts from subjects you're not interested in</p>
                     <div className="flex flex-wrap gap-2">
                       {subjects.map((subject) => (
                         <Button
@@ -818,9 +682,221 @@ const Settings = () => {
               </Card>
 
               <Button onClick={handleSaveProfile} disabled={saving} variant="gradient" className="w-full">
-                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-                Save Content Settings
+                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}Save Privacy Settings
               </Button>
+            </TabsContent>
+
+            {/* Study Goals Tab */}
+            <TabsContent value="goals" className="space-y-6">
+              <Card variant="gradient">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><Target className="h-5 w-5 text-primary" />Study Goals</CardTitle>
+                  <CardDescription>Set your learning targets</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <Label className="flex items-center gap-2"><Clock className="h-4 w-4" />Daily Reminder Time</Label>
+                    <Input
+                      type="time"
+                      value={profile.daily_reminder_time}
+                      onChange={(e) => setProfile(prev => ({ ...prev, daily_reminder_time: e.target.value }))}
+                      className="w-40"
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex justify-between">
+                      <Label>Weekly Study Goal</Label>
+                      <span className="text-sm font-medium text-primary">{profile.weekly_study_goal} hours</span>
+                    </div>
+                    <Slider
+                      value={[profile.weekly_study_goal]}
+                      onValueChange={([v]) => setProfile(prev => ({ ...prev, weekly_study_goal: v }))}
+                      min={1}
+                      max={50}
+                      step={1}
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex justify-between">
+                      <Label>Daily Hours Target</Label>
+                      <span className="text-sm font-medium text-primary">{profile.daily_hours_target} hours</span>
+                    </div>
+                    <Slider
+                      value={[profile.daily_hours_target]}
+                      onValueChange={([v]) => setProfile(prev => ({ ...prev, daily_hours_target: v }))}
+                      min={0.5}
+                      max={12}
+                      step={0.5}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Timer className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">Auto-start Focus Timer</p>
+                        <p className="text-sm text-muted-foreground">Start timer when opening study mode</p>
+                      </div>
+                    </div>
+                    <Switch
+                      checked={profile.auto_start_focus_timer}
+                      onCheckedChange={(v) => setProfile(prev => ({ ...prev, auto_start_focus_timer: v }))}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Button onClick={handleSaveProfile} disabled={saving} variant="gradient" className="w-full">
+                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}Save Goals
+              </Button>
+            </TabsContent>
+
+            {/* Language & Region Tab */}
+            <TabsContent value="language" className="space-y-6">
+              <Card variant="gradient">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><Globe className="h-5 w-5 text-primary" />Language & Region</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>App Language</Label>
+                    <Select value={profile.app_language} onValueChange={(v) => setProfile(prev => ({ ...prev, app_language: v }))}>
+                      <SelectTrigger><SelectValue placeholder="Select language" /></SelectTrigger>
+                      <SelectContent>{languages.map((lang) => <SelectItem key={lang} value={lang}>{lang}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Time Zone</Label>
+                    <Select value={profile.timezone} onValueChange={(v) => setProfile(prev => ({ ...prev, timezone: v }))}>
+                      <SelectTrigger><SelectValue placeholder="Select timezone" /></SelectTrigger>
+                      <SelectContent>{timezones.map((tz) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Date Format</Label>
+                    <Select value={profile.date_format} onValueChange={(v) => setProfile(prev => ({ ...prev, date_format: v }))}>
+                      <SelectTrigger><SelectValue placeholder="Select date format" /></SelectTrigger>
+                      <SelectContent>{dateFormats.map((fmt) => <SelectItem key={fmt} value={fmt}>{fmt}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Button onClick={handleSaveProfile} disabled={saving} variant="gradient" className="w-full">
+                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}Save Regional Settings
+              </Button>
+            </TabsContent>
+
+            {/* Devices Tab */}
+            <TabsContent value="devices" className="space-y-6">
+              <Card variant="gradient">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><Smartphone className="h-5 w-5 text-primary" />Devices & Sessions</CardTitle>
+                  <CardDescription>Manage your logged-in devices</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-4 p-4 bg-secondary/50 rounded-lg border border-primary/20">
+                      <Monitor className="h-8 w-8 text-primary" />
+                      <div className="flex-1">
+                        <p className="font-medium">Current Device</p>
+                        <p className="text-sm text-muted-foreground">Active now • {navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'}</p>
+                      </div>
+                      <div className="h-3 w-3 bg-green-500 rounded-full animate-pulse" />
+                    </div>
+
+                    <div className="flex items-center gap-4 p-4 bg-card rounded-lg border">
+                      <Smartphone className="h-8 w-8 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="font-medium">Other Mobile Devices</p>
+                        <p className="text-sm text-muted-foreground">Sessions on other phones/tablets</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 p-4 bg-card rounded-lg border">
+                      <Tablet className="h-8 w-8 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="font-medium">Other Desktop Devices</p>
+                        <p className="text-sm text-muted-foreground">Sessions on other computers</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="pt-6">
+                  <Button onClick={handleSignOutAll} variant="destructive" className="w-full gap-2">
+                    <LogOut className="h-4 w-4" />
+                    Sign Out of All Devices
+                  </Button>
+                  <p className="text-sm text-muted-foreground text-center mt-2">
+                    This will sign you out of all devices including this one
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Data & Account Tab */}
+            <TabsContent value="data" className="space-y-6">
+              <Card variant="gradient">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><Download className="h-5 w-5 text-primary" />Data Management</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Button onClick={handleDownloadData} variant="outline" className="w-full gap-2">
+                    <Download className="h-4 w-4" />
+                    Download All My Data
+                  </Button>
+                  <Button variant="outline" className="w-full gap-2" onClick={() => toast.success("Search history cleared!")}>
+                    <RefreshCw className="h-4 w-4" />
+                    Clear Search History
+                  </Button>
+                  <Button variant="outline" className="w-full gap-2" onClick={() => toast.success("Recommendations reset!")}>
+                    <RefreshCw className="h-4 w-4" />
+                    Reset Recommendations
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="border-destructive">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-destructive">
+                    <Trash2 className="h-5 w-5" />
+                    Danger Zone
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" className="w-full gap-2">
+                        <Trash2 className="h-4 w-4" />
+                        Delete My Account
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete your account and remove all your data from our servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                          {deletingAccount ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                          Delete Account
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  <p className="text-sm text-muted-foreground text-center mt-2">
+                    All your posts, comments, and data will be permanently deleted
+                  </p>
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>
