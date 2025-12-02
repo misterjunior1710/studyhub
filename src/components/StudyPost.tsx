@@ -1,4 +1,4 @@
-import { ArrowUp, ArrowDown, MessageSquare, Share2, Bookmark, BookmarkCheck, Trash2 } from "lucide-react";
+import { ArrowUp, ArrowDown, MessageSquare, Share2, Bookmark, BookmarkCheck, Trash2, Flag, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -151,6 +151,46 @@ const StudyPost = ({
     }
   };
 
+  const handleFlag = async () => {
+    try {
+      const { error } = await supabase
+        .from("posts")
+        .update({ 
+          is_flagged: true, 
+          flag_reason: "Flagged by admin for review",
+          flagged_at: new Date().toISOString(),
+          flagged_by: user?.id
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      toast.success("Post flagged for review");
+      onVoteChange?.();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to flag post");
+    }
+  };
+
+  const handleHide = async () => {
+    try {
+      const { error } = await supabase
+        .from("posts")
+        .update({ 
+          is_hidden: true,
+          flag_reason: "Hidden by admin"
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      toast.success("Post hidden from public view");
+      onVoteChange?.();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to hide post");
+    }
+  };
+
   const netVotes = upvotes - downvotes;
 
   return (
@@ -253,28 +293,38 @@ const StudyPost = ({
           </Button>
           
           {isAdmin && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
-                  <Trash2 className="h-4 w-4" />
-                  Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete this post?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete the post and all its comments.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <>
+              <Button variant="ghost" size="sm" className="gap-2 text-warning hover:text-warning" onClick={handleFlag}>
+                <Flag className="h-4 w-4" />
+                Flag
+              </Button>
+              <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-muted-foreground" onClick={handleHide}>
+                <EyeOff className="h-4 w-4" />
+                Hide
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
+                    <Trash2 className="h-4 w-4" />
                     Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete this post?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete the post and all its comments.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </>
           )}
         </div>
       </CardContent>
