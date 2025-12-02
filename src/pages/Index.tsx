@@ -1,8 +1,9 @@
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import FilterSidebar from "@/components/FilterSidebar";
 import StudyPost from "@/components/StudyPost";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Clock, Star, Loader2 } from "lucide-react";
+import { TrendingUp, Clock, Star, Loader2, Sparkles } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
@@ -146,25 +147,32 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar onPostCreated={loadPosts} onSearch={setSearchQuery} />
       
       <div 
-        className="relative h-48 bg-cover bg-center overflow-hidden"
+        className="relative h-56 bg-cover bg-center overflow-hidden"
         style={{ backgroundImage: `url(${heroImage})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-accent/90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-accent/80 to-primary/90 animate-gradient-shift" style={{ backgroundSize: "200% 200%" }} />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent)]" />
         <div className="relative container mx-auto px-4 h-full flex flex-col justify-center">
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="h-6 w-6 text-white animate-bounce-soft" />
+            <span className="text-white/90 text-sm font-medium bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+              Join 10,000+ learners
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 animate-fade-in">
             Study Together, Learn Better
           </h1>
-          <p className="text-white/90 text-lg">
-            Connect with students worldwide, share knowledge, and ace your exams
+          <p className="text-white/90 text-lg md:text-xl animate-fade-in" style={{ animationDelay: "0.1s" }}>
+            Connect with students worldwide, share knowledge, and ace your exams ✨
           </p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-6 flex-1">
         <div className="flex gap-6">
           <FilterSidebar
             selectedCountry={selectedCountry}
@@ -183,7 +191,7 @@ const Index = () => {
               <div className="flex gap-2">
                 <Button
                   variant={sortBy === "hot" ? "default" : "ghost"}
-                  className="gap-2"
+                  className="gap-2 transition-all duration-200 hover:scale-105"
                   onClick={() => setSortBy("hot")}
                 >
                   <TrendingUp className="h-4 w-4" />
@@ -191,7 +199,7 @@ const Index = () => {
                 </Button>
                 <Button
                   variant={sortBy === "new" ? "default" : "ghost"}
-                  className="gap-2"
+                  className="gap-2 transition-all duration-200 hover:scale-105"
                   onClick={() => setSortBy("new")}
                 >
                   <Clock className="h-4 w-4" />
@@ -199,7 +207,7 @@ const Index = () => {
                 </Button>
                 <Button
                   variant={sortBy === "top" ? "default" : "ghost"}
-                  className="gap-2"
+                  className="gap-2 transition-all duration-200 hover:scale-105"
                   onClick={() => setSortBy("top")}
                 >
                   <Star className="h-4 w-4" />
@@ -213,37 +221,46 @@ const Index = () => {
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
             ) : posts.length === 0 ? (
-              <div className="text-center py-12">
+              <div className="text-center py-12 animate-fade-in">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-4">
+                  <Sparkles className="h-8 w-8 text-primary" />
+                </div>
                 <p className="text-muted-foreground">
                   No posts yet. Be the first to create one!
                 </p>
               </div>
             ) : (
               <div className="space-y-4">
-                {posts.map((post) => (
-                  <StudyPost
-                    key={post.id}
-                    id={post.id}
-                    title={post.title}
-                    content={post.content}
-                    author={post.profiles?.username ?? "Anonymous"}
-                    upvotes={post.upvotes}
-                    downvotes={post.downvotes}
-                    comments={Array.isArray(post.comments) ? post.comments.length : 0}
-                    subject={post.subject}
-                    grade={post.grade}
-                    stream={post.stream}
-                    country={post.country}
-                    timeAgo={getTimeAgo(post.created_at)}
-                    fileUrl={post.file_url}
-                    onVoteChange={loadPosts}
-                  />
+                {posts.map((post, index) => (
+                  <div 
+                    key={post.id} 
+                    className="animate-slide-up" 
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    <StudyPost
+                      id={post.id}
+                      title={post.title}
+                      content={post.content}
+                      author={post.profiles?.username ?? "Anonymous"}
+                      upvotes={post.upvotes}
+                      downvotes={post.downvotes}
+                      comments={Array.isArray(post.comments) ? post.comments.length : 0}
+                      subject={post.subject}
+                      grade={post.grade}
+                      stream={post.stream}
+                      country={post.country}
+                      timeAgo={getTimeAgo(post.created_at)}
+                      fileUrl={post.file_url}
+                      onVoteChange={loadPosts}
+                    />
+                  </div>
                 ))}
               </div>
             )}
           </main>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

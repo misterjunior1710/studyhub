@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,8 +8,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { z } from "zod";
+import AgeVerificationDialog from "@/components/AgeVerificationDialog";
+import Footer from "@/components/Footer";
 
 // List of allowed email domains (popular providers + educational)
 const allowedDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "live.com", "icloud.com", "protonmail.com", "aol.com", "mail.com", "zoho.com", "edu", "ac.in", "edu.in", "ac.uk", "edu.au", "edu.sg"];
@@ -33,6 +35,9 @@ const Auth = () => {
   const [country, setCountry] = useState("");
   const [grade, setGrade] = useState("");
   const [stream, setStream] = useState("");
+  const [showAgeVerification, setShowAgeVerification] = useState(false);
+  const [pendingAdultGrade, setPendingAdultGrade] = useState("");
+  
   const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria", "Other"];
   
   const isAdult = grade === "Adult (18+)" || grade === "Working Professional";
@@ -40,6 +45,32 @@ const Auth = () => {
   const streams = isAdult 
     ? ["Not Applicable", "Self-Learning", "Professional Development", "Other"]
     : ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Other"];
+  
+  const handleGradeChange = (value: string) => {
+    const isNewAdult = value === "Adult (18+)" || value === "Working Professional";
+    const wasAdult = grade === "Adult (18+)" || grade === "Working Professional";
+    
+    if (isNewAdult && !wasAdult) {
+      setPendingAdultGrade(value);
+      setShowAgeVerification(true);
+    } else {
+      if (wasAdult !== isNewAdult) setStream("");
+      setGrade(value);
+    }
+  };
+  
+  const handleAgeVerificationConfirm = () => {
+    setGrade(pendingAdultGrade);
+    setStream("");
+    setShowAgeVerification(false);
+    setPendingAdultGrade("");
+  };
+  
+  const handleAgeVerificationCancel = () => {
+    setShowAgeVerification(false);
+    setPendingAdultGrade("");
+  };
+
   useEffect(() => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({
@@ -144,19 +175,26 @@ const Auth = () => {
       toast.error(error.message || "Failed to sign in with Google");
     }
   };
-  return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-accent/10 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            StudyHub
-          </CardTitle>
-          <CardDescription>Join the study community</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+  return (
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-accent/20 p-4">
+        <Card className="w-full max-w-md animate-fade-in shadow-xl border-primary/10">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-2">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center animate-bounce-soft">
+                <Sparkles className="h-6 w-6 text-white" />
+              </div>
+            </div>
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              StudyHub
+            </CardTitle>
+            <CardDescription>Join the study community ✨</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="login" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="login">Login</TabsTrigger>
+                <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
@@ -221,13 +259,7 @@ const Auth = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="signup-grade">Grade</Label>
-                    <Select value={grade} onValueChange={(value) => {
-                      setGrade(value);
-                      // Reset stream when switching between student/adult
-                      const wasAdult = grade === "Adult (18+)" || grade === "Working Professional";
-                      const nowAdult = value === "Adult (18+)" || value === "Working Professional";
-                      if (wasAdult !== nowAdult) setStream("");
-                    }} required>
+                    <Select value={grade} onValueChange={handleGradeChange} required>
                       <SelectTrigger id="signup-grade">
                         <SelectValue placeholder="Select grade" />
                       </SelectTrigger>
@@ -280,10 +312,25 @@ const Auth = () => {
                 </svg>
                 Continue with Google
               </Button>
+              
+              <p className="text-center text-xs text-muted-foreground mt-4">
+                By signing up, you agree to our{" "}
+                <Link to="/terms" className="text-primary hover:underline">Terms</Link>
+                {" "}and{" "}
+                <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
+              </p>
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
-    </div>;
+      </div>
+      <Footer />
+      <AgeVerificationDialog
+        open={showAgeVerification}
+        onConfirm={handleAgeVerificationConfirm}
+        onCancel={handleAgeVerificationCancel}
+      />
+    </div>
+  );
 };
 export default Auth;
