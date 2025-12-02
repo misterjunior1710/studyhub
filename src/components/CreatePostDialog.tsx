@@ -127,16 +127,23 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       // Content moderation check
       toast.info("Checking content...");
       const moderationResponse = await supabase.functions.invoke('moderate-content', {
-        body: { title, content }
+        body: { title, content, userId: user.id }
       });
 
       if (moderationResponse.error) {
         console.error("Moderation error:", moderationResponse.error);
         // Continue anyway if moderation fails
-      } else if (moderationResponse.data && !moderationResponse.data.isAppropriate) {
-        toast.error(moderationResponse.data.reason || "Content not allowed");
-        setLoading(false);
-        return;
+      } else if (moderationResponse.data) {
+        if (moderationResponse.data.isBanned) {
+          toast.error("Your account has been suspended. You cannot create posts.");
+          setLoading(false);
+          return;
+        }
+        if (!moderationResponse.data.isAppropriate) {
+          toast.error(moderationResponse.data.reason || "Content not allowed");
+          setLoading(false);
+          return;
+        }
       }
 
       let fileUrl = null;
