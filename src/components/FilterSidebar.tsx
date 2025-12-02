@@ -29,7 +29,7 @@ const FilterSidebar = ({
   onStreamChange,
   onClearAll,
 }: FilterSidebarProps) => {
-  const countries = ["United States", "United Kingdom", "India", "Canada", "Australia"];
+  const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria"];
   const subjects = ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English"];
   const grades = ["Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate"];
   const streams = ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "State Board"];
