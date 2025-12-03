@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { memo, useMemo, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
-import { Button } from "@/components/ui/button";
+import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Users, Plus } from "lucide-react";
+import { Loader2, Users } from "lucide-react";
 import { toast } from "sonner";
 import CreateGroupDialog from "@/components/CreateGroupDialog";
 
@@ -16,77 +17,83 @@ interface GroupChat {
   member_count?: number;
 }
 
+const fetchGroups = async (userId: string | null): Promise<GroupChat[]> => {
+  if (!userId) return [];
+
+  // Get all groups where user is a member
+  const { data: memberData, error: memberError } = await supabase
+    .from("group_members")
+    .select("group_id")
+    .eq("user_id", userId);
+
+  if (memberError) throw memberError;
+
+  if (!memberData || memberData.length === 0) {
+    return [];
+  }
+
+  const groupIds = memberData.map(m => m.group_id);
+
+  // Get group details and member counts in parallel
+  const { data: groupsData, error: groupsError } = await supabase
+    .from("group_chats")
+    .select("*")
+    .in("id", groupIds)
+    .order("created_at", { ascending: false });
+
+  if (groupsError) throw groupsError;
+
+  // Get member counts for each group
+  const groupsWithCounts = await Promise.all(
+    (groupsData || []).map(async (group) => {
+      const { count } = await supabase
+        .from("group_members")
+        .select("*", { count: "exact", head: true })
+        .eq("group_id", group.id);
+      
+      return {
+        ...group,
+        member_count: count || 0
+      };
+    })
+  );
+
+  return groupsWithCounts;
+};
+
 const Groups = () => {
   const navigate = useNavigate();
-  const [groups, setGroups] = useState<GroupChat[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const queryClient = useQueryClient();
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    checkAuth();
-    loadGroups();
-  }, []);
-
-  const checkAuth = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    setUser(user);
-  };
-
-  const loadGroups = async () => {
-    setLoading(true);
-    try {
-      // Get all groups where user is a member
-      const { data: memberData, error: memberError } = await supabase
-        .from("group_members")
-        .select("group_id")
-        .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
-
-      if (memberError) throw memberError;
-
-      if (!memberData || memberData.length === 0) {
-        setGroups([]);
-        setLoading(false);
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/auth");
         return;
       }
+      setUserId(user.id);
+    };
+    checkAuth();
+  }, [navigate]);
 
-      const groupIds = memberData.map(m => m.group_id);
+  const { data: groups = [], isLoading: loading, error } = useQuery({
+    queryKey: ["groups", userId],
+    queryFn: () => fetchGroups(userId),
+    enabled: !!userId,
+    staleTime: 30 * 1000,
+    gcTime: 5 * 60 * 1000,
+  });
 
-      // Get group details
-      const { data: groupsData, error: groupsError } = await supabase
-        .from("group_chats")
-        .select("*")
-        .in("id", groupIds)
-        .order("created_at", { ascending: false });
+  const handleGroupCreated = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["groups"] });
+  }, [queryClient]);
 
-      if (groupsError) throw groupsError;
-
-      // Get member counts for each group
-      const groupsWithCounts = await Promise.all(
-        (groupsData || []).map(async (group) => {
-          const { count } = await supabase
-            .from("group_members")
-            .select("*", { count: "exact", head: true })
-            .eq("group_id", group.id);
-          
-          return {
-            ...group,
-            member_count: count || 0
-          };
-        })
-      );
-
-      setGroups(groupsWithCounts);
-    } catch (error: any) {
-      console.error("Error loading groups:", error);
-      toast.error("Failed to load groups");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const breadcrumbData = useMemo(() => getBreadcrumbSchema([
+    { name: "Home", url: "https://studyhub.lovable.app/" },
+    { name: "Groups", url: "https://studyhub.lovable.app/groups" },
+  ]), []);
 
   const getTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
@@ -99,11 +106,22 @@ const Groups = () => {
     return `${Math.floor(seconds / 86400)}d ago`;
   };
 
+  if (error) {
+    toast.error("Failed to load groups");
+  }
+
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Study Groups - Collaborate with Students"
+        description="Join or create study groups on StudyHub. Collaborate with other students in focused study groups and learn together."
+        canonical="https://studyhub.lovable.app/groups"
+      />
+      <StructuredData data={breadcrumbData} />
+      
       <Navbar />
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
+      <main className="container mx-auto px-4 py-8">
+        <header className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Study Groups
@@ -112,52 +130,55 @@ const Groups = () => {
               Collaborate with other students in focused study groups
             </p>
           </div>
-          <CreateGroupDialog onGroupCreated={loadGroups} />
-        </div>
+          <CreateGroupDialog onGroupCreated={handleGroupCreated} />
+        </header>
 
-        {loading ? (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        ) : groups.length === 0 ? (
-          <Card className="text-center py-12">
-            <CardContent>
-              <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-xl font-semibold mb-2">No groups yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Create your first study group to start collaborating with others
-              </p>
-              <CreateGroupDialog onGroupCreated={loadGroups} />
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {groups.map((group) => (
-              <Card
-                key={group.id}
-                className="cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => navigate(`/groups/${group.id}`)}
-              >
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-primary" />
-                    {group.name}
-                  </CardTitle>
-                  <CardDescription>{group.description || "No description"}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>{group.member_count} members</span>
-                    <span>Created {getTimeAgo(group.created_at)}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
+        <section aria-label="Your study groups">
+          {loading ? (
+            <div className="flex justify-center items-center py-12" role="status" aria-label="Loading groups">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : groups.length === 0 ? (
+            <Card className="text-center py-12">
+              <CardContent>
+                <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" aria-hidden="true" />
+                <h2 className="text-xl font-semibold mb-2">No groups yet</h2>
+                <p className="text-muted-foreground mb-4">
+                  Create your first study group to start collaborating with others
+                </p>
+                <CreateGroupDialog onGroupCreated={handleGroupCreated} />
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {groups.map((group) => (
+                <Card
+                  key={group.id}
+                  className="cursor-pointer hover:shadow-lg transition-shadow"
+                  onClick={() => navigate(`/groups/${group.id}`)}
+                  role="article"
+                >
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Users className="h-5 w-5 text-primary" aria-hidden="true" />
+                      {group.name}
+                    </CardTitle>
+                    <CardDescription>{group.description || "No description"}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                      <span>{group.member_count} members</span>
+                      <time>Created {getTimeAgo(group.created_at)}</time>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 };
 
-export default Groups;
+export default memo(Groups);

@@ -1,9 +1,9 @@
+import { memo, useState, useEffect, useCallback, useRef } from "react";
 import { ArrowUp, ArrowDown, MessageSquare, Share2, Bookmark, BookmarkCheck, Trash2, Flag, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import {
@@ -37,7 +37,7 @@ interface StudyPostProps {
   onVoteChange?: () => void;
 }
 
-const StudyPost = ({
+const StudyPost = memo(({
   id,
   title,
   content,
@@ -57,88 +57,120 @@ const StudyPost = ({
   const navigate = useNavigate();
   const [userVote, setUserVote] = useState<string | null>(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ id: string } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const mountedRef = useRef(true);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
+    let isCancelled = false;
+
+    const checkUserStatus = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (isCancelled || !mountedRef.current) return;
+        
+        setUser(user);
+        
+        if (!user) return;
+
+        // Batch requests for better performance
+        const [roleResult, voteResult, bookmarkResult] = await Promise.all([
+          supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", user.id)
+            .eq("role", "admin")
+            .maybeSingle(),
+          supabase
+            .from("votes")
+            .select("vote_type")
+            .eq("post_id", id)
+            .eq("user_id", user.id)
+            .maybeSingle(),
+          supabase
+            .from("bookmarks")
+            .select("id")
+            .eq("post_id", id)
+            .eq("user_id", user.id)
+            .maybeSingle(),
+        ]);
+
+        if (isCancelled || !mountedRef.current) return;
+
+        setIsAdmin(!!roleResult.data);
+        if (voteResult.data) setUserVote(voteResult.data.vote_type);
+        setIsBookmarked(!!bookmarkResult.data);
+      } catch (error) {
+        console.error("Error checking user status:", error);
+      }
+    };
+
     checkUserStatus();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [id]);
 
-  const checkUserStatus = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    setUser(user);
-    
-    if (!user) return;
-
-    // Check if user is admin
-    const { data: roleData } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("role", "admin")
-      .maybeSingle();
-    
-    setIsAdmin(!!roleData);
-
-    const { data: voteData } = await supabase
-      .from("votes")
-      .select("vote_type")
-      .eq("post_id", id)
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-    if (voteData) setUserVote(voteData.vote_type);
-
-    const { data: bookmarkData } = await supabase
-      .from("bookmarks")
-      .select("id")
-      .eq("post_id", id)
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-    setIsBookmarked(!!bookmarkData);
-  };
-
-  const handleVote = async (voteType: "up" | "down") => {
+  const handleVote = useCallback(async (voteType: "up" | "down") => {
     if (!user) {
       toast.error("Please sign in to vote");
       navigate("/auth");
       return;
     }
 
-    if (userVote === voteType) {
-      await supabase.from("votes").delete().eq("post_id", id).eq("user_id", user.id);
-      setUserVote(null);
-    } else {
-      if (userVote) {
+    try {
+      if (userVote === voteType) {
         await supabase.from("votes").delete().eq("post_id", id).eq("user_id", user.id);
+        setUserVote(null);
+      } else {
+        if (userVote) {
+          await supabase.from("votes").delete().eq("post_id", id).eq("user_id", user.id);
+        }
+        await supabase.from("votes").insert({ post_id: id, user_id: user.id, vote_type: voteType });
+        setUserVote(voteType);
       }
-      await supabase.from("votes").insert({ post_id: id, user_id: user.id, vote_type: voteType });
-      setUserVote(voteType);
+
+      onVoteChange?.();
+    } catch (error) {
+      console.error("Vote error:", error);
+      toast.error("Failed to update vote");
     }
+  }, [user, userVote, id, navigate, onVoteChange]);
 
-    onVoteChange?.();
-  };
-
-  const handleBookmark = async () => {
+  const handleBookmark = useCallback(async () => {
     if (!user) {
       toast.error("Please sign in to bookmark");
       navigate("/auth");
       return;
     }
 
-    if (isBookmarked) {
-      await supabase.from("bookmarks").delete().eq("post_id", id).eq("user_id", user.id);
-      setIsBookmarked(false);
-      toast.success("Bookmark removed");
-    } else {
-      await supabase.from("bookmarks").insert({ post_id: id, user_id: user.id });
-      setIsBookmarked(true);
-      toast.success("Post bookmarked!");
+    try {
+      if (isBookmarked) {
+        await supabase.from("bookmarks").delete().eq("post_id", id).eq("user_id", user.id);
+        setIsBookmarked(false);
+        toast.success("Bookmark removed");
+      } else {
+        await supabase.from("bookmarks").insert({ post_id: id, user_id: user.id });
+        setIsBookmarked(true);
+        toast.success("Post bookmarked!");
+      }
+    } catch (error) {
+      console.error("Bookmark error:", error);
+      toast.error("Failed to update bookmark");
     }
-  };
+  }, [user, isBookmarked, id, navigate]);
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     try {
       const { error } = await supabase
         .from("posts")
@@ -149,12 +181,13 @@ const StudyPost = ({
 
       toast.success("Post deleted successfully");
       onVoteChange?.();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to delete post");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to delete post";
+      toast.error(message);
     }
-  };
+  }, [id, onVoteChange]);
 
-  const handleFlag = async () => {
+  const handleFlag = useCallback(async () => {
     try {
       const { error } = await supabase
         .from("posts")
@@ -170,12 +203,13 @@ const StudyPost = ({
 
       toast.success("Post flagged for review");
       onVoteChange?.();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to flag post");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to flag post";
+      toast.error(message);
     }
-  };
+  }, [id, user?.id, onVoteChange]);
 
-  const handleHide = async () => {
+  const handleHide = useCallback(async () => {
     try {
       const { error } = await supabase
         .from("posts")
@@ -189,10 +223,20 @@ const StudyPost = ({
 
       toast.success("Post hidden from public view");
       onVoteChange?.();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to hide post");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to hide post";
+      toast.error(message);
     }
-  };
+  }, [id, onVoteChange]);
+
+  const navigateToPost = useCallback(() => {
+    navigate(`/post/${id}`);
+  }, [navigate, id]);
+
+  const navigateToAuthor = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (authorId) navigate(`/user/${authorId}`);
+  }, [navigate, authorId]);
 
   const netVotes = upvotes - downvotes;
 
@@ -206,17 +250,19 @@ const StudyPost = ({
               size="icon"
               className={`h-8 w-8 ${userVote === "up" ? "text-success" : "hover:text-success"}`}
               onClick={() => handleVote("up")}
+              aria-label="Upvote"
             >
-              <ArrowUp className="h-5 w-5" />
+              <ArrowUp className="h-5 w-5" aria-hidden="true" />
             </Button>
-            <span className="text-sm font-semibold">{netVotes}</span>
+            <span className="text-sm font-semibold" aria-label={`${netVotes} votes`}>{netVotes}</span>
             <Button
               variant="ghost"
               size="icon"
               className={`h-8 w-8 ${userVote === "down" ? "text-destructive" : "hover:text-destructive"}`}
               onClick={() => handleVote("down")}
+              aria-label="Downvote"
             >
-              <ArrowDown className="h-5 w-5" />
+              <ArrowDown className="h-5 w-5" aria-hidden="true" />
             </Button>
           </div>
 
@@ -227,18 +273,26 @@ const StudyPost = ({
               <Badge variant="outline">{stream}</Badge>
               <Badge variant="outline">{country}</Badge>
             </div>
-            <h3
+            <h2
               className="text-lg font-semibold leading-tight hover:text-primary cursor-pointer"
-              onClick={() => navigate(`/post/${id}`)}
+              onClick={navigateToPost}
             >
               {title}
-            </h3>
+            </h2>
             <p className="text-sm text-muted-foreground">
               Posted by {authorId ? (
-                <span className="hover:underline cursor-pointer text-primary" onClick={(e) => { e.stopPropagation(); navigate(`/user/${authorId}`); }}>u/{author}</span>
+                <span 
+                  className="hover:underline cursor-pointer text-primary" 
+                  onClick={navigateToAuthor}
+                  role="link"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && navigateToAuthor(e as unknown as React.MouseEvent)}
+                >
+                  u/{author}
+                </span>
               ) : (
                 <span>u/{author}</span>
-              )} • {timeAgo}
+              )} • <time>{timeAgo}</time>
             </p>
           </div>
         </div>
@@ -251,7 +305,7 @@ const StudyPost = ({
         />
 
         {fileUrl && (
-          <div className="border border-border rounded-lg p-4 bg-muted/50">
+          <figure className="border border-border rounded-lg p-4 bg-muted/50">
             {fileUrl.endsWith('.pdf') ? (
               <a
                 href={fileUrl}
@@ -264,11 +318,12 @@ const StudyPost = ({
             ) : (
               <img
                 src={fileUrl}
-                alt="Attached image"
+                alt={`Attachment for ${title}`}
                 className="max-w-full rounded-lg"
+                loading="lazy"
               />
             )}
-          </div>
+          </figure>
         )}
 
         <div className="flex items-center gap-2 pt-2 border-t border-border">
@@ -276,13 +331,13 @@ const StudyPost = ({
             variant="ghost"
             size="sm"
             className="gap-2"
-            onClick={() => navigate(`/post/${id}`)}
+            onClick={navigateToPost}
           >
-            <MessageSquare className="h-4 w-4" />
+            <MessageSquare className="h-4 w-4" aria-hidden="true" />
             {comments} Comments
           </Button>
           <Button variant="ghost" size="sm" className="gap-2">
-            <Share2 className="h-4 w-4" />
+            <Share2 className="h-4 w-4" aria-hidden="true" />
             Share
           </Button>
           <Button
@@ -290,16 +345,16 @@ const StudyPost = ({
             size="sm"
             className="gap-2"
             onClick={handleBookmark}
+            aria-label={isBookmarked ? "Remove bookmark" : "Bookmark post"}
           >
             {isBookmarked ? (
-              <BookmarkCheck className="h-4 w-4 fill-current" />
+              <BookmarkCheck className="h-4 w-4 fill-current" aria-hidden="true" />
             ) : (
-              <Bookmark className="h-4 w-4" />
+              <Bookmark className="h-4 w-4" aria-hidden="true" />
             )}
             {isBookmarked ? "Saved" : "Save"}
           </Button>
           
-          {/* Report button for all logged-in users (non-admin) */}
           {user && !isAdmin && (
             <ReportPostDialog postId={id} postTitle={title} />
           )}
@@ -307,17 +362,17 @@ const StudyPost = ({
           {isAdmin && (
             <>
               <Button variant="ghost" size="sm" className="gap-2 text-warning hover:text-warning" onClick={handleFlag}>
-                <Flag className="h-4 w-4" />
+                <Flag className="h-4 w-4" aria-hidden="true" />
                 Flag
               </Button>
               <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-muted-foreground" onClick={handleHide}>
-                <EyeOff className="h-4 w-4" />
+                <EyeOff className="h-4 w-4" aria-hidden="true" />
                 Hide
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" aria-hidden="true" />
                     Delete
                   </Button>
                 </AlertDialogTrigger>
@@ -342,6 +397,8 @@ const StudyPost = ({
       </CardContent>
     </Card>
   );
-};
+});
+
+StudyPost.displayName = "StudyPost";
 
 export default StudyPost;
