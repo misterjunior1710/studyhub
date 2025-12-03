@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +23,7 @@ interface LeaderboardUser {
 }
 
 const Leaderboard = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [topUsers, setTopUsers] = useState<LeaderboardUser[]>([]);
   const [topStreak, setTopStreak] = useState<LeaderboardUser[]>([]);
@@ -110,9 +112,10 @@ const Leaderboard = () => {
 
   const UserRow = ({ user, rank, metric, metricLabel }: { user: LeaderboardUser; rank: number; metric: number | string; metricLabel: string }) => (
     <div 
-      className={`flex items-center gap-4 p-4 rounded-lg transition-all duration-200 hover:bg-accent/50 ${
+      className={`flex items-center gap-4 p-4 rounded-lg transition-all duration-200 hover:bg-accent/50 cursor-pointer ${
         user.id === currentUserId ? "bg-primary/10 border border-primary/30" : ""
       } ${rank <= 3 ? getRankBadge(rank) + " text-white" : "bg-card"}`}
+      onClick={() => navigate(`/user/${user.id}`)}
     >
       <div className="flex items-center justify-center w-8">
         {getRankIcon(rank)}
@@ -127,7 +130,7 @@ const Leaderboard = () => {
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className={`font-semibold truncate ${rank <= 3 ? "" : ""}`}>
+          <p className={`font-semibold truncate hover:underline ${rank <= 3 ? "" : ""}`}>
             {user.username || "Anonymous"}
           </p>
           {user.id === currentUserId && (
