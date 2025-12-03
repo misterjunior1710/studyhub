@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { memo, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
+import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -22,84 +24,73 @@ interface LeaderboardUser {
   post_count?: number;
 }
 
-const Leaderboard = () => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [topUsers, setTopUsers] = useState<LeaderboardUser[]>([]);
-  const [topStreak, setTopStreak] = useState<LeaderboardUser[]>([]);
-  const [topPosters, setTopPosters] = useState<LeaderboardUser[]>([]);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadLeaderboards();
-    getCurrentUser();
-  }, []);
-
-  const getCurrentUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    setCurrentUserId(user?.id || null);
-  };
-
-  const loadLeaderboards = async () => {
-    setLoading(true);
-
-    // Top users by points
-    const { data: pointsData } = await supabase
+const fetchLeaderboardData = async () => {
+  const [pointsResult, streakResult, postsResult, userResult] = await Promise.all([
+    supabase
       .from("profiles")
       .select("id, username, avatar_url, points, streak_days, country, grade")
       .order("points", { ascending: false })
-      .limit(50);
-
-    if (pointsData) {
-      setTopUsers(pointsData as LeaderboardUser[]);
-    }
-
-    // Top users by streak
-    const { data: streakData } = await supabase
+      .limit(50),
+    supabase
       .from("profiles")
       .select("id, username, avatar_url, points, streak_days, country, grade")
       .order("streak_days", { ascending: false })
-      .limit(50);
-
-    if (streakData) {
-      setTopStreak(streakData as LeaderboardUser[]);
-    }
-
-    // Top posters - count posts per user
-    const { data: postsData } = await supabase
+      .limit(50),
+    supabase
       .from("posts")
-      .select("user_id, profiles!posts_user_id_fkey(id, username, avatar_url, points, streak_days, country, grade)");
+      .select("user_id, profiles!posts_user_id_fkey(id, username, avatar_url, points, streak_days, country, grade)"),
+    supabase.auth.getUser(),
+  ]);
 
-    if (postsData) {
-      const postCounts: Record<string, { user: any; count: number }> = {};
-      postsData.forEach((post: any) => {
-        if (post.profiles) {
-          const userId = post.profiles.id;
-          if (!postCounts[userId]) {
-            postCounts[userId] = { user: post.profiles, count: 0 };
-          }
-          postCounts[userId].count++;
-        }
-      });
-
-      const sortedPosters = Object.values(postCounts)
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 50)
-        .map(item => ({
-          ...item.user,
-          post_count: item.count
-        }));
-
-      setTopPosters(sortedPosters);
+  // Process top posters
+  const postCounts: Record<string, { user: LeaderboardUser; count: number }> = {};
+  (postsResult.data || []).forEach((post: { profiles?: LeaderboardUser }) => {
+    if (post.profiles) {
+      const userId = post.profiles.id;
+      if (!postCounts[userId]) {
+        postCounts[userId] = { user: post.profiles, count: 0 };
+      }
+      postCounts[userId].count++;
     }
+  });
 
-    setLoading(false);
+  const topPosters = Object.values(postCounts)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 50)
+    .map(item => ({
+      ...item.user,
+      post_count: item.count
+    }));
+
+  return {
+    topUsers: (pointsResult.data || []) as LeaderboardUser[],
+    topStreak: (streakResult.data || []) as LeaderboardUser[],
+    topPosters,
+    currentUserId: userResult.data.user?.id || null,
   };
+};
+
+const Leaderboard = () => {
+  const navigate = useNavigate();
+
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ["leaderboard"],
+    queryFn: fetchLeaderboardData,
+    staleTime: 60 * 1000, // 1 minute
+    gcTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const { topUsers = [], topStreak = [], topPosters = [], currentUserId } = data || {};
+
+  const breadcrumbData = useMemo(() => getBreadcrumbSchema([
+    { name: "Home", url: "https://studyhub.lovable.app/" },
+    { name: "Leaderboard", url: "https://studyhub.lovable.app/leaderboard" },
+  ]), []);
 
   const getRankIcon = (rank: number) => {
-    if (rank === 1) return <Crown className="h-6 w-6 text-yellow-500" />;
-    if (rank === 2) return <Medal className="h-6 w-6 text-gray-400" />;
-    if (rank === 3) return <Award className="h-6 w-6 text-amber-600" />;
+    if (rank === 1) return <Crown className="h-6 w-6 text-yellow-500" aria-hidden="true" />;
+    if (rank === 2) return <Medal className="h-6 w-6 text-gray-400" aria-hidden="true" />;
+    if (rank === 3) return <Award className="h-6 w-6 text-amber-600" aria-hidden="true" />;
     return <span className="text-lg font-bold text-muted-foreground w-6 text-center">{rank}</span>;
   };
 
@@ -110,19 +101,20 @@ const Leaderboard = () => {
     return "";
   };
 
-  const UserRow = ({ user, rank, metric, metricLabel }: { user: LeaderboardUser; rank: number; metric: number | string; metricLabel: string }) => (
+  const UserRow = memo(({ user, rank, metric, metricLabel }: { user: LeaderboardUser; rank: number; metric: number | string; metricLabel: string }) => (
     <div 
       className={`flex items-center gap-4 p-4 rounded-lg transition-all duration-200 hover:bg-accent/50 cursor-pointer ${
         user.id === currentUserId ? "bg-primary/10 border border-primary/30" : ""
       } ${rank <= 3 ? getRankBadge(rank) + " text-white" : "bg-card"}`}
       onClick={() => navigate(`/user/${user.id}`)}
+      role="listitem"
     >
       <div className="flex items-center justify-center w-8">
         {getRankIcon(rank)}
       </div>
       
       <Avatar className="h-12 w-12 border-2 border-background">
-        <AvatarImage src={user.avatar_url} />
+        <AvatarImage src={user.avatar_url} alt={`${user.username}'s avatar`} />
         <AvatarFallback className={rank <= 3 ? "bg-background text-foreground" : "bg-primary text-primary-foreground"}>
           {user.username?.charAt(0).toUpperCase() || "U"}
         </AvatarFallback>
@@ -130,7 +122,7 @@ const Leaderboard = () => {
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className={`font-semibold truncate hover:underline ${rank <= 3 ? "" : ""}`}>
+          <p className="font-semibold truncate hover:underline">
             {user.username || "Anonymous"}
           </p>
           {user.id === currentUserId && (
@@ -150,13 +142,15 @@ const Leaderboard = () => {
         <p className="text-xs opacity-80">{metricLabel}</p>
       </div>
     </div>
-  );
+  ));
+
+  UserRow.displayName = "UserRow";
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="container mx-auto px-4 py-8 flex justify-center">
+        <div className="container mx-auto px-4 py-8 flex justify-center" role="status" aria-label="Loading leaderboard">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </div>
@@ -165,53 +159,58 @@ const Leaderboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Leaderboard - Top Students"
+        description="See who's leading the pack on StudyHub! Compete with fellow students and climb the ranks based on points, streaks, and contributions."
+        canonical="https://studyhub.lovable.app/leaderboard"
+      />
+      <StructuredData data={breadcrumbData} />
+      
       <Navbar />
       
-      {/* Hero Section */}
-      <div className="bg-gradient-to-br from-primary via-primary to-accent py-12">
+      <header className="bg-gradient-to-br from-primary via-primary to-accent py-12">
         <div className="container mx-auto px-4 text-center text-white">
           <div className="flex justify-center mb-4">
-            <Trophy className="h-16 w-16 animate-float" />
+            <Trophy className="h-16 w-16 animate-float" aria-hidden="true" />
           </div>
           <h1 className="text-4xl font-bold mb-2">Leaderboard</h1>
           <p className="text-white/80 max-w-md mx-auto">
             See who's leading the pack! Compete with fellow students and climb the ranks.
           </p>
         </div>
-      </div>
+      </header>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-3 gap-4 -mt-8 mb-8">
+      <main className="container mx-auto px-4 py-8 max-w-4xl">
+        <section className="grid grid-cols-3 gap-4 -mt-8 mb-8" aria-label="Statistics">
           <Card variant="elevated" className="text-center p-4">
-            <Star className="h-8 w-8 mx-auto text-yellow-500 mb-2" />
+            <Star className="h-8 w-8 mx-auto text-yellow-500 mb-2" aria-hidden="true" />
             <p className="text-2xl font-bold text-primary">{topUsers.reduce((sum, u) => sum + (u.points || 0), 0)}</p>
             <p className="text-sm text-muted-foreground">Total Points</p>
           </Card>
           <Card variant="elevated" className="text-center p-4">
-            <Flame className="h-8 w-8 mx-auto text-orange-500 mb-2" />
+            <Flame className="h-8 w-8 mx-auto text-orange-500 mb-2" aria-hidden="true" />
             <p className="text-2xl font-bold text-primary">{Math.max(...topStreak.map(u => u.streak_days || 0), 0)}</p>
             <p className="text-sm text-muted-foreground">Longest Streak</p>
           </Card>
           <Card variant="elevated" className="text-center p-4">
-            <BookOpen className="h-8 w-8 mx-auto text-blue-500 mb-2" />
+            <BookOpen className="h-8 w-8 mx-auto text-blue-500 mb-2" aria-hidden="true" />
             <p className="text-2xl font-bold text-primary">{topPosters.reduce((sum, u) => sum + (u.post_count || 0), 0)}</p>
             <p className="text-sm text-muted-foreground">Total Posts</p>
           </Card>
-        </div>
+        </section>
 
         <Tabs defaultValue="points" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="points" className="gap-2">
-              <Zap className="h-4 w-4" />
+              <Zap className="h-4 w-4" aria-hidden="true" />
               Points
             </TabsTrigger>
             <TabsTrigger value="streak" className="gap-2">
-              <Flame className="h-4 w-4" />
+              <Flame className="h-4 w-4" aria-hidden="true" />
               Streak
             </TabsTrigger>
             <TabsTrigger value="posts" className="gap-2">
-              <Target className="h-4 w-4" />
+              <Target className="h-4 w-4" aria-hidden="true" />
               Posts
             </TabsTrigger>
           </TabsList>
@@ -220,11 +219,11 @@ const Leaderboard = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-primary" />
+                  <TrendingUp className="h-5 w-5 text-primary" aria-hidden="true" />
                   Top Students by Points
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-2" role="list" aria-label="Top students by points">
                 {topUsers.length === 0 ? (
                   <p className="text-center text-muted-foreground py-8">
                     No users yet. Be the first to earn points!
@@ -248,11 +247,11 @@ const Leaderboard = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Flame className="h-5 w-5 text-orange-500" />
+                  <Flame className="h-5 w-5 text-orange-500" aria-hidden="true" />
                   Top Streaks
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-2" role="list" aria-label="Top students by streak">
                 {topStreak.length === 0 ? (
                   <p className="text-center text-muted-foreground py-8">
                     No streaks yet. Start learning daily!
@@ -276,11 +275,11 @@ const Leaderboard = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5 text-blue-500" />
+                  <Target className="h-5 w-5 text-blue-500" aria-hidden="true" />
                   Top Contributors
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-2" role="list" aria-label="Top contributors">
                 {topPosters.length === 0 ? (
                   <p className="text-center text-muted-foreground py-8">
                     No posts yet. Be the first to contribute!
@@ -300,9 +299,9 @@ const Leaderboard = () => {
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
+      </main>
     </div>
   );
 };
 
-export default Leaderboard;
+export default memo(Leaderboard);

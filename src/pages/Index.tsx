@@ -1,182 +1,70 @@
+import { memo, useState, useCallback, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FilterSidebar from "@/components/FilterSidebar";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
 import StudyPost from "@/components/StudyPost";
 import CookieConsent from "@/components/CookieConsent";
+import SEOHead, { StructuredData, getOrganizationSchema, getCommunitySchema } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TrendingUp, Clock, Star, Loader2, Sparkles, Search } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
-import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-
-interface Post {
-  id: string;
-  title: string;
-  content: string;
-  subject: string;
-  grade: string;
-  stream: string;
-  country: string;
-  upvotes: number;
-  downvotes: number;
-  created_at: string;
-  file_url: string | null;
-  user_id: string;
-  profiles?: {
-    username: string;
-  };
-  comments?: { count: number }[];
-}
+import { usePosts, useUserData, getTimeAgo } from "@/hooks/usePosts";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const Index = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState("hot");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"hot" | "new" | "top">("hot");
+  const [searchInput, setSearchInput] = useState("");
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
   const [selectedStream, setSelectedStream] = useState<string | null>(null);
-  const [userGrade, setUserGrade] = useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const [profileResult, roleResult] = await Promise.all([
-          supabase.from("profiles").select("grade").eq("id", user.id).single(),
-          supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").single()
-        ]);
-        setUserGrade(profileResult.data?.grade || null);
-        setIsAdmin(!!roleResult.data);
-      }
-    };
-    fetchUserData();
-  }, []);
+  // Debounce search to prevent excessive API calls
+  const searchQuery = useDebounce(searchInput, 300);
 
-  useEffect(() => {
-    loadPosts();
+  // Get user data with caching
+  const { data: userData } = useUserData();
 
-    const channel = supabase
-      .channel("posts")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "posts",
-        },
-        () => {
-          loadPosts();
-        }
-      )
-      .subscribe();
+  // Get posts with React Query caching
+  const { data: posts = [], isLoading: loading, invalidatePosts } = usePosts({
+    postType: "general",
+    sortBy,
+    searchQuery,
+    selectedCountry,
+    selectedSubject,
+    selectedGrade,
+    selectedStream,
+    userGrade: userData?.grade,
+    isAdmin: userData?.isAdmin,
+  });
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [sortBy, searchQuery, selectedCountry, selectedSubject, selectedGrade, selectedStream, userGrade, isAdmin]);
-
-  const loadPosts = async () => {
-    setLoading(true);
-
-    const buildQuery = (withRelations: boolean) => {
-      let query = supabase
-        .from("posts")
-        .select(
-          withRelations
-            ? "*, profiles!posts_user_id_fkey(username), comments(count)"
-            : "*"
-        )
-        .eq("post_type", "general");
-
-      if (searchQuery) {
-        query = query.or(`title.ilike.%${searchQuery}%,content.ilike.%${searchQuery}%`);
-      }
-
-      if (selectedCountry) {
-        query = query.eq("country", selectedCountry);
-      }
-
-      if (selectedSubject) {
-        query = query.eq("subject", selectedSubject);
-      }
-
-      if (selectedGrade) {
-        query = query.eq("grade", selectedGrade);
-      }
-
-      if (selectedStream) {
-        query = query.eq("stream", selectedStream);
-      }
-
-      // Hide Adult (18+) content from non-adult users (admins can see all)
-      if (!isAdmin && userGrade !== "Adult (18+)") {
-        query = query.neq("grade", "Adult (18+)");
-      }
-
-      if (sortBy === "new") {
-        query = query.order("created_at", { ascending: false });
-      } else if (sortBy === "top") {
-        query = query.order("upvotes", { ascending: false });
-      } else {
-        query = query.order("upvotes", { ascending: false }).order("created_at", { ascending: false });
-      }
-
-      return query;
-    };
-
-    try {
-      const { data, error } = await buildQuery(true);
-
-      if (error) {
-        console.error("Error loading posts with relations:", error);
-        const { data: fallbackData, error: fallbackError } = await buildQuery(false);
-
-        if (fallbackError) {
-          console.error("Error loading posts without relations:", fallbackError);
-          toast.error("Failed to load posts");
-        } else {
-          setPosts((fallbackData as any) || []);
-        }
-      } else {
-        setPosts((data as any) || []);
-      }
-    } catch (err) {
-      console.error("Unexpected error loading posts:", err);
-      toast.error("Failed to load posts");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleClearFilters = () => {
+  const handleClearFilters = useCallback(() => {
     setSelectedCountry(null);
     setSelectedSubject(null);
     setSelectedGrade(null);
     setSelectedStream(null);
-  };
+  }, []);
 
-  const getTimeAgo = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    if (seconds < 60) return `${seconds} seconds ago`;
-    if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
-    return `${Math.floor(seconds / 86400)} days ago`;
-  };
+  // Memoize structured data
+  const structuredData = useMemo(() => ({
+    "@context": "https://schema.org",
+    "@graph": [getOrganizationSchema(), getCommunitySchema()],
+  }), []);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Navbar onPostCreated={loadPosts} />
+      <SEOHead
+        title="Study Together, Learn Better"
+        description="Connect with students worldwide on StudyHub. Share knowledge, ask questions, and collaborate across different countries, subjects, grades, and educational streams."
+        canonical="https://studyhub.lovable.app/"
+      />
+      <StructuredData data={structuredData} />
       
-      <div 
+      <Navbar onPostCreated={invalidatePosts} />
+      
+      <header 
         className="relative bg-cover bg-center overflow-hidden"
         style={{ backgroundImage: `url(${heroImage})` }}
       >
@@ -190,25 +78,24 @@ const Index = () => {
             Connect with students worldwide, share knowledge, and ace your exams ✨
           </p>
           
-          {/* Search Bar in Hero */}
           <div className="max-w-2xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
             <div className="relative">
-              <Search className="absolute left-3 sm:left-4 top-1/2 h-4 w-4 sm:h-5 sm:w-5 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-3 sm:left-4 top-1/2 h-4 w-4 sm:h-5 sm:w-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
               <Input
                 placeholder="Search questions, topics..."
                 className="w-full pl-10 sm:pl-12 pr-4 py-4 sm:py-6 text-sm sm:text-base md:text-lg bg-background/95 backdrop-blur-sm border-0 shadow-xl rounded-xl focus:ring-2 focus:ring-white/50"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label="Search posts"
               />
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="container mx-auto px-4 py-4 sm:py-6 flex-1">
         <div className="flex gap-4 lg:gap-6">
-          {/* Desktop sidebar */}
-          <div className="hidden lg:block">
+          <aside className="hidden lg:block" aria-label="Filters">
             <FilterSidebar
               selectedCountry={selectedCountry}
               selectedSubject={selectedSubject}
@@ -220,18 +107,19 @@ const Index = () => {
               onStreamChange={setSelectedStream}
               onClearAll={handleClearFilters}
             />
-          </div>
+          </aside>
           
           <main className="flex-1 space-y-4 sm:space-y-6 min-w-0">
-            <div className="flex flex-wrap items-center justify-between gap-2">
+            <nav className="flex flex-wrap items-center justify-between gap-2" aria-label="Sort options">
               <div className="flex gap-1 sm:gap-2">
                 <Button
                   variant={sortBy === "hot" ? "default" : "ghost"}
                   size="sm"
                   className="gap-1 sm:gap-2 transition-all duration-200 hover:scale-105 text-xs sm:text-sm"
                   onClick={() => setSortBy("hot")}
+                  aria-pressed={sortBy === "hot"}
                 >
-                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
                   Hot
                 </Button>
                 <Button
@@ -239,8 +127,9 @@ const Index = () => {
                   size="sm"
                   className="gap-1 sm:gap-2 transition-all duration-200 hover:scale-105 text-xs sm:text-sm"
                   onClick={() => setSortBy("new")}
+                  aria-pressed={sortBy === "new"}
                 >
-                  <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <Clock className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
                   New
                 </Button>
                 <Button
@@ -248,13 +137,13 @@ const Index = () => {
                   size="sm"
                   className="gap-1 sm:gap-2 transition-all duration-200 hover:scale-105 text-xs sm:text-sm"
                   onClick={() => setSortBy("top")}
+                  aria-pressed={sortBy === "top"}
                 >
-                  <Star className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <Star className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
                   Top
                 </Button>
               </div>
               
-              {/* Mobile filter button */}
               <MobileFilterSheet
                 selectedCountry={selectedCountry}
                 selectedSubject={selectedSubject}
@@ -266,50 +155,52 @@ const Index = () => {
                 onStreamChange={setSelectedStream}
                 onClearAll={handleClearFilters}
               />
-            </div>
+            </nav>
 
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
-            ) : posts.length === 0 ? (
-              <div className="text-center py-12 animate-fade-in">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-4">
-                  <Sparkles className="h-8 w-8 text-primary" />
+            <section aria-label="Posts feed">
+              {loading ? (
+                <div className="flex justify-center py-12" role="status" aria-label="Loading posts">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
-                <p className="text-muted-foreground">
-                  No posts yet. Be the first to create one!
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {posts.map((post, index) => (
-                  <div 
-                    key={post.id} 
-                    className="animate-slide-up" 
-                    style={{ animationDelay: `${index * 0.05}s` }}
-                  >
-                    <StudyPost
-                      id={post.id}
-                      title={post.title}
-                      content={post.content}
-                      author={post.profiles?.username ?? "Anonymous"}
-                      authorId={post.user_id}
-                      upvotes={post.upvotes}
-                      downvotes={post.downvotes}
-                      comments={Array.isArray(post.comments) ? post.comments.length : 0}
-                      subject={post.subject}
-                      grade={post.grade}
-                      stream={post.stream}
-                      country={post.country}
-                      timeAgo={getTimeAgo(post.created_at)}
-                      fileUrl={post.file_url ?? undefined}
-                      onVoteChange={loadPosts}
-                    />
+              ) : posts.length === 0 ? (
+                <div className="text-center py-12 animate-fade-in">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-4">
+                    <Sparkles className="h-8 w-8 text-primary" aria-hidden="true" />
                   </div>
-                ))}
-              </div>
-            )}
+                  <p className="text-muted-foreground">
+                    No posts yet. Be the first to create one!
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {posts.map((post, index) => (
+                    <article 
+                      key={post.id} 
+                      className="animate-slide-up" 
+                      style={{ animationDelay: `${Math.min(index * 0.05, 0.5)}s` }}
+                    >
+                      <StudyPost
+                        id={post.id}
+                        title={post.title}
+                        content={post.content}
+                        author={post.profiles?.username ?? "Anonymous"}
+                        authorId={post.user_id}
+                        upvotes={post.upvotes}
+                        downvotes={post.downvotes}
+                        comments={Array.isArray(post.comments) ? post.comments.length : 0}
+                        subject={post.subject}
+                        grade={post.grade}
+                        stream={post.stream}
+                        country={post.country}
+                        timeAgo={getTimeAgo(post.created_at)}
+                        fileUrl={post.file_url ?? undefined}
+                        onVoteChange={invalidatePosts}
+                      />
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
           </main>
         </div>
       </div>
@@ -319,4 +210,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default memo(Index);
