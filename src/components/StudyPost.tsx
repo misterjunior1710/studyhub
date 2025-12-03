@@ -24,6 +24,7 @@ interface StudyPostProps {
   title: string;
   content: string;
   author: string;
+  authorId?: string;
   upvotes: number;
   downvotes: number;
   comments: number;
@@ -41,6 +42,7 @@ const StudyPost = ({
   title,
   content,
   author,
+  authorId,
   upvotes,
   downvotes,
   comments,
@@ -232,7 +234,11 @@ const StudyPost = ({
               {title}
             </h3>
             <p className="text-sm text-muted-foreground">
-              Posted by u/{author} • {timeAgo}
+              Posted by {authorId ? (
+                <span className="hover:underline cursor-pointer text-primary" onClick={(e) => { e.stopPropagation(); navigate(`/user/${authorId}`); }}>u/{author}</span>
+              ) : (
+                <span>u/{author}</span>
+              )} • {timeAgo}
             </p>
           </div>
         </div>

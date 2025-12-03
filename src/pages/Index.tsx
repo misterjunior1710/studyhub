@@ -24,6 +24,7 @@ interface Post {
   downvotes: number;
   created_at: string;
   file_url: string | null;
+  user_id: string;
   profiles?: {
     username: string;
   };
@@ -293,6 +294,7 @@ const Index = () => {
                       title={post.title}
                       content={post.content}
                       author={post.profiles?.username ?? "Anonymous"}
+                      authorId={post.user_id}
                       upvotes={post.upvotes}
                       downvotes={post.downvotes}
                       comments={Array.isArray(post.comments) ? post.comments.length : 0}
@@ -301,7 +303,7 @@ const Index = () => {
                       stream={post.stream}
                       country={post.country}
                       timeAgo={getTimeAgo(post.created_at)}
-                      fileUrl={post.file_url}
+                      fileUrl={post.file_url ?? undefined}
                       onVoteChange={loadPosts}
                     />
                   </div>

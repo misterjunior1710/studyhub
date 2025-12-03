@@ -94,6 +94,7 @@ const AskDoubt = () => {
                 title={post.title}
                 content={post.content}
                 author={post.profiles?.username ?? "Anonymous"}
+                authorId={post.user_id}
                 upvotes={post.upvotes}
                 downvotes={post.downvotes}
                 comments={Array.isArray(post.comments) ? post.comments.length : 0}
