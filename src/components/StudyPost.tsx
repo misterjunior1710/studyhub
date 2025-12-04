@@ -1,5 +1,6 @@
 import { memo, useState, useEffect, useCallback, useRef } from "react";
 import { ArrowUp, ArrowDown, MessageSquare, Share2, Bookmark, BookmarkCheck, Trash2, Flag, EyeOff } from "lucide-react";
+import { sanitizeHtml } from "@/lib/sanitize";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -301,7 +302,7 @@ const StudyPost = memo(({
       <CardContent className="space-y-4">
         <div 
           className="prose prose-sm max-w-none text-foreground leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: content }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }}
         />
 
         {fileUrl && (
