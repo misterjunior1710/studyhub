@@ -63,20 +63,52 @@ serve(async (req) => {
   }
 
   try {
-    const { title, content, userId } = await req.json();
+    const { title, content } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     
-    const textToCheck = `${title} ${content}`.toLowerCase();
-    const fullText = `${title} ${content}`;
+    // Extract user from JWT token instead of trusting client input
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(JSON.stringify({
+        isAppropriate: false,
+        reason: "Authentication required",
+        flaggedWords: [],
+        isSpam: false
+      }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const token = authHeader.replace('Bearer ', '');
     
-    // Initialize Supabase client for checking user strikes
+    // Initialize Supabase client
+    let userId: string | null = null;
     let userStrikes = 0;
     let isBanned = false;
     
-    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userId) {
+    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
       const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+      
+      // Get user from token
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      
+      if (authError || !user) {
+        console.error("Auth error:", authError);
+        return new Response(JSON.stringify({
+          isAppropriate: false,
+          reason: "Invalid authentication token",
+          flaggedWords: [],
+          isSpam: false
+        }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      userId = user.id;
       
       // Check if user is banned
       const { data: profile } = await supabase
@@ -116,6 +148,9 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+    
+    const textToCheck = `${title} ${content}`.toLowerCase();
+    const fullText = `${title} ${content}`;
     
     // Check for links first
     const hasLinks = urlPattern.test(textToCheck);

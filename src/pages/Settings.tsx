@@ -435,7 +435,7 @@ const Settings = () => {
           )}
 
           <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-5 lg:grid-cols-9' : 'grid-cols-4 lg:grid-cols-8'} lg:w-auto`}>
+            <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-5 lg:grid-cols-8' : 'grid-cols-4 lg:grid-cols-7'} lg:w-auto`}>
               <TabsTrigger value="profile" className="gap-1">
                 <User className="h-4 w-4" />
                 <span className="hidden lg:inline">Profile</span>
@@ -459,10 +459,6 @@ const Settings = () => {
               <TabsTrigger value="language" className="gap-1">
                 <Globe className="h-4 w-4" />
                 <span className="hidden lg:inline">Region</span>
-              </TabsTrigger>
-              <TabsTrigger value="devices" className="gap-1">
-                <Smartphone className="h-4 w-4" />
-                <span className="hidden lg:inline">Devices</span>
               </TabsTrigger>
               <TabsTrigger value="data" className="gap-1">
                 <Download className="h-4 w-4" />
@@ -842,56 +838,6 @@ const Settings = () => {
               <Button onClick={handleSaveProfile} disabled={saving} variant="gradient" className="w-full">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}Save Regional Settings
               </Button>
-            </TabsContent>
-
-            {/* Devices Tab */}
-            <TabsContent value="devices" className="space-y-6">
-              <Card variant="gradient">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><Smartphone className="h-5 w-5 text-primary" />Devices & Sessions</CardTitle>
-                  <CardDescription>Manage your logged-in devices</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-4 p-4 bg-secondary/50 rounded-lg border border-primary/20">
-                      <Monitor className="h-8 w-8 text-primary" />
-                      <div className="flex-1">
-                        <p className="font-medium">Current Device</p>
-                        <p className="text-sm text-muted-foreground">Active now • {navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'}</p>
-                      </div>
-                      <div className="h-3 w-3 bg-green-500 rounded-full animate-pulse" />
-                    </div>
-
-                    <div className="flex items-center gap-4 p-4 bg-card rounded-lg border">
-                      <Smartphone className="h-8 w-8 text-muted-foreground" />
-                      <div className="flex-1">
-                        <p className="font-medium">Other Mobile Devices</p>
-                        <p className="text-sm text-muted-foreground">Sessions on other phones/tablets</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 p-4 bg-card rounded-lg border">
-                      <Tablet className="h-8 w-8 text-muted-foreground" />
-                      <div className="flex-1">
-                        <p className="font-medium">Other Desktop Devices</p>
-                        <p className="text-sm text-muted-foreground">Sessions on other computers</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="pt-6">
-                  <Button onClick={handleSignOutAll} variant="destructive" className="w-full gap-2">
-                    <LogOut className="h-4 w-4" />
-                    Sign Out of All Devices
-                  </Button>
-                  <p className="text-sm text-muted-foreground text-center mt-2">
-                    This will sign you out of all devices including this one
-                  </p>
-                </CardContent>
-              </Card>
             </TabsContent>
 
             {/* Data & Account Tab */}

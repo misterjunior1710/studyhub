@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,10 +8,8 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  to: string;
   subject: string;
   html: string;
-  from?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -20,9 +19,57 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { to, subject, html, from }: EmailRequest = await req.json();
+    // Extract user from JWT token
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
 
-    console.log(`Sending email to: ${to}, subject: ${subject}`);
+    const token = authHeader.replace('Bearer ', '');
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error("Missing Supabase configuration");
+    }
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    
+    // Get user from token
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user) {
+      console.error("Auth error:", authError);
+      return new Response(
+        JSON.stringify({ error: "Invalid authentication token" }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
+    // Only allow sending emails to the authenticated user's own email
+    const userEmail = user.email;
+    if (!userEmail) {
+      return new Response(
+        JSON.stringify({ error: "User email not found" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
+    const { subject, html }: EmailRequest = await req.json();
+
+    console.log(`Sending email to authenticated user: ${userEmail}, subject: ${subject}`);
 
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -31,8 +78,8 @@ const handler = async (req: Request): Promise<Response> => {
         Authorization: `Bearer ${Deno.env.get("RESEND_API_KEY")}`,
       },
       body: JSON.stringify({
-        from: from || "StudyHub <onboarding@resend.dev>",
-        to: [to],
+        from: "StudyHub <onboarding@resend.dev>",
+        to: [userEmail], // Only send to authenticated user's email
         subject: subject,
         html: html,
       }),

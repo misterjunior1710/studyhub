@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { sanitizeHtml } from "@/lib/sanitize";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -630,7 +631,7 @@ const PostCard = ({ post, actionLoading, onApprove, onHide, onRestore, onDelete,
         )}
       </div>
       
-      <p className="text-sm line-clamp-3" dangerouslySetInnerHTML={{ __html: post.content }} />
+      <p className="text-sm line-clamp-3" dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }} />
       
       <div className="flex gap-2">
         {onApprove && (
