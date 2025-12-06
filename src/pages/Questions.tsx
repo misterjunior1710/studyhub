@@ -18,10 +18,10 @@ const Questions = () => {
 
   const breadcrumbData = getBreadcrumbSchema([{
     name: "Home",
-    url: "https://studyhub.lovable.app/"
+    url: "https://studyhub-studentportal.lovable.app/"
   }, {
     name: "Questions",
-    url: "https://studyhub.lovable.app/questions"
+    url: "https://studyhub-studentportal.lovable.app/questions"
   }]);
 
   return (
@@ -29,7 +29,7 @@ const Questions = () => {
       <SEOHead 
         title="Questions - Get Study Help" 
         description="Get help with your studies from the StudyHub community. Post your academic questions and receive answers from students worldwide." 
-        canonical="https://studyhub.lovable.app/questions" 
+        canonical="https://studyhub-studentportal.lovable.app/questions" 
       />
       <StructuredData data={breadcrumbData} />
       

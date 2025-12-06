@@ -83,8 +83,8 @@ const Leaderboard = () => {
   const { topUsers = [], topStreak = [], topPosters = [], currentUserId } = data || {};
 
   const breadcrumbData = useMemo(() => getBreadcrumbSchema([
-    { name: "Home", url: "https://studyhub.lovable.app/" },
-    { name: "Leaderboard", url: "https://studyhub.lovable.app/leaderboard" },
+    { name: "Home", url: "https://studyhub-studentportal.lovable.app/" },
+    { name: "Leaderboard", url: "https://studyhub-studentportal.lovable.app/leaderboard" },
   ]), []);
 
   const getRankIcon = (rank: number) => {
@@ -162,7 +162,7 @@ const Leaderboard = () => {
       <SEOHead
         title="Leaderboard - Top Students"
         description="See who's leading the pack on StudyHub! Compete with fellow students and climb the ranks based on points, streaks, and contributions."
-        canonical="https://studyhub.lovable.app/leaderboard"
+        canonical="https://studyhub-studentportal.lovable.app/leaderboard"
       />
       <StructuredData data={breadcrumbData} />
       

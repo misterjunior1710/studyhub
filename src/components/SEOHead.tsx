@@ -104,7 +104,7 @@ export const getOrganizationSchema = () => ({
   "@type": "Organization",
   name: "StudyHub",
   description: "Connect with students worldwide on StudyHub. Share knowledge, ask questions, and collaborate.",
-  url: "https://studyhub.lovable.app",
+  url: "https://studyhub-studentportal.lovable.app",
   logo: "https://storage.googleapis.com/gpt-engineer-file-uploads/T6FlWUVm6DYTgcsVHeiIqQYaN6A2/uploads/1764745423647-Screenshot 2025-12-03 123228.png",
   sameAs: [],
   contactPoint: {
@@ -119,10 +119,10 @@ export const getCommunitySchema = () => ({
   "@type": "WebSite",
   name: "StudyHub",
   description: "A global study community for students to connect, share knowledge, and collaborate.",
-  url: "https://studyhub.lovable.app",
+  url: "https://studyhub-studentportal.lovable.app",
   potentialAction: {
     "@type": "SearchAction",
-    target: "https://studyhub.lovable.app/?search={search_term_string}",
+    target: "https://studyhub-studentportal.lovable.app/?search={search_term_string}",
     "query-input": "required name=search_term_string",
   },
 });
