@@ -189,8 +189,8 @@ const Friends = () => {
   }, [friends, pendingSent, pendingReceived]);
 
   const breadcrumbData = useMemo(() => getBreadcrumbSchema([
-    { name: "Home", url: "https://studyhub.lovable.app/" },
-    { name: "Friends", url: "https://studyhub.lovable.app/friends" },
+    { name: "Home", url: "https://studyhub-studentportal.lovable.app/" },
+    { name: "Friends", url: "https://studyhub-studentportal.lovable.app/friends" },
   ]), []);
 
   if (loading) {
@@ -209,7 +209,7 @@ const Friends = () => {
       <SEOHead
         title="Friends - Connect with Students"
         description="Connect with fellow students on StudyHub. Find study partners, share knowledge, and build your academic network."
-        canonical="https://studyhub.lovable.app/friends"
+        canonical="https://studyhub-studentportal.lovable.app/friends"
       />
       <StructuredData data={breadcrumbData} />
       

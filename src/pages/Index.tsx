@@ -61,7 +61,7 @@ const Index = () => {
       <SEOHead
         title="Study Together, Learn Better"
         description="Connect with students worldwide on StudyHub. Share knowledge, ask questions, and collaborate across different countries, subjects, grades, and educational streams."
-        canonical="https://studyhub.lovable.app/"
+        canonical="https://studyhub-studentportal.lovable.app/"
       />
       <StructuredData data={structuredData} />
       
