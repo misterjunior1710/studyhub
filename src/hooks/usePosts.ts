@@ -1,7 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { User } from "@supabase/supabase-js";
+import { useCallback, useEffect, useRef } from "react";
 
 interface Post {
   id: string;
@@ -46,9 +45,10 @@ const fetchPosts = async ({
   userGrade,
   isAdmin,
 }: UsePostsOptions): Promise<Post[]> => {
+  // Use public_profiles view to avoid RLS issues
   let query = supabase
     .from("posts")
-    .select("*, profiles!posts_user_id_fkey(username), comments(count)")
+    .select("*, public_profiles!posts_user_id_fkey(username), comments(count)")
     .eq("post_type", postType);
 
   if (searchQuery) {
@@ -99,7 +99,11 @@ const fetchPosts = async ({
     return (fallbackData as Post[]) || [];
   }
 
-  return (data as Post[]) || [];
+  // Map public_profiles back to profiles for compatibility
+  return (data || []).map((post: any) => ({
+    ...post,
+    profiles: post.public_profiles,
+  })) as Post[];
 };
 
 export const usePosts = (options: UsePostsOptions) => {
@@ -123,13 +127,13 @@ export const usePosts = (options: UsePostsOptions) => {
   const query = useQuery({
     queryKey,
     queryFn: () => fetchPosts(options),
-    staleTime: 30 * 1000, // 30 seconds
-    gcTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 60 * 1000, // 1 minute
+    gcTime: 30 * 60 * 1000, // 30 minutes
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
-    retry: 2,
+    retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-    enabled: options.enabled !== false, // Default to enabled
+    enabled: options.enabled !== false,
   });
 
   const invalidatePosts = useCallback(() => {
@@ -153,7 +157,6 @@ export const usePosts = (options: UsePostsOptions) => {
           table: "posts",
         },
         () => {
-          // Debounce invalidation to prevent excessive refetches
           invalidatePosts();
         }
       )
@@ -173,51 +176,6 @@ export const usePosts = (options: UsePostsOptions) => {
     ...query,
     invalidatePosts,
   };
-};
-
-export const useUserData = () => {
-  const [authInitialized, setAuthInitialized] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  // Listen to auth state changes to properly handle session persistence
-  useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setCurrentUser(session?.user ?? null);
-        setAuthInitialized(true);
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setCurrentUser(session?.user ?? null);
-      setAuthInitialized(true);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  return useQuery({
-    queryKey: ["currentUser", currentUser?.id],
-    queryFn: async () => {
-      if (!currentUser) return { user: null, grade: null, isAdmin: false };
-
-      const [profileResult, roleResult] = await Promise.all([
-        supabase.from("profiles").select("grade").eq("id", currentUser.id).single(),
-        supabase.from("user_roles").select("role").eq("user_id", currentUser.id).eq("role", "admin").single(),
-      ]);
-
-      return {
-        user: currentUser,
-        grade: profileResult.data?.grade || null,
-        isAdmin: !!roleResult.data,
-      };
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 30 * 60 * 1000, // 30 minutes
-    enabled: authInitialized, // Only run query after auth is initialized
-  });
 };
 
 export const getTimeAgo = (dateString: string): string => {

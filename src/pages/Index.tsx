@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TrendingUp, Clock, Star, Loader2, Sparkles, Search } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
-import { usePosts, useUserData, getTimeAgo } from "@/hooks/usePosts";
+import { usePosts, getTimeAgo } from "@/hooks/usePosts";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const [sortBy, setSortBy] = useState<"hot" | "new" | "top">("hot");
@@ -24,8 +25,8 @@ const Index = () => {
   // Debounce search to prevent excessive API calls
   const searchQuery = useDebounce(searchInput, 300);
 
-  // Get user data with caching
-  const { data: userData } = useUserData();
+  // Get user data from auth context
+  const { profileData, isAdmin } = useAuth();
 
   // Get posts with React Query caching
   const { data: posts = [], isLoading: loading, invalidatePosts } = usePosts({
@@ -36,8 +37,8 @@ const Index = () => {
     selectedSubject,
     selectedGrade,
     selectedStream,
-    userGrade: userData?.grade,
-    isAdmin: userData?.isAdmin,
+    userGrade: profileData?.grade,
+    isAdmin,
   });
 
   const handleClearFilters = useCallback(() => {
