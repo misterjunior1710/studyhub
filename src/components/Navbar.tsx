@@ -16,7 +16,7 @@ interface NavbarProps {
 const Navbar = ({ onPostCreated }: NavbarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, username, profileData, isAdmin, signOut } = useAuth();
+  const { user, username, profileData, isAdmin, profileLoading, signOut } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -87,7 +87,11 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
                     <DropdownMenuLabel>
                       <div className="flex flex-col space-y-1">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-medium leading-none">{username || "User"}</p>
+                          {profileLoading ? (
+                            <div className="h-4 w-16 bg-muted animate-pulse rounded" />
+                          ) : (
+                            <p className="text-sm font-medium leading-none">{username || "User"}</p>
+                          )}
                           {isAdmin && (
                             <span className="text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded-full font-semibold">
                               ADMIN

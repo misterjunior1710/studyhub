@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -118,10 +119,9 @@ const StudyPost = memo(({
   onVoteChange,
 }: StudyPostProps) => {
   const navigate = useNavigate();
+  const { user, isAdmin } = useAuth();
   const [userVote, setUserVote] = useState<string | null>(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [user, setUser] = useState<{ id: string } | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [showSignInDialog, setShowSignInDialog] = useState(false);
   const mountedRef = useRef(true);
 
@@ -133,27 +133,15 @@ const StudyPost = memo(({
     };
   }, []);
 
+  // Only fetch vote/bookmark status, not user/admin (comes from context)
   useEffect(() => {
+    if (!user) return;
+    
     let isCancelled = false;
 
-    const checkUserStatus = async () => {
+    const fetchUserPostData = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (isCancelled || !mountedRef.current) return;
-        
-        setUser(user);
-        
-        if (!user) return;
-
-        // Batch requests for better performance
-        const [roleResult, voteResult, bookmarkResult] = await Promise.all([
-          supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", user.id)
-            .eq("role", "admin")
-            .maybeSingle(),
+        const [voteResult, bookmarkResult] = await Promise.all([
           supabase
             .from("votes")
             .select("vote_type")
@@ -170,20 +158,19 @@ const StudyPost = memo(({
 
         if (isCancelled || !mountedRef.current) return;
 
-        setIsAdmin(!!roleResult.data);
         if (voteResult.data) setUserVote(voteResult.data.vote_type);
         setIsBookmarked(!!bookmarkResult.data);
       } catch (error) {
-        console.error("Error checking user status:", error);
+        console.error("Error fetching post data:", error);
       }
     };
 
-    checkUserStatus();
+    fetchUserPostData();
 
     return () => {
       isCancelled = true;
     };
-  }, [id]);
+  }, [id, user]);
 
   const handleVote = useCallback(async (voteType: "up" | "down") => {
     if (!user) {

@@ -12,6 +12,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
+  profileLoading: boolean;
   isAdmin: boolean;
   username: string;
   profileData: {
@@ -30,6 +31,7 @@ const defaultAuthContext: AuthContextType = {
   user: null,
   session: null,
   isLoading: true,
+  profileLoading: false,
   isAdmin: false,
   username: "",
   profileData: {},
@@ -55,6 +57,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState("");
+  const [profileLoading, setProfileLoading] = useState(false);
   const [profileData, setProfileData] = useState<{
     country?: string;
     grade?: string;
@@ -66,6 +69,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Activity tracking refs
   const lastActivityRef = useRef<number>(Date.now());
   const activityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Prevent duplicate profile fetches
+  const fetchedUserIdRef = useRef<string | null>(null);
 
   // Debounced activity update
   const updateActivity = useCallback(() => {
@@ -82,47 +87,51 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const fetchUserProfile = useCallback(async (userId: string) => {
+    // Prevent duplicate fetches for the same user
+    if (fetchedUserIdRef.current === userId) return;
+    fetchedUserIdRef.current = userId;
+    
+    setProfileLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("username, country, grade, stream, avatar_url")
-        .eq("id", userId)
-        .maybeSingle();
+      const [profileResult, roleResult] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("username, country, grade, stream, avatar_url")
+          .eq("id", userId)
+          .maybeSingle(),
+        supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", userId)
+          .eq("role", "admin")
+          .maybeSingle()
+      ]);
 
-      if (error) {
-        console.error("Error fetching profile:", error);
+      if (profileResult.error) {
+        console.error("Error fetching profile:", profileResult.error);
         setUsername("");
         setProfileData({});
-        return;
-      }
-
-      if (data) {
-        setUsername(data.username || "");
+      } else if (profileResult.data) {
+        setUsername(profileResult.data.username || "");
         setProfileData({
-          country: data.country || undefined,
-          grade: data.grade || undefined,
-          stream: data.stream || undefined,
-          avatar_url: data.avatar_url || undefined,
+          country: profileResult.data.country || undefined,
+          grade: profileResult.data.grade || undefined,
+          stream: profileResult.data.stream || undefined,
+          avatar_url: profileResult.data.avatar_url || undefined,
         });
       } else {
         setUsername("");
         setProfileData({});
       }
 
-      // Check admin role
-      const { data: roleData } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId)
-        .eq("role", "admin")
-        .maybeSingle();
-
-      setIsAdmin(!!roleData);
+      setIsAdmin(!!roleResult.data);
     } catch (error) {
       console.error("Error in fetchUserProfile:", error);
       setUsername("");
       setProfileData({});
       setIsAdmin(false);
+    } finally {
+      setProfileLoading(false);
     }
   }, []);
 
@@ -278,6 +287,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         user,
         session,
         isLoading,
+        profileLoading,
         isAdmin,
         username,
         profileData,
