@@ -1,5 +1,5 @@
 import { memo, useState, useEffect, useCallback, useRef } from "react";
-import { ArrowUp, ArrowDown, MessageSquare, Share2, Bookmark, BookmarkCheck, Trash2, Flag, EyeOff } from "lucide-react";
+import { ArrowUp, ArrowDown, MessageSquare, Share2, Bookmark, BookmarkCheck, Trash2, Flag, EyeOff, LogIn } from "lucide-react";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,69 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import ReportPostDialog from "./ReportPostDialog";
+
+// Helper function to truncate HTML content
+const truncateContent = (html: string, maxLength: number = 150): { truncated: string; isTruncated: boolean } => {
+  // Strip HTML tags for length calculation
+  const textOnly = html.replace(/<[^>]*>/g, '');
+  if (textOnly.length <= maxLength) {
+    return { truncated: html, isTruncated: false };
+  }
+  
+  // Find a good breakpoint
+  const truncatedText = textOnly.substring(0, maxLength);
+  const lastSpace = truncatedText.lastIndexOf(' ');
+  const breakPoint = lastSpace > maxLength * 0.7 ? lastSpace : maxLength;
+  
+  return { truncated: textOnly.substring(0, breakPoint) + '...', isTruncated: true };
+};
+
+// Truncated content component for logged out users
+const TruncatedContent = ({ 
+  content, 
+  isLoggedIn, 
+  onSignInClick 
+}: { 
+  content: string; 
+  isLoggedIn: boolean; 
+  onSignInClick: () => void;
+}) => {
+  if (isLoggedIn) {
+    return (
+      <div 
+        className="prose prose-sm max-w-none text-foreground leading-relaxed"
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }}
+      />
+    );
+  }
+
+  const { truncated, isTruncated } = truncateContent(content);
+  
+  return (
+    <div className="space-y-3">
+      <p className="text-foreground leading-relaxed text-sm">{truncated}</p>
+      {isTruncated && (
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={onSignInClick}
+          className="gap-2"
+        >
+          <LogIn className="h-4 w-4" />
+          View Full Post
+        </Button>
+      )}
+    </div>
+  );
+};
 
 interface StudyPostProps {
   id: string;
@@ -60,6 +122,7 @@ const StudyPost = memo(({
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [user, setUser] = useState<{ id: string } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showSignInDialog, setShowSignInDialog] = useState(false);
   const mountedRef = useRef(true);
 
   // Cleanup on unmount
@@ -300,12 +363,13 @@ const StudyPost = memo(({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <div 
-          className="prose prose-sm max-w-none text-foreground leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }}
+        <TruncatedContent 
+          content={content} 
+          isLoggedIn={!!user} 
+          onSignInClick={() => setShowSignInDialog(true)} 
         />
 
-        {fileUrl && (
+        {user && fileUrl && (
           <figure className="border border-border rounded-lg p-4 bg-muted/50">
             {fileUrl.endsWith('.pdf') ? (
               <a
@@ -396,6 +460,29 @@ const StudyPost = memo(({
           )}
         </div>
       </CardContent>
+
+      {/* Sign In Dialog for logged out users */}
+      <Dialog open={showSignInDialog} onOpenChange={setShowSignInDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <LogIn className="h-5 w-5" />
+              Sign In Required
+            </DialogTitle>
+            <DialogDescription className="text-base pt-2">
+              Sign in to view full post, vote, or comment.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 pt-4">
+            <Button onClick={() => navigate("/auth")} className="w-full">
+              Sign In
+            </Button>
+            <Button variant="outline" onClick={() => setShowSignInDialog(false)} className="w-full">
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 });
