@@ -1,5 +1,5 @@
 import { memo, useState, useEffect, useCallback, useRef } from "react";
-import { ArrowUp, ArrowDown, MessageSquare, Share2, Bookmark, BookmarkCheck, Trash2, Flag, EyeOff, LogIn } from "lucide-react";
+import { ArrowUp, ArrowDown, MessageSquare, Share2, Bookmark, BookmarkCheck, Trash2, Flag, EyeOff, LogIn, Pencil } from "lucide-react";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +27,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import ReportPostDialog from "./ReportPostDialog";
+import EditPostDialog from "./EditPostDialog";
 
 // Helper function to truncate HTML content
 const truncateContent = (html: string, maxLength: number = 150): { truncated: string; isTruncated: boolean } => {
@@ -123,7 +124,10 @@ const StudyPost = memo(({
   const [userVote, setUserVote] = useState<string | null>(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showSignInDialog, setShowSignInDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const mountedRef = useRef(true);
+
+  const isAuthor = user?.id === authorId;
 
   // Cleanup on unmount
   useEffect(() => {
@@ -417,7 +421,18 @@ const StudyPost = memo(({
                 )}
                 {isBookmarked ? "Saved" : "Save"}
               </Button>
-              {!isAdmin && <ReportPostDialog postId={id} postTitle={title} />}
+              {isAuthor && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => setShowEditDialog(true)}
+                >
+                  <Pencil className="h-4 w-4" aria-hidden="true" />
+                  Edit
+                </Button>
+              )}
+              {!isAdmin && !isAuthor && <ReportPostDialog postId={id} postTitle={title} />}
             </>
           ) : (
             <>
@@ -496,6 +511,16 @@ const StudyPost = memo(({
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Post Dialog */}
+      <EditPostDialog
+        postId={id}
+        currentTitle={title}
+        currentContent={content}
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        onPostUpdated={onVoteChange}
+      />
     </Card>
   );
 });
