@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowUp, ArrowDown, Share2, Bookmark, ArrowLeft, Loader2, Trash2 } from "lucide-react";
+import { ArrowUp, ArrowDown, Share2, Bookmark, ArrowLeft, Loader2, Trash2, Lock, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -20,6 +20,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+
+// Helper to truncate content for logged out users
+const truncateContent = (html: string, maxLength: number = 200): string => {
+  const textOnly = html.replace(/<[^>]*>/g, '');
+  if (textOnly.length <= maxLength) return html;
+  const truncatedText = textOnly.substring(0, maxLength);
+  const lastSpace = truncatedText.lastIndexOf(' ');
+  const breakPoint = lastSpace > maxLength * 0.7 ? lastSpace : maxLength;
+  return textOnly.substring(0, breakPoint) + '...';
+};
 
 interface Post {
   id: string;
@@ -56,13 +66,25 @@ const Post = () => {
   const [submitting, setSubmitting] = useState(false);
   const [userVote, setUserVote] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = useState<{ id: string } | null>(null);
 
   useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    checkAuth();
     loadPost();
-    loadComments();
-    checkUserVote();
-    checkAdminStatus();
+    // Only load comments if user is authenticated
   }, [id]);
+
+  useEffect(() => {
+    if (user) {
+      loadComments();
+      checkUserVote();
+      checkAdminStatus();
+    }
+  }, [id, user]);
 
   const loadPost = async () => {
     setLoading(true);
@@ -292,25 +314,34 @@ const Post = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex gap-4">
-              <div className="flex flex-col items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={`h-8 w-8 ${userVote === "up" ? "text-success" : "hover:text-success"}`}
-                  onClick={() => handleVote("up")}
-                >
-                  <ArrowUp className="h-5 w-5" />
-                </Button>
-                <span className="text-sm font-semibold">{netVotes}</span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={`h-8 w-8 ${userVote === "down" ? "text-destructive" : "hover:text-destructive"}`}
-                  onClick={() => handleVote("down")}
-                >
-                  <ArrowDown className="h-5 w-5" />
-                </Button>
-              </div>
+              {/* Vote section - only for logged in users */}
+              {user ? (
+                <div className="flex flex-col items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`h-8 w-8 ${userVote === "up" ? "text-success" : "hover:text-success"}`}
+                    onClick={() => handleVote("up")}
+                  >
+                    <ArrowUp className="h-5 w-5" />
+                  </Button>
+                  <span className="text-sm font-semibold">{netVotes}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`h-8 w-8 ${userVote === "down" ? "text-destructive" : "hover:text-destructive"}`}
+                    onClick={() => handleVote("down")}
+                  >
+                    <ArrowDown className="h-5 w-5" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-1 opacity-50">
+                  <ArrowUp className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">•</span>
+                  <ArrowDown className="h-5 w-5 text-muted-foreground" />
+                </div>
+              )}
 
               <div className="flex-1 space-y-4">
                 <div className="flex flex-wrap gap-2">
@@ -323,24 +354,44 @@ const Post = () => {
                 <h1 className="text-2xl font-bold">{post.title}</h1>
 
                 <p className="text-sm text-muted-foreground">
-                  Posted by u/{post.profiles.username} •{" "}
+                  Posted by u/{post.profiles?.username ?? "User"} •{" "}
                   {new Date(post.created_at).toLocaleDateString()}
                 </p>
 
-                <div 
-                  className="prose prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
-                />
+                {/* Content - truncated for logged out users */}
+                {user ? (
+                  <div 
+                    className="prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
+                  />
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-foreground leading-relaxed">
+                      {truncateContent(post.content)}
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => navigate("/auth")}
+                      className="gap-2"
+                    >
+                      <LogIn className="h-4 w-4" />
+                      Sign in to read full post
+                    </Button>
+                  </div>
+                )}
 
                 <div className="flex items-center gap-2 pt-4 border-t">
                   <Button variant="ghost" size="sm" className="gap-2">
                     <Share2 className="h-4 w-4" />
                     Share
                   </Button>
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    <Bookmark className="h-4 w-4" />
-                    Save
-                  </Button>
+                  {user && (
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <Bookmark className="h-4 w-4" />
+                      Save
+                    </Button>
+                  )}
                   
                   {isAdmin && (
                     <AlertDialog>
@@ -372,64 +423,81 @@ const Post = () => {
           </CardContent>
         </Card>
 
-        <div className="mt-6 space-y-4">
-          <h2 className="text-xl font-semibold">Comments ({comments.length})</h2>
+        {/* Comments section - only for logged in users */}
+        {user ? (
+          <div className="mt-6 space-y-4">
+            <h2 className="text-xl font-semibold">Comments ({comments.length})</h2>
 
-          <form onSubmit={handleComment} className="space-y-2">
-            <Textarea
-              placeholder="What are your thoughts?"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              rows={3}
-            />
-            <Button type="submit" disabled={submitting}>
-              {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-              Comment
-            </Button>
-          </form>
+            <form onSubmit={handleComment} className="space-y-2">
+              <Textarea
+                placeholder="What are your thoughts?"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                rows={3}
+              />
+              <Button type="submit" disabled={submitting}>
+                {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                Comment
+              </Button>
+            </form>
 
-          <div className="space-y-3">
-            {comments.map((comment) => (
-              <Card key={comment.id}>
-                <CardContent className="pt-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground mb-2">
-                        u/{comment.profiles?.username ?? "User"} •{" "}
-                        {new Date(comment.created_at).toLocaleDateString()}
-                      </p>
-                      <p className="whitespace-pre-wrap">{comment.content}</p>
+            <div className="space-y-3">
+              {comments.map((comment) => (
+                <Card key={comment.id}>
+                  <CardContent className="pt-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground mb-2">
+                          u/{comment.profiles?.username ?? "User"} •{" "}
+                          {new Date(comment.created_at).toLocaleDateString()}
+                        </p>
+                        <p className="whitespace-pre-wrap">{comment.content}</p>
+                      </div>
+                      
+                      {isAdmin && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete this comment?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete the comment.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDeleteComment(comment.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
                     </div>
-                    
-                    {isAdmin && (
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete this comment?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete the comment.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDeleteComment(comment.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
+        ) : (
+          <Card className="mt-6">
+            <CardContent className="py-8 text-center">
+              <Lock className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
+              <h3 className="text-lg font-semibold mb-2">Sign in to view comments</h3>
+              <p className="text-muted-foreground mb-4">
+                Join the discussion by signing in to your account
+              </p>
+              <Button onClick={() => navigate("/auth")} className="gap-2">
+                <LogIn className="h-4 w-4" />
+                Sign In
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

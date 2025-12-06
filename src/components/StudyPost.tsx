@@ -308,27 +308,36 @@ const StudyPost = memo(({
     <Card className="hover:shadow-lg transition-all duration-300">
       <CardHeader className="pb-3">
         <div className="flex gap-3">
-          <div className="flex flex-col items-center gap-1 pt-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`h-8 w-8 ${userVote === "up" ? "text-success" : "hover:text-success"}`}
-              onClick={() => handleVote("up")}
-              aria-label="Upvote"
-            >
-              <ArrowUp className="h-5 w-5" aria-hidden="true" />
-            </Button>
-            <span className="text-sm font-semibold" aria-label={`${netVotes} votes`}>{netVotes}</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`h-8 w-8 ${userVote === "down" ? "text-destructive" : "hover:text-destructive"}`}
-              onClick={() => handleVote("down")}
-              aria-label="Downvote"
-            >
-              <ArrowDown className="h-5 w-5" aria-hidden="true" />
-            </Button>
-          </div>
+          {/* Vote section - only show for logged in users */}
+          {user ? (
+            <div className="flex flex-col items-center gap-1 pt-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-8 w-8 ${userVote === "up" ? "text-success" : "hover:text-success"}`}
+                onClick={() => handleVote("up")}
+                aria-label="Upvote"
+              >
+                <ArrowUp className="h-5 w-5" aria-hidden="true" />
+              </Button>
+              <span className="text-sm font-semibold" aria-label={`${netVotes} votes`}>{netVotes}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-8 w-8 ${userVote === "down" ? "text-destructive" : "hover:text-destructive"}`}
+                onClick={() => handleVote("down")}
+                aria-label="Downvote"
+              >
+                <ArrowDown className="h-5 w-5" aria-hidden="true" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-1 pt-1 opacity-50">
+              <ArrowUp className="h-5 w-5 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">•</span>
+              <ArrowDown className="h-5 w-5 text-muted-foreground" />
+            </div>
+          )}
 
           <div className="flex-1 space-y-2">
             <div className="flex flex-wrap gap-2">
@@ -392,36 +401,53 @@ const StudyPost = memo(({
         )}
 
         <div className="flex items-center gap-2 pt-2 border-t border-border">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-2"
-            onClick={navigateToPost}
-          >
-            <MessageSquare className="h-4 w-4" aria-hidden="true" />
-            {comments} Comments
-          </Button>
-          <Button variant="ghost" size="sm" className="gap-2">
-            <Share2 className="h-4 w-4" aria-hidden="true" />
-            Share
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-2"
-            onClick={handleBookmark}
-            aria-label={isBookmarked ? "Remove bookmark" : "Bookmark post"}
-          >
-            {isBookmarked ? (
-              <BookmarkCheck className="h-4 w-4 fill-current" aria-hidden="true" />
-            ) : (
-              <Bookmark className="h-4 w-4" aria-hidden="true" />
-            )}
-            {isBookmarked ? "Saved" : "Save"}
-          </Button>
-          
-          {user && !isAdmin && (
-            <ReportPostDialog postId={id} postTitle={title} />
+          {user ? (
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2"
+                onClick={navigateToPost}
+              >
+                <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                {comments} Comments
+              </Button>
+              <Button variant="ghost" size="sm" className="gap-2">
+                <Share2 className="h-4 w-4" aria-hidden="true" />
+                Share
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2"
+                onClick={handleBookmark}
+                aria-label={isBookmarked ? "Remove bookmark" : "Bookmark post"}
+              >
+                {isBookmarked ? (
+                  <BookmarkCheck className="h-4 w-4 fill-current" aria-hidden="true" />
+                ) : (
+                  <Bookmark className="h-4 w-4" aria-hidden="true" />
+                )}
+                {isBookmarked ? "Saved" : "Save"}
+              </Button>
+              {!isAdmin && <ReportPostDialog postId={id} postTitle={title} />}
+            </>
+          ) : (
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2"
+                onClick={() => setShowSignInDialog(true)}
+              >
+                <LogIn className="h-4 w-4" aria-hidden="true" />
+                Sign in to interact
+              </Button>
+              <Button variant="ghost" size="sm" className="gap-2">
+                <Share2 className="h-4 w-4" aria-hidden="true" />
+                Share
+              </Button>
+            </>
           )}
           
           {isAdmin && (
