@@ -1,4 +1,4 @@
-import { Home, HelpCircle, Laugh, Users, Trophy, UserPlus, Menu, Timer } from "lucide-react";
+import { Home, HelpCircle, Users, Trophy, UserPlus, Menu, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -20,7 +20,6 @@ const MobileNav = () => {
   const navItems = [
     { path: "/", label: "Home", icon: Home },
     { path: "/questions", label: "Questions", icon: HelpCircle },
-    { path: "/memes", label: "Memes", icon: Laugh },
     { path: "/groups", label: "Groups", icon: Users },
     { path: "/leaderboard", label: "Leaderboard", icon: Trophy },
     { path: "/friends", label: "Friends", icon: UserPlus },

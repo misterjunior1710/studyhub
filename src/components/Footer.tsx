@@ -47,13 +47,13 @@ const Footer = () => {
             <h4 className="font-semibold text-foreground">Community</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/memes" className="text-muted-foreground hover:text-primary transition-colors">
-                  Memes
+                <Link to="/friends" className="text-muted-foreground hover:text-primary transition-colors">
+                  Friends
                 </Link>
               </li>
               <li>
-                <Link to="/friends" className="text-muted-foreground hover:text-primary transition-colors">
-                  Friends
+                <Link to="/study" className="text-muted-foreground hover:text-primary transition-colors">
+                  Study Mode
                 </Link>
               </li>
               <li>

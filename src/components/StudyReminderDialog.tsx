@@ -6,7 +6,7 @@ import { BookOpen, Timer } from "lucide-react";
 const messages = [
   "You've been scrolling for a bit! Ready to get back on track? 🎯",
   "Hey friend! Your study goals are waiting for you! 📖",
-  "Memes are fun, but so is crushing your goals! 💪",
+  "Breaks are great, but so is crushing your goals! 💪",
   "A little break is great—just checking in! Ready to focus? ✨",
   "Your future self will thank you for getting back to studying! 🌟",
 ];

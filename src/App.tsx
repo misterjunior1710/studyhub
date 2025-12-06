@@ -18,7 +18,6 @@ import Auth from "./pages/Auth";
 // Lazy load non-critical pages for better initial load
 const Post = lazy(() => import("./pages/Post"));
 const Questions = lazy(() => import("./pages/Questions"));
-const Memes = lazy(() => import("./pages/Memes"));
 const Groups = lazy(() => import("./pages/Groups"));
 const GroupChat = lazy(() => import("./pages/GroupChat"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -103,7 +102,6 @@ const App = () => (
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/post/:id" element={<Post />} />
                   <Route path="/questions" element={<Questions />} />
-                  <Route path="/memes" element={<Memes />} />
                   <Route path="/groups" element={<Groups />} />
                   <Route path="/groups/:id" element={<GroupChat />} />
                   <Route path="/settings" element={<Settings />} />
