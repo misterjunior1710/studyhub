@@ -482,7 +482,6 @@ export type Database = {
           daily_xp_date: string | null
           date_format: string | null
           grade: string | null
-          hide_memes: boolean | null
           id: string
           is_banned: boolean | null
           is_public: boolean | null
@@ -521,7 +520,6 @@ export type Database = {
           daily_xp_date?: string | null
           date_format?: string | null
           grade?: string | null
-          hide_memes?: boolean | null
           id: string
           is_banned?: boolean | null
           is_public?: boolean | null
@@ -560,7 +558,6 @@ export type Database = {
           daily_xp_date?: string | null
           date_format?: string | null
           grade?: string | null
-          hide_memes?: boolean | null
           id?: string
           is_banned?: boolean | null
           is_public?: boolean | null

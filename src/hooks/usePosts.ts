@@ -22,7 +22,7 @@ interface Post {
 }
 
 interface UsePostsOptions {
-  postType: "general" | "doubt" | "meme";
+  postType: "general" | "doubt";
   sortBy?: "hot" | "new" | "top";
   searchQuery?: string;
   selectedCountry?: string | null;

@@ -60,7 +60,6 @@ interface ProfileData {
   notify_announcements: boolean;
   notify_weekly_report: boolean;
   show_verified_only: boolean;
-  hide_memes: boolean;
   blocked_subjects: string[];
   safe_mode: boolean;
   daily_reminder_time: string;
@@ -113,7 +112,6 @@ const Settings = () => {
     notify_announcements: true,
     notify_weekly_report: true,
     show_verified_only: false,
-    hide_memes: false,
     blocked_subjects: [],
     safe_mode: false,
     daily_reminder_time: "09:00",
@@ -201,7 +199,6 @@ const Settings = () => {
         notify_announcements: profileData.notify_announcements ?? true,
         notify_weekly_report: profileData.notify_weekly_report ?? true,
         show_verified_only: profileData.show_verified_only ?? false,
-        hide_memes: profileData.hide_memes ?? false,
         blocked_subjects: profileData.blocked_subjects || [],
         safe_mode: profileData.safe_mode ?? false,
         daily_reminder_time: profileData.daily_reminder_time || "09:00",
@@ -280,7 +277,6 @@ const Settings = () => {
         notify_announcements: profile.notify_announcements,
         notify_weekly_report: profile.notify_weekly_report,
         show_verified_only: profile.show_verified_only,
-        hide_memes: profile.hide_memes,
         blocked_subjects: profile.blocked_subjects,
         safe_mode: profile.safe_mode,
         daily_reminder_time: profile.daily_reminder_time,
@@ -699,7 +695,6 @@ const Settings = () => {
                 <CardContent className="space-y-6">
                   {[
                     { key: 'show_verified_only', title: 'Show Only Verified Posts', desc: 'Only see posts from verified users' },
-                    { key: 'hide_memes', title: 'Hide Memes/Off-topic', desc: 'Filter out meme and off-topic posts' },
                     { key: 'safe_mode', title: 'Safe Mode (for Juniors)', desc: 'Extra content filtering for younger users' },
                   ].map(({ key, title, desc }) => (
                     <div key={key} className="flex items-center justify-between">

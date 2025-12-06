@@ -37,7 +37,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria", "Other"];
   const postTypes = [
     { value: "doubt", label: "Ask a Question" },
-    { value: "meme", label: "Share a Meme" },
     { value: "general", label: "General Post" }
   ];
 
