@@ -435,37 +435,37 @@ const Settings = () => {
           )}
 
           <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-5 lg:grid-cols-8' : 'grid-cols-4 lg:grid-cols-7'} lg:w-auto`}>
-              <TabsTrigger value="profile" className="gap-1">
-                <User className="h-4 w-4" />
+            <TabsList className={`flex overflow-x-auto lg:grid lg:w-auto gap-1 ${isAdmin ? 'lg:grid-cols-8' : 'lg:grid-cols-7'}`}>
+              <TabsTrigger value="profile" className="flex-shrink-0 gap-1 px-2 sm:px-3">
+                <User className="h-4 w-4 shrink-0" />
                 <span className="hidden lg:inline">Profile</span>
               </TabsTrigger>
-              <TabsTrigger value="appearance" className="gap-1">
-                <Palette className="h-4 w-4" />
+              <TabsTrigger value="appearance" className="flex-shrink-0 gap-1 px-2 sm:px-3">
+                <Palette className="h-4 w-4 shrink-0" />
                 <span className="hidden lg:inline">Theme</span>
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="gap-1">
-                <Bell className="h-4 w-4" />
+              <TabsTrigger value="notifications" className="flex-shrink-0 gap-1 px-2 sm:px-3">
+                <Bell className="h-4 w-4 shrink-0" />
                 <span className="hidden lg:inline">Alerts</span>
               </TabsTrigger>
-              <TabsTrigger value="privacy" className="gap-1">
-                <Shield className="h-4 w-4" />
+              <TabsTrigger value="privacy" className="flex-shrink-0 gap-1 px-2 sm:px-3">
+                <Shield className="h-4 w-4 shrink-0" />
                 <span className="hidden lg:inline">Privacy</span>
               </TabsTrigger>
-              <TabsTrigger value="goals" className="gap-1">
-                <Target className="h-4 w-4" />
+              <TabsTrigger value="goals" className="flex-shrink-0 gap-1 px-2 sm:px-3">
+                <Target className="h-4 w-4 shrink-0" />
                 <span className="hidden lg:inline">Goals</span>
               </TabsTrigger>
-              <TabsTrigger value="language" className="gap-1">
-                <Globe className="h-4 w-4" />
+              <TabsTrigger value="language" className="flex-shrink-0 gap-1 px-2 sm:px-3">
+                <Globe className="h-4 w-4 shrink-0" />
                 <span className="hidden lg:inline">Region</span>
               </TabsTrigger>
-              <TabsTrigger value="data" className="gap-1">
-                <Download className="h-4 w-4" />
+              <TabsTrigger value="data" className="flex-shrink-0 gap-1 px-2 sm:px-3">
+                <Download className="h-4 w-4 shrink-0" />
                 <span className="hidden lg:inline">Data</span>
               </TabsTrigger>
               {isAdmin && (
-                <TabsTrigger value="moderation" className="gap-1 text-destructive">
+                <TabsTrigger value="moderation" className="flex-shrink-0 gap-1 px-2 sm:px-3 text-destructive">
                   <AlertTriangle className="h-4 w-4" />
                   <span className="hidden lg:inline">Moderation</span>
                 </TabsTrigger>
