@@ -18,7 +18,7 @@ const inappropriatePatterns = [
 
 // Spam detection patterns
 const spamPatterns = [
-  /(.)\1{4,}/gi, // Repeated characters (e.g., "aaaaaaa")
+  /([a-zA-Z0-9])\1{7,}/gi, // Repeated alphanumeric characters 8+ times (allows punctuation like !!! or ???)
   /\b(buy|sell|discount|offer|deal|promo|coupon)\b.*\b(now|today|limited)\b/gi,
   /\b(make\s*money|earn\s*cash|get\s*rich)\b/gi,
   /\b(telegram|whatsapp|discord)\s*[@:]?\s*[\w]+/gi,
