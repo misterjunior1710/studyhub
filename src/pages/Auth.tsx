@@ -112,7 +112,7 @@ const Auth = () => {
         }
       });
       if (error) throw error;
-      toast.success("Account created! You can now log in.");
+      toast.success("Please check your email to verify your account before signing in.");
       setEmail("");
       setPassword("");
       setUsername("");
@@ -146,7 +146,11 @@ const Auth = () => {
       toast.success("Welcome back!");
       navigate("/");
     } catch (error: any) {
-      toast.error(error.message || "Failed to sign in");
+      if (error.message?.includes("Email not confirmed")) {
+        toast.error("Please verify your email before signing in. Check your inbox for the verification link.");
+      } else {
+        toast.error(error.message || "Failed to sign in");
+      }
     } finally {
       setLoading(false);
     }
