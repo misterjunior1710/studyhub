@@ -307,46 +307,45 @@ const StudyMode = () => {
               </div>
 
               {/* Timer Controls */}
-              <div className="flex justify-center gap-3">
+              <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3">
                 {!isRunning ? (
                   <Button 
-                    size="lg" 
                     onClick={startTimer}
                     disabled={createSession.isPending}
-                    className="min-w-32"
+                    className="px-4 sm:px-6 h-10 sm:h-11"
                   >
                     {createSession.isPending ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                     ) : (
                       <>
-                        <Play className="h-5 w-5 mr-2" />
+                        <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2" />
                         Start
                       </>
                     )}
                   </Button>
                 ) : (
-                  <Button size="lg" variant="outline" onClick={pauseTimer} className="min-w-32">
-                    <Pause className="h-5 w-5 mr-2" />
+                  <Button variant="outline" onClick={pauseTimer} className="px-4 sm:px-6 h-10 sm:h-11">
+                    <Pause className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2" />
                     Pause
                   </Button>
                 )}
                 <Button 
-                  size="lg" 
                   variant="destructive" 
                   onClick={stopTimer}
                   disabled={!currentSessionId || updateSession.isPending}
+                  className="px-4 sm:px-6 h-10 sm:h-11"
                 >
                   {updateSession.isPending ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                   ) : (
                     <>
-                      <Square className="h-5 w-5 mr-2" />
+                      <Square className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2" />
                       Stop
                     </>
                   )}
                 </Button>
-                <Button size="lg" variant="ghost" onClick={resetTimer} disabled={isRunning}>
-                  <RotateCcw className="h-5 w-5" />
+                <Button variant="ghost" onClick={resetTimer} disabled={isRunning} className="h-10 sm:h-11 px-3">
+                  <RotateCcw className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               </div>
             </CardContent>
