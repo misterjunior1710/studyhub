@@ -78,6 +78,11 @@ const Footer = () => {
                   Terms & Conditions
                 </Link>
               </li>
+              <li>
+                <Link to="/support" className="text-muted-foreground hover:text-primary transition-colors">
+                  Need Help?
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
