@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { Resend } from "https://esm.sh/resend@2.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -81,6 +82,52 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     console.log("Support request saved successfully:", data.id);
+
+    // Send email notification using Resend
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (resendApiKey) {
+      try {
+        const resend = new Resend(resendApiKey);
+        const timestamp = new Date().toLocaleString("en-US", {
+          dateStyle: "full",
+          timeStyle: "short",
+        });
+
+        const emailResponse = await resend.emails.send({
+          from: "StudyHub Support <support@estukel.resend.app>",
+          to: ["studyhub.community.web@gmail.com"],
+          subject: `[Support Request] ${category}: ${subject}`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #7c3aed;">New Support Request</h2>
+              <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <p><strong>From:</strong> ${name}</p>
+                <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+                <p><strong>Category:</strong> ${category}</p>
+                <p><strong>Subject:</strong> ${subject}</p>
+                <p><strong>Submitted:</strong> ${timestamp}</p>
+                <p><strong>Request ID:</strong> ${data.id}</p>
+              </div>
+              <h3 style="color: #374151;">Message:</h3>
+              <div style="background-color: #fff; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                <p style="white-space: pre-wrap;">${message}</p>
+              </div>
+              <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;" />
+              <p style="color: #6b7280; font-size: 14px;">
+                Reply directly to this email or contact the user at <a href="mailto:${email}">${email}</a>
+              </p>
+            </div>
+          `,
+        });
+
+        console.log("Email notification sent successfully:", emailResponse);
+      } catch (emailError: any) {
+        console.error("Failed to send email notification:", emailError.message);
+        // Don't fail the request if email fails - the data is already saved
+      }
+    } else {
+      console.warn("RESEND_API_KEY not configured, skipping email notification");
+    }
 
     return new Response(
       JSON.stringify({ success: true, message: "Support request submitted successfully", id: data.id }),
