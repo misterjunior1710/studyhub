@@ -108,25 +108,34 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          is_accepted: boolean | null
           post_id: string
+          quality_score: number | null
           updated_at: string
           user_id: string
+          xp_awarded: boolean | null
         }
         Insert: {
           content: string
           created_at?: string
           id?: string
+          is_accepted?: boolean | null
           post_id: string
+          quality_score?: number | null
           updated_at?: string
           user_id: string
+          xp_awarded?: boolean | null
         }
         Update: {
           content?: string
           created_at?: string
           id?: string
+          is_accepted?: boolean | null
           post_id?: string
+          quality_score?: number | null
           updated_at?: string
           user_id?: string
+          xp_awarded?: boolean | null
         }
         Relationships: [
           {
@@ -470,6 +479,7 @@ export type Database = {
           created_at: string
           daily_hours_target: number | null
           daily_reminder_time: string | null
+          daily_xp_date: string | null
           date_format: string | null
           grade: string | null
           hide_memes: boolean | null
@@ -494,6 +504,7 @@ export type Database = {
           timezone: string | null
           username: string | null
           weekly_study_goal: number | null
+          weekly_xp_last_reset: string | null
         }
         Insert: {
           allow_dms?: boolean | null
@@ -507,6 +518,7 @@ export type Database = {
           created_at?: string
           daily_hours_target?: number | null
           daily_reminder_time?: string | null
+          daily_xp_date?: string | null
           date_format?: string | null
           grade?: string | null
           hide_memes?: boolean | null
@@ -531,6 +543,7 @@ export type Database = {
           timezone?: string | null
           username?: string | null
           weekly_study_goal?: number | null
+          weekly_xp_last_reset?: string | null
         }
         Update: {
           allow_dms?: boolean | null
@@ -544,6 +557,7 @@ export type Database = {
           created_at?: string
           daily_hours_target?: number | null
           daily_reminder_time?: string | null
+          daily_xp_date?: string | null
           date_format?: string | null
           grade?: string | null
           hide_memes?: boolean | null
@@ -568,6 +582,7 @@ export type Database = {
           timezone?: string | null
           username?: string | null
           weekly_study_goal?: number | null
+          weekly_xp_last_reset?: string | null
         }
         Relationships: []
       }
@@ -710,6 +725,30 @@ export type Database = {
           },
         ]
       }
+      user_xp_totals: {
+        Row: {
+          last_updated_at: string
+          total_xp: number
+          user_id: string
+          week_start: string
+          weekly_xp: number
+        }
+        Insert: {
+          last_updated_at?: string
+          total_xp?: number
+          user_id: string
+          week_start?: string
+          weekly_xp?: number
+        }
+        Update: {
+          last_updated_at?: string
+          total_xp?: number
+          user_id?: string
+          week_start?: string
+          weekly_xp?: number
+        }
+        Relationships: []
+      }
       votes: {
         Row: {
           created_at: string
@@ -741,6 +780,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      xp_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          idempotency_key: string
+          metadata: Json | null
+          source_id: string | null
+          source_type: string | null
+          user_id: string
+          xp_amount: number
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          idempotency_key: string
+          metadata?: Json | null
+          source_id?: string | null
+          source_type?: string | null
+          user_id: string
+          xp_amount: number
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          idempotency_key?: string
+          metadata?: Json | null
+          source_id?: string | null
+          source_type?: string | null
+          user_id?: string
+          xp_amount?: number
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -788,6 +863,21 @@ export type Database = {
       }
     }
     Functions: {
+      award_xp: {
+        Args: {
+          p_event_type: string
+          p_metadata?: Json
+          p_source_id?: string
+          p_source_type?: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
+      get_daily_answer_xp_remaining: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
+      get_xp_tier: { Args: { p_event_type: string }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -804,6 +894,7 @@ export type Database = {
         Args: { _group_id: string; _user_id: string }
         Returns: boolean
       }
+      reset_weekly_xp: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
