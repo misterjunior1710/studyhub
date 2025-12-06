@@ -1,7 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "https://esm.sh/resend@2.0.0";
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,8 +13,6 @@ interface SupportRequest {
   subject: string;
   message: string;
 }
-
-const SUPPORT_EMAIL = "support@yourdomain.com"; // Update this to your actual support email
 
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
@@ -48,66 +44,52 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Processing support request from:", email, "Category:", category);
 
-    // Send email to support team
-    const supportEmailResponse = await resend.emails.send({
-      from: "StudyHub Support <onboarding@resend.dev>",
-      to: [SUPPORT_EMAIL],
-      subject: `[${category}] ${subject}`,
-      html: `
-        <h2>New Support Request</h2>
-        <p><strong>From:</strong> ${name} (${email})</p>
-        <p><strong>Category:</strong> ${category}</p>
-        <p><strong>Subject:</strong> ${subject}</p>
-        <hr/>
-        <h3>Message:</h3>
-        <p>${message.replace(/\n/g, '<br/>')}</p>
-        <hr/>
-        <p style="color: #666; font-size: 12px;">This message was sent via the StudyHub Support form.</p>
-      `,
-    });
+    // Create Supabase client with service role key
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-    if (supportEmailResponse.error) {
-      console.error("Failed to send support email:", supportEmailResponse.error);
-      throw new Error("Failed to send email to support team");
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error("Missing Supabase environment variables");
+      return new Response(
+        JSON.stringify({ error: "Server configuration error" }),
+        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
     }
 
-    console.log("Support email sent successfully:", supportEmailResponse);
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Send confirmation email to user
-    const confirmationEmailResponse = await resend.emails.send({
-      from: "StudyHub <onboarding@resend.dev>",
-      to: [email],
-      subject: "We received your support request",
-      html: `
-        <h2>Thank you for contacting us, ${name}!</h2>
-        <p>We have received your support request and will get back to you as soon as possible.</p>
-        <p><strong>Category:</strong> ${category}</p>
-        <p><strong>Subject:</strong> ${subject}</p>
-        <hr/>
-        <p>Your message:</p>
-        <blockquote style="border-left: 3px solid #ccc; padding-left: 10px; color: #666;">
-          ${message.replace(/\n/g, '<br/>')}
-        </blockquote>
-        <hr/>
-        <p>Best regards,<br/>The StudyHub Team</p>
-      `,
-    });
+    // Insert support request into database
+    const { data, error: dbError } = await supabase
+      .from("support_requests")
+      .insert({
+        name,
+        email,
+        category,
+        subject,
+        message,
+        status: "pending"
+      })
+      .select()
+      .single();
 
-    if (confirmationEmailResponse.error) {
-      console.warn("Failed to send confirmation email:", confirmationEmailResponse.error);
-      // Don't throw - support email was sent successfully
-    } else {
-      console.log("Confirmation email sent successfully:", confirmationEmailResponse);
+    if (dbError) {
+      console.error("Failed to save support request:", dbError);
+      return new Response(
+        JSON.stringify({ error: "Failed to save support request" }),
+        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
     }
+
+    console.log("Support request saved successfully:", data.id);
 
     return new Response(
-      JSON.stringify({ success: true, message: "Support request sent successfully" }),
+      JSON.stringify({ success: true, message: "Support request submitted successfully", id: data.id }),
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   } catch (error: any) {
     console.error("Error in send-support-request function:", error);
     return new Response(
-      JSON.stringify({ error: error.message || "Failed to send support request" }),
+      JSON.stringify({ error: error.message || "Failed to submit support request" }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
