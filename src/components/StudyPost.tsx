@@ -327,11 +327,11 @@ const StudyPost = memo(({
           )}
 
           <div className="flex-1 space-y-2">
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary">{subject}</Badge>
-              <Badge variant="outline">{grade}</Badge>
-              <Badge variant="outline">{stream}</Badge>
-              <Badge variant="outline">{country}</Badge>
+            <div className="flex flex-wrap gap-2 max-w-full">
+              <Badge variant="secondary" className="text-xs">{subject}</Badge>
+              <Badge variant="outline" className="text-xs">{grade}</Badge>
+              <Badge variant="outline" className="text-xs">{stream}</Badge>
+              <Badge variant="outline" className="text-xs">{country}</Badge>
             </div>
             <h2
               className="text-lg font-semibold leading-tight hover:text-primary cursor-pointer"
