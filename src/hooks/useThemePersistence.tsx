@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 const themeColors: Record<string, { primary: string; accent: string }> = {
@@ -22,44 +23,29 @@ export const applyThemeColor = (colorName: string) => {
 };
 
 export const useThemePersistence = () => {
+  const { user } = useAuth();
+
   useEffect(() => {
     const loadUserTheme = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
+      if (!user) return;
+
+      try {
         const { data: profile } = await supabase
           .from("profiles")
           .select("theme_color")
           .eq("id", user.id)
           .maybeSingle();
-        
+
         if (profile?.theme_color) {
           applyThemeColor(profile.theme_color);
         }
+      } catch (error) {
+        console.error("Error loading theme:", error);
       }
     };
 
     loadUserTheme();
-
-    // Also listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("theme_color")
-          .eq("id", session.user.id)
-          .maybeSingle();
-        
-        if (profile?.theme_color) {
-          applyThemeColor(profile.theme_color);
-        }
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+  }, [user]);
 };
 
 export default useThemePersistence;
