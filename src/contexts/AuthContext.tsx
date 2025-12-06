@@ -220,6 +220,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(currentSession?.user ?? null);
         setIsLoading(false);
 
+        // Clear hash fragment from URL after successful auth
+        // This handles email verification redirects with #access_token=...
+        if (window.location.hash && window.location.hash.includes('access_token')) {
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+
         // Defer profile fetch with setTimeout to avoid deadlock
         if (currentSession?.user) {
           setTimeout(() => {
