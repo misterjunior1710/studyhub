@@ -2,10 +2,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { useThemePersistence } from "@/hooks/useThemePersistence";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import SessionExpiredDialog from "@/components/SessionExpiredDialog";
 import { lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -59,6 +60,30 @@ const PageLoader = () => (
   </div>
 );
 
+// Session expired handler component (needs to be inside BrowserRouter)
+const SessionExpiredHandler = () => {
+  const navigate = useNavigate();
+  const { showSessionExpired, refreshSession, resetSessionExpired } = useAuth();
+
+  const handleRefresh = async () => {
+    await refreshSession();
+    resetSessionExpired();
+  };
+
+  const handleSignIn = () => {
+    resetSessionExpired();
+    navigate("/auth");
+  };
+
+  return (
+    <SessionExpiredDialog
+      open={showSessionExpired}
+      onRefresh={handleRefresh}
+      onSignIn={handleSignIn}
+    />
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
@@ -68,6 +93,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              <SessionExpiredHandler />
               <Suspense fallback={<PageLoader />}>
                 <Routes>
                   <Route path="/" element={<Index />} />

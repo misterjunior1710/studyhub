@@ -6,9 +6,11 @@ import MobileFilterSheet from "@/components/MobileFilterSheet";
 import StudyPost from "@/components/StudyPost";
 import CookieConsent from "@/components/CookieConsent";
 import SEOHead, { StructuredData, getOrganizationSchema, getCommunitySchema } from "@/components/SEOHead";
+import { PostSkeletonList } from "@/components/PostSkeleton";
+import PullToRefresh from "@/components/PullToRefresh";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { TrendingUp, Clock, Star, Loader2, Sparkles, Search } from "lucide-react";
+import { TrendingUp, Clock, Star, Sparkles, Search } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
 import { usePosts, getTimeAgo } from "@/hooks/usePosts";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -159,48 +161,48 @@ const Index = () => {
             </nav>
 
             <section aria-label="Posts feed">
-              {loading ? (
-                <div className="flex justify-center py-12" role="status" aria-label="Loading posts">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-              ) : posts.length === 0 ? (
-                <div className="text-center py-12 animate-fade-in">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-4">
-                    <Sparkles className="h-8 w-8 text-primary" aria-hidden="true" />
+              <PullToRefresh onRefresh={invalidatePosts}>
+                {loading ? (
+                  <PostSkeletonList count={4} />
+                ) : posts.length === 0 ? (
+                  <div className="text-center py-12 animate-fade-in">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-4">
+                      <Sparkles className="h-8 w-8 text-primary" aria-hidden="true" />
+                    </div>
+                    <p className="text-muted-foreground">
+                      No posts yet. Be the first to create one!
+                    </p>
                   </div>
-                  <p className="text-muted-foreground">
-                    No posts yet. Be the first to create one!
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {posts.map((post, index) => (
-                    <article 
-                      key={post.id} 
-                      className="animate-slide-up" 
-                      style={{ animationDelay: `${Math.min(index * 0.05, 0.5)}s` }}
-                    >
-                      <StudyPost
-                        id={post.id}
-                        title={post.title}
-                        content={post.content}
-                        author={post.profiles?.username ?? "Anonymous"}
-                        authorId={post.user_id}
-                        upvotes={post.upvotes}
-                        downvotes={post.downvotes}
-                        comments={Array.isArray(post.comments) ? post.comments.length : 0}
-                        subject={post.subject}
-                        grade={post.grade}
-                        stream={post.stream}
-                        country={post.country}
-                        timeAgo={getTimeAgo(post.created_at)}
-                        fileUrl={post.file_url ?? undefined}
-                        onVoteChange={invalidatePosts}
-                      />
-                    </article>
-                  ))}
-                </div>
-              )}
+                ) : (
+                  <div className="space-y-4">
+                    {posts.map((post, index) => (
+                      <article 
+                        key={post.id} 
+                        className="animate-slide-up" 
+                        style={{ animationDelay: `${Math.min(index * 0.05, 0.5)}s` }}
+                      >
+                        <StudyPost
+                          id={post.id}
+                          title={post.title}
+                          content={post.content}
+                          author={post.profiles?.username ?? "Anonymous"}
+                          authorId={post.user_id}
+                          upvotes={post.upvotes}
+                          downvotes={post.downvotes}
+                          comments={Array.isArray(post.comments) ? post.comments.length : 0}
+                          subject={post.subject}
+                          grade={post.grade}
+                          stream={post.stream}
+                          country={post.country}
+                          timeAgo={getTimeAgo(post.created_at)}
+                          fileUrl={post.file_url ?? undefined}
+                          onVoteChange={invalidatePosts}
+                        />
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </PullToRefresh>
             </section>
           </main>
         </div>
