@@ -27,28 +27,28 @@ interface LeaderboardUser {
 const fetchLeaderboardData = async () => {
   const [pointsResult, streakResult, postsResult, userResult] = await Promise.all([
     supabase
-      .from("profiles")
+      .from("public_profiles")
       .select("id, username, avatar_url, points, streak_days, country, grade")
       .order("points", { ascending: false })
       .limit(50),
     supabase
-      .from("profiles")
+      .from("public_profiles")
       .select("id, username, avatar_url, points, streak_days, country, grade")
       .order("streak_days", { ascending: false })
       .limit(50),
     supabase
       .from("posts")
-      .select("user_id, profiles!posts_user_id_fkey(id, username, avatar_url, points, streak_days, country, grade)"),
+      .select("user_id, public_profiles!posts_user_id_fkey(id, username, avatar_url, points, streak_days, country, grade)"),
     supabase.auth.getUser(),
   ]);
 
   // Process top posters
   const postCounts: Record<string, { user: LeaderboardUser; count: number }> = {};
-  (postsResult.data || []).forEach((post: { profiles?: LeaderboardUser }) => {
-    if (post.profiles) {
-      const userId = post.profiles.id;
+  (postsResult.data || []).forEach((post: { public_profiles?: LeaderboardUser }) => {
+    if (post.public_profiles) {
+      const userId = post.public_profiles.id;
       if (!postCounts[userId]) {
-        postCounts[userId] = { user: post.profiles, count: 0 };
+        postCounts[userId] = { user: post.public_profiles, count: 0 };
       }
       postCounts[userId].count++;
     }

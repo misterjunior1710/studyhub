@@ -79,12 +79,29 @@ const UserProfile = () => {
       setCurrentUserGrade(viewerGrade);
     }
 
-    // Fetch target profile
-    const { data: profileData, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .maybeSingle();
+    // Fetch target profile - use public_profiles view for other users
+    const isOwnProfile = user?.id === userId;
+    
+    let profileData: UserProfile | null = null;
+    let error: Error | null = null;
+    
+    if (isOwnProfile) {
+      const result = await supabase
+        .from("profiles")
+        .select("id, username, avatar_url, bio, country, grade, stream, points, streak_days, created_at, is_public")
+        .eq("id", userId)
+        .maybeSingle();
+      profileData = result.data as UserProfile | null;
+      error = result.error;
+    } else {
+      const result = await supabase
+        .from("public_profiles")
+        .select("*")
+        .eq("id", userId)
+        .maybeSingle();
+      profileData = result.data as UserProfile | null;
+      error = result.error;
+    }
 
     if (error || !profileData) {
       toast.error("User not found");
@@ -99,7 +116,7 @@ const UserProfile = () => {
       // If viewer is a child (Grade 1-6) and target is an adult, restrict
       if (viewerGrade && CHILD_GRADES.includes(viewerGrade)) {
         setIsRestricted(true);
-        setProfile(profileData as UserProfile);
+        setProfile(profileData);
         setLoading(false);
         return;
       }
@@ -130,9 +147,9 @@ const UserProfile = () => {
       setSubjectStats(stats);
     }
 
-    // Get leaderboard rank
+    // Get leaderboard rank from public_profiles
     const { data: allProfiles } = await supabase
-      .from("profiles")
+      .from("public_profiles")
       .select("id, points")
       .order("points", { ascending: false });
 
