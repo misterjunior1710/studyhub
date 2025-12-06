@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -24,10 +24,15 @@ export const applyThemeColor = (colorName: string) => {
 
 export const useThemePersistence = () => {
   const { user } = useAuth();
+  const hasFetchedRef = useRef<string | null>(null);
 
   useEffect(() => {
     const loadUserTheme = async () => {
       if (!user) return;
+      
+      // Prevent duplicate fetches for same user
+      if (hasFetchedRef.current === user.id) return;
+      hasFetchedRef.current = user.id;
 
       try {
         const { data: profile } = await supabase

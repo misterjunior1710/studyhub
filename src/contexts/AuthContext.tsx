@@ -71,6 +71,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const activityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   // Prevent duplicate profile fetches
   const fetchedUserIdRef = useRef<string | null>(null);
+  // Session ref to access current session without causing re-renders
+  const sessionRef = useRef<Session | null>(null);
 
   // Debounced activity update
   const updateActivity = useCallback(() => {
@@ -174,6 +176,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, []);
 
+  // Keep sessionRef in sync with session state
+  useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
+
   // Activity tracking effect
   useEffect(() => {
     if (!session) return;
@@ -255,9 +262,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Refresh session on window focus (for returning to idle tabs)
     const handleFocus = () => {
       updateActivity();
-      if (session) {
+      const currentSession = sessionRef.current;
+      if (currentSession) {
         // Check if session is about to expire (within 5 minutes)
-        const expiresAt = session.expires_at;
+        const expiresAt = currentSession.expires_at;
         if (expiresAt) {
           const expiryTime = expiresAt * 1000;
           const now = Date.now();
@@ -279,7 +287,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         clearTimeout(activityTimeoutRef.current);
       }
     };
-  }, [fetchUserProfile, refreshSession, session, updateActivity]);
+  }, [fetchUserProfile, refreshSession, updateActivity]);
 
   return (
     <AuthContext.Provider
