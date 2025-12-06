@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
     <title>StudyHub - A Study Community</title>
     <meta name="description" content="Connect with students worldwide on StudyHub. Share knowledge, ask questions, and collaborate across different countries, subjects, grades, and educational streams.">
     <meta name="author" content="StudyHub" />
@@ -28,6 +28,44 @@
       gtag('config', 'AW-17772519952');
     </script>
     
+    <!-- Elfsight Widget Mobile Fixes -->
+    <style>
+      /* Constrain Elfsight chatbot widget on all devices */
+      .elfsight-app-faab7318-ecd8-4d6d-9c39-8f9a0368cf67 {
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        z-index: 9999 !important;
+        max-width: calc(100vw - 40px) !important;
+      }
+
+      /* Mobile-specific constraints for Elfsight widgets */
+      @media (max-width: 768px) {
+        .elfsight-app-faab7318-ecd8-4d6d-9c39-8f9a0368cf67 {
+          bottom: 16px !important;
+          right: 16px !important;
+          max-width: calc(100vw - 32px) !important;
+          max-height: 60vh !important;
+        }
+
+        .elfsight-app-faab7318-ecd8-4d6d-9c39-8f9a0368cf67 iframe,
+        .elfsight-app-faab7318-ecd8-4d6d-9c39-8f9a0368cf67 > div {
+          max-width: calc(100vw - 32px) !important;
+          max-height: 60vh !important;
+        }
+
+        /* Hide contact form widget on mobile to prevent layout issues */
+        .elfsight-app-080d0b46-27cd-4b17-b750-1c3686813ffd {
+          display: none !important;
+        }
+      }
+
+      /* Prevent any Elfsight widget from causing horizontal overflow */
+      [class*="elfsight-app-"] {
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+      }
+    </style>
   
   
   
