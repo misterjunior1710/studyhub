@@ -30,12 +30,12 @@ const fetchLeaderboardData = async () => {
       .from("public_profiles")
       .select("id, username, avatar_url, points, streak_days, country, grade")
       .order("points", { ascending: false })
-      .limit(50),
+      .limit(3),
     supabase
       .from("public_profiles")
       .select("id, username, avatar_url, points, streak_days, country, grade")
       .order("streak_days", { ascending: false })
-      .limit(50),
+      .limit(3),
     supabase
       .from("posts")
       .select("user_id, public_profiles!posts_user_id_fkey(id, username, avatar_url, points, streak_days, country, grade)"),
@@ -56,7 +56,7 @@ const fetchLeaderboardData = async () => {
 
   const topPosters = Object.values(postCounts)
     .sort((a, b) => b.count - a.count)
-    .slice(0, 50)
+    .slice(0, 3)
     .map(item => ({
       ...item.user,
       post_count: item.count
