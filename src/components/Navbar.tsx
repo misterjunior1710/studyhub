@@ -1,4 +1,5 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, Trophy, UserPlus, Timer } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Users, Settings, Trophy, UserPlus, Timer, LifeBuoy } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -66,6 +67,20 @@ const Navbar = ({
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant={isActive("/support") ? "default" : "ghost"} 
+                  size="icon" 
+                  onClick={() => navigate("/support")}
+                >
+                  <LifeBuoy className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Need Help?</p>
+              </TooltipContent>
+            </Tooltip>
             <ThemeToggle />
             {user ? <>
                 <NotificationsPopover />
