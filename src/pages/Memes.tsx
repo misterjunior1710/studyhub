@@ -1,16 +1,46 @@
-import { memo } from "react";
+import { memo, useState, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import StudyPost from "@/components/StudyPost";
 import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { PostSkeletonList } from "@/components/PostSkeleton";
 import PullToRefresh from "@/components/PullToRefresh";
 import { usePosts, getTimeAgo } from "@/hooks/usePosts";
+import StudyReminderDialog from "@/components/StudyReminderDialog";
+
+const INITIAL_REMINDER_DELAY = 2 * 60 * 1000; // 2 minutes
+const EXTENDED_REMINDER_DELAY = 5 * 60 * 1000; // 5 minutes
 
 const Memes = () => {
+  const [showReminder, setShowReminder] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
   const { data: posts = [], isLoading: loading, invalidatePosts } = usePosts({
     postType: "meme",
     sortBy: "new",
   });
+
+  const startTimer = (delay: number) => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(() => {
+      setShowReminder(true);
+    }, delay);
+  };
+
+  useEffect(() => {
+    startTimer(INITIAL_REMINDER_DELAY);
+    
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
+  const handleExtendTime = () => {
+    startTimer(EXTENDED_REMINDER_DELAY);
+  };
 
   const breadcrumbData = getBreadcrumbSchema([
     { name: "Home", url: "https://studyhub.lovable.app/" },
@@ -76,6 +106,12 @@ const Memes = () => {
           </PullToRefresh>
         </section>
       </main>
+      
+      <StudyReminderDialog 
+        open={showReminder} 
+        onOpenChange={setShowReminder}
+        onExtendTime={handleExtendTime}
+      />
     </div>
   );
 };
