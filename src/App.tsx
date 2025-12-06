@@ -27,6 +27,7 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
+const StudyMode = lazy(() => import("./pages/StudyMode"));
 
 // Optimized QueryClient with proper caching and garbage collection
 const queryClient = new QueryClient({
@@ -107,6 +108,7 @@ const App = () => (
                   <Route path="/leaderboard" element={<Leaderboard />} />
                   <Route path="/friends" element={<Friends />} />
                   <Route path="/user/:userId" element={<UserProfile />} />
+                  <Route path="/study" element={<StudyMode />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/terms" element={<Terms />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

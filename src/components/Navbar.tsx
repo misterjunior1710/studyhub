@@ -1,4 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Laugh, Users, Settings, Trophy, UserPlus } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Laugh, Users, Settings, Trophy, UserPlus, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -61,6 +61,10 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
               <Button variant={isActive("/friends") ? "default" : "ghost"} size="sm" onClick={() => navigate("/friends")}>
                 <UserPlus className="h-4 w-4 mr-2" />
                 Friends
+              </Button>
+              <Button variant={isActive("/study") ? "default" : "ghost"} size="sm" onClick={() => navigate("/study")}>
+                <Timer className="h-4 w-4 mr-2" />
+                Study
               </Button>
             </div>
           </div>
