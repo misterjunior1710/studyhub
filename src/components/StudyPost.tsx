@@ -292,7 +292,7 @@ const StudyPost = memo(({
   const netVotes = upvotes - downvotes;
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-300">
+    <Card className="hover:shadow-lg transition-all duration-300 overflow-hidden">
       <CardHeader className="pb-3">
         <div className="flex gap-3">
           {/* Vote section - only show for logged in users */}
@@ -387,7 +387,7 @@ const StudyPost = memo(({
           </figure>
         )}
 
-        <div className="flex items-center gap-2 pt-2 border-t border-border">
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border">
           {user ? (
             <>
               <Button
