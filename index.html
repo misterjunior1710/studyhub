@@ -28,66 +28,10 @@
       gtag('config', 'AW-17772519952');
     </script>
     
-    <!-- Elfsight Widget Mobile Fixes -->
-    <style>
-      /* Constrain Elfsight chatbot widget on all devices */
-      .elfsight-app-faab7318-ecd8-4d6d-9c39-8f9a0368cf67 {
-        position: fixed !important;
-        bottom: 20px !important;
-        right: 20px !important;
-        z-index: 9999 !important;
-        max-width: calc(100vw - 40px) !important;
-      }
-
-      /* Mobile-specific constraints for Elfsight widgets */
-      @media (max-width: 768px) {
-        .elfsight-app-faab7318-ecd8-4d6d-9c39-8f9a0368cf67 {
-          bottom: 16px !important;
-          right: 16px !important;
-          max-width: calc(100vw - 32px) !important;
-          max-height: 60vh !important;
-        }
-
-        .elfsight-app-faab7318-ecd8-4d6d-9c39-8f9a0368cf67 iframe,
-        .elfsight-app-faab7318-ecd8-4d6d-9c39-8f9a0368cf67 > div {
-          max-width: calc(100vw - 32px) !important;
-          max-height: 60vh !important;
-        }
-
-        /* Hide contact form widget on mobile to prevent layout issues */
-        .elfsight-app-080d0b46-27cd-4b17-b750-1c3686813ffd {
-          display: none !important;
-        }
-      }
-
-      /* Prevent any Elfsight widget from causing horizontal overflow */
-      [class*="elfsight-app-"] {
-        max-width: 100vw !important;
-        box-sizing: border-box !important;
-      }
-    </style>
-  
-  
-  
-  
-  
-  
-  
-  <link rel="icon" type="image/x-icon" href="https://storage.googleapis.com/gpt-engineer-file-uploads/T6FlWUVm6DYTgcsVHeiIqQYaN6A2/uploads/1764745423647-Screenshot 2025-12-03 123228.png">
-  <meta property="og:title" content="StudyHub - A Study Community">
-  <meta name="twitter:title" content="StudyHub - A Study Community">
-  <meta property="og:description" content="Connect with students worldwide on StudyHub. Share knowledge, ask questions, and collaborate across different countries, subjects, grades, and educational streams.">
-  <meta name="twitter:description" content="Connect with students worldwide on StudyHub. Share knowledge, ask questions, and collaborate across different countries, subjects, grades, and educational streams.">
-</head>
+  </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- Elfsight Widgets -->
-    <script src="https://elfsightcdn.com/platform.js" async></script>
-    <div class="elfsight-app-faab7318-ecd8-4d6d-9c39-8f9a0368cf67" data-elfsight-app-lazy></div>
-    <!-- Elfsight Contact Form -->
-    <div class="elfsight-app-080d0b46-27cd-4b17-b750-1c3686813ffd" data-elfsight-app-lazy></div>
   </body>
 </html>
