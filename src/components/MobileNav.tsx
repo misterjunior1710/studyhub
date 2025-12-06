@@ -1,4 +1,4 @@
-import { Home, HelpCircle, Laugh, Users, Trophy, UserPlus, Menu } from "lucide-react";
+import { Home, HelpCircle, Users, Trophy, UserPlus, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -20,7 +20,6 @@ const MobileNav = () => {
   const navItems = [
     { path: "/", label: "Home", icon: Home },
     { path: "/ask-doubt", label: "Ask Doubt", icon: HelpCircle },
-    { path: "/memes", label: "Memes", icon: Laugh },
     { path: "/groups", label: "Groups", icon: Users },
     { path: "/leaderboard", label: "Leaderboard", icon: Trophy },
     { path: "/friends", label: "Friends", icon: UserPlus },
@@ -41,19 +40,19 @@ const MobileNav = () => {
       </SheetTrigger>
       <SheetContent side="left" className="w-72">
         <SheetHeader>
-          <SheetTitle className="text-left bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            StudyHub
+          <SheetTitle className="text-left text-xl font-bold">
+            studyhub
           </SheetTitle>
         </SheetHeader>
-        <nav className="flex flex-col gap-2 mt-6">
+        <nav className="flex flex-col gap-1 mt-6">
           {navItems.map((item) => (
             <Button
               key={item.path}
-              variant={isActive(item.path) ? "default" : "ghost"}
-              className="w-full justify-start"
+              variant={isActive(item.path) ? "secondary" : "ghost"}
+              className="w-full justify-start gap-3"
               onClick={() => handleNavigate(item.path)}
             >
-              <item.icon className="h-4 w-4 mr-3" />
+              <item.icon className="h-5 w-5" />
               {item.label}
             </Button>
           ))}

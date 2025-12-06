@@ -1,96 +1,44 @@
 import { Link } from "react-router-dom";
-import { Heart, Github, Twitter, Mail } from "lucide-react";
+
 const Footer = () => {
-  return <footer className="border-t border-border bg-card/50 backdrop-blur-sm">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              StudyHub
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              Your collaborative learning community. Connect, learn, and grow together.
-            </p>
-            
-          </div>
-
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Quick Links</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link to="/ask-doubt" className="text-muted-foreground hover:text-primary transition-colors">
-                  Ask a Doubt
-                </Link>
-              </li>
-              <li>
-                <Link to="/groups" className="text-muted-foreground hover:text-primary transition-colors">
-                  Study Groups
-                </Link>
-              </li>
-              <li>
-                <Link to="/leaderboard" className="text-muted-foreground hover:text-primary transition-colors">
-                  Leaderboard
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Community */}
-          <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Community</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link to="/memes" className="text-muted-foreground hover:text-primary transition-colors">
-                  Memes
-                </Link>
-              </li>
-              <li>
-                <Link to="/friends" className="text-muted-foreground hover:text-primary transition-colors">
-                  Friends
-                </Link>
-              </li>
-              <li>
-                <Link to="/settings" className="text-muted-foreground hover:text-primary transition-colors">
-                  Settings
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Legal</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
-                  Terms & Conditions
-                </Link>
-              </li>
-            </ul>
-          </div>
+  return (
+    <footer className="border-t border-border bg-card py-4 hidden md:block">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground">
+          <Link to="/" className="hover:text-foreground transition-colors">
+            Home
+          </Link>
+          <span>•</span>
+          <Link to="/ask-doubt" className="hover:text-foreground transition-colors">
+            Ask a Doubt
+          </Link>
+          <span>•</span>
+          <Link to="/groups" className="hover:text-foreground transition-colors">
+            Study Groups
+          </Link>
+          <span>•</span>
+          <Link to="/leaderboard" className="hover:text-foreground transition-colors">
+            Leaderboard
+          </Link>
+          <span>•</span>
+          <Link to="/friends" className="hover:text-foreground transition-colors">
+            Friends
+          </Link>
+          <span>•</span>
+          <Link to="/privacy" className="hover:text-foreground transition-colors">
+            Privacy
+          </Link>
+          <span>•</span>
+          <Link to="/terms" className="hover:text-foreground transition-colors">
+            Terms
+          </Link>
         </div>
-
-        <div className="mt-8 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} StudyHub. All rights reserved.
-          </p>
-          <p className="text-sm text-muted-foreground flex items-center gap-1">
-            Made with <Heart className="h-4 w-4 text-destructive animate-pulse" /> for students everywhere
-          </p>
-        </div>
+        <p className="text-center text-xs text-muted-foreground mt-3">
+          © {new Date().getFullYear()} StudyHub. All rights reserved.
+        </p>
       </div>
-    </footer>;
+    </footer>
+  );
 };
+
 export default Footer;
