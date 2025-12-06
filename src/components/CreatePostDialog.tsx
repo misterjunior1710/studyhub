@@ -36,7 +36,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     : ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Other"];
   const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria", "Other"];
   const postTypes = [
-    { value: "doubt", label: "Ask a Doubt" },
+    { value: "doubt", label: "Ask a Question" },
     { value: "meme", label: "Share a Meme" },
     { value: "general", label: "General Post" }
   ];

@@ -42,7 +42,7 @@ const Navbar = ({
                 <Home className="h-4 w-4 mr-2" />
                 Home
               </Button>
-              <Button variant={isActive("/ask-doubt") ? "default" : "ghost"} size="sm" onClick={() => navigate("/ask-doubt")}>
+              <Button variant={isActive("/questions") ? "default" : "ghost"} size="sm" onClick={() => navigate("/questions")}>
                 <HelpCircle className="h-4 w-4 mr-2" />
                 Questions
               </Button>
