@@ -25,8 +25,8 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/ask-doubt" className="text-muted-foreground hover:text-primary transition-colors">
-                  Ask a Doubt
+                <Link to="/questions" className="text-muted-foreground hover:text-primary transition-colors">
+                  Questions
                 </Link>
               </li>
               <li>

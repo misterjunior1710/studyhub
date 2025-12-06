@@ -19,7 +19,7 @@ const MobileNav = () => {
 
   const navItems = [
     { path: "/", label: "Home", icon: Home },
-    { path: "/ask-doubt", label: "Ask Doubt", icon: HelpCircle },
+    { path: "/questions", label: "Questions", icon: HelpCircle },
     { path: "/memes", label: "Memes", icon: Laugh },
     { path: "/groups", label: "Groups", icon: Users },
     { path: "/leaderboard", label: "Leaderboard", icon: Trophy },

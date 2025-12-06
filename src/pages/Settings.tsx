@@ -634,7 +634,7 @@ const Settings = () => {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {[
-                    { key: 'notify_doubt_replies', icon: MessageSquare, title: 'New Doubt Replies', desc: 'When someone replies to your doubts' },
+                    { key: 'notify_doubt_replies', icon: MessageSquare, title: 'New Question Replies', desc: 'When someone replies to your questions' },
                     { key: 'notify_mentions', icon: User, title: 'Mentions (@)', desc: 'When someone mentions you' },
                     { key: 'notify_group_updates', icon: Users, title: 'Group Updates', desc: 'About group activities' },
                     { key: 'notify_mock_tests', icon: FileText, title: 'New Mock Test Releases', desc: 'When new tests are available' },
