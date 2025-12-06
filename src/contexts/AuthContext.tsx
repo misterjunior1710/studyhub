@@ -1,7 +1,12 @@
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useRef, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+// Session timeout configuration
+const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+const ACTIVITY_DEBOUNCE = 5000; // 5 seconds
+const CHECK_INTERVAL = 60 * 1000; // Check every minute
 
 interface AuthContextType {
   user: User | null;
@@ -15,8 +20,10 @@ interface AuthContextType {
     stream?: string;
     avatar_url?: string;
   };
+  showSessionExpired: boolean;
   refreshSession: () => Promise<void>;
   signOut: () => Promise<void>;
+  resetSessionExpired: () => void;
 }
 
 const defaultAuthContext: AuthContextType = {
@@ -26,8 +33,10 @@ const defaultAuthContext: AuthContextType = {
   isAdmin: false,
   username: "",
   profileData: {},
+  showSessionExpired: false,
   refreshSession: async () => {},
   signOut: async () => {},
+  resetSessionExpired: () => {},
 };
 
 const AuthContext = createContext<AuthContextType>(defaultAuthContext);
@@ -52,6 +61,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     stream?: string;
     avatar_url?: string;
   }>({});
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  
+  // Activity tracking refs
+  const lastActivityRef = useRef<number>(Date.now());
+  const activityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounced activity update
+  const updateActivity = useCallback(() => {
+    const now = Date.now();
+    if (now - lastActivityRef.current > ACTIVITY_DEBOUNCE) {
+      lastActivityRef.current = now;
+    }
+  }, []);
+
+  // Reset session expired state
+  const resetSessionExpired = useCallback(() => {
+    setShowSessionExpired(false);
+    lastActivityRef.current = Date.now();
+  }, []);
 
   const fetchUserProfile = useCallback(async (userId: string) => {
     try {
@@ -137,6 +165,36 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, []);
 
+  // Activity tracking effect
+  useEffect(() => {
+    if (!session) return;
+
+    const handleActivity = () => updateActivity();
+    
+    // Listen for user activity
+    window.addEventListener("mousemove", handleActivity, { passive: true });
+    window.addEventListener("keydown", handleActivity, { passive: true });
+    window.addEventListener("click", handleActivity, { passive: true });
+    window.addEventListener("scroll", handleActivity, { passive: true });
+    window.addEventListener("touchstart", handleActivity, { passive: true });
+
+    // Check for inactivity periodically
+    const checkInactivity = setInterval(() => {
+      if (session && Date.now() - lastActivityRef.current > INACTIVITY_TIMEOUT) {
+        setShowSessionExpired(true);
+      }
+    }, CHECK_INTERVAL);
+
+    return () => {
+      window.removeEventListener("mousemove", handleActivity);
+      window.removeEventListener("keydown", handleActivity);
+      window.removeEventListener("click", handleActivity);
+      window.removeEventListener("scroll", handleActivity);
+      window.removeEventListener("touchstart", handleActivity);
+      clearInterval(checkInactivity);
+    };
+  }, [session, updateActivity]);
+
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -151,6 +209,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setTimeout(() => {
             fetchUserProfile(currentSession.user.id);
           }, 0);
+          // Reset activity on new session
+          lastActivityRef.current = Date.now();
+          setShowSessionExpired(false);
         } else {
           setUsername("");
           setProfileData({});
@@ -178,11 +239,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (currentSession?.user) {
         fetchUserProfile(currentSession.user.id);
+        lastActivityRef.current = Date.now();
       }
     });
 
     // Refresh session on window focus (for returning to idle tabs)
     const handleFocus = () => {
+      updateActivity();
       if (session) {
         // Check if session is about to expire (within 5 minutes)
         const expiresAt = session.expires_at;
@@ -203,8 +266,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return () => {
       subscription.unsubscribe();
       window.removeEventListener("focus", handleFocus);
+      if (activityTimeoutRef.current) {
+        clearTimeout(activityTimeoutRef.current);
+      }
     };
-  }, [fetchUserProfile, refreshSession, session]);
+  }, [fetchUserProfile, refreshSession, session, updateActivity]);
 
   return (
     <AuthContext.Provider
@@ -215,8 +281,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         isAdmin,
         username,
         profileData,
+        showSessionExpired,
         refreshSession,
         signOut,
+        resetSessionExpired,
       }}
     >
       {children}
