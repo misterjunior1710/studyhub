@@ -38,7 +38,7 @@ const FAQ_ITEMS = [
   {
     question: "How do I reset my password?",
     answer:
-      "Go to the Profile page, then go to settings. Scroll to the Change Password Section.Enter your new password twice and click Update Password.",
+      "Go to the Profile page,then go to settings. Scroll to the Change Password Section.Enter your new password twice and click Update Password.",
   },
   {
     question: "How does the XP system work?",
@@ -53,7 +53,7 @@ const FAQ_ITEMS = [
   {
     question: "How do I report inappropriate content?",
     answer:
-      "Click the report button (flag icon) on any post or comment to report it. Our moderation team reviews all reports within 24 hours.",
+      "Click the report button (flag icon) on any post or comment to report it. Our admins reviews all reports within 24-72 hours.",
   },
   {
     question: "Why was my post removed?",
