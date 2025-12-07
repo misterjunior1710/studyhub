@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { Loader2, Sparkles } from "lucide-react";
 import { z } from "zod";
 import AgeVerificationDialog from "@/components/AgeVerificationDialog";
+import EmailVerificationDialog from "@/components/EmailVerificationDialog";
 import Footer from "@/components/Footer";
 
 // List of allowed email domains (popular providers + educational)
@@ -37,6 +38,10 @@ const Auth = () => {
   const [stream, setStream] = useState("");
   const [showAgeVerification, setShowAgeVerification] = useState(false);
   const [pendingAdultGrade, setPendingAdultGrade] = useState("");
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState("");
+  const [activeTab, setActiveTab] = useState("login");
+  const tabsRef = useRef<HTMLDivElement>(null);
   const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria", "Other"];
   const isAdult = grade === "Adult (18+)" || grade === "Working Professional";
   const grades = ["Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate", "Postgraduate", "Adult (18+)", "Working Professional"];
@@ -112,7 +117,8 @@ const Auth = () => {
         }
       });
       if (error) throw error;
-      toast.success("Please check your email to verify your account before signing in.");
+      setVerificationEmail(email);
+      setShowEmailVerification(true);
       setEmail("");
       setPassword("");
       setUsername("");
@@ -185,7 +191,7 @@ const Auth = () => {
             <CardDescription>Join the study community ✨</CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="login" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" ref={tabsRef}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Login</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -312,6 +318,14 @@ const Auth = () => {
       </div>
       <Footer />
       <AgeVerificationDialog open={showAgeVerification} onConfirm={handleAgeVerificationConfirm} onCancel={handleAgeVerificationCancel} />
+      <EmailVerificationDialog 
+        open={showEmailVerification} 
+        email={verificationEmail} 
+        onGoToLogin={() => {
+          setShowEmailVerification(false);
+          setActiveTab("login");
+        }} 
+      />
     </div>;
 };
 export default Auth;
