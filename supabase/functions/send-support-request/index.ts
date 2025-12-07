@@ -88,17 +88,30 @@ const handler = async (req: Request): Promise<Response> => {
     if (resendApiKey) {
       try {
         const resend = new Resend(resendApiKey);
+        
+        // Convert to IST (UTC+5:30)
         const now = new Date();
-        const day = now.getDate();
-        const month = now.toLocaleString("en-US", { month: "short" });
-        const year = now.getFullYear();
-        const time = now.toLocaleString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+        const istOffset = 5.5 * 60 * 60 * 1000;
+        const istDate = new Date(now.getTime() + istOffset);
+        const day = istDate.getUTCDate();
+        const month = istDate.toLocaleString("en-US", { month: "short", timeZone: "UTC" });
+        const year = istDate.getUTCFullYear();
+        const hours = istDate.getUTCHours();
+        const minutes = istDate.getUTCMinutes();
+        const ampm = hours >= 12 ? "PM" : "AM";
+        const displayHour = hours % 12 || 12;
+        const time = `${displayHour}:${minutes.toString().padStart(2, "0")} ${ampm}`;
         const timestamp = `${day} ${month} ${year} · ${time}`;
+        
+        // Capitalize first letter of each word in category
+        const formattedCategory = category.split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ');
 
         const emailResponse = await resend.emails.send({
           from: "StudyHub Support <onboarding@resend.dev>",
           to: ["studyhub.community.web@gmail.com"],
-          subject: `New Support Request Received — ${category} | ${subject}`,
+          subject: `New Support Request Received — ${formattedCategory} | ${subject}`,
           html: `
             <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
               <!-- Header -->
@@ -114,7 +127,7 @@ const handler = async (req: Request): Promise<Response> => {
                 <div style="background-color: #f1f5f9; padding: 24px; border-radius: 8px; margin-bottom: 24px;">
                   <p style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px;"><strong>From:</strong> ${name}</p>
                   <p style="margin: 0 0 16px 0; color: #1e293b; font-size: 15px;"><strong>Email:</strong> <a href="mailto:${email}" style="color: #0891b2; text-decoration: none;">${email}</a></p>
-                  <p style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px;"><strong>Category:</strong> ${category}</p>
+                  <p style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px;"><strong>Category:</strong> ${formattedCategory}</p>
                   <p style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px;"><strong>Submitted:</strong> ${timestamp}</p>
                   <p style="margin: 0; color: #64748b; font-size: 13px;"><strong>Request ID:</strong> ${data.id}</p>
                 </div>
