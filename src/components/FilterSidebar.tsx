@@ -30,9 +30,9 @@ const FilterSidebar = ({
   onClearAll,
 }: FilterSidebarProps) => {
   const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria"];
-  const subjects = ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "General", "Career Advice", "Finance", "Technology", "Business", "Personal Development"];
+  const subjects = ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "General", "Career Advice", "Finance", "Technology", "Business", "Personal Development", "Dentistry", "Oral Health", "Dental Sciences"];
   const grades = ["Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate", "Postgraduate", "Adult (18+)", "Working Professional"];
-  const streams = ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Not Applicable", "Self-Learning", "Professional Development"];
+  const streams = ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Not Applicable", "Self-Learning", "Professional Development", "BDS", "MDS", "Dental Hygiene", "Dental Technology", "Dental Nursing"];
 
   return (
     <aside className="w-72 shrink-0 border-r border-border bg-card p-4 space-y-4">

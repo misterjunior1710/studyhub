@@ -56,9 +56,7 @@ interface ProfileData {
   notify_doubt_replies: boolean;
   notify_mentions: boolean;
   notify_group_updates: boolean;
-  notify_mock_tests: boolean;
   notify_announcements: boolean;
-  notify_weekly_report: boolean;
   show_verified_only: boolean;
   blocked_subjects: string[];
   safe_mode: boolean;
@@ -108,9 +106,7 @@ const Settings = () => {
     notify_doubt_replies: true,
     notify_mentions: true,
     notify_group_updates: true,
-    notify_mock_tests: true,
     notify_announcements: true,
-    notify_weekly_report: true,
     show_verified_only: false,
     blocked_subjects: [],
     safe_mode: false,
@@ -129,13 +125,13 @@ const Settings = () => {
   const isAdult = profile.grade === "Adult (18+)" || profile.grade === "Working Professional";
   const grades = ["Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate", "Postgraduate", "Adult (18+)", "Working Professional"];
   const streams = isAdult 
-    ? ["Not Applicable", "Self-Learning", "Professional Development", "Other"]
+    ? ["Not Applicable", "Self-Learning", "Professional Development", "BDS", "MDS", "Dental Hygiene", "Dental Technology", "Dental Nursing", "Other"]
     : ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Other"];
   const languages = ["English", "Spanish", "French", "German", "Hindi", "Chinese", "Japanese", "Portuguese", "Arabic", "Russian"];
   const timezones = ["UTC", "America/New_York", "America/Los_Angeles", "Europe/London", "Europe/Paris", "Europe/Berlin", "Asia/Tokyo", "Asia/Shanghai", "Asia/Kolkata", "Australia/Sydney"];
   const dateFormats = ["MM/DD/YYYY", "DD/MM/YYYY", "YYYY-MM-DD"];
   const subjects = isAdult
-    ? ["General", "Career Advice", "Finance", "Technology", "Business", "Personal Development", "Health & Wellness", "Other", "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "History", "Geography"]
+    ? ["General", "Career Advice", "Finance", "Technology", "Business", "Personal Development", "Health & Wellness", "Dentistry", "Oral Health", "Dental Sciences", "Other", "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "History", "Geography"]
     : ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "History", "Geography", "General"];
 
   useEffect(() => {
@@ -195,9 +191,7 @@ const Settings = () => {
         notify_doubt_replies: profileData.notify_doubt_replies ?? true,
         notify_mentions: profileData.notify_mentions ?? true,
         notify_group_updates: profileData.notify_group_updates ?? true,
-        notify_mock_tests: profileData.notify_mock_tests ?? true,
         notify_announcements: profileData.notify_announcements ?? true,
-        notify_weekly_report: profileData.notify_weekly_report ?? true,
         show_verified_only: profileData.show_verified_only ?? false,
         blocked_subjects: profileData.blocked_subjects || [],
         safe_mode: profileData.safe_mode ?? false,
@@ -273,9 +267,7 @@ const Settings = () => {
         notify_doubt_replies: profile.notify_doubt_replies,
         notify_mentions: profile.notify_mentions,
         notify_group_updates: profile.notify_group_updates,
-        notify_mock_tests: profile.notify_mock_tests,
         notify_announcements: profile.notify_announcements,
-        notify_weekly_report: profile.notify_weekly_report,
         show_verified_only: profile.show_verified_only,
         blocked_subjects: profile.blocked_subjects,
         safe_mode: profile.safe_mode,
@@ -633,9 +625,7 @@ const Settings = () => {
                     { key: 'notify_doubt_replies', icon: MessageSquare, title: 'New Question Replies', desc: 'When someone replies to your questions' },
                     { key: 'notify_mentions', icon: User, title: 'Mentions (@)', desc: 'When someone mentions you' },
                     { key: 'notify_group_updates', icon: Users, title: 'Group Updates', desc: 'About group activities' },
-                    { key: 'notify_mock_tests', icon: FileText, title: 'New Mock Test Releases', desc: 'When new tests are available' },
                     { key: 'notify_announcements', icon: Megaphone, title: 'Admin Announcements', desc: 'Important updates from administrators' },
-                    { key: 'notify_weekly_report', icon: BarChart3, title: 'Weekly Progress Report', desc: 'Weekly summary of your activity' },
                   ].map(({ key, icon: Icon, title, desc }) => (
                     <div key={key} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">

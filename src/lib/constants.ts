@@ -15,7 +15,7 @@ export const STUDENT_STREAMS = [
   "French Baccalauréat", "Dutch VWO", "Other"
 ];
 
-export const ADULT_STREAMS = ["Not Applicable", "Self-Learning", "Professional Development", "Other"];
+export const ADULT_STREAMS = ["Not Applicable", "Self-Learning", "Professional Development", "BDS", "MDS", "Dental Hygiene", "Dental Technology", "Dental Nursing", "Other"];
 
 // Subjects
 export const STUDENT_SUBJECTS = [
@@ -25,7 +25,12 @@ export const STUDENT_SUBJECTS = [
 
 export const ADULT_SUBJECTS = [
   "General", "Career Advice", "Finance", "Technology", 
-  "Business", "Personal Development", "Health & Wellness", "Other"
+  "Business", "Personal Development", "Health & Wellness", 
+  "Dentistry", "Oral Health", "Dental Sciences", "Other"
+];
+
+export const DENTAL_STREAMS = [
+  "BDS", "MDS", "Dental Hygiene", "Dental Technology", "Dental Nursing"
 ];
 
 export const ALL_SUBJECTS = [...STUDENT_SUBJECTS, ...ADULT_SUBJECTS];
