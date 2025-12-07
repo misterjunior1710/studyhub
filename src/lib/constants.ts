@@ -15,7 +15,19 @@ export const STUDENT_STREAMS = [
   "French Baccalauréat", "Dutch VWO", "Other"
 ];
 
-export const ADULT_STREAMS = ["Not Applicable", "Self-Learning", "Professional Development", "BDS", "MDS", "Dental Hygiene", "Dental Technology", "Dental Nursing", "Other"];
+export const ADULT_STREAMS = [
+  "Not Applicable", "Self-Learning", "Professional Development",
+  // Dental Degrees
+  "BDS", "MDS",
+  // UK Royal College Qualifications
+  "LDSRCS(Eng)", "MFDSRCS(Eng)", "MFDSRCS(Edin)", "MFDSRCPS(Glas)",
+  "MIMPDent RCSEd",
+  // Registration Status
+  "GDC Registered", "DCI Registered",
+  // Support Roles
+  "Dental Hygiene", "Dental Technology", "Dental Nursing",
+  "Other"
+];
 
 // Subjects
 export const STUDENT_SUBJECTS = [
@@ -26,11 +38,20 @@ export const STUDENT_SUBJECTS = [
 export const ADULT_SUBJECTS = [
   "General", "Career Advice", "Finance", "Technology", 
   "Business", "Personal Development", "Health & Wellness", 
-  "Dentistry", "Oral Health", "Dental Sciences", "Other"
+  // Dental General
+  "Dentistry", "Oral Health", "Dental Sciences",
+  // Dental Specialties
+  "Implant Dentistry", "Oral Surgery", "Endodontics", 
+  "Prosthodontics", "Orthodontics", "Periodontics",
+  "Paediatric Dentistry", "Oral Medicine", "Dental Radiology",
+  "Other"
 ];
 
 export const DENTAL_STREAMS = [
-  "BDS", "MDS", "Dental Hygiene", "Dental Technology", "Dental Nursing"
+  "BDS", "MDS",
+  "LDSRCS(Eng)", "MFDSRCS(Eng)", "MFDSRCS(Edin)", "MFDSRCPS(Glas)",
+  "MIMPDent RCSEd", "GDC Registered", "DCI Registered",
+  "Dental Hygiene", "Dental Technology", "Dental Nursing"
 ];
 
 export const ALL_SUBJECTS = [...STUDENT_SUBJECTS, ...ADULT_SUBJECTS];
