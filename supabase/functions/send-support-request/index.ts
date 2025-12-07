@@ -94,7 +94,7 @@ const handler = async (req: Request): Promise<Response> => {
         });
 
         const emailResponse = await resend.emails.send({
-          from: "StudyHub Support <support@estukel.resend.app>",
+          from: "StudyHub Support <onboarding@resend.dev>",
           to: ["studyhub.community.web@gmail.com"],
           subject: `[Support Request] ${category}: ${subject}`,
           html: `
@@ -120,7 +120,11 @@ const handler = async (req: Request): Promise<Response> => {
           `,
         });
 
-        console.log("Email notification sent successfully:", emailResponse);
+        if (emailResponse.error) {
+          console.error("Resend API error:", emailResponse.error);
+        } else {
+          console.log("Email notification sent successfully:", emailResponse.data);
+        }
       } catch (emailError: any) {
         console.error("Failed to send email notification:", emailError.message);
         // Don't fail the request if email fails - the data is already saved
