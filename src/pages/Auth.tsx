@@ -30,6 +30,9 @@ const passwordSchema = z.string().min(6, "Password must be at least 6 characters
 const Auth = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendEmail, setResendEmail] = useState("");
+  const [showResendForm, setShowResendForm] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -161,6 +164,36 @@ const Auth = () => {
       setLoading(false);
     }
   };
+  
+  const handleResendVerification = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const emailResult = emailSchema.safeParse(resendEmail);
+    if (!emailResult.success) {
+      toast.error(emailResult.error.errors[0].message);
+      return;
+    }
+    
+    setResendLoading(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: resendEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`
+        }
+      });
+      if (error) throw error;
+      toast.success("Verification email sent! Please check your inbox and spam folder.");
+      setResendEmail("");
+      setShowResendForm(false);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to resend verification email");
+    } finally {
+      setResendLoading(false);
+    }
+  };
+  
   const handleGoogleSignIn = async () => {
     try {
       const {
@@ -220,11 +253,60 @@ const Auth = () => {
                   <span className="w-full border-t border-border" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  
+                  <span className="bg-card px-2 text-muted-foreground">or</span>
                 </div>
               </div>
 
-              
+              {!showResendForm ? (
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={() => setShowResendForm(true)}
+                >
+                  Didn't receive verification email?
+                </Button>
+              ) : (
+                <form onSubmit={handleResendVerification} className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border">
+                  <p className="text-sm text-muted-foreground">
+                    Enter your email to resend the verification link
+                  </p>
+                  <Input 
+                    type="email" 
+                    placeholder="you@example.com" 
+                    value={resendEmail} 
+                    onChange={e => setResendEmail(e.target.value)} 
+                    required 
+                  />
+                  <div className="flex gap-2">
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => {
+                        setShowResendForm(false);
+                        setResendEmail("");
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      size="sm"
+                      className="flex-1"
+                      disabled={resendLoading}
+                    >
+                      {resendLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        "Resend Email"
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              )}
             </TabsContent>
 
             <TabsContent value="signup">
