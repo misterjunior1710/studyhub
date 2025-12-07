@@ -14,57 +14,51 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-
 const supportSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
   email: z.string().email("Please enter a valid email address").max(255),
   category: z.string().min(1, "Please select a category"),
   subject: z.string().min(5, "Subject must be at least 5 characters").max(200),
-  message: z.string().min(20, "Message must be at least 20 characters").max(2000),
+  message: z.string().min(20, "Message must be at least 20 characters").max(2000)
 });
-
 type SupportFormValues = z.infer<typeof supportSchema>;
-
-const CATEGORIES = [
-  { value: "general", label: "General Inquiry" },
-  { value: "technical", label: "Technical Issue" },
-  { value: "account", label: "Account Help" },
-  { value: "bug", label: "Bug Report" },
-  { value: "feature", label: "Feature Request" },
-  { value: "other", label: "Other" },
-];
-
-const FAQ_ITEMS = [
-  {
-    question: "How do I reset my password?",
-    answer:
-      "Go to the Profile page,then go to settings. Scroll to the Change Password Section.Enter your new password twice and click Update Password.",
-  },
-  {
-    question: "How does the XP system work?",
-    answer:
-      "You earn XP by answering questions, completing study sessions, and maintaining daily streaks. Higher quality answers earn more XP!",
-  },
-  {
-    question: "Can I delete my account?",
-    answer:
-      "Yes, you can delete your account from the Settings page. Please note this action is irreversible and all your data will be permanently deleted.",
-  },
-  {
-    question: "How do I report inappropriate content?",
-    answer:
-      "Click the report button (flag icon) on any post or comment to report it. Our admins reviews all reports within 24-72 hours.",
-  },
-  {
-    question: "Why was my post removed?",
-    answer:
-      "Posts may be removed if they violate our community guidelines. Check your notifications for details, or contact support if you believe this was a mistake.",
-  },
-];
-
+const CATEGORIES = [{
+  value: "general",
+  label: "General Inquiry"
+}, {
+  value: "technical",
+  label: "Technical Issue"
+}, {
+  value: "account",
+  label: "Account Help"
+}, {
+  value: "bug",
+  label: "Bug Report"
+}, {
+  value: "feature",
+  label: "Feature Request"
+}, {
+  value: "other",
+  label: "Other"
+}];
+const FAQ_ITEMS = [{
+  question: "How do I reset my password?",
+  answer: "Go to the Profile page,then go to settings. Scroll to the Change Password Section.Enter your new password twice and click Update Password."
+}, {
+  question: "How does the XP system work?",
+  answer: "You earn XP by answering questions, completing study sessions, and maintaining daily streaks. Higher quality answers earn more XP!"
+}, {
+  question: "Can I delete my account?",
+  answer: "Yes, you can delete your account from the Settings page. Please note this action is irreversible and all your data will be permanently deleted."
+}, {
+  question: "How do I report inappropriate content?",
+  answer: "Click the report button (flag icon) on any post or comment to report it. Our admins reviews all reports within 24-72 hours."
+}, {
+  question: "Why was my post removed?",
+  answer: "Posts may be removed if they violate our community guidelines. Check your notifications for details, or contact support if you believe this was a mistake."
+}];
 const Support = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const form = useForm<SupportFormValues>({
     resolver: zodResolver(supportSchema),
     defaultValues: {
@@ -72,41 +66,38 @@ const Support = () => {
       email: "",
       category: "",
       subject: "",
-      message: "",
-    },
+      message: ""
+    }
   });
-
   const onSubmit = async (data: SupportFormValues) => {
     setIsSubmitting(true);
     try {
-      const { data: response, error } = await supabase.functions.invoke("send-support-request", {
-        body: data,
+      const {
+        data: response,
+        error
+      } = await supabase.functions.invoke("send-support-request", {
+        body: data
       });
-
       if (error) {
         throw error;
       }
-
       toast({
         title: "Request sent!",
-        description: "We've received your message and will get back to you soon.",
+        description: "We've received your message and will get back to you soon."
       });
-
       form.reset();
     } catch (error: any) {
       console.error("Error sending support request:", error);
       toast({
         title: "Failed to send",
         description: error.message || "Please try again later.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Navbar />
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
@@ -127,39 +118,29 @@ const Support = () => {
 
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
+                <FormField control={form.control} name="name" render={({
+                field
+              }) => <FormItem>
                       <FormLabel>Your Name</FormLabel>
                       <FormControl>
                         <Input placeholder="John Doe" {...field} />
                       </FormControl>
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    </FormItem>} />
 
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
+                <FormField control={form.control} name="email" render={({
+                field
+              }) => <FormItem>
                       <FormLabel>Email Address</FormLabel>
                       <FormControl>
                         <Input type="email" placeholder="john@example.com" {...field} />
                       </FormControl>
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    </FormItem>} />
 
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
+                <FormField control={form.control} name="category" render={({
+                field
+              }) => <FormItem>
                       <FormLabel>Category</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
@@ -168,59 +149,39 @@ const Support = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {CATEGORIES.map((cat) => (
-                            <SelectItem key={cat.value} value={cat.value}>
+                          {CATEGORIES.map(cat => <SelectItem key={cat.value} value={cat.value}>
                               {cat.label}
-                            </SelectItem>
-                          ))}
+                            </SelectItem>)}
                         </SelectContent>
                       </Select>
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    </FormItem>} />
 
-                <FormField
-                  control={form.control}
-                  name="subject"
-                  render={({ field }) => (
-                    <FormItem>
+                <FormField control={form.control} name="subject" render={({
+                field
+              }) => <FormItem>
                       <FormLabel>Subject</FormLabel>
                       <FormControl>
                         <Input placeholder="Brief description of your issue" {...field} />
                       </FormControl>
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    </FormItem>} />
 
-                <FormField
-                  control={form.control}
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem>
+                <FormField control={form.control} name="message" render={({
+                field
+              }) => <FormItem>
                       <FormLabel>Message</FormLabel>
                       <FormControl>
-                        <Textarea
-                          placeholder="Please describe your issue in detail..."
-                          className="min-h-[120px] resize-none"
-                          {...field}
-                        />
+                        <Textarea placeholder="Please describe your issue in detail..." className="min-h-[120px] resize-none" {...field} />
                       </FormControl>
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    </FormItem>} />
 
                 <Button type="submit" className="w-full" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    "Sending..."
-                  ) : (
-                    <>
+                  {isSubmitting ? "Sending..." : <>
                       <Send className="h-4 w-4 mr-2" />
                       Send Message
-                    </>
-                  )}
+                    </>}
                 </Button>
               </form>
             </Form>
@@ -231,23 +192,17 @@ const Support = () => {
             <h2 className="text-xl font-semibold text-foreground mb-6">Frequently Asked Questions</h2>
 
             <Accordion type="single" collapsible className="space-y-3">
-              {FAQ_ITEMS.map((item, index) => (
-                <AccordionItem
-                  key={index}
-                  value={`item-${index}`}
-                  className="bg-card border border-border rounded-lg px-4"
-                >
+              {FAQ_ITEMS.map((item, index) => <AccordionItem key={index} value={`item-${index}`} className="bg-card border border-border rounded-lg px-4">
                   <AccordionTrigger className="text-left text-foreground hover:no-underline py-4">
                     {item.question}
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground pb-4">{item.answer}</AccordionContent>
-                </AccordionItem>
-              ))}
+                </AccordionItem>)}
             </Accordion>
 
             <div className="mt-8 p-4 bg-muted/50 rounded-lg border border-border">
               <p className="text-sm text-muted-foreground">
-                <strong>Response Time:</strong> We typically respond within 24-48 hours during business days.
+                <strong>Response Time:</strong> We typically respond within 24-72 hours during business days.
               </p>
             </div>
           </div>
@@ -255,8 +210,6 @@ const Support = () => {
       </main>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Support;
