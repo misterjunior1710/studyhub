@@ -88,34 +88,56 @@ const handler = async (req: Request): Promise<Response> => {
     if (resendApiKey) {
       try {
         const resend = new Resend(resendApiKey);
-        const timestamp = new Date().toLocaleString("en-US", {
-          dateStyle: "full",
-          timeStyle: "short",
-        });
+        const now = new Date();
+        const day = now.getDate();
+        const month = now.toLocaleString("en-US", { month: "short" });
+        const year = now.getFullYear();
+        const time = now.toLocaleString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+        const timestamp = `${day} ${month} ${year} · ${time}`;
 
         const emailResponse = await resend.emails.send({
           from: "StudyHub Support <onboarding@resend.dev>",
           to: ["studyhub.community.web@gmail.com"],
-          subject: `[Support Request] ${category}: ${subject}`,
+          subject: `New Support Request Received — ${category} | ${subject}`,
           html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2 style="color: #7c3aed;">New Support Request</h2>
-              <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <p><strong>From:</strong> ${name}</p>
-                <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-                <p><strong>Category:</strong> ${category}</p>
-                <p><strong>Subject:</strong> ${subject}</p>
-                <p><strong>Submitted:</strong> ${timestamp}</p>
-                <p><strong>Request ID:</strong> ${data.id}</p>
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+              <!-- Header -->
+              <div style="background-color: #0e7490; padding: 24px 32px; border-radius: 8px 8px 0 0;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 600;">🎓 StudyHub Support</h1>
+                <p style="color: #cffafe; margin: 8px 0 0 0; font-size: 14px;">New Support Request</p>
               </div>
-              <h3 style="color: #374151;">Message:</h3>
-              <div style="background-color: #fff; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
-                <p style="white-space: pre-wrap;">${message}</p>
+              
+              <!-- Content -->
+              <div style="padding: 32px;">
+                <!-- Request Summary Card -->
+                <h2 style="color: #0e7490; font-size: 14px; font-weight: 600; margin: 0 0 16px 0; text-transform: uppercase; letter-spacing: 0.5px;">Request Summary</h2>
+                <div style="background-color: #f1f5f9; padding: 24px; border-radius: 8px; margin-bottom: 24px;">
+                  <p style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px;"><strong>From:</strong> ${name}</p>
+                  <p style="margin: 0 0 16px 0; color: #1e293b; font-size: 15px;"><strong>Email:</strong> <a href="mailto:${email}" style="color: #0891b2; text-decoration: none;">${email}</a></p>
+                  <p style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px;"><strong>Category:</strong> ${category}</p>
+                  <p style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px;"><strong>Submitted:</strong> ${timestamp}</p>
+                  <p style="margin: 0; color: #64748b; font-size: 13px;"><strong>Request ID:</strong> ${data.id}</p>
+                </div>
+                
+                <!-- Message Section -->
+                <h2 style="color: #0e7490; font-size: 14px; font-weight: 600; margin: 0 0 16px 0; text-transform: uppercase; letter-spacing: 0.5px;">📝 Message</h2>
+                <div style="background-color: #ffffff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                  <p style="margin: 0; color: #1e293b; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+                </div>
               </div>
-              <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;" />
-              <p style="color: #6b7280; font-size: 14px;">
-                Reply directly to this email or contact the user at <a href="mailto:${email}">${email}</a>
-              </p>
+              
+              <!-- Footer -->
+              <div style="background-color: #f8fafc; padding: 24px 32px; border-top: 1px solid #e2e8f0; border-radius: 0 0 8px 8px;">
+                <p style="margin: 0 0 12px 0; color: #64748b; font-size: 13px; line-height: 1.5;">
+                  You're receiving this because a support request was submitted on StudyHub.
+                </p>
+                <p style="margin: 0 0 16px 0; color: #64748b; font-size: 13px; line-height: 1.5;">
+                  Need to reply? Just respond to this email directly by contacting the user at <a href="mailto:${email}" style="color: #0891b2; text-decoration: none;">${email}</a>
+                </p>
+                <p style="margin: 0; color: #94a3b8; font-size: 12px;">
+                  © 2025 StudyHub • Support Team
+                </p>
+              </div>
             </div>
           `,
         });
