@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -261,6 +262,11 @@ const StudyMode = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEOHead
+        title="Study Mode"
+        description="Focus on your studies with StudyHub's Pomodoro timer and study tracking."
+        noIndex={true}
+      />
       <Navbar />
       
       <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">

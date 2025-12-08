@@ -13,6 +13,7 @@ import { z } from "zod";
 import AgeVerificationDialog from "@/components/AgeVerificationDialog";
 import EmailVerificationDialog from "@/components/EmailVerificationDialog";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 
 // List of allowed email domains (popular providers + educational)
 const allowedDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "live.com", "icloud.com", "protonmail.com", "aol.com", "mail.com", "zoho.com", "edu", "ac.in", "edu.in", "ac.uk", "edu.au", "edu.sg"];
@@ -210,6 +211,11 @@ const Auth = () => {
     }
   };
   return <div className="min-h-screen flex flex-col">
+      <SEOHead
+        title="Sign In"
+        description="Join StudyHub to connect with students worldwide. Sign in or create an account to ask questions, share knowledge, and join study groups."
+        canonical="https://studyhub-studentportal.lovable.app/auth"
+      />
       <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-accent/20 p-4">
         <Card className="w-full max-w-md animate-fade-in shadow-xl border-primary/10">
           <CardHeader className="text-center">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead, { StructuredData, getBreadcrumbSchema, getFAQSchema } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -59,6 +60,14 @@ const FAQ_ITEMS = [{
 }];
 const Support = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const breadcrumbData = useMemo(() => getBreadcrumbSchema([
+    { name: "Home", url: "https://studyhub-studentportal.lovable.app/" },
+    { name: "Support", url: "https://studyhub-studentportal.lovable.app/support" },
+  ]), []);
+
+  const faqSchema = useMemo(() => getFAQSchema(FAQ_ITEMS), []);
+
   const form = useForm<SupportFormValues>({
     resolver: zodResolver(supportSchema),
     defaultValues: {
@@ -98,6 +107,13 @@ const Support = () => {
     }
   };
   return <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Help & Support"
+        description="Get help with StudyHub. Contact our support team, browse FAQs, and find answers to common questions about using the platform."
+        canonical="https://studyhub-studentportal.lovable.app/support"
+      />
+      <StructuredData data={breadcrumbData} />
+      <StructuredData data={faqSchema} />
       <Navbar />
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
+import SEOHead from "@/components/SEOHead";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -225,6 +226,11 @@ const UserProfile = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={profile.username ? `${profile.username}'s Profile` : "User Profile"}
+        description="View student profile on StudyHub."
+        noIndex={true}
+      />
       <Navbar />
       
       {/* Hero Section */}

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeHtml } from "@/lib/sanitize";
 import Navbar from "@/components/Navbar";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -304,6 +305,11 @@ const Post = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={post.title}
+        description={`${post.subject} question on StudyHub`}
+        noIndex={true}
+      />
       <Navbar />
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         <Button variant="ghost" onClick={() => navigate("/")} className="mb-4">

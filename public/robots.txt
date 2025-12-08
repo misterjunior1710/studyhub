@@ -1,8 +1,20 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /settings
+Disallow: /friends
+Disallow: /study
+Disallow: /post/*
+Disallow: /user/*
+Disallow: /groups/*
 
 User-agent: Bingbot
 Allow: /
+Disallow: /settings
+Disallow: /friends
+Disallow: /study
+Disallow: /post/*
+Disallow: /user/*
+Disallow: /groups/*
 
 User-agent: Twitterbot
 Allow: /
@@ -12,3 +24,11 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /settings
+Disallow: /friends
+Disallow: /study
+Disallow: /post/*
+Disallow: /user/*
+Disallow: /groups/*
+
+Sitemap: https://studyhub-studentportal.lovable.app/sitemap.xml
