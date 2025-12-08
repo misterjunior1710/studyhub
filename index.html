@@ -30,8 +30,8 @@
     
     <!-- Loading skeleton styles - prevents white flash -->
     <style>
-      /* Hide SEO fallback content initially - React will replace it */
-      #root > * {
+      /* Hide SEO fallback content only - not React rendered content */
+      #root > .seo-fallback {
         display: none !important;
       }
       
@@ -46,7 +46,7 @@
         transition: opacity 0.3s ease-out;
       }
       
-      /* Dark mode support */
+      /* Dark mode support - OS preference */
       @media (prefers-color-scheme: dark) {
         #loading-skeleton {
           background: hsl(240 10% 4%);
@@ -57,6 +57,17 @@
         #loading-skeleton .skeleton-nav {
           border-color: hsl(240 4% 16%);
         }
+      }
+      
+      /* Dark mode support - .dark class on html */
+      .dark #loading-skeleton {
+        background: hsl(240 10% 4%);
+      }
+      .dark #loading-skeleton .skeleton-bar {
+        background: hsl(240 4% 16%);
+      }
+      .dark #loading-skeleton .skeleton-nav {
+        border-color: hsl(240 4% 16%);
       }
       
       .skeleton-bar {
@@ -158,57 +169,59 @@
     </div>
     
     <div id="root">
-      <!-- Static fallback content for SEO crawlers - replaced by React on hydration -->
-      <header style="padding: 1rem; text-align: center;">
-        <h1><strong>StudyHub</strong> - Study Smarter, Win Harder</h1>
-        <nav>
-          <a href="/">Home</a> |
-          <a href="/questions">Questions</a> |
-          <a href="/groups">Study Groups</a> |
-          <a href="/leaderboard">Leaderboard</a> |
-          <a href="/support">Support</a> |
-          <a href="/auth">Sign In</a>
-        </nav>
-      </header>
-      <main style="padding: 2rem; text-align: center;">
-        <h2><strong>Connect with Students Worldwide</strong></h2>
-        <p><strong>StudyHub</strong> is the <strong>ultimate platform for students</strong> to share knowledge, ask questions, and collaborate across different countries, subjects, grades, and streams.</p>
-        
-        <section>
-          <h3><strong>Why Choose StudyHub?</strong></h3>
-          <ul style="list-style: none; padding: 0;">
-            <li>📚 <strong>Ask doubts</strong> and get answers from peers worldwide</li>
-            <li>👥 <strong>Join study groups</strong> based on your subjects and interests</li>
-            <li>🏆 <strong>Earn XP</strong> and climb the leaderboard</li>
-            <li>🔥 <strong>Build study streaks</strong> and stay motivated</li>
-            <li>🌍 <strong>Connect with students</strong> from different countries</li>
-          </ul>
-        </section>
-        
-        <section>
-          <h3><strong>Popular Features</strong></h3>
-          <p><a href="/questions"><strong>Browse Questions</strong></a> - Find answers to common study problems</p>
-          <p><a href="/groups"><strong>Study Groups</strong></a> - Join communities of like-minded students</p>
-          <p><a href="/leaderboard"><strong>Leaderboard</strong></a> - See top contributors this week</p>
-          <p><a href="/friends"><strong>Friends</strong></a> - Connect with fellow students and study partners</p>
-          <p><a href="/study"><strong>Study Mode</strong></a> - Focus with our Pomodoro timer</p>
-        </section>
-        
-        <section>
-          <h3><strong>Get Started Today</strong></h3>
-          <p>Join <strong>thousands of students</strong> already learning together on <strong>StudyHub</strong>.</p>
-          <a href="/auth"><strong>Create Your Free Account</strong></a>
-        </section>
-      </main>
-      <footer style="padding: 1rem; text-align: center; border-top: 1px solid #ccc;">
-        <p>&copy; 2025 <strong>StudyHub</strong>. All rights reserved.</p>
-        <p><strong>Study Smarter, Win Harder</strong> 🎯</p>
-        <nav>
-          <a href="/privacy">Privacy Policy</a> |
-          <a href="/terms">Terms & Conditions</a> |
-          <a href="/support">Help & Support</a>
-        </nav>
-      </footer>
+      <!-- Static fallback content for SEO crawlers - hidden by CSS, preserved for crawlers -->
+      <div class="seo-fallback">
+        <header style="padding: 1rem; text-align: center;">
+          <h1><strong>StudyHub</strong> - Study Smarter, Win Harder</h1>
+          <nav>
+            <a href="/">Home</a> |
+            <a href="/questions">Questions</a> |
+            <a href="/groups">Study Groups</a> |
+            <a href="/leaderboard">Leaderboard</a> |
+            <a href="/support">Support</a> |
+            <a href="/auth">Sign In</a>
+          </nav>
+        </header>
+        <main style="padding: 2rem; text-align: center;">
+          <h2><strong>Connect with Students Worldwide</strong></h2>
+          <p><strong>StudyHub</strong> is the <strong>ultimate platform for students</strong> to share knowledge, ask questions, and collaborate across different countries, subjects, grades, and streams.</p>
+          
+          <section>
+            <h3><strong>Why Choose StudyHub?</strong></h3>
+            <ul style="list-style: none; padding: 0;">
+              <li>📚 <strong>Ask doubts</strong> and get answers from peers worldwide</li>
+              <li>👥 <strong>Join study groups</strong> based on your subjects and interests</li>
+              <li>🏆 <strong>Earn XP</strong> and climb the leaderboard</li>
+              <li>🔥 <strong>Build study streaks</strong> and stay motivated</li>
+              <li>🌍 <strong>Connect with students</strong> from different countries</li>
+            </ul>
+          </section>
+          
+          <section>
+            <h3><strong>Popular Features</strong></h3>
+            <p><a href="/questions"><strong>Browse Questions</strong></a> - Find answers to common study problems</p>
+            <p><a href="/groups"><strong>Study Groups</strong></a> - Join communities of like-minded students</p>
+            <p><a href="/leaderboard"><strong>Leaderboard</strong></a> - See top contributors this week</p>
+            <p><a href="/friends"><strong>Friends</strong></a> - Connect with fellow students and study partners</p>
+            <p><a href="/study"><strong>Study Mode</strong></a> - Focus with our Pomodoro timer</p>
+          </section>
+          
+          <section>
+            <h3><strong>Get Started Today</strong></h3>
+            <p>Join <strong>thousands of students</strong> already learning together on <strong>StudyHub</strong>.</p>
+            <a href="/auth"><strong>Create Your Free Account</strong></a>
+          </section>
+        </main>
+        <footer style="padding: 1rem; text-align: center; border-top: 1px solid #ccc;">
+          <p>&copy; 2025 <strong>StudyHub</strong>. All rights reserved.</p>
+          <p><strong>Study Smarter, Win Harder</strong> 🎯</p>
+          <nav>
+            <a href="/privacy">Privacy Policy</a> |
+            <a href="/terms">Terms & Conditions</a> |
+            <a href="/support">Help & Support</a>
+          </nav>
+        </footer>
+      </div>
     </div>
     
     <!-- Noscript fallback for crawlers that don't execute JS -->
