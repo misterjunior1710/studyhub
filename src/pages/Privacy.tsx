@@ -1,9 +1,22 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Eye, Lock, Database, Bell, Users, Trash2, Mail } from "lucide-react";
+
 const Privacy = () => {
+  const breadcrumbData = getBreadcrumbSchema([
+    { name: "Home", url: "https://studyhub-studentportal.lovable.app/" },
+    { name: "Privacy Policy", url: "https://studyhub-studentportal.lovable.app/privacy" },
+  ]);
+
   return <div className="min-h-screen bg-background flex flex-col">
+      <SEOHead
+        title="Privacy Policy"
+        description="Learn how StudyHub protects your data and privacy. We're committed to keeping your personal information secure while you connect and learn with students worldwide."
+        canonical="https://studyhub-studentportal.lovable.app/privacy"
+      />
+      <StructuredData data={breadcrumbData} />
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">
         <div className="space-y-8 animate-fade-in">

@@ -51,7 +51,7 @@ const SEOHead = ({
     setMetaTag("twitter:description", description);
     setMetaTag("twitter:image", image);
 
-    // Canonical URL
+    // Canonical URL and og:url
     if (canonical) {
       let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
       if (!link) {
@@ -60,6 +60,7 @@ const SEOHead = ({
         document.head.appendChild(link);
       }
       link.href = canonical;
+      setMetaTag("og:url", canonical, true);
     }
 
     // Cleanup function to reset on unmount (optional)
@@ -136,4 +137,17 @@ export const getBreadcrumbSchema = (items: { name: string; url: string }[]) => (
     name: item.name,
     item: item.url,
   })),
+});
+
+export const getFAQSchema = (items: { question: string; answer: string }[]) => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: items.map(item => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer
+    }
+  }))
 });

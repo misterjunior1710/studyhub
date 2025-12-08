@@ -1,9 +1,22 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Users, BookOpen, AlertTriangle, Scale, Ban, RefreshCw, Mail } from "lucide-react";
+
 const Terms = () => {
+  const breadcrumbData = getBreadcrumbSchema([
+    { name: "Home", url: "https://studyhub-studentportal.lovable.app/" },
+    { name: "Terms & Conditions", url: "https://studyhub-studentportal.lovable.app/terms" },
+  ]);
+
   return <div className="min-h-screen bg-background flex flex-col">
+      <SEOHead
+        title="Terms & Conditions"
+        description="Read StudyHub's terms of service. Understand your rights and responsibilities when using our student community platform."
+        canonical="https://studyhub-studentportal.lovable.app/terms"
+      />
+      <StructuredData data={breadcrumbData} />
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">
         <div className="space-y-8 animate-fade-in">

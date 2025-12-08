@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -384,6 +385,11 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Settings"
+        description="Manage your StudyHub account settings, preferences, and privacy options."
+        noIndex={true}
+      />
       <Navbar />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">

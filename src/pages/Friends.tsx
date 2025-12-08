@@ -210,6 +210,7 @@ const Friends = () => {
         title="Friends - Connect with Students"
         description="Connect with fellow students on StudyHub. Find study partners, share knowledge, and build your academic network."
         canonical="https://studyhub-studentportal.lovable.app/friends"
+        noIndex={true}
       />
       <StructuredData data={breadcrumbData} />
       
