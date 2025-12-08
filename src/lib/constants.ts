@@ -1,3 +1,9 @@
+// Brand constants
+export const BRAND_NAME = "StudyHub";
+export const BRAND_TAGLINE = "Study Smarter, Win Harder";
+export const BRAND_URL = "https://studyhub-studentportal.lovable.app";
+export const BRAND_DESCRIPTION = "Connect with students worldwide on StudyHub. Share knowledge, ask questions, and collaborate across different countries, subjects, grades, and streams.";
+
 // Grade levels - includes adult option
 export const STUDENT_GRADES = [
   "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", 

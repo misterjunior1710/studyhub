@@ -10,7 +10,7 @@ const Footer = () => {
               StudyHub
             </h3>
             <p className="text-sm text-muted-foreground">
-              Your collaborative learning community. Connect, learn, and grow together.
+              Study Smarter, Win Harder 🎯
             </p>
             
           </div>

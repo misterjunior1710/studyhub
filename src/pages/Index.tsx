@@ -59,7 +59,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Study Together, Learn Better"
+        title="Study Smarter, Win Harder"
         description="Connect with students worldwide on StudyHub. Share knowledge, ask questions, and collaborate across different countries, subjects, grades, and educational streams."
         canonical="https://studyhub-studentportal.lovable.app/"
       />
@@ -75,7 +75,7 @@ const Index = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent)]" />
         <div className="relative container mx-auto px-4 py-8 sm:py-12 md:py-16">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 animate-fade-in leading-tight">
-            Study Together, Learn Better
+            Study Smarter, Win Harder
           </h1>
           <p className="text-white/90 text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 animate-fade-in max-w-2xl" style={{ animationDelay: "0.1s" }}>
             Connect with students worldwide, share knowledge, and ace your exams ✨
