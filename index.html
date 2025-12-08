@@ -28,6 +28,59 @@
     <meta name="twitter:description" content="Connect with students worldwide on StudyHub. Share knowledge, ask questions, and collaborate across different countries, subjects, grades, and streams." />
     <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/T6FlWUVm6DYTgcsVHeiIqQYaN6A2/social-images/social-1764745412327-Screenshot 2025-12-03 123228.png">
     
+    <!-- Loading skeleton styles - prevents white flash -->
+    <style>
+      /* Hide SEO fallback content initially - React will replace it */
+      #root > * {
+        display: none !important;
+      }
+      
+      /* Loading skeleton styles */
+      #loading-skeleton {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: hsl(0 0% 100%);
+        display: flex;
+        flex-direction: column;
+        transition: opacity 0.3s ease-out;
+      }
+      
+      /* Dark mode support */
+      @media (prefers-color-scheme: dark) {
+        #loading-skeleton {
+          background: hsl(240 10% 4%);
+        }
+        #loading-skeleton .skeleton-bar {
+          background: hsl(240 4% 16%);
+        }
+        #loading-skeleton .skeleton-nav {
+          border-color: hsl(240 4% 16%);
+        }
+      }
+      
+      .skeleton-bar {
+        background: hsl(240 6% 90%);
+        border-radius: 8px;
+        animation: skeleton-pulse 1.5s ease-in-out infinite;
+      }
+      
+      .skeleton-nav {
+        border-bottom: 1px solid hsl(240 6% 90%);
+      }
+      
+      @keyframes skeleton-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      
+      /* Hide skeleton when app loads */
+      #loading-skeleton.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
+    
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6720785210518411" crossorigin="anonymous"></script>
     
@@ -75,6 +128,35 @@
   </head>
 
   <body>
+    <!-- Loading skeleton - shown immediately, hidden when React mounts -->
+    <div id="loading-skeleton" aria-hidden="true">
+      <!-- Navbar skeleton -->
+      <div class="skeleton-nav" style="height: 64px; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <div class="skeleton-bar" style="width: 120px; height: 32px;"></div>
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <div class="skeleton-bar" style="width: 60px; height: 20px;"></div>
+          <div class="skeleton-bar" style="width: 60px; height: 20px;"></div>
+          <div class="skeleton-bar" style="width: 60px; height: 20px;"></div>
+          <div class="skeleton-bar" style="width: 80px; height: 36px;"></div>
+        </div>
+      </div>
+      
+      <!-- Hero skeleton -->
+      <div style="padding: 60px 24px 40px; text-align: center;">
+        <div class="skeleton-bar" style="width: 60%; max-width: 400px; height: 40px; margin: 0 auto 20px;"></div>
+        <div class="skeleton-bar" style="width: 80%; max-width: 600px; height: 20px; margin: 0 auto 12px;"></div>
+        <div class="skeleton-bar" style="width: 70%; max-width: 500px; height: 20px; margin: 0 auto 28px;"></div>
+        <div class="skeleton-bar" style="width: 140px; height: 44px; margin: 0 auto;"></div>
+      </div>
+      
+      <!-- Content skeleton -->
+      <div style="max-width: 900px; margin: 0 auto; padding: 24px;">
+        <div class="skeleton-bar" style="width: 100%; height: 140px; margin-bottom: 16px;"></div>
+        <div class="skeleton-bar" style="width: 100%; height: 140px; margin-bottom: 16px;"></div>
+        <div class="skeleton-bar" style="width: 100%; height: 140px;"></div>
+      </div>
+    </div>
+    
     <div id="root">
       <!-- Static fallback content for SEO crawlers - replaced by React on hydration -->
       <header style="padding: 1rem; text-align: center;">
