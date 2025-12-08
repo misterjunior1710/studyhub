@@ -5,17 +5,17 @@ export default {
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
-	container: {
-		center: true,
-		padding: {
-			DEFAULT: '1rem',
-			sm: '1.5rem',
-			lg: '2rem'
-		},
-		screens: {
-			'2xl': '1400px'
-		}
-	},
+  	container: {
+  		center: true,
+  		padding: {
+  			DEFAULT: '1rem',
+  			sm: '1.5rem',
+  			lg: '2rem'
+  		},
+  		screens: {
+  			'2xl': '1400px'
+  		}
+  	},
   	extend: {
   		colors: {
   			border: 'hsl(var(--border))',
@@ -126,7 +126,7 @@ export default {
   					opacity: '1'
   				}
   			},
-  			'shimmer': {
+  			shimmer: {
   				'0%': {
   					backgroundPosition: '-200% 0'
   				},
@@ -134,7 +134,7 @@ export default {
   					backgroundPosition: '200% 0'
   				}
   			},
-  			'float': {
+  			float: {
   				'0%, 100%': {
   					transform: 'translateY(0)'
   				},
@@ -150,7 +150,7 @@ export default {
   					transform: 'translateY(-5px)'
   				}
   			},
-  			'wiggle': {
+  			wiggle: {
   				'0%, 100%': {
   					transform: 'rotate(-3deg)'
   				},
@@ -177,7 +177,7 @@ export default {
   					backgroundPosition: '0% 50%'
   				}
   			},
-  			'pop': {
+  			pop: {
   				'0%': {
   					transform: 'scale(1)'
   				},
@@ -205,13 +205,13 @@ export default {
   			'fade-in': 'fade-in 0.4s ease-out forwards',
   			'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
   			'scale-in': 'scale-in 0.2s ease-out',
-  			'shimmer': 'shimmer 2s linear infinite',
-  			'float': 'float 4s ease-in-out infinite',
+  			shimmer: 'shimmer 2s linear infinite',
+  			float: 'float 4s ease-in-out infinite',
   			'bounce-soft': 'bounce-soft 2s ease-in-out infinite',
-  			'wiggle': 'wiggle 0.5s ease-in-out',
+  			wiggle: 'wiggle 0.5s ease-in-out',
   			'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
   			'gradient-shift': 'gradient-shift 3s ease infinite',
-  			'pop': 'pop 0.3s ease-out',
+  			pop: 'pop 0.3s ease-out',
   			'slide-up': 'slide-up 0.5s ease-out forwards'
   		},
   		boxShadow: {
@@ -228,14 +228,11 @@ export default {
   				'Lato',
   				'ui-sans-serif',
   				'system-ui',
-  				'-apple-system',
-  				'BlinkMacSystemFont',
-  				'Segoe UI',
-  				'Roboto',
-  				'Helvetica Neue',
-  				'Arial',
-  				'Noto Sans',
-  				'sans-serif'
+  				'sans-serif',
+  				'Apple Color Emoji',
+  				'Segoe UI Emoji',
+  				'Segoe UI Symbol',
+  				'Noto Color Emoji'
   			],
   			serif: [
   				'EB Garamond',
