@@ -104,6 +104,7 @@ export const getOrganizationSchema = () => ({
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "StudyHub",
+  slogan: "Study Smarter, Win Harder",
   description: "Connect with students worldwide on StudyHub. Share knowledge, ask questions, and collaborate.",
   url: "https://studyhub-studentportal.lovable.app",
   logo: "https://storage.googleapis.com/gpt-engineer-file-uploads/T6FlWUVm6DYTgcsVHeiIqQYaN6A2/uploads/1764745423647-Screenshot 2025-12-03 123228.png",
@@ -119,6 +120,7 @@ export const getCommunitySchema = () => ({
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "StudyHub",
+  alternateName: "Study Smarter, Win Harder",
   description: "A global study community for students to connect, share knowledge, and collaborate.",
   url: "https://studyhub-studentportal.lovable.app",
   potentialAction: {
