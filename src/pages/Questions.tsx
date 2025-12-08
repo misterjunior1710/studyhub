@@ -27,8 +27,8 @@ const Questions = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead 
-        title="Questions - Get Study Help" 
-        description="Get help with your studies from the StudyHub community. Post your academic questions and receive answers from students worldwide." 
+        title="Academic Questions - Get Study Help" 
+        description="Get help with your studies from the StudyHub community. Post academic questions in any subject and receive answers from students worldwide. From math problems to essay feedback." 
         canonical="https://studyhub-studentportal.lovable.app/questions" 
       />
       <StructuredData data={breadcrumbData} />
@@ -37,11 +37,20 @@ const Questions = () => {
       <main className="container mx-auto px-4 py-8">
         <header className="mb-8">
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Questions
+            Academic Questions
           </h1>
-          <p className="text-muted-foreground">
-            Get help with your studies from the community
+          <p className="text-muted-foreground max-w-2xl">
+            Stuck on a problem? Post your question and get help from students around the world. 
+            Whether it's calculus, chemistry, or creative writing, the community is here to help.
           </p>
+          <nav className="mt-3 text-sm" aria-label="Related pages">
+            <span className="text-muted-foreground">See also: </span>
+            <a href="/" className="text-primary hover:underline">Home Feed</a>
+            <span className="text-muted-foreground mx-2">•</span>
+            <a href="/groups" className="text-primary hover:underline">Study Groups</a>
+            <span className="text-muted-foreground mx-2">•</span>
+            <a href="/leaderboard" className="text-primary hover:underline">Leaderboard</a>
+          </nav>
         </header>
 
         <section aria-label="Questions feed">
@@ -49,8 +58,15 @@ const Questions = () => {
             {loading ? (
               <PostSkeletonList count={4} />
             ) : posts.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                No questions posted yet. Be the first to ask!
+              <div className="text-center py-12">
+                <h2 className="text-lg font-semibold mb-2">No questions posted yet</h2>
+                <p className="text-muted-foreground mb-4">
+                  Be the first to ask! Click the post button in the navigation to ask your question.
+                </p>
+                <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                  Questions can be about any academic subject — homework help, exam preparation, 
+                  concept explanations, or study strategies. The community is ready to assist.
+                </p>
               </div>
             ) : (
               <div className="grid gap-6">

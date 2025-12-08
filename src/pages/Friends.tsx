@@ -221,9 +221,10 @@ const Friends = () => {
           <div className="flex justify-center mb-4">
             <Users className="h-16 w-16 animate-float" aria-hidden="true" />
           </div>
-          <h1 className="text-4xl font-bold mb-2">Friends</h1>
-          <p className="text-white/80 max-w-md mx-auto">
-            Connect with fellow students, share knowledge, and study together
+          <h1 className="text-4xl font-bold mb-2">Study Friends</h1>
+          <p className="text-white/80 max-w-lg mx-auto">
+            Build your academic network by connecting with fellow students. Find study partners 
+            who share your interests, collaborate on challenging topics, and support each other's learning journey.
           </p>
         </div>
       </header>
@@ -297,10 +298,16 @@ const Friends = () => {
                 <CardTitle>My Friends</CardTitle>
               </CardHeader>
               <CardContent>
-                {friends.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-8">
-                    No friends yet. Search for students to connect!
-                  </p>
+              {friends.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground mb-3">
+                      No friends yet. Use the search above to find students to connect with!
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Tip: Search by username to find classmates or students studying similar subjects. 
+                      You can also meet new people in <a href="/groups" className="text-primary hover:underline">Study Groups</a>.
+                    </p>
+                  </div>
                 ) : (
                   <div className="space-y-3" role="list" aria-label="Friends list">
                     {friends.map((friend) => (

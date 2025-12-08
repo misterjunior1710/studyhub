@@ -210,25 +210,39 @@ const Auth = () => {
       toast.error(error.message || "Failed to sign in with Google");
     }
   };
-  return <div className="min-h-screen flex flex-col">
+  return <main className="min-h-screen flex flex-col">
       <SEOHead
-        title="Sign In"
-        description="Join StudyHub to connect with students worldwide. Sign in or create an account to ask questions, share knowledge, and join study groups."
+        title="Sign In - Join StudyHub"
+        description="Join StudyHub to connect with students worldwide. Sign in or create an account to ask questions, share knowledge, and collaborate in study groups. Study Smarter, Win Harder."
         canonical="https://studyhub-studentportal.lovable.app/auth"
       />
+      
+      {/* SEO Content Section */}
+      <header className="sr-only">
+        <h1>Sign In to StudyHub - Study Smarter, Win Harder</h1>
+        <p>
+          Welcome to StudyHub, the ultimate collaborative learning platform for students worldwide. 
+          Create your free account or sign in to access features including asking academic questions, 
+          joining study groups, earning XP on the leaderboard, and connecting with peers across 
+          different countries, subjects, and educational streams. Whether you're in Grade 6 or 
+          pursuing postgraduate studies, StudyHub helps you learn better together.
+        </p>
+      </header>
+      
       <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-accent/20 p-4">
-        <Card className="w-full max-w-md animate-fade-in shadow-xl border-primary/10">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-2">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center animate-bounce-soft">
-                <Sparkles className="h-6 w-6 text-white" />
+        <article className="w-full max-w-md">
+          <Card className="animate-fade-in shadow-xl border-primary/10">
+            <CardHeader className="text-center">
+              <div className="flex justify-center mb-2">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center animate-bounce-soft">
+                  <Sparkles className="h-6 w-6 text-white" aria-hidden="true" />
+                </div>
               </div>
-            </div>
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              StudyHub
-            </CardTitle>
-            <CardDescription>Join the study community ✨</CardDescription>
-          </CardHeader>
+              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                StudyHub
+              </CardTitle>
+              <CardDescription>Join the global study community</CardDescription>
+            </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" ref={tabsRef}>
               <TabsList className="grid w-full grid-cols-2">
@@ -403,6 +417,18 @@ const Auth = () => {
           </Tabs>
         </CardContent>
       </Card>
+        
+          {/* Additional SEO content below card */}
+          <aside className="mt-6 text-center text-sm text-muted-foreground">
+            <p className="mb-3">
+              Already have questions? <Link to="/" className="text-primary hover:underline font-medium">Browse the community</Link> or 
+              check the <Link to="/leaderboard" className="text-primary hover:underline font-medium">top students</Link>.
+            </p>
+            <p>
+              Need help? Visit our <Link to="/support" className="text-primary hover:underline">Support Center</Link>.
+            </p>
+          </aside>
+        </article>
       </div>
       <Footer />
       <AgeVerificationDialog open={showAgeVerification} onConfirm={handleAgeVerificationConfirm} onCancel={handleAgeVerificationCancel} />
@@ -414,6 +440,6 @@ const Auth = () => {
           setActiveTab("login");
         }} 
       />
-    </div>;
+    </main>;
 };
 export default Auth;

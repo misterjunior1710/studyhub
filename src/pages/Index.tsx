@@ -169,8 +169,14 @@ const Index = () => {
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-4">
                       <Sparkles className="h-8 w-8 text-primary" aria-hidden="true" />
                     </div>
-                    <p className="text-muted-foreground">
-                      No posts yet. Be the first to create one!
+                    <h2 className="text-lg font-semibold mb-2">No posts yet</h2>
+                    <p className="text-muted-foreground mb-4">
+                      Be the first to share your knowledge or ask a question!
+                    </p>
+                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                      StudyHub is a community where students from around the world help each other succeed. 
+                      Start by asking a question or sharing study materials in any subject — from Mathematics 
+                      and Physics to Languages and History.
                     </p>
                   </div>
                 ) : (

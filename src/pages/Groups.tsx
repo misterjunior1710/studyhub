@@ -114,7 +114,7 @@ const Groups = () => {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Study Groups - Collaborate with Students"
-        description="Join or create study groups on StudyHub. Collaborate with other students in focused study groups and learn together."
+        description="Join or create study groups on StudyHub. Collaborate with students in focused study groups, share resources, and learn together across subjects and grades."
         canonical="https://studyhub-studentportal.lovable.app/groups"
       />
       <StructuredData data={breadcrumbData} />
@@ -126,9 +126,18 @@ const Groups = () => {
             <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Study Groups
             </h1>
-            <p className="text-muted-foreground">
-              Collaborate with other students in focused study groups
+            <p className="text-muted-foreground max-w-xl">
+              Create or join study groups to collaborate with fellow students. Study groups are perfect for 
+              exam preparation, project work, or regular study sessions with peers who share your academic goals.
             </p>
+            <nav className="mt-3 text-sm" aria-label="Related pages">
+              <span className="text-muted-foreground">Explore: </span>
+              <a href="/questions" className="text-primary hover:underline">Ask Questions</a>
+              <span className="text-muted-foreground mx-2">•</span>
+              <a href="/friends" className="text-primary hover:underline">Find Friends</a>
+              <span className="text-muted-foreground mx-2">•</span>
+              <a href="/leaderboard" className="text-primary hover:underline">Leaderboard</a>
+            </nav>
           </div>
           <CreateGroupDialog onGroupCreated={handleGroupCreated} />
         </header>
@@ -142,9 +151,10 @@ const Groups = () => {
             <Card className="text-center py-12">
               <CardContent>
                 <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" aria-hidden="true" />
-                <h2 className="text-xl font-semibold mb-2">No groups yet</h2>
-                <p className="text-muted-foreground mb-4">
-                  Create your first study group to start collaborating with others
+                <h2 className="text-xl font-semibold mb-2">No study groups yet</h2>
+                <p className="text-muted-foreground mb-4 max-w-md mx-auto">
+                  Create your first study group to start collaborating with other students. 
+                  Invite friends, share study materials, and discuss topics in real-time.
                 </p>
                 <CreateGroupDialog onGroupCreated={handleGroupCreated} />
               </CardContent>

@@ -160,8 +160,8 @@ const Leaderboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Leaderboard - Top Students"
-        description="See who's leading the pack on StudyHub! Compete with fellow students and climb the ranks based on points, streaks, and contributions."
+        title="Leaderboard - Top Students on StudyHub"
+        description="See who's leading the pack on StudyHub! Compete with fellow students and climb the ranks based on points, study streaks, and contributions. Study Smarter, Win Harder."
         canonical="https://studyhub-studentportal.lovable.app/leaderboard"
       />
       <StructuredData data={breadcrumbData} />
@@ -173,9 +173,10 @@ const Leaderboard = () => {
           <div className="flex justify-center mb-4">
             <Trophy className="h-16 w-16 animate-float" aria-hidden="true" />
           </div>
-          <h1 className="text-4xl font-bold mb-2">Leaderboard</h1>
-          <p className="text-white/80 max-w-md mx-auto">
-            See who's leading the pack! Compete with fellow students and climb the ranks.
+          <h1 className="text-4xl font-bold mb-2">Student Leaderboard</h1>
+          <p className="text-white/80 max-w-lg mx-auto">
+            Discover the top performers in our global study community. Earn points by asking questions, 
+            helping others, and maintaining daily study streaks. Compete with fellow students and climb the ranks!
           </p>
         </div>
       </header>
@@ -299,6 +300,29 @@ const Leaderboard = () => {
             </Card>
           </TabsContent>
         </Tabs>
+        
+        {/* SEO-friendly content section */}
+        <section className="mt-12 text-center" aria-labelledby="leaderboard-cta">
+          <h2 id="leaderboard-cta" className="text-xl font-semibold mb-3">Ready to Join the Rankings?</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-4">
+            Start earning points today by participating in the StudyHub community. Ask academic questions, 
+            help fellow students with answers, maintain your daily study streak, and watch your rank climb. 
+            The more you contribute, the higher you rise!
+          </p>
+          <nav className="flex flex-wrap justify-center gap-3" aria-label="Related pages">
+            <a href="/questions" className="text-primary hover:underline font-medium">
+              Browse Questions
+            </a>
+            <span className="text-muted-foreground">•</span>
+            <a href="/groups" className="text-primary hover:underline font-medium">
+              Join Study Groups
+            </a>
+            <span className="text-muted-foreground">•</span>
+            <a href="/study" className="text-primary hover:underline font-medium">
+              Start Studying
+            </a>
+          </nav>
+        </section>
       </main>
     </div>
   );

@@ -263,19 +263,22 @@ const StudyMode = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Study Mode"
-        description="Focus on your studies with StudyHub's Pomodoro timer and study tracking."
+        title="Study Mode - Focus Timer"
+        description="Boost your productivity with StudyHub's Pomodoro timer and study tracking. Set weekly goals, track focus sessions, and maintain your study streak."
         noIndex={true}
       />
       <Navbar />
       
       <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
-        <div className="space-y-6">
+        <article className="space-y-6">
           {/* Header */}
-          <div className="text-center space-y-2">
+          <header className="text-center space-y-2">
             <h1 className="text-3xl font-bold">Study Mode</h1>
-            <p className="text-muted-foreground">Focus on your studies with the Pomodoro technique</p>
-          </div>
+            <p className="text-muted-foreground max-w-lg mx-auto">
+              Boost your focus with the Pomodoro technique — 25 minutes of concentrated study 
+              followed by a 5-minute break. Track your progress and build consistent study habits.
+            </p>
+          </header>
 
           {/* Timer Card */}
           <Card className="border-2 border-primary/20">
@@ -466,18 +469,24 @@ const StudyMode = () => {
           </Card>
 
           {/* Tips */}
-          <Card className="bg-muted/30">
-            <CardContent className="pt-6">
-              <h3 className="font-semibold mb-2">💡 Pomodoro Tips</h3>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Focus for 25 minutes, then take a 5-minute break</li>
-                <li>• After 4 focus sessions, take a longer 15-30 minute break</li>
-                <li>• Remove distractions during focus time</li>
-                <li>• Use breaks to stretch, hydrate, or rest your eyes</li>
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
+          <section aria-labelledby="tips-heading">
+            <Card className="bg-muted/30">
+              <CardContent className="pt-6">
+                <h2 id="tips-heading" className="font-semibold mb-2">💡 Pomodoro Tips</h2>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• Focus for 25 minutes, then take a 5-minute break</li>
+                  <li>• After 4 focus sessions, take a longer 15-30 minute break</li>
+                  <li>• Remove distractions during focus time</li>
+                  <li>• Use breaks to stretch, hydrate, or rest your eyes</li>
+                </ul>
+                <p className="mt-4 text-sm text-muted-foreground">
+                  Need study material? <a href="/questions" className="text-primary hover:underline">Browse questions</a> from 
+                  the community or <a href="/groups" className="text-primary hover:underline">join a study group</a> to stay motivated.
+                </p>
+              </CardContent>
+            </Card>
+          </section>
+        </article>
       </main>
 
       <Footer />
