@@ -243,7 +243,7 @@ const UserProfile = () => {
           
           <div className="flex flex-col md:flex-row items-center gap-6">
             <Avatar className="h-32 w-32 border-4 border-white/20">
-              <AvatarImage src={profile.avatar_url} />
+              <AvatarImage src={profile.avatar_url} alt={`${profile.username || 'User'}'s profile picture`} />
               <AvatarFallback className="text-4xl bg-white/20 text-white">
                 {profile.username?.charAt(0).toUpperCase() || "U"}
               </AvatarFallback>

@@ -244,7 +244,7 @@ const GroupChat = () => {
                 <Card key={message.id} className={message.user_id === user?.id ? "bg-primary/10" : ""}>
                   <CardContent className="pt-4">
                     <div className="flex items-start gap-3">
-                      <Avatar className="h-8 w-8">
+                      <Avatar className="h-8 w-8" title={`${message.profiles?.username || 'User'}'s avatar`}>
                         <AvatarFallback className="bg-primary text-primary-foreground">
                           {message.profiles?.username?.charAt(0).toUpperCase() || "U"}
                         </AvatarFallback>

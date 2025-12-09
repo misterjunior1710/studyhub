@@ -479,7 +479,7 @@ const Settings = () => {
                   <div className="flex items-center gap-6">
                     <div className="relative">
                       <Avatar className="h-24 w-24">
-                        <AvatarImage src={profile.avatar_url} />
+                        <AvatarImage src={profile.avatar_url} alt={`${profile.username || 'User'}'s profile picture`} />
                         <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
                           {profile.username.charAt(0).toUpperCase() || "U"}
                         </AvatarFallback>
