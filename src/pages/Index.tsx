@@ -70,6 +70,8 @@ const Index = () => {
       <header 
         className="relative bg-cover bg-center overflow-hidden"
         style={{ backgroundImage: `url(${heroImage})` }}
+        role="img"
+        aria-label="Students collaborating and studying together"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-accent/80 to-primary/90 animate-gradient-shift" style={{ backgroundSize: "200% 200%" }} />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent)]" />

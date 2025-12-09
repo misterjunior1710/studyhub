@@ -89,8 +89,8 @@ const Navbar = ({
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="relative">
-                      <Avatar className="h-8 w-8">
+                    <Button variant="ghost" size="icon" className="relative" aria-label={`${username || 'User'}'s profile menu`}>
+                      <Avatar className="h-8 w-8" title={`${username || 'User'}'s profile`}>
                         <AvatarFallback className="bg-primary text-primary-foreground">
                           {username.charAt(0).toUpperCase() || "U"}
                         </AvatarFallback>

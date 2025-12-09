@@ -199,7 +199,7 @@ const GroupMembersDialog = ({ groupId, onMemberChange }: GroupMembersDialogProps
                   className="flex items-center justify-between p-2 hover:bg-accent"
                 >
                   <div className="flex items-center gap-2">
-                    <Avatar className="h-6 w-6">
+                    <Avatar className="h-6 w-6" title={`${user.username}'s avatar`}>
                       <AvatarFallback className="text-xs">
                         {user.username?.charAt(0).toUpperCase() || "U"}
                       </AvatarFallback>
@@ -240,7 +240,7 @@ const GroupMembersDialog = ({ groupId, onMemberChange }: GroupMembersDialogProps
                   className="flex items-center justify-between p-2 hover:bg-accent"
                 >
                   <div className="flex items-center gap-2">
-                    <Avatar className="h-6 w-6">
+                    <Avatar className="h-6 w-6" title={`${member.profiles?.username || 'User'}'s avatar`}>
                       <AvatarFallback className="text-xs bg-primary text-primary-foreground">
                         {member.profiles?.username?.charAt(0).toUpperCase() || "U"}
                       </AvatarFallback>
