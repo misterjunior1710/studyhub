@@ -314,24 +314,36 @@ export type Database = {
       }
       group_messages: {
         Row: {
+          audio_duration: number | null
+          audio_url: string | null
           content: string
           created_at: string | null
+          file_type: string | null
+          file_url: string | null
           group_id: string
           id: string
           updated_at: string | null
           user_id: string
         }
         Insert: {
+          audio_duration?: number | null
+          audio_url?: string | null
           content: string
           created_at?: string | null
+          file_type?: string | null
+          file_url?: string | null
           group_id: string
           id?: string
           updated_at?: string | null
           user_id: string
         }
         Update: {
+          audio_duration?: number | null
+          audio_url?: string | null
           content?: string
           created_at?: string | null
+          file_type?: string | null
+          file_url?: string | null
           group_id?: string
           id?: string
           updated_at?: string | null

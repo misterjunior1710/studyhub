@@ -165,12 +165,12 @@ const GroupMembersDialog = ({ groupId, onMemberChange }: GroupMembersDialogProps
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Users className="h-4 w-4 mr-2" />
-          Members
+        <Button variant="outline" size="sm" className="h-8 sm:h-9 px-2 sm:px-3" aria-label="View members">
+          <Users className="h-4 w-4 sm:mr-2" />
+          <span className="hidden sm:inline">Members</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-w-[95vw]">
         <DialogHeader>
           <DialogTitle>Group Members</DialogTitle>
           <DialogDescription>

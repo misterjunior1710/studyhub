@@ -71,11 +71,11 @@ const EditGroupDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10" aria-label="Edit group">
           <Pencil className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md max-w-[95vw]">
         <DialogHeader>
           <DialogTitle>Edit Group</DialogTitle>
         </DialogHeader>
