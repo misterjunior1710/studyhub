@@ -5,18 +5,23 @@ import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ArrowLeft, Send, Users, Loader2 } from "lucide-react";
+import { ArrowLeft, Send, Users, Loader2, Image, Paperclip, X } from "lucide-react";
 import { toast } from "sonner";
 import GroupMembersDialog from "@/components/GroupMembersDialog";
 import EditGroupDialog from "@/components/EditGroupDialog";
+import GroupChatMessage from "@/components/GroupChatMessage";
+import VoiceRecorder from "@/components/VoiceRecorder";
 
 interface Message {
   id: string;
   content: string;
   created_at: string;
   user_id: string;
+  file_url?: string | null;
+  file_type?: string | null;
+  audio_url?: string | null;
+  audio_duration?: number | null;
   profiles?: {
     username: string;
   };
@@ -37,7 +42,12 @@ const GroupChat = () => {
   const [sending, setSending] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [groupInfo, setGroupInfo] = useState<GroupInfo | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [uploadingFile, setUploadingFile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     checkAuth();
@@ -69,6 +79,15 @@ const GroupChat = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    // Clean up file preview URL when component unmounts or file changes
+    return () => {
+      if (filePreview) {
+        URL.revokeObjectURL(filePreview);
+      }
+    };
+  }, [filePreview]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -112,7 +131,6 @@ const GroupChat = () => {
   const loadMessages = async () => {
     setLoading(true);
     try {
-      // Get messages
       const { data: messagesData, error: messagesError } = await supabase
         .from("group_messages")
         .select("*")
@@ -121,7 +139,6 @@ const GroupChat = () => {
 
       if (messagesError) throw messagesError;
 
-      // Get user profiles for all message senders
       if (messagesData && messagesData.length > 0) {
         const userIds = [...new Set(messagesData.map(m => m.user_id))];
         const { data: profilesData } = await supabase
@@ -129,7 +146,6 @@ const GroupChat = () => {
           .select("id, username")
           .in("id", userIds);
 
-        // Map profiles to messages
         const messagesWithProfiles = messagesData.map(message => ({
           ...message,
           profiles: profilesData?.find(p => p.id === message.user_id) || { username: "User" }
@@ -147,24 +163,122 @@ const GroupChat = () => {
     }
   };
 
+  const uploadFile = async (file: File): Promise<{ url: string; type: string }> => {
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${user.id}/${id}/${Date.now()}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("group-chat-files")
+      .upload(fileName, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from("group-chat-files")
+      .getPublicUrl(fileName);
+
+    const fileType = file.type.startsWith("image/") ? "image" : 
+                     file.type === "application/pdf" ? "pdf" : "other";
+
+    return { url: publicUrl, type: fileType };
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, isImage: boolean) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // File size limit: 10MB
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size must be less than 10MB");
+      return;
+    }
+
+    setSelectedFile(file);
+
+    if (file.type.startsWith("image/")) {
+      setFilePreview(URL.createObjectURL(file));
+    } else {
+      setFilePreview(null);
+    }
+  };
+
+  const clearSelectedFile = () => {
+    setSelectedFile(null);
+    if (filePreview) {
+      URL.revokeObjectURL(filePreview);
+      setFilePreview(null);
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (imageInputRef.current) imageInputRef.current.value = "";
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !user) return;
+    if ((!newMessage.trim() && !selectedFile) || !user) return;
 
     setSending(true);
+    setUploadingFile(!!selectedFile);
+
     try {
+      let fileUrl: string | null = null;
+      let fileType: string | null = null;
+
+      if (selectedFile) {
+        const uploadResult = await uploadFile(selectedFile);
+        fileUrl = uploadResult.url;
+        fileType = uploadResult.type;
+      }
+
       const { error } = await supabase.from("group_messages").insert({
         group_id: id,
         user_id: user.id,
         content: newMessage.trim(),
+        file_url: fileUrl,
+        file_type: fileType,
       });
 
       if (error) throw error;
 
       setNewMessage("");
+      clearSelectedFile();
     } catch (error: any) {
       console.error("Error sending message:", error);
       toast.error("Failed to send message");
+    } finally {
+      setSending(false);
+      setUploadingFile(false);
+    }
+  };
+
+  const handleSendVoiceMessage = async (audioBlob: Blob, duration: number) => {
+    if (!user || !id) return;
+
+    setSending(true);
+    try {
+      const fileName = `${user.id}/${id}/${Date.now()}.webm`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from("group-chat-files")
+        .upload(fileName, audioBlob);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("group-chat-files")
+        .getPublicUrl(fileName);
+
+      const { error } = await supabase.from("group_messages").insert({
+        group_id: id,
+        user_id: user.id,
+        content: "",
+        audio_url: publicUrl,
+        audio_duration: duration,
+      });
+
+      if (error) throw error;
+    } catch (error: any) {
+      console.error("Error sending voice message:", error);
+      toast.error("Failed to send voice message");
     } finally {
       setSending(false);
     }
@@ -190,28 +304,32 @@ const GroupChat = () => {
       />
       <Navbar />
       
-      {/* Group Header */}
+      {/* Group Header - Responsive */}
       <div className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
+        <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate("/groups")}
+              className="h-8 w-8 sm:h-10 sm:w-10 shrink-0"
+              aria-label="Back to groups"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
-            <div className="flex-1">
-              <h1 className="text-xl font-bold">{groupInfo?.name || "Loading..."}</h1>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-base sm:text-xl font-bold truncate">
+                {groupInfo?.name || "Loading..."}
+              </h1>
               {groupInfo && (
-                <p className="text-sm text-muted-foreground flex items-center gap-2">
-                  <Users className="h-4 w-4" />
+                <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1 sm:gap-2">
+                  <Users className="h-3 w-3 sm:h-4 sm:w-4" />
                   {groupInfo.member_count} members
                 </p>
               )}
             </div>
             {id && groupInfo && (
-              <>
+              <div className="flex items-center gap-1 sm:gap-2">
                 <EditGroupDialog
                   groupId={id}
                   currentName={groupInfo.name}
@@ -219,50 +337,34 @@ const GroupChat = () => {
                   onGroupUpdated={loadGroupInfo}
                 />
                 <GroupMembersDialog groupId={id} onMemberChange={loadGroupInfo} />
-              </>
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Messages Container */}
+      {/* Messages Container - Responsive */}
       <div className="flex-1 overflow-y-auto">
-        <div className="container mx-auto px-4 py-6 max-w-4xl">
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 max-w-4xl">
           {loading ? (
             <div className="flex justify-center items-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-primary" />
             </div>
           ) : messages.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">
+            <div className="text-center py-8 sm:py-12">
+              <p className="text-sm sm:text-base text-muted-foreground">
                 No messages yet. Start the conversation!
               </p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-2 sm:space-y-4">
               {messages.map((message) => (
-                <Card key={message.id} className={message.user_id === user?.id ? "bg-primary/10" : ""}>
-                  <CardContent className="pt-4">
-                    <div className="flex items-start gap-3">
-                      <Avatar className="h-8 w-8" title={`${message.profiles?.username || 'User'}'s avatar`}>
-                        <AvatarFallback className="bg-primary text-primary-foreground">
-                          {message.profiles?.username?.charAt(0).toUpperCase() || "U"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <div className="flex items-baseline gap-2 mb-1">
-                          <span className="font-semibold text-sm">
-                            {message.profiles?.username || "User"}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {getTimeAgo(message.created_at)}
-                          </span>
-                        </div>
-                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <GroupChatMessage
+                  key={message.id}
+                  message={message}
+                  isOwn={message.user_id === user?.id}
+                  getTimeAgo={getTimeAgo}
+                />
               ))}
               <div ref={messagesEndRef} />
             </div>
@@ -270,18 +372,109 @@ const GroupChat = () => {
         </div>
       </div>
 
-      {/* Message Input */}
+      {/* Message Input - Responsive */}
       <div className="border-t border-border bg-card">
-        <div className="container mx-auto px-4 py-4 max-w-4xl">
-          <form onSubmit={handleSendMessage} className="flex gap-2">
+        <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4 max-w-4xl">
+          {/* File Preview */}
+          {selectedFile && (
+            <div className="mb-2 p-2 bg-muted rounded-lg flex items-center gap-2">
+              {filePreview ? (
+                <img 
+                  src={filePreview} 
+                  alt="Preview of selected file" 
+                  className="h-12 w-12 object-cover rounded"
+                />
+              ) : (
+                <div className="h-12 w-12 bg-primary/10 rounded flex items-center justify-center">
+                  <Paperclip className="h-5 w-5 text-primary" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{selectedFile.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {(selectedFile.size / 1024).toFixed(1)} KB
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={clearSelectedFile}
+                className="h-8 w-8 shrink-0"
+                aria-label="Remove file"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+
+          <form onSubmit={handleSendMessage} className="flex items-end gap-1 sm:gap-2">
+            {/* Hidden file inputs */}
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => handleFileSelect(e, true)}
+            />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.txt,.zip"
+              className="hidden"
+              onChange={(e) => handleFileSelect(e, false)}
+            />
+
+            {/* Attachment buttons - Hidden when recording */}
+            <div className="flex items-center gap-0.5 sm:gap-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => imageInputRef.current?.click()}
+                disabled={sending}
+                className="h-9 w-9 sm:h-10 sm:w-10 shrink-0"
+                aria-label="Attach image"
+              >
+                <Image className="h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={sending}
+                className="h-9 w-9 sm:h-10 sm:w-10 shrink-0"
+                aria-label="Attach file"
+              >
+                <Paperclip className="h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+            </div>
+
+            {/* Text Input */}
             <Input
-              placeholder="Type your message..."
+              placeholder="Type a message..."
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               disabled={sending}
-              className="flex-1"
+              className="flex-1 h-9 sm:h-10 text-sm sm:text-base"
             />
-            <Button type="submit" disabled={sending || !newMessage.trim()}>
+
+            {/* Voice Recorder */}
+            <VoiceRecorder
+              onSend={handleSendVoiceMessage}
+              disabled={sending}
+              className="shrink-0"
+            />
+
+            {/* Send Button */}
+            <Button 
+              type="submit" 
+              disabled={sending || (!newMessage.trim() && !selectedFile)}
+              size="icon"
+              className="h-9 w-9 sm:h-10 sm:w-10 shrink-0"
+              aria-label="Send message"
+            >
               {sending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (

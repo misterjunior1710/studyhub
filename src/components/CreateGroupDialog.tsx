@@ -82,12 +82,13 @@ const CreateGroupDialog = ({ onGroupCreated }: CreateGroupDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-2">
+        <Button className="gap-2 h-9 sm:h-10 text-sm sm:text-base">
           <Plus className="h-4 w-4" />
-          Create Group
+          <span className="hidden sm:inline">Create Group</span>
+          <span className="sm:hidden">Create</span>
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md max-w-[95vw]">
         <DialogHeader>
           <DialogTitle>Create Study Group</DialogTitle>
           <DialogDescription>

@@ -120,17 +120,16 @@ const Groups = () => {
       <StructuredData data={breadcrumbData} />
       
       <Navbar />
-      <main className="container mx-auto px-4 py-8">
-        <header className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+          <div className="flex-1">
+            <h1 className="text-2xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Study Groups
             </h1>
-            <p className="text-muted-foreground max-w-xl">
-              Create or join study groups to collaborate with fellow students. Study groups are perfect for 
-              exam preparation, project work, or regular study sessions with peers who share your academic goals.
+            <p className="text-sm sm:text-base text-muted-foreground max-w-xl">
+              Create or join study groups to collaborate with fellow students.
             </p>
-            <nav className="mt-3 text-sm" aria-label="Related pages">
+            <nav className="mt-2 sm:mt-3 text-xs sm:text-sm hidden sm:block" aria-label="Related pages">
               <span className="text-muted-foreground">Explore: </span>
               <a href="/questions" className="text-primary hover:underline">Ask Questions</a>
               <span className="text-muted-foreground mx-2">•</span>
@@ -160,7 +159,7 @@ const Groups = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {groups.map((group) => (
                 <Card
                   key={group.id}
