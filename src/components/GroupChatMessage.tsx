@@ -42,6 +42,28 @@ const GroupChatMessage = ({ message, isOwn, getTimeAgo }: GroupChatMessageProps)
     }
 
     // PDF or other file
+    const handleDownload = async () => {
+      try {
+        const response = await fetch(message.file_url!);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        // Extract filename from URL or use default
+        const urlParts = message.file_url!.split('/');
+        const fileName = urlParts[urlParts.length - 1] || 'download';
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } catch (error) {
+        console.error('Download failed:', error);
+        // Fallback to opening in new tab
+        window.open(message.file_url!, "_blank");
+      }
+    };
+
     return (
       <div className="mt-2 flex items-center gap-2 p-2 bg-muted rounded-lg max-w-full sm:max-w-xs">
         <FileIcon className="h-8 w-8 text-primary shrink-0" />
@@ -55,7 +77,7 @@ const GroupChatMessage = ({ message, isOwn, getTimeAgo }: GroupChatMessageProps)
           variant="ghost"
           size="icon"
           className="h-8 w-8 shrink-0"
-          onClick={() => window.open(message.file_url!, "_blank")}
+          onClick={handleDownload}
           aria-label="Download file"
         >
           <Download className="h-4 w-4" />
