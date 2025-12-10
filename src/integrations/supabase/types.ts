@@ -197,6 +197,148 @@ export type Database = {
         }
         Relationships: []
       }
+      feynman_notes: {
+        Row: {
+          concept: string
+          created_at: string
+          gaps_identified: string | null
+          id: string
+          is_public: boolean | null
+          refined_explanation: string | null
+          simple_explanation: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          concept: string
+          created_at?: string
+          gaps_identified?: string | null
+          id?: string
+          is_public?: boolean | null
+          refined_explanation?: string | null
+          simple_explanation?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          concept?: string
+          created_at?: string
+          gaps_identified?: string | null
+          id?: string
+          is_public?: boolean | null
+          refined_explanation?: string | null
+          simple_explanation?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      flashcard_decks: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      flashcard_reviews: {
+        Row: {
+          flashcard_id: string
+          id: string
+          reviewed_at: string
+          user_id: string
+          was_correct: boolean
+        }
+        Insert: {
+          flashcard_id: string
+          id?: string
+          reviewed_at?: string
+          user_id: string
+          was_correct: boolean
+        }
+        Update: {
+          flashcard_id?: string
+          id?: string
+          reviewed_at?: string
+          user_id?: string
+          was_correct?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flashcard_reviews_flashcard_id_fkey"
+            columns: ["flashcard_id"]
+            isOneToOne: false
+            referencedRelation: "flashcards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flashcards: {
+        Row: {
+          back: string
+          box_number: number
+          created_at: string
+          deck_id: string
+          front: string
+          id: string
+          next_review_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          back: string
+          box_number?: number
+          created_at?: string
+          deck_id: string
+          front: string
+          id?: string
+          next_review_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          back?: string
+          box_number?: number
+          created_at?: string
+          deck_id?: string
+          front?: string
+          id?: string
+          next_review_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flashcards_deck_id_fkey"
+            columns: ["deck_id"]
+            isOneToOne: false
+            referencedRelation: "flashcard_decks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       friends: {
         Row: {
           created_at: string
@@ -358,6 +500,84 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      mind_map_nodes: {
+        Row: {
+          color: string | null
+          content: string
+          created_at: string
+          id: string
+          mind_map_id: string
+          parent_id: string | null
+          position_x: number
+          position_y: number
+        }
+        Insert: {
+          color?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          mind_map_id: string
+          parent_id?: string | null
+          position_x?: number
+          position_y?: number
+        }
+        Update: {
+          color?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          mind_map_id?: string
+          parent_id?: string | null
+          position_x?: number
+          position_y?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mind_map_nodes_mind_map_id_fkey"
+            columns: ["mind_map_id"]
+            isOneToOne: false
+            referencedRelation: "mind_maps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mind_map_nodes_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "mind_map_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mind_maps: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       notifications: {
         Row: {
@@ -592,6 +812,166 @@ export type Database = {
           username?: string | null
           weekly_study_goal?: number | null
           weekly_xp_last_reset?: string | null
+        }
+        Relationships: []
+      }
+      quiz_attempts: {
+        Row: {
+          answers: Json
+          completed_at: string
+          id: string
+          quiz_id: string
+          score: number
+          total_questions: number
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          completed_at?: string
+          id?: string
+          quiz_id: string
+          score?: number
+          total_questions: number
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          completed_at?: string
+          id?: string
+          quiz_id?: string
+          score?: number
+          total_questions?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_questions: {
+        Row: {
+          correct_answer: string
+          created_at: string
+          explanation: string | null
+          id: string
+          options: Json | null
+          order_index: number
+          question: string
+          question_type: string
+          quiz_id: string
+        }
+        Insert: {
+          correct_answer: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          options?: Json | null
+          order_index?: number
+          question: string
+          question_type?: string
+          quiz_id: string
+        }
+        Update: {
+          correct_answer?: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          options?: Json | null
+          order_index?: number
+          question?: string
+          question_type?: string
+          quiz_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quizzes: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean | null
+          subject: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          subject?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          subject?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reading_sessions: {
+        Row: {
+          created_at: string
+          current_step: string
+          id: string
+          questions: string | null
+          read_notes: string | null
+          recite_notes: string | null
+          review_notes: string | null
+          source_material: string | null
+          survey_notes: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_step?: string
+          id?: string
+          questions?: string | null
+          read_notes?: string | null
+          recite_notes?: string | null
+          review_notes?: string | null
+          source_material?: string | null
+          survey_notes?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_step?: string
+          id?: string
+          questions?: string | null
+          read_notes?: string | null
+          recite_notes?: string | null
+          review_notes?: string | null
+          source_material?: string | null
+          survey_notes?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
