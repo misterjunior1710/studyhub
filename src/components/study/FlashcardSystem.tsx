@@ -38,8 +38,11 @@ export function FlashcardSystem() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [createDeckOpen, setCreateDeckOpen] = useState(false);
   const [createCardOpen, setCreateCardOpen] = useState(false);
+  const [editCardOpen, setEditCardOpen] = useState(false);
+  const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
   const [newDeck, setNewDeck] = useState({ title: "", description: "", is_public: false });
   const [newCard, setNewCard] = useState({ front: "", back: "" });
+  const [editCard, setEditCard] = useState({ front: "", back: "" });
 
   const { data: decks = [], isLoading: decksLoading } = useQuery({
     queryKey: ["flashcard-decks", user?.id],
@@ -143,6 +146,39 @@ export function FlashcardSystem() {
       toast.success("Deck deleted");
     },
   });
+
+  const updateCardMutation = useMutation({
+    mutationFn: async ({ cardId, front, back }: { cardId: string; front: string; back: string }) => {
+      const { error } = await supabase.from("flashcards").update({ front, back }).eq("id", cardId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["flashcards"] });
+      setEditCardOpen(false);
+      setEditingCard(null);
+      setEditCard({ front: "", back: "" });
+      toast.success("Card updated!");
+    },
+    onError: () => toast.error("Failed to update card"),
+  });
+
+  const deleteCardMutation = useMutation({
+    mutationFn: async (cardId: string) => {
+      const { error } = await supabase.from("flashcards").delete().eq("id", cardId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["flashcards"] });
+      toast.success("Card deleted");
+    },
+    onError: () => toast.error("Failed to delete card"),
+  });
+
+  const openEditCard = (card: Flashcard) => {
+    setEditingCard(card);
+    setEditCard({ front: card.front, back: card.back });
+    setEditCardOpen(true);
+  };
 
   const handleAnswer = (wasCorrect: boolean) => {
     const currentCard = dueCards[currentCardIndex];
@@ -254,30 +290,62 @@ export function FlashcardSystem() {
             <p className="text-muted-foreground">No cards yet. Add your first flashcard!</p>
           </Card>
         ) : (
-          <div className="grid gap-3">
-            {cards.map(card => (
-              <Card key={card.id} className="p-4">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <p className="font-medium">{card.front}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{card.back}</p>
+          <>
+            <div className="grid gap-3">
+              {cards.map(card => (
+                <Card key={card.id} className="p-4">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <p className="font-medium">{card.front}</p>
+                      <p className="text-sm text-muted-foreground mt-1">{card.back}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={cn(
+                        "text-xs px-2 py-1 rounded",
+                        card.box_number === 1 && "bg-red-500/20 text-red-500",
+                        card.box_number === 2 && "bg-orange-500/20 text-orange-500",
+                        card.box_number === 3 && "bg-yellow-500/20 text-yellow-500",
+                        card.box_number === 4 && "bg-blue-500/20 text-blue-500",
+                        card.box_number === 5 && "bg-green-500/20 text-green-500",
+                      )}>
+                        Box {card.box_number}
+                      </span>
+                      <Button variant="ghost" size="icon" onClick={() => openEditCard(card)}>
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => deleteCardMutation.mutate(card.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className={cn(
-                      "text-xs px-2 py-1 rounded",
-                      card.box_number === 1 && "bg-red-500/20 text-red-500",
-                      card.box_number === 2 && "bg-orange-500/20 text-orange-500",
-                      card.box_number === 3 && "bg-yellow-500/20 text-yellow-500",
-                      card.box_number === 4 && "bg-blue-500/20 text-blue-500",
-                      card.box_number === 5 && "bg-green-500/20 text-green-500",
-                    )}>
-                      Box {card.box_number}
-                    </span>
+                </Card>
+              ))}
+            </div>
+
+            <Dialog open={editCardOpen} onOpenChange={setEditCardOpen}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Edit Flashcard</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label>Front (Question)</Label>
+                    <Textarea value={editCard.front} onChange={e => setEditCard(p => ({ ...p, front: e.target.value }))} />
                   </div>
+                  <div>
+                    <Label>Back (Answer)</Label>
+                    <Textarea value={editCard.back} onChange={e => setEditCard(p => ({ ...p, back: e.target.value }))} />
+                  </div>
+                  <Button 
+                    onClick={() => editingCard && updateCardMutation.mutate({ cardId: editingCard.id, front: editCard.front, back: editCard.back })} 
+                    disabled={!editCard.front || !editCard.back}
+                  >
+                    Save Changes
+                  </Button>
                 </div>
-              </Card>
-            ))}
-          </div>
+              </DialogContent>
+            </Dialog>
+          </>
         )}
       </div>
     );
