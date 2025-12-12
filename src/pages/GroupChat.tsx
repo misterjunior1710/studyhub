@@ -12,6 +12,8 @@ import GroupMembersDialog from "@/components/GroupMembersDialog";
 import EditGroupDialog from "@/components/EditGroupDialog";
 import GroupChatMessage from "@/components/GroupChatMessage";
 import VoiceRecorder from "@/components/VoiceRecorder";
+import LeaveGroupDialog from "@/components/LeaveGroupDialog";
+import DeleteGroupDialog from "@/components/DeleteGroupDialog";
 
 interface Message {
   id: string;
@@ -45,6 +47,7 @@ const GroupChat = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -53,6 +56,7 @@ const GroupChat = () => {
     checkAuth();
     loadGroupInfo();
     loadMessages();
+    checkAdminStatus();
 
     // Subscribe to new messages
     const channel = supabase
@@ -100,6 +104,24 @@ const GroupChat = () => {
       return;
     }
     setUser(user);
+  };
+
+  const checkAdminStatus = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || !id) return;
+
+      const { data } = await supabase
+        .from("group_members")
+        .select("role")
+        .eq("group_id", id)
+        .eq("user_id", user.id)
+        .single();
+
+      setIsAdmin(data?.role === "admin");
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+    }
   };
 
   const loadGroupInfo = async () => {
@@ -330,13 +352,27 @@ const GroupChat = () => {
             </div>
             {id && groupInfo && (
               <div className="flex items-center gap-1 sm:gap-2">
-                <EditGroupDialog
-                  groupId={id}
-                  currentName={groupInfo.name}
-                  currentDescription={groupInfo.description || ""}
-                  onGroupUpdated={loadGroupInfo}
-                />
+                {isAdmin && (
+                  <EditGroupDialog
+                    groupId={id}
+                    currentName={groupInfo.name}
+                    currentDescription={groupInfo.description || ""}
+                    onGroupUpdated={loadGroupInfo}
+                  />
+                )}
                 <GroupMembersDialog groupId={id} onMemberChange={loadGroupInfo} />
+                <LeaveGroupDialog
+                  groupId={id}
+                  groupName={groupInfo.name}
+                  onLeave={() => navigate("/groups")}
+                />
+                {isAdmin && (
+                  <DeleteGroupDialog
+                    groupId={id}
+                    groupName={groupInfo.name}
+                    onDelete={() => navigate("/groups")}
+                  />
+                )}
               </div>
             )}
           </div>
