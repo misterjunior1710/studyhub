@@ -29,6 +29,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
 const StudyMode = lazy(() => import("./pages/StudyMode"));
 const Support = lazy(() => import("./pages/Support"));
+const DirectMessage = lazy(() => import("./pages/DirectMessage"));
 
 // Optimized QueryClient with proper caching and garbage collection
 const queryClient = new QueryClient({
@@ -108,6 +109,7 @@ const App = () => (
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/leaderboard" element={<Leaderboard />} />
                   <Route path="/friends" element={<Friends />} />
+                  <Route path="/dm/:friendId" element={<DirectMessage />} />
                   <Route path="/user/:userId" element={<UserProfile />} />
                   <Route path="/study" element={<StudyMode />} />
                   <Route path="/privacy" element={<Privacy />} />

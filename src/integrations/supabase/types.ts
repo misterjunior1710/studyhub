@@ -223,25 +223,40 @@ export type Database = {
       }
       direct_messages: {
         Row: {
+          audio_duration: number | null
+          audio_url: string | null
           content: string
           conversation_id: string
           created_at: string | null
+          file_name: string | null
+          file_type: string | null
+          file_url: string | null
           id: string
           is_read: boolean | null
           sender_id: string
         }
         Insert: {
+          audio_duration?: number | null
+          audio_url?: string | null
           content: string
           conversation_id: string
           created_at?: string | null
+          file_name?: string | null
+          file_type?: string | null
+          file_url?: string | null
           id?: string
           is_read?: boolean | null
           sender_id: string
         }
         Update: {
+          audio_duration?: number | null
+          audio_url?: string | null
           content?: string
           conversation_id?: string
           created_at?: string | null
+          file_name?: string | null
+          file_type?: string | null
+          file_url?: string | null
           id?: string
           is_read?: boolean | null
           sender_id?: string
