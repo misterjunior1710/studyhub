@@ -71,7 +71,12 @@ export function FlashcardSystem() {
     enabled: !!selectedDeck,
   });
 
+  // Cards that are due for first-time stats tracking
   const dueCards = cards.filter(c => new Date(c.next_review_at) <= new Date());
+  // Track which cards have been reviewed in this session (for unlimited practice)
+  const [reviewedInSession, setReviewedInSession] = useState<Set<string>>(new Set());
+  // Use all cards for practice, not just due ones
+  const practiceCards = cards;
 
   const createDeckMutation = useMutation({
     mutationFn: async () => {
@@ -112,23 +117,28 @@ export function FlashcardSystem() {
   });
 
   const reviewCardMutation = useMutation({
-    mutationFn: async ({ cardId, wasCorrect }: { cardId: string; wasCorrect: boolean }) => {
+    mutationFn: async ({ cardId, wasCorrect, shouldTrackStats }: { cardId: string; wasCorrect: boolean; shouldTrackStats: boolean }) => {
       const card = cards.find(c => c.id === cardId)!;
-      let newBox = wasCorrect ? Math.min(card.box_number + 1, 5) : 1;
-      const intervals = [1, 2, 4, 8, 16]; // days
-      const nextReview = new Date();
-      nextReview.setDate(nextReview.getDate() + intervals[newBox - 1]);
+      
+      // Only update stats and spaced repetition if this is the first attempt (card is due)
+      if (shouldTrackStats) {
+        let newBox = wasCorrect ? Math.min(card.box_number + 1, 5) : 1;
+        const intervals = [1, 2, 4, 8, 16]; // days
+        const nextReview = new Date();
+        nextReview.setDate(nextReview.getDate() + intervals[newBox - 1]);
 
-      await supabase.from("flashcard_reviews").insert({
-        flashcard_id: cardId,
-        user_id: user!.id,
-        was_correct: wasCorrect,
-      });
+        await supabase.from("flashcard_reviews").insert({
+          flashcard_id: cardId,
+          user_id: user!.id,
+          was_correct: wasCorrect,
+        });
 
-      await supabase.from("flashcards").update({
-        box_number: newBox,
-        next_review_at: nextReview.toISOString(),
-      }).eq("id", cardId);
+        await supabase.from("flashcards").update({
+          box_number: newBox,
+          next_review_at: nextReview.toISOString(),
+        }).eq("id", cardId);
+      }
+      // For subsequent attempts, we just let them practice without tracking
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["flashcards"] });
@@ -181,24 +191,33 @@ export function FlashcardSystem() {
   };
 
   const handleAnswer = (wasCorrect: boolean) => {
-    const currentCard = dueCards[currentCardIndex];
-    reviewCardMutation.mutate({ cardId: currentCard.id, wasCorrect });
+    const currentCard = practiceCards[currentCardIndex];
+    // Only track stats if this card is due and hasn't been reviewed in this session
+    const isDue = new Date(currentCard.next_review_at) <= new Date();
+    const shouldTrackStats = isDue && !reviewedInSession.has(currentCard.id);
+    
+    reviewCardMutation.mutate({ cardId: currentCard.id, wasCorrect, shouldTrackStats });
+    
+    // Mark as reviewed in this session
+    setReviewedInSession(prev => new Set(prev).add(currentCard.id));
+    
     setIsFlipped(false);
-    if (currentCardIndex < dueCards.length - 1) {
+    if (currentCardIndex < practiceCards.length - 1) {
       setCurrentCardIndex(prev => prev + 1);
     } else {
       setReviewMode(false);
       setCurrentCardIndex(0);
-      toast.success("Review session complete!");
+      setReviewedInSession(new Set()); // Reset for next session
+      toast.success("Practice session complete!");
     }
   };
 
-  if (reviewMode && dueCards.length > 0) {
-    const currentCard = dueCards[currentCardIndex];
+  if (reviewMode && practiceCards.length > 0) {
+    const currentCard = practiceCards[currentCardIndex];
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-6">
         <div className="text-sm text-muted-foreground">
-          Card {currentCardIndex + 1} of {dueCards.length} • Box {currentCard.box_number}
+          Card {currentCardIndex + 1} of {practiceCards.length} • Box {currentCard.box_number}
         </div>
         <div
           className={cn(
@@ -232,7 +251,7 @@ export function FlashcardSystem() {
             </Button>
           </div>
         )}
-        <Button variant="ghost" onClick={() => setReviewMode(false)}>
+        <Button variant="ghost" onClick={() => { setReviewMode(false); setReviewedInSession(new Set()); }}>
           Exit Review
         </Button>
       </div>
@@ -274,9 +293,9 @@ export function FlashcardSystem() {
                 </div>
               </DialogContent>
             </Dialog>
-            {dueCards.length > 0 && (
-              <Button onClick={() => setReviewMode(true)}>
-                <Play className="h-4 w-4 mr-2" /> Review ({dueCards.length})
+            {cards.length > 0 && (
+              <Button onClick={() => { setReviewedInSession(new Set()); setCurrentCardIndex(0); setReviewMode(true); }}>
+                <Play className="h-4 w-4 mr-2" /> Practice ({cards.length})
               </Button>
             )}
           </div>
