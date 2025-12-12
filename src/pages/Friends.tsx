@@ -12,10 +12,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { 
   Loader2, UserPlus, Users, UserCheck, UserX, Search, 
-  Clock, Check, X, MessageSquare 
+  Clock, Check, X 
 } from "lucide-react";
 import { toast } from "sonner";
 import { useDebounce } from "@/hooks/useDebounce";
+import DirectMessageDialog from "@/components/DirectMessageDialog";
 
 interface FriendRequest {
   id: string;
@@ -323,9 +324,16 @@ const Friends = () => {
                           </p>
                         </div>
                         <div className="flex gap-2">
-                          <Button variant="outline" size="sm" aria-label="Message">
-                            <MessageSquare className="h-4 w-4" aria-hidden="true" />
-                          </Button>
+                          {currentUserId && friend.profiles && (
+                            <DirectMessageDialog
+                              friend={{
+                                id: friend.profiles.id,
+                                username: friend.profiles.username,
+                                avatar_url: friend.profiles.avatar_url,
+                              }}
+                              currentUserId={currentUserId}
+                            />
+                          )}
                           <Button variant="ghost" size="sm" onClick={() => rejectMutation.mutate(friend.id)} aria-label="Remove friend">
                             <UserX className="h-4 w-4" aria-hidden="true" />
                           </Button>
