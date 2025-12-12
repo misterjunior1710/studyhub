@@ -25,16 +25,12 @@ import {
   Loader2,
   Layers,
   ClipboardList,
-  Network,
-  Lightbulb,
-  BookOpen
+  Network
 } from "lucide-react";
 import { format, startOfWeek, endOfWeek, isToday } from "date-fns";
 import { FlashcardSystem } from "@/components/study/FlashcardSystem";
 import { QuizSystem } from "@/components/study/QuizSystem";
 import { MindMapBuilder } from "@/components/study/MindMapBuilder";
-import { FeynmanTechnique } from "@/components/study/FeynmanTechnique";
-import { GuidedReading } from "@/components/study/GuidedReading";
 
 interface StudySession {
   id: string;
@@ -224,13 +220,11 @@ const StudyMode = () => {
         </header>
 
         <Tabs defaultValue="timer" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-auto gap-1">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto gap-1">
             <TabsTrigger value="timer" className="text-xs sm:text-sm py-2"><Timer className="h-4 w-4 mr-1 hidden sm:inline" />Timer</TabsTrigger>
             <TabsTrigger value="flashcards" className="text-xs sm:text-sm py-2"><Layers className="h-4 w-4 mr-1 hidden sm:inline" />Flashcards</TabsTrigger>
             <TabsTrigger value="quizzes" className="text-xs sm:text-sm py-2"><ClipboardList className="h-4 w-4 mr-1 hidden sm:inline" />Quizzes</TabsTrigger>
             <TabsTrigger value="mindmaps" className="text-xs sm:text-sm py-2"><Network className="h-4 w-4 mr-1 hidden sm:inline" />Mind Maps</TabsTrigger>
-            <TabsTrigger value="feynman" className="text-xs sm:text-sm py-2"><Lightbulb className="h-4 w-4 mr-1 hidden sm:inline" />Feynman</TabsTrigger>
-            <TabsTrigger value="reading" className="text-xs sm:text-sm py-2"><BookOpen className="h-4 w-4 mr-1 hidden sm:inline" />SQ3R</TabsTrigger>
           </TabsList>
 
           <TabsContent value="timer" className="space-y-6">
@@ -294,8 +288,6 @@ const StudyMode = () => {
           <TabsContent value="flashcards"><FlashcardSystem /></TabsContent>
           <TabsContent value="quizzes"><QuizSystem /></TabsContent>
           <TabsContent value="mindmaps"><MindMapBuilder /></TabsContent>
-          <TabsContent value="feynman"><FeynmanTechnique /></TabsContent>
-          <TabsContent value="reading"><GuidedReading /></TabsContent>
         </Tabs>
       </main>
       
