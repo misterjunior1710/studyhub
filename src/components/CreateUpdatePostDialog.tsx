@@ -4,9 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Loader2 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Plus, Loader2, CalendarIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import RichTextEditor from "./RichTextEditor";
 
 interface CreateUpdatePostDialogProps {
@@ -19,6 +23,7 @@ const CreateUpdatePostDialog = ({ onPostCreated }: CreateUpdatePostDialogProps) 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [updateCategory, setUpdateCategory] = useState("feature");
+  const [customDate, setCustomDate] = useState<Date | undefined>(undefined);
 
   const updateCategories = [
     { value: "feature", label: "🚀 New Feature" },
@@ -51,7 +56,18 @@ const CreateUpdatePostDialog = ({ onPostCreated }: CreateUpdatePostDialogProps) 
         return;
       }
 
-      const { error } = await supabase.from("posts").insert({
+      // Build the insert object
+      const postData: {
+        user_id: string;
+        title: string;
+        content: string;
+        subject: string;
+        grade: string;
+        stream: string;
+        country: string;
+        post_type: string;
+        created_at?: string;
+      } = {
         user_id: user.id,
         title,
         content,
@@ -60,7 +76,14 @@ const CreateUpdatePostDialog = ({ onPostCreated }: CreateUpdatePostDialogProps) 
         stream: "Update",
         country: "Global",
         post_type: "update",
-      });
+      };
+
+      // If custom date is set, use it for created_at
+      if (customDate) {
+        postData.created_at = customDate.toISOString();
+      }
+
+      const { error } = await supabase.from("posts").insert(postData);
 
       if (error) {
         console.error("Update creation error:", error);
@@ -74,6 +97,7 @@ const CreateUpdatePostDialog = ({ onPostCreated }: CreateUpdatePostDialogProps) 
       setTitle("");
       setContent("");
       setUpdateCategory("feature");
+      setCustomDate(undefined);
       setOpen(false);
       onPostCreated?.();
     } catch (error: any) {
@@ -125,20 +149,65 @@ const CreateUpdatePostDialog = ({ onPostCreated }: CreateUpdatePostDialogProps) 
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="updateCategory">Update Type</Label>
-            <Select value={updateCategory} onValueChange={setUpdateCategory}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {updateCategories.map((cat) => (
-                  <SelectItem key={cat.value} value={cat.value}>
-                    {cat.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="updateCategory">Update Type</Label>
+              <Select value={updateCategory} onValueChange={setUpdateCategory}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {updateCategories.map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Post Date (optional)</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !customDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {customDate ? format(customDate, "PPP") : "Use current date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={customDate}
+                    onSelect={setCustomDate}
+                    disabled={(date) => date > new Date()}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                  {customDate && (
+                    <div className="p-2 border-t">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => setCustomDate(undefined)}
+                      >
+                        Clear date
+                      </Button>
+                    </div>
+                  )}
+                </PopoverContent>
+              </Popover>
+              <p className="text-xs text-muted-foreground">
+                Set a past date to backdate this post
+              </p>
+            </div>
           </div>
 
           <div className="space-y-2">
