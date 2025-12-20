@@ -142,6 +142,8 @@ const Updates = () => {
                       grade={post.grade}
                       stream={post.stream}
                       country={post.country}
+                      postType="update"
+                      createdAt={post.created_at}
                     />
                   ))}
                 </div>
