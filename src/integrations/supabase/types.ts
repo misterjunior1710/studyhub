@@ -469,6 +469,60 @@ export type Database = {
           },
         ]
       }
+      generated_study_content: {
+        Row: {
+          created_at: string
+          examples: Json | null
+          explanation: string | null
+          generation_status: string
+          grade: string
+          id: string
+          key_concepts: Json | null
+          practice_questions: Json | null
+          revision_notes: string | null
+          sources: Json | null
+          stream: string
+          subject: string
+          topic: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          examples?: Json | null
+          explanation?: string | null
+          generation_status?: string
+          grade: string
+          id?: string
+          key_concepts?: Json | null
+          practice_questions?: Json | null
+          revision_notes?: string | null
+          sources?: Json | null
+          stream: string
+          subject: string
+          topic: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          examples?: Json | null
+          explanation?: string | null
+          generation_status?: string
+          grade?: string
+          id?: string
+          key_concepts?: Json | null
+          practice_questions?: Json | null
+          revision_notes?: string | null
+          sources?: Json | null
+          stream?: string
+          subject?: string
+          topic?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       group_chats: {
         Row: {
           created_at: string | null

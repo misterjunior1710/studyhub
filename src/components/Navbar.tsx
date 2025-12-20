@@ -1,4 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, Trophy, UserPlus, Timer, LifeBuoy } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Users, Settings, Trophy, UserPlus, Timer, LifeBuoy, Sparkles } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -62,6 +62,10 @@ const Navbar = ({
               <Button variant={isActive("/study") ? "default" : "ghost"} size="sm" onClick={() => navigate("/study")}>
                 <Timer className="h-4 w-4 mr-2" />
                 Study
+              </Button>
+              <Button variant={isActive("/content-generator") ? "default" : "ghost"} size="sm" onClick={() => navigate("/content-generator")}>
+                <Sparkles className="h-4 w-4 mr-2" />
+                AI Generator
               </Button>
             </div>
           </div>

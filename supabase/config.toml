@@ -8,3 +8,12 @@ verify_jwt = true
 
 [functions.send-support-request]
 verify_jwt = false
+
+[functions.firecrawl-search]
+verify_jwt = true
+
+[functions.firecrawl-scrape]
+verify_jwt = true
+
+[functions.generate-study-content]
+verify_jwt = true
