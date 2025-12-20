@@ -34,7 +34,7 @@ import {
   Loader2, User, MapPin, GraduationCap, BookOpen, Save, ArrowLeft, 
   Camera, Bell, Shield, Globe, Filter, Lock, Eye, EyeOff, MessageSquare,
   Users, FileText, Megaphone, BarChart3, Smartphone, Monitor, Tablet,
-  Download, Trash2, RefreshCw, Clock, Target, Timer, Palette, LogOut, AlertTriangle, Ban
+  Download, Trash2, RefreshCw, Clock, Target, Timer, Palette, LogOut, AlertTriangle, Ban, Sparkles
 } from "lucide-react";
 import { toast } from "sonner";
 import AdminModerationPanel from "@/components/AdminModerationPanel";
@@ -58,6 +58,7 @@ interface ProfileData {
   notify_mentions: boolean;
   notify_group_updates: boolean;
   notify_announcements: boolean;
+  notify_feature_updates: boolean;
   show_verified_only: boolean;
   blocked_subjects: string[];
   safe_mode: boolean;
@@ -108,6 +109,7 @@ const Settings = () => {
     notify_mentions: true,
     notify_group_updates: true,
     notify_announcements: true,
+    notify_feature_updates: false,
     show_verified_only: false,
     blocked_subjects: [],
     safe_mode: false,
@@ -193,6 +195,7 @@ const Settings = () => {
         notify_mentions: profileData.notify_mentions ?? true,
         notify_group_updates: profileData.notify_group_updates ?? true,
         notify_announcements: profileData.notify_announcements ?? true,
+        notify_feature_updates: profileData.notify_feature_updates ?? false,
         show_verified_only: profileData.show_verified_only ?? false,
         blocked_subjects: profileData.blocked_subjects || [],
         safe_mode: profileData.safe_mode ?? false,
@@ -269,6 +272,7 @@ const Settings = () => {
         notify_mentions: profile.notify_mentions,
         notify_group_updates: profile.notify_group_updates,
         notify_announcements: profile.notify_announcements,
+        notify_feature_updates: profile.notify_feature_updates,
         show_verified_only: profile.show_verified_only,
         blocked_subjects: profile.blocked_subjects,
         safe_mode: profile.safe_mode,
@@ -632,6 +636,7 @@ const Settings = () => {
                     { key: 'notify_mentions', icon: User, title: 'Mentions (@)', desc: 'When someone mentions you' },
                     { key: 'notify_group_updates', icon: Users, title: 'Group Updates', desc: 'About group activities' },
                     { key: 'notify_announcements', icon: Megaphone, title: 'Admin Announcements', desc: 'Important updates from administrators' },
+                    { key: 'notify_feature_updates', icon: Sparkles, title: 'Feature Updates', desc: 'New features, improvements, and bug fixes (default: off)' },
                   ].map(({ key, icon: Icon, title, desc }) => (
                     <div key={key} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
