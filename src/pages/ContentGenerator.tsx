@@ -13,15 +13,21 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   Loader2, Sparkles, BookOpen, Lightbulb, FileText, HelpCircle, ExternalLink, 
-  Save, Plus, Trash2, Download, History, Layers, ChevronRight, Clock
+  Save, Plus, Trash2, Download, History, Layers, ChevronRight, Clock, Database,
+  GraduationCap, Globe, CheckCircle2
 } from "lucide-react";
 import { contentGeneratorApi, GeneratedContent } from "@/lib/api/contentGenerator";
-import { getGradesForSelection, getStreamsForGrade, getSubjectsForGrade } from "@/lib/constants";
+import { getGradesForSelection, getStreamsForGrade, getSubjectsForGrade, COUNTRIES } from "@/lib/constants";
 import { getCurriculumTemplates, getAvailableCurriculums, CurriculumSubject } from "@/lib/curriculumTemplates";
 import { exportContentToPDF } from "@/lib/pdfExport";
+import { TRUSTED_SOURCES, getTotalSourceCount } from "@/lib/trustedSources";
 import { supabase } from "@/integrations/supabase/client";
+import RichTextEditor from "@/components/RichTextEditor";
+import { toast as sonnerToast } from "sonner";
 
 interface SavedContent {
   id: string;
@@ -61,6 +67,13 @@ const ContentGenerator = memo(() => {
   const [showTemplates, setShowTemplates] = useState(false);
   const [selectedCurriculum, setSelectedCurriculum] = useState<string>("");
   const [curriculumSubjects, setCurriculumSubjects] = useState<CurriculumSubject[]>([]);
+
+  // Create post dialog state
+  const [showCreatePostDialog, setShowCreatePostDialog] = useState(false);
+  const [postTitle, setPostTitle] = useState("");
+  const [postContent, setPostContent] = useState("");
+  const [postCountry, setPostCountry] = useState(profileData.country || "");
+  const [isCreatingPost, setIsCreatingPost] = useState(false);
 
   const grades = getGradesForSelection();
   const streams = getStreamsForGrade(grade);
@@ -163,9 +176,9 @@ const ContentGenerator = memo(() => {
       if (result.success) {
         toast({
           title: "Content saved!",
-          description: "Your study material has been saved.",
+          description: "Your study material has been saved to your History tab.",
         });
-        loadHistory(); // Refresh history
+        loadHistory();
       } else {
         throw new Error(result.error);
       }
@@ -202,7 +215,6 @@ const ContentGenerator = memo(() => {
     if (!user || !generatedContent) return;
 
     try {
-      // Create a flashcard deck
       const { data: deck, error: deckError } = await supabase
         .from('flashcard_decks')
         .insert({
@@ -216,7 +228,6 @@ const ContentGenerator = memo(() => {
 
       if (deckError) throw deckError;
 
-      // Create flashcards from key concepts and practice questions
       const flashcardsToCreate = [
         ...generatedContent.keyConcepts.map(concept => ({
           deck_id: deck.id,
@@ -243,7 +254,6 @@ const ContentGenerator = memo(() => {
         description: `${flashcardsToCreate.length} flashcards have been added to your study deck.`,
       });
 
-      // Navigate to study mode
       navigate("/study");
     } catch (error) {
       console.error("Flashcard creation error:", error);
@@ -300,11 +310,10 @@ const ContentGenerator = memo(() => {
     });
   };
 
-  const handleCreatePost = () => {
+  const openCreatePostDialog = () => {
     if (!generatedContent) return;
     
-    const postContent = `
-## ${generatedContent.topic}
+    const formattedContent = `## ${generatedContent.topic}
 
 ${generatedContent.explanation}
 
@@ -313,18 +322,73 @@ ${generatedContent.keyConcepts.map(c => `- **${c.term}**: ${c.definition}`).join
 
 ### Revision Notes
 ${generatedContent.revisionNotes.map(n => `• ${n}`).join('\n')}
+
+### Worked Examples
+${generatedContent.examples.map((e, i) => `**Example ${i+1}:** ${e.problem}\n*Solution:* ${e.solution}`).join('\n\n')}
     `.trim();
 
-    navigate("/", { 
-      state: { 
-        createPost: true, 
-        postTitle: `Study Guide: ${generatedContent.topic}`,
-        postContent,
-        postSubject: generatedContent.subject,
-        postGrade: generatedContent.grade,
-        postStream: generatedContent.stream,
-      } 
-    });
+    setPostTitle(`Study Guide: ${generatedContent.topic}`);
+    setPostContent(formattedContent);
+    setShowCreatePostDialog(true);
+  };
+
+  const handlePublishPost = async () => {
+    if (!user || !generatedContent) return;
+
+    if (!postTitle.trim() || !postContent.trim() || !postCountry) {
+      toast({
+        title: "Missing fields",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsCreatingPost(true);
+    try {
+      sonnerToast.info("Checking content...");
+      const moderationResponse = await supabase.functions.invoke('moderate-content', {
+        body: { title: postTitle, content: postContent, userId: user.id }
+      });
+
+      if (moderationResponse.data && !moderationResponse.data.isAppropriate) {
+        toast({
+          title: "Content not allowed",
+          description: moderationResponse.data.reason || "Please revise your content.",
+          variant: "destructive",
+        });
+        setIsCreatingPost(false);
+        return;
+      }
+
+      const { error } = await supabase.from("posts").insert({
+        user_id: user.id,
+        title: postTitle,
+        content: postContent,
+        subject: generatedContent.subject,
+        grade: generatedContent.grade,
+        stream: generatedContent.stream,
+        country: postCountry,
+        post_type: "general",
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Post published!",
+        description: "Your study guide has been shared with the community.",
+      });
+      setShowCreatePostDialog(false);
+    } catch (error) {
+      console.error("Post creation error:", error);
+      toast({
+        title: "Failed to publish",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreatingPost(false);
+    }
   };
 
   return (
@@ -342,12 +406,12 @@ ${generatedContent.revisionNotes.map(n => `• ${n}`).join('\n')}
             AI Content Generator
           </h1>
           <p className="text-muted-foreground mt-2">
-            Generate structured study materials from trusted educational sources
+            Generate structured study materials from {getTotalSourceCount()}+ trusted educational sources
           </p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsList className="grid w-full max-w-lg grid-cols-3">
             <TabsTrigger value="generate" className="flex items-center gap-2">
               <Sparkles className="h-4 w-4" />
               Generate
@@ -355,6 +419,10 @@ ${generatedContent.revisionNotes.map(n => `• ${n}`).join('\n')}
             <TabsTrigger value="history" className="flex items-center gap-2">
               <History className="h-4 w-4" />
               History
+            </TabsTrigger>
+            <TabsTrigger value="sources" className="flex items-center gap-2">
+              <Globe className="h-4 w-4" />
+              Sources
             </TabsTrigger>
           </TabsList>
 
@@ -454,7 +522,7 @@ ${generatedContent.revisionNotes.map(n => `• ${n}`).join('\n')}
                     </Button>
 
                     <p className="text-xs text-muted-foreground text-center">
-                      Sourced from Khan Academy, BYJU'S, Britannica, Wikipedia, and more
+                      Powered by {getTotalSourceCount()}+ trusted educational sources
                     </p>
                   </CardContent>
                 </Card>
@@ -524,6 +592,22 @@ ${generatedContent.revisionNotes.map(n => `• ${n}`).join('\n')}
                     </CardContent>
                   </Card>
                 )}
+
+                {/* Info Card */}
+                <Card className="bg-muted/50">
+                  <CardContent className="pt-4">
+                    <div className="flex items-start gap-3">
+                      <Database className="h-5 w-5 text-primary mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium">Where does saved content go?</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Saved study materials are stored in the <strong>History</strong> tab. 
+                          You can view, reload, or delete them anytime.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
 
               {/* Generated Content Preview */}
@@ -570,7 +654,7 @@ ${generatedContent.revisionNotes.map(n => `• ${n}`).join('\n')}
                         <Layers className="mr-2 h-4 w-4" />
                         Create Flashcards
                       </Button>
-                      <Button onClick={handleCreatePost} variant="outline" size="sm">
+                      <Button onClick={openCreatePostDialog} variant="outline" size="sm">
                         <Plus className="mr-2 h-4 w-4" />
                         Create Post
                       </Button>
@@ -805,8 +889,135 @@ ${generatedContent.revisionNotes.map(n => `• ${n}`).join('\n')}
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="sources" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5" />
+                  {getTotalSourceCount()}+ Trusted Educational Sources
+                </CardTitle>
+                <CardDescription>
+                  Our AI references content from these verified educational platforms and institutions
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Accordion type="multiple" className="space-y-2">
+                  {TRUSTED_SOURCES.map((category) => (
+                    <AccordionItem key={category.category} value={category.category} className="border rounded-lg px-4">
+                      <AccordionTrigger className="hover:no-underline">
+                        <div className="flex items-center gap-2">
+                          <GraduationCap className="h-4 w-4 text-primary" />
+                          <span>{category.category}</span>
+                          <Badge variant="secondary" className="ml-2">{category.sources.length}</Badge>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <p className="text-sm text-muted-foreground mb-4">{category.description}</p>
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          {category.sources.map((source) => (
+                            <div key={source.name} className="flex items-start gap-2 p-2 rounded-lg hover:bg-muted/50">
+                              <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                              <div className="min-w-0">
+                                {source.url ? (
+                                  <a 
+                                    href={source.url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-sm font-medium text-primary hover:underline"
+                                  >
+                                    {source.name}
+                                  </a>
+                                ) : (
+                                  <p className="text-sm font-medium">{source.name}</p>
+                                )}
+                                <p className="text-xs text-muted-foreground">{source.description}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </main>
+
+      {/* Create Post Dialog */}
+      <Dialog open={showCreatePostDialog} onOpenChange={setShowCreatePostDialog}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Create Post from Study Material</DialogTitle>
+            <DialogDescription>
+              Review and edit your post before publishing to the community
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="post-title">Title</Label>
+              <Input
+                id="post-title"
+                value={postTitle}
+                onChange={(e) => setPostTitle(e.target.value)}
+                placeholder="Enter post title"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="post-content">Content</Label>
+              <RichTextEditor
+                content={postContent}
+                onChange={setPostContent}
+                placeholder="Edit your post content..."
+              />
+            </div>
+
+            {generatedContent && (
+              <div className="flex gap-2 flex-wrap">
+                <Badge variant="secondary">{generatedContent.subject}</Badge>
+                <Badge variant="outline">{generatedContent.grade}</Badge>
+                <Badge variant="outline">{generatedContent.stream}</Badge>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="post-country">Country *</Label>
+              <Select value={postCountry} onValueChange={setPostCountry}>
+                <SelectTrigger id="post-country">
+                  <SelectValue placeholder="Select country" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COUNTRIES.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setShowCreatePostDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handlePublishPost} disabled={isCreatingPost}>
+                {isCreatingPost ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Publishing...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Publish Post
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 });
