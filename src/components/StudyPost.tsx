@@ -28,6 +28,18 @@ import {
 } from "@/components/ui/dialog";
 import ReportPostDialog from "./ReportPostDialog";
 import EditPostDialog from "./EditPostDialog";
+import EditUpdatePostDialog from "./EditUpdatePostDialog";
+
+// Helper to get capitalized category with emoji
+const getCategoryDisplay = (category: string): string => {
+  const categoryMap: Record<string, string> = {
+    feature: "✨ New Feature",
+    improvement: "🔧 Improvement",
+    bugfix: "🐛 Bug Fix",
+    announcement: "📢 Announcement",
+  };
+  return categoryMap[category.toLowerCase()] || category;
+};
 
 // Helper function to truncate HTML content
 const truncateContent = (html: string, maxLength: number = 150): { truncated: string; isTruncated: boolean } => {
@@ -99,6 +111,8 @@ interface StudyPostProps {
   country: string;
   timeAgo: string;
   fileUrl?: string;
+  postType?: string;
+  createdAt?: string;
   onVoteChange?: () => void;
 }
 
@@ -117,6 +131,8 @@ const StudyPost = memo(({
   country,
   timeAgo,
   fileUrl,
+  postType,
+  createdAt,
   onVoteChange,
 }: StudyPostProps) => {
   const navigate = useNavigate();
@@ -125,9 +141,12 @@ const StudyPost = memo(({
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showSignInDialog, setShowSignInDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showUpdateEditDialog, setShowUpdateEditDialog] = useState(false);
   const mountedRef = useRef(true);
 
   const isAuthor = user?.id === authorId;
+  const isUpdatePost = postType === "update";
+  const isAdminUser = user?.email === "misterjunior1710@gmail.com";
 
   // Cleanup on unmount
   useEffect(() => {
@@ -332,10 +351,16 @@ const StudyPost = memo(({
 
           <div className="flex-1 space-y-2">
             <div className="flex flex-wrap gap-2 max-w-full">
-              <Badge variant="secondary" className="text-xs">{subject}</Badge>
-              <Badge variant="outline" className="text-xs">{grade}</Badge>
-              <Badge variant="outline" className="text-xs">{stream}</Badge>
-              <Badge variant="outline" className="text-xs">{country}</Badge>
+              {isUpdatePost ? (
+                <Badge variant="secondary" className="text-xs">{getCategoryDisplay(subject)}</Badge>
+              ) : (
+                <>
+                  <Badge variant="secondary" className="text-xs">{subject}</Badge>
+                  <Badge variant="outline" className="text-xs">{grade}</Badge>
+                  <Badge variant="outline" className="text-xs">{stream}</Badge>
+                  <Badge variant="outline" className="text-xs">{country}</Badge>
+                </>
+              )}
             </div>
             <h2
               className="text-lg font-semibold leading-tight hover:text-primary cursor-pointer"
@@ -394,15 +419,18 @@ const StudyPost = memo(({
         <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border">
           {user ? (
             <>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2"
-                onClick={navigateToPost}
-              >
-                <MessageSquare className="h-4 w-4" aria-hidden="true" />
-                {comments} Comments
-              </Button>
+              {/* Hide comments button for update posts */}
+              {!isUpdatePost && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2"
+                  onClick={navigateToPost}
+                >
+                  <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                  {comments} Comments
+                </Button>
+              )}
               <Button variant="ghost" size="sm" className="gap-2">
                 <Share2 className="h-4 w-4" aria-hidden="true" />
                 Share
@@ -421,7 +449,8 @@ const StudyPost = memo(({
                 )}
                 {isBookmarked ? "Saved" : "Save"}
               </Button>
-              {isAuthor && (
+              {/* Edit button for regular posts (author only) */}
+              {isAuthor && !isUpdatePost && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -432,7 +461,20 @@ const StudyPost = memo(({
                   Edit
                 </Button>
               )}
-              {!isAdmin && !isAuthor && <ReportPostDialog postId={id} postTitle={title} />}
+              {/* Edit button for update posts (admin only) */}
+              {isUpdatePost && isAdminUser && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => setShowUpdateEditDialog(true)}
+                >
+                  <Pencil className="h-4 w-4" aria-hidden="true" />
+                  Edit
+                </Button>
+              )}
+              {/* Hide report for update posts */}
+              {!isAdmin && !isAuthor && !isUpdatePost && <ReportPostDialog postId={id} postTitle={title} />}
             </>
           ) : (
             <>
@@ -452,7 +494,8 @@ const StudyPost = memo(({
             </>
           )}
           
-          {isAdmin && (
+          {/* Hide Flag/Hide for update posts, only show delete */}
+          {isAdmin && !isUpdatePost && (
             <>
               <Button variant="ghost" size="sm" className="gap-2 text-warning hover:text-warning" onClick={handleFlag}>
                 <Flag className="h-4 w-4" aria-hidden="true" />
@@ -462,29 +505,31 @@ const StudyPost = memo(({
                 <EyeOff className="h-4 w-4" aria-hidden="true" />
                 Hide
               </Button>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
-                    <Trash2 className="h-4 w-4" aria-hidden="true" />
-                    Delete
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete this post?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete the post and all its comments.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
             </>
+          )}
+          {isAdmin && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
+                  <Trash2 className="h-4 w-4" aria-hidden="true" />
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete this post?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete the post and all its comments.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
         </div>
       </CardContent>
@@ -519,6 +564,18 @@ const StudyPost = memo(({
         currentContent={content}
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
+        onPostUpdated={onVoteChange}
+      />
+
+      {/* Edit Update Post Dialog */}
+      <EditUpdatePostDialog
+        postId={id}
+        currentTitle={title}
+        currentContent={content}
+        currentCategory={subject}
+        currentDate={createdAt || new Date().toISOString()}
+        open={showUpdateEditDialog}
+        onOpenChange={setShowUpdateEditDialog}
         onPostUpdated={onVoteChange}
       />
     </Card>
