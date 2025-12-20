@@ -848,6 +848,7 @@ export type Database = {
           last_active_date: string | null
           notify_announcements: boolean | null
           notify_doubt_replies: boolean | null
+          notify_feature_updates: boolean | null
           notify_group_updates: boolean | null
           notify_mentions: boolean | null
           notify_mock_tests: boolean | null
@@ -886,6 +887,7 @@ export type Database = {
           last_active_date?: string | null
           notify_announcements?: boolean | null
           notify_doubt_replies?: boolean | null
+          notify_feature_updates?: boolean | null
           notify_group_updates?: boolean | null
           notify_mentions?: boolean | null
           notify_mock_tests?: boolean | null
@@ -924,6 +926,7 @@ export type Database = {
           last_active_date?: string | null
           notify_announcements?: boolean | null
           notify_doubt_replies?: boolean | null
+          notify_feature_updates?: boolean | null
           notify_group_updates?: boolean | null
           notify_mentions?: boolean | null
           notify_mock_tests?: boolean | null
