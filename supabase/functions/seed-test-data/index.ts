@@ -190,6 +190,159 @@ serve(async (req) => {
       }
     }
 
+    // Get all created posts for adding comments
+    const { data: allPosts } = await supabase
+      .from("posts")
+      .select("id, title")
+      .order("created_at", { ascending: false })
+      .limit(36);
+
+    // Comments data - varied tones and helpful responses
+    const commentsData = [
+      // Comments for pH rainwater question
+      { postTitle: "Why does the pH of rainwater decrease in polluted areas?", userIndex: 3, content: "Great question! It's mainly due to SO2 and NO2 from vehicles and factories. They react with water vapor to form sulfuric and nitric acid. For boards, focus on the chemical equations!", hoursAgo: 2 },
+      { postTitle: "Why does the pH of rainwater decrease in polluted areas?", userIndex: 8, content: "Adding to what Marcus said - industrial emissions are actually the bigger contributor in most cities. Vehicles matter more in areas with less industry.", hoursAgo: 1 },
+      
+      // Comments for Ohm's Law question
+      { postTitle: "Is Ohm's Law valid for all electrical components?", userIndex: 12, content: "Ohm's Law only works for 'ohmic conductors' - things like metal wires at constant temperature. It doesn't apply to diodes, LEDs, or thermistors because their resistance changes.", hoursAgo: 5 },
+      { postTitle: "Is Ohm's Law valid for all electrical components?", userIndex: 15, content: "Simple way to remember: if the V-I graph is a straight line through origin, it's ohmic. Curved line = non-ohmic. That's the key for exams!", hoursAgo: 4 },
+      { postTitle: "Is Ohm's Law valid for all electrical components?", userIndex: 0, content: "Thanks for asking this - I had the same doubt! The answers here really helped.", hoursAgo: 3 },
+      
+      // Comments for surface area to volume
+      { postTitle: "Why is the surface area to volume ratio important in biology?", userIndex: 4, content: "It's super important for understanding why cells are small! As cells get bigger, volume increases faster than surface area, making diffusion inefficient. Definitely learn the concept + 2-3 examples.", hoursAgo: 20 },
+      { postTitle: "Why is the surface area to volume ratio important in biology?", userIndex: 17, content: "For NEET/boards, memorize examples: alveoli (high SA for gas exchange), villi in intestines, root hair cells. Examiners love asking about these!", hoursAgo: 18 },
+      
+      // Comments for limits question
+      { postTitle: "Help with limits approaching infinity?",  userIndex: 1, content: "Common mistake: not dividing by the highest power of x. For rational functions, divide numerator and denominator by x^n where n is the highest power. Makes it much easier!", hoursAgo: 1 },
+      { postTitle: "Help with limits approaching infinity?", userIndex: 12, content: "Also remember: if degree of numerator > denominator, limit is ±∞. If equal, it's the ratio of leading coefficients. If numerator < denominator, limit is 0.", hoursAgo: 1 },
+      
+      // Comments for mitosis/meiosis
+      { postTitle: "Difference between mitosis and meiosis", userIndex: 2, content: "Memory trick I use: PMAT for mitosis (one round), PMAT-PMAT for meiosis (two rounds). Also 'mitosis makes twins' (identical) and 'meiosis makes babies' (gametes)!", hoursAgo: 6 },
+      { postTitle: "Difference between mitosis and meiosis", userIndex: 8, content: "I draw them side by side every time I study. Visual learning really helps with this topic. Also focus on where crossing over happens - that's a common exam question.", hoursAgo: 5 },
+      
+      // Comments for Python learning
+      { postTitle: "What's the best way to start learning Python?", userIndex: 3, content: "Start with basics! Variables, loops, functions. Then move to small projects. I recommend 'Automate the Boring Stuff with Python' - it's free online and project-based.", hoursAgo: 10 },
+      { postTitle: "What's the best way to start learning Python?", userIndex: 11, content: "Codecademy and freeCodeCamp are great for beginners. Don't rush into advanced stuff. Master the fundamentals first!", hoursAgo: 8 },
+      { postTitle: "What's the best way to start learning Python?", userIndex: 19, content: "Same boat! I've been using Replit to practice - you can code in browser without installing anything.", hoursAgo: 6 },
+      
+      // Comments for French Revolution
+      { postTitle: "Comment expliquer la Révolution française", userIndex: 18, content: "Les 5 points clés: 1) Crise financière 2) Inégalités sociales (3 états) 3) Influence des Lumières 4) Mauvaises récoltes 5) Faiblesse de Louis XVI. Bon courage pour l'examen!", hoursAgo: 40 },
+      { postTitle: "Comment expliquer la Révolution française", userIndex: 7, content: "In English: Financial crisis, social inequality, Enlightenment ideas, food shortages, weak monarchy. The storming of the Bastille is usually the key event to mention!", hoursAgo: 36 },
+      
+      // Comments for gradient question
+      { postTitle: "How do you calculate the gradient of a curve", userIndex: 1, content: "Gradient at a point = derivative at that point. So if y = x², then dy/dx = 2x. At x=3, gradient = 2(3) = 6. Practice with simple polynomials first!", hoursAgo: 4 },
+      { postTitle: "How do you calculate the gradient of a curve", userIndex: 3, content: "Think of it as 'instantaneous rate of change'. The derivative gives you a formula for the gradient at ANY point on the curve.", hoursAgo: 3 },
+      
+      // Comments for photosynthesis/green plants
+      { postTitle: "Why do plants look green if they absorb red and blue", userIndex: 4, content: "Actually a brilliant question! One theory is that early photosynthetic organisms already used the 'best' wavelengths, so plants evolved to use what was left. It's called the 'purple Earth hypothesis'.", hoursAgo: 30 },
+      { postTitle: "Why do plants look green if they absorb red and blue", userIndex: 2, content: "Also, green light isn't completely useless - some does get absorbed, especially in shade conditions. Chlorophyll b and carotenoids help capture different wavelengths.", hoursAgo: 28 },
+      
+      // Comments for organic chemistry
+      { postTitle: "Struggling with organic chemistry nomenclature", userIndex: 12, content: "IUPAC naming order: 1) Find longest carbon chain 2) Number from end nearest to substituent 3) Name substituents alphabetically 4) Add functional group suffix. Practice is key!", hoursAgo: 60 },
+      { postTitle: "Struggling with organic chemistry nomenclature", userIndex: 9, content: "For multiple functional groups, there's a priority order: COOH > CHO > C=O > OH > NH2 > C=C > C≡C. The highest priority becomes the suffix!", hoursAgo: 55 },
+      
+      // Comments for JEE question
+      { postTitle: "JEE Mains vs Advanced - which topics overlap?", userIndex: 17, content: "Most topics overlap actually! But Advanced goes deeper. Focus on: Mechanics, Electromagnetism, Optics, Modern Physics for Physics. Organic reactions and Equilibrium for Chemistry.", hoursAgo: 3 },
+      { postTitle: "JEE Mains vs Advanced - which topics overlap?", userIndex: 2, content: "I'd say 70% overlap. Advanced has more Calculus-based physics and trickier organic chemistry. Start with Mains-level, then level up.", hoursAgo: 2 },
+      
+      // Comments for SHM question
+      { postTitle: "Simple harmonic motion - why is acceleration proportional", userIndex: 1, content: "Think of a spring! The more you stretch it (displacement), the harder it pulls back (force). Since F = ma and F ∝ -x (Hooke's Law), acceleration must be proportional to displacement.", hoursAgo: 15 },
+      { postTitle: "Simple harmonic motion - why is acceleration proportional", userIndex: 12, content: "The negative sign is crucial - it means acceleration always points TOWARD equilibrium. That's what makes it oscillate instead of just flying off!", hoursAgo: 12 },
+      
+      // Comments for historical dates
+      { postTitle: "Best way to memorize historical dates?", userIndex: 7, content: "I create stories linking events. Like: 1789 French Revolution, 1799 Napoleon takes power - 10 years of chaos. Narratives stick better than isolated dates!", hoursAgo: 80 },
+      { postTitle: "Best way to memorize historical dates?", userIndex: 6, content: "Flashcards with Anki! Spaced repetition really works for dates. Also, focus on understanding causation - it helps you estimate dates logically.", hoursAgo: 70 },
+      
+      // Comments for NEET study hours
+      { postTitle: "NEET Biology - how many hours should I study daily?", userIndex: 2, content: "Quality > quantity. 4-5 focused hours after school is realistic. Use weekends for longer sessions. Don't burn out - consistency matters more!", hoursAgo: 5 },
+      { postTitle: "NEET Biology - how many hours should I study daily?", userIndex: 12, content: "I did 5-6 hours on school days, 8-10 on weekends. But everyone's different. Track your progress, not just hours.", hoursAgo: 4 },
+      { postTitle: "NEET Biology - how many hours should I study daily?", userIndex: 8, content: "Focus on NCERT first! 80% of Bio questions come from there. Better to master NCERT in 4 hours than skim 5 books in 10 hours.", hoursAgo: 3 },
+      
+      // Comments for Shakespeare
+      { postTitle: "What's the point of learning Shakespeare?", userIndex: 7, content: "Honestly felt the same way at first. But Shakespeare invented so many phrases we use today: 'break the ice', 'wild goose chase', 'heart of gold'. The language is part of our culture!", hoursAgo: 100 },
+      { postTitle: "What's the point of learning Shakespeare?", userIndex: 11, content: "Also, the themes are timeless - ambition, jealousy, love, betrayal. Macbeth is basically a study in how ambition corrupts. Still relevant to politics today!", hoursAgo: 90 },
+      { postTitle: "What's the point of learning Shakespeare?", userIndex: 18, content: "Pro tip: watch a movie version first (there are good Macbeth adaptations). Makes the text SO much easier to understand.", hoursAgo: 85 },
+      
+      // Comments for study hours discussion
+      { postTitle: "Is studying 8 hours a day actually effective?", userIndex: 2, content: "100% agree with you. I tried the 10-hour thing and just burned out. Now I do 4-5 focused hours with proper breaks and my grades actually improved.", hoursAgo: 0.5 },
+      { postTitle: "Is studying 8 hours a day actually effective?", userIndex: 3, content: "Pomodoro technique changed my life. 25 min study, 5 min break. You'd be surprised how much you can cover in 4 Pomodoros!", hoursAgo: 0.5 },
+      { postTitle: "Is studying 8 hours a day actually effective?", userIndex: 17, content: "Depends on the subject too. Math needs focused short sessions. Reading-heavy subjects can go longer. Mix it up!", hoursAgo: 0.5 },
+      
+      // Comments for online vs textbooks
+      { postTitle: "Online resources vs textbooks - what do you prefer?", userIndex: 5, content: "YouTube for understanding concepts, textbooks for depth and exam-specific content. Both have their place!", hoursAgo: 20 },
+      { postTitle: "Online resources vs textbooks - what do you prefer?", userIndex: 4, content: "For sciences, videos help visualize. For humanities, textbooks give more nuance. I use 70% video, 30% text.", hoursAgo: 18 },
+      
+      // Comments for morning study
+      { postTitle: "Anyone else struggle with morning study sessions?", userIndex: 10, content: "Same! I'm a night owl. Studies show chronotypes are real - some people ARE more productive at night. Do what works for you!", hoursAgo: 8 },
+      { postTitle: "Anyone else struggle with morning study sessions?", userIndex: 13, content: "I used to be a night person but switched to mornings for exams (since exams are in the morning). Took 2 weeks to adjust but worth it.", hoursAgo: 6 },
+      
+      // Comments for A-Levels 3 vs 4
+      { postTitle: "A-Levels: 3 subjects or 4?", userIndex: 7, content: "Most unis only look at 3 subjects. Better to get A*A*A in 3 than AABB in 4. Unless you're applying to very competitive courses that specifically want 4.", hoursAgo: 50 },
+      { postTitle: "A-Levels: 3 subjects or 4?", userIndex: 4, content: "I did 4 in AS, dropped to 3 for A2. It's a common strategy - gives you a backup and shows breadth.", hoursAgo: 45 },
+      
+      // Comments for exam anxiety
+      { postTitle: "How do you deal with exam anxiety?", userIndex: 14, content: "Deep breathing before exams really helps. 4 seconds in, hold 4, out 4. Also, getting to the exam hall early so you're not rushed.", hoursAgo: 15 },
+      { postTitle: "How do you deal with exam anxiety?", userIndex: 10, content: "I write down everything I'm worried about forgetting RIGHT before the exam starts. Gets it out of my head and onto paper.", hoursAgo: 12 },
+      { postTitle: "How do you deal with exam anxiety?", userIndex: 4, content: "Practice papers under timed conditions! The more you simulate exam conditions, the less scary the real thing feels.", hoursAgo: 10 },
+      
+      // Comments for gap year
+      { postTitle: "Gap year before university - good idea?", userIndex: 11, content: "Took one and don't regret it. Worked part-time, traveled a bit, figured out I actually wanted to study CS instead of business. Worth the 'delay'.", hoursAgo: 200 },
+      { postTitle: "Gap year before university - good idea?", userIndex: 1, content: "UK unis are generally fine with gap years. Just make sure you have a plan - 'I want to travel and work' is fine, 'I dunno' isn't.", hoursAgo: 180 },
+      
+      // Comments for note-taking apps
+      { postTitle: "Best note-taking apps for students?", userIndex: 5, content: "Notion is amazing for organizing but can be overwhelming. Obsidian is great if you like linking ideas. I use Notion for school stuff, Obsidian for personal learning.", hoursAgo: 150 },
+      { postTitle: "Best note-taking apps for students?", userIndex: 19, content: "Unpopular opinion: pen and paper is still best for learning. Writing by hand helps memory. I digitize important notes later.", hoursAgo: 140 },
+      { postTitle: "Best note-taking apps for students?", userIndex: 3, content: "OneNote if you're in the Microsoft ecosystem. Free and syncs everywhere. Not as pretty as Notion but gets the job done.", hoursAgo: 130 },
+      
+      // Comments for programming language
+      { postTitle: "What programming language should I learn after Python?", userIndex: 3, content: "JavaScript if you want to make websites. It's everywhere and you can see results quickly. Java is great for understanding OOP deeply but more verbose.", hoursAgo: 40 },
+      { postTitle: "What programming language should I learn after Python?", userIndex: 11, content: "Depends on your goal. Game dev? C++. Web? JavaScript. Android? Kotlin. For a student, I'd say JavaScript - most versatile.", hoursAgo: 35 },
+      
+      // Comments for geometry proofs
+      { postTitle: "Why do we need to learn proofs in geometry?", userIndex: 3, content: "Proofs teach logical thinking - building arguments step by step. That skill transfers to debugging code, writing essays, even everyday problem solving!", hoursAgo: 60 },
+      { postTitle: "Why do we need to learn proofs in geometry?", userIndex: 1, content: "Also, proofs are actually used in higher math, CS (algorithm correctness), and even law (building a case). The format is useful beyond geometry.", hoursAgo: 55 },
+      
+      // Comments for gaming and studies
+      { postTitle: "How to balance gaming and studies?", userIndex: 10, content: "I game as a reward! Finish my study goals for the day, then guilt-free gaming. Works way better than trying to quit completely.", hoursAgo: 7 },
+      { postTitle: "How to balance gaming and studies?", userIndex: 13, content: "Set specific gaming hours. For me it's 8-10 PM on school nights, more on weekends. Having boundaries helps.", hoursAgo: 5 },
+      { postTitle: "How to balance gaming and studies?", userIndex: 5, content: "Some games actually help! Puzzle games, strategy games. I credit Minecraft with getting me into programming lol", hoursAgo: 4 },
+    ];
+
+    // Add comments
+    let commentsCreated = 0;
+    for (const commentData of commentsData) {
+      const user = createdUsers[commentData.userIndex];
+      if (!user) continue;
+
+      const post = allPosts?.find(p => p.title.includes(commentData.postTitle.substring(0, 30)));
+      if (!post) continue;
+
+      // Check if comment exists
+      const { data: existingComment } = await supabase
+        .from("comments")
+        .select("id")
+        .eq("post_id", post.id)
+        .eq("user_id", user.id)
+        .eq("content", commentData.content)
+        .single();
+
+      if (existingComment) continue;
+
+      const commentTime = new Date(now.getTime() - commentData.hoursAgo * 60 * 60 * 1000);
+
+      const { error } = await supabase.from("comments").insert({
+        post_id: post.id,
+        user_id: user.id,
+        content: commentData.content,
+        created_at: commentTime.toISOString(),
+        updated_at: commentTime.toISOString(),
+      });
+
+      if (!error) commentsCreated++;
+    }
+
+    results.push(`Created ${commentsCreated} comments`);
+
     console.log("Seed results:", results);
 
     return new Response(
@@ -199,6 +352,7 @@ serve(async (req) => {
         stats: {
           users: createdUsers.length,
           posts: postsData.length,
+          comments: commentsCreated,
         },
         results,
       }),
