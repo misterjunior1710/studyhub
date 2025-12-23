@@ -315,7 +315,7 @@ const StudyPost = memo(({
   const netVotes = upvotes - downvotes;
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-300 overflow-hidden">
+    <Card className="overflow-hidden">
       <CardHeader className="pb-3">
         <div className="flex gap-3">
           {/* Vote section - only show for logged in users */}
