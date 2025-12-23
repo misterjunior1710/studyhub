@@ -73,17 +73,17 @@ const Index = () => {
         role="img"
         aria-label="Students collaborating and studying together"
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-accent/80 to-primary/90 animate-gradient-shift" style={{ backgroundSize: "200% 200%" }} />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-accent/80 to-primary/90" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent)]" />
         <div className="relative container mx-auto px-4 py-8 sm:py-12 md:py-16">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 animate-fade-in leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 leading-tight">
             Study Smarter, Win Harder
           </h1>
-          <p className="text-white/90 text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 animate-fade-in max-w-2xl" style={{ animationDelay: "0.1s" }}>
+          <p className="text-white/90 text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 max-w-2xl">
             Connect with students worldwide, share knowledge, and ace your exams ✨
           </p>
           
-          <div className="max-w-2xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <div className="max-w-2xl">
             <div className="relative">
               <Search className="absolute left-3 sm:left-4 top-1/2 h-4 w-4 sm:h-5 sm:w-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
               <Input
@@ -120,7 +120,7 @@ const Index = () => {
                 <Button
                   variant={sortBy === "hot" ? "default" : "ghost"}
                   size="sm"
-                  className="gap-1 sm:gap-2 transition-all duration-200 hover:scale-105 text-xs sm:text-sm"
+                  className="gap-1 sm:gap-2 text-xs sm:text-sm"
                   onClick={() => setSortBy("hot")}
                   aria-pressed={sortBy === "hot"}
                 >
@@ -130,7 +130,7 @@ const Index = () => {
                 <Button
                   variant={sortBy === "new" ? "default" : "ghost"}
                   size="sm"
-                  className="gap-1 sm:gap-2 transition-all duration-200 hover:scale-105 text-xs sm:text-sm"
+                  className="gap-1 sm:gap-2 text-xs sm:text-sm"
                   onClick={() => setSortBy("new")}
                   aria-pressed={sortBy === "new"}
                 >
@@ -140,7 +140,7 @@ const Index = () => {
                 <Button
                   variant={sortBy === "top" ? "default" : "ghost"}
                   size="sm"
-                  className="gap-1 sm:gap-2 transition-all duration-200 hover:scale-105 text-xs sm:text-sm"
+                  className="gap-1 sm:gap-2 text-xs sm:text-sm"
                   onClick={() => setSortBy("top")}
                   aria-pressed={sortBy === "top"}
                 >
@@ -167,7 +167,7 @@ const Index = () => {
                 {loading ? (
                   <PostSkeletonList count={4} />
                 ) : posts.length === 0 ? (
-                  <div className="text-center py-12 animate-fade-in">
+                  <div className="text-center py-12">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-4">
                       <Sparkles className="h-8 w-8 text-primary" aria-hidden="true" />
                     </div>
@@ -183,12 +183,8 @@ const Index = () => {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {posts.map((post, index) => (
-                      <article 
-                        key={post.id} 
-                        className="animate-slide-up" 
-                        style={{ animationDelay: `${Math.min(index * 0.05, 0.5)}s` }}
-                      >
+                    {posts.map((post) => (
+                      <article key={post.id}>
                         <StudyPost
                           id={post.id}
                           title={post.title}
