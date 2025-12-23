@@ -47,15 +47,15 @@ const MobileNav = () => {
             StudyHub
           </SheetTitle>
         </SheetHeader>
-        <nav className="flex flex-col gap-2 mt-6">
+        <nav className="flex flex-col gap-1 mt-6">
           {navItems.map((item) => (
             <Button
               key={item.path}
               variant={isActive(item.path) ? "default" : "ghost"}
-              className="w-full justify-start"
+              className="w-full justify-start h-12 text-base"
               onClick={() => handleNavigate(item.path)}
             >
-              <item.icon className="h-4 w-4 mr-3" />
+              <item.icon className="h-5 w-5 mr-3" />
               {item.label}
             </Button>
           ))}
