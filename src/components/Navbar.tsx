@@ -30,15 +30,19 @@ const Navbar = ({
     await signOut();
     navigate("/");
   };
-  return <nav className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-sm">
+  return (
+    <nav className="sticky top-0 z-50 border-b border-border bg-card/95">
       <div className="container mx-auto px-4">
         <div className="flex h-14 sm:h-16 items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-2 sm:gap-6">
             <MobileNav />
-            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent cursor-pointer" onClick={() => navigate("/")}>
+            <h1 
+              className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent cursor-pointer" 
+              onClick={() => navigate("/")}
+            >
               StudyHub
             </h1>
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-1">
               <Button variant={isActive("/") ? "default" : "ghost"} size="sm" onClick={() => navigate("/")}>
                 <Home className="h-4 w-4 mr-2" />
                 Home
@@ -65,7 +69,7 @@ const Navbar = ({
               </Button>
               <Button variant={isActive("/content-generator") ? "default" : "ghost"} size="sm" onClick={() => navigate("/content-generator")}>
                 <Sparkles className="h-4 w-4 mr-2" />
-                AI Generator
+                AI
               </Button>
               <Button variant={isActive("/updates") ? "default" : "ghost"} size="sm" onClick={() => navigate("/updates")}>
                 <Megaphone className="h-4 w-4 mr-2" />
@@ -144,6 +148,8 @@ const Navbar = ({
           </div>
         </div>
       </div>
-    </nav>;
+    </nav>
+  );
 };
+
 export default Navbar;
