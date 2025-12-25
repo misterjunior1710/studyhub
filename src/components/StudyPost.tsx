@@ -1,6 +1,7 @@
 import { memo, useState, useEffect, useCallback, useRef } from "react";
 import { ArrowUp, ArrowDown, MessageSquare, Share2, Bookmark, BookmarkCheck, Trash2, Flag, EyeOff, LogIn, Pencil } from "lucide-react";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { sharePost } from "@/lib/share";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCommentCount } from "@/hooks/useCommentCount";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -144,9 +146,22 @@ const StudyPost = memo(({
   const [showUpdateEditDialog, setShowUpdateEditDialog] = useState(false);
   const mountedRef = useRef(true);
 
+  // Use real-time comment count
+  const commentCount = useCommentCount(id, comments);
+
   const isAuthor = user?.id === authorId;
   const isUpdatePost = postType === "update";
   const isAdminUser = user?.email === "misterjunior1710@gmail.com";
+
+  // Handle share
+  const handleShare = useCallback(async () => {
+    const url = `${window.location.origin}/post/${id}`;
+    await sharePost({
+      title,
+      text: `Check out this post on StudyHub: ${title}`,
+      url,
+    });
+  }, [id, title]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -428,10 +443,10 @@ const StudyPost = memo(({
                   onClick={navigateToPost}
                 >
                   <MessageSquare className="h-4 w-4" aria-hidden="true" />
-                  {comments} Comments
+                  {commentCount} Comments
                 </Button>
               )}
-              <Button variant="ghost" size="sm" className="gap-2">
+              <Button variant="ghost" size="sm" className="gap-2" onClick={handleShare}>
                 <Share2 className="h-4 w-4" aria-hidden="true" />
                 Share
               </Button>
@@ -487,7 +502,7 @@ const StudyPost = memo(({
                 <LogIn className="h-4 w-4" aria-hidden="true" />
                 Sign in to interact
               </Button>
-              <Button variant="ghost" size="sm" className="gap-2">
+              <Button variant="ghost" size="sm" className="gap-2" onClick={handleShare}>
                 <Share2 className="h-4 w-4" aria-hidden="true" />
                 Share
               </Button>
