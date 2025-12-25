@@ -1,20 +1,76 @@
-import { memo } from "react";
+import { memo, useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import StudyPost from "@/components/StudyPost";
 import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { PostSkeletonList } from "@/components/PostSkeleton";
 import PullToRefresh from "@/components/PullToRefresh";
 import { usePosts, getTimeAgo } from "@/hooks/usePosts";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
+
+const POSTS_PER_PAGE = 10;
 
 const Questions = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  
   const {
-    data: posts = [],
+    data: allPosts = [],
     isLoading: loading,
     invalidatePosts
   } = usePosts({
     postType: "doubt",
     sortBy: "new"
   });
+
+  // Paginate posts
+  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+  const posts = useMemo(() => {
+    const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+    return allPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+  }, [allPosts, currentPage]);
+
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages: (number | "ellipsis")[] = [];
+    const maxVisible = 5;
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      
+      if (currentPage > 3) {
+        pages.push("ellipsis");
+      }
+      
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      
+      for (let i = start; i <= end; i++) {
+        if (!pages.includes(i)) pages.push(i);
+      }
+      
+      if (currentPage < totalPages - 2) {
+        pages.push("ellipsis");
+      }
+      
+      if (!pages.includes(totalPages)) pages.push(totalPages);
+    }
+    
+    return pages;
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const breadcrumbData = getBreadcrumbSchema([{
     name: "Home",
@@ -57,7 +113,7 @@ const Questions = () => {
           <PullToRefresh onRefresh={invalidatePosts}>
             {loading ? (
               <PostSkeletonList count={4} />
-            ) : posts.length === 0 ? (
+            ) : allPosts.length === 0 ? (
               <div className="text-center py-12">
                 <h2 className="text-lg font-semibold mb-2">No questions posted yet</h2>
                 <p className="text-muted-foreground mb-4">
@@ -69,28 +125,71 @@ const Questions = () => {
                 </p>
               </div>
             ) : (
-              <div className="grid gap-6">
-                {posts.map(post => (
-                  <article key={post.id}>
-                    <StudyPost 
-                      id={post.id} 
-                      title={post.title} 
-                      content={post.content} 
-                      author={post.profiles?.username ?? "Anonymous"} 
-                      authorId={post.user_id} 
-                      upvotes={post.upvotes} 
-                      downvotes={post.downvotes} 
-                      comments={Array.isArray(post.comments) ? post.comments.length : 0} 
-                      subject={post.subject} 
-                      grade={post.grade} 
-                      stream={post.stream} 
-                      country={post.country} 
-                      timeAgo={getTimeAgo(post.created_at)} 
-                      fileUrl={post.file_url ?? undefined} 
-                      onVoteChange={invalidatePosts} 
-                    />
-                  </article>
-                ))}
+              <div className="space-y-6">
+                <div className="grid gap-6">
+                  {posts.map(post => (
+                    <article key={post.id}>
+                      <StudyPost 
+                        id={post.id} 
+                        title={post.title} 
+                        content={post.content} 
+                        author={post.profiles?.username ?? "Anonymous"} 
+                        authorId={post.user_id} 
+                        upvotes={post.upvotes} 
+                        downvotes={post.downvotes} 
+                        comments={Array.isArray(post.comments) ? post.comments.length : 0} 
+                        subject={post.subject} 
+                        grade={post.grade} 
+                        stream={post.stream} 
+                        country={post.country} 
+                        timeAgo={getTimeAgo(post.created_at)} 
+                        fileUrl={post.file_url ?? undefined} 
+                        onVoteChange={invalidatePosts} 
+                      />
+                    </article>
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <Pagination className="mt-8">
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious 
+                          onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                          className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                      
+                      {getPageNumbers().map((page, index) => (
+                        <PaginationItem key={index}>
+                          {page === "ellipsis" ? (
+                            <PaginationEllipsis />
+                          ) : (
+                            <PaginationLink
+                              onClick={() => handlePageChange(page)}
+                              isActive={currentPage === page}
+                              className="cursor-pointer"
+                            >
+                              {page}
+                            </PaginationLink>
+                          )}
+                        </PaginationItem>
+                      ))}
+                      
+                      <PaginationItem>
+                        <PaginationNext 
+                          onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+                          className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                )}
+                
+                <p className="text-center text-sm text-muted-foreground">
+                  Showing {((currentPage - 1) * POSTS_PER_PAGE) + 1}-{Math.min(currentPage * POSTS_PER_PAGE, allPosts.length)} of {allPosts.length} questions
+                </p>
               </div>
             )}
           </PullToRefresh>

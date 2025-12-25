@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { sharePost } from "@/lib/share";
 import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowUp, ArrowDown, Share2, Bookmark, ArrowLeft, Loader2, Trash2, Lock, LogIn } from "lucide-react";
+import { ArrowUp, ArrowDown, Share2, Bookmark, BookmarkCheck, ArrowLeft, Loader2, Trash2, Lock, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -68,6 +69,8 @@ const Post = () => {
   const [userVote, setUserVote] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState<{ id: string } | null>(null);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -84,7 +87,38 @@ const Post = () => {
       loadComments();
       checkUserVote();
       checkAdminStatus();
+      checkBookmarkStatus();
     }
+  }, [id, user]);
+
+  // Real-time subscription for comments
+  useEffect(() => {
+    if (!user || !id) return;
+
+    const channel = supabase
+      .channel(`post-comments-${id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "comments",
+          filter: `post_id=eq.${id}`,
+        },
+        () => {
+          loadComments();
+        }
+      )
+      .subscribe();
+
+    channelRef.current = channel;
+
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
+    };
   }, [id, user]);
 
   const loadPost = async () => {
@@ -288,6 +322,51 @@ const Post = () => {
     }
   };
 
+  const checkBookmarkStatus = async () => {
+    if (!user) return;
+    
+    const { data } = await supabase
+      .from("bookmarks")
+      .select("id")
+      .eq("post_id", id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    
+    setIsBookmarked(!!data);
+  };
+
+  const handleBookmark = async () => {
+    if (!user) {
+      toast.error("Please sign in to bookmark");
+      navigate("/auth");
+      return;
+    }
+
+    try {
+      if (isBookmarked) {
+        await supabase.from("bookmarks").delete().eq("post_id", id).eq("user_id", user.id);
+        setIsBookmarked(false);
+        toast.success("Bookmark removed");
+      } else {
+        await supabase.from("bookmarks").insert({ post_id: id, user_id: user.id });
+        setIsBookmarked(true);
+        toast.success("Post bookmarked!");
+      }
+    } catch (error) {
+      console.error("Bookmark error:", error);
+      toast.error("Failed to update bookmark");
+    }
+  };
+
+  const handleShare = async () => {
+    const url = `${window.location.origin}/post/${id}`;
+    await sharePost({
+      title: post?.title || "StudyHub Post",
+      text: `Check out this post on StudyHub`,
+      url,
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -388,14 +467,23 @@ const Post = () => {
                 )}
 
                 <div className="flex items-center gap-2 pt-4 border-t">
-                  <Button variant="ghost" size="sm" className="gap-2">
+                  <Button variant="ghost" size="sm" className="gap-2" onClick={handleShare}>
                     <Share2 className="h-4 w-4" />
                     Share
                   </Button>
                   {user && (
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      <Bookmark className="h-4 w-4" />
-                      Save
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="gap-2"
+                      onClick={handleBookmark}
+                    >
+                      {isBookmarked ? (
+                        <BookmarkCheck className="h-4 w-4 fill-current" />
+                      ) : (
+                        <Bookmark className="h-4 w-4" />
+                      )}
+                      {isBookmarked ? "Saved" : "Save"}
                     </Button>
                   )}
                   
