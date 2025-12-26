@@ -466,16 +466,16 @@ const Post = () => {
                   </div>
                 )}
 
-                <div className="flex items-center gap-2 pt-4 border-t">
-                  <Button variant="ghost" size="sm" className="gap-2" onClick={handleShare}>
+                <div className="flex flex-wrap items-center gap-1 sm:gap-2 pt-4 border-t">
+                  <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3" onClick={handleShare}>
                     <Share2 className="h-4 w-4" />
-                    Share
+                    <span className="hidden xs:inline">Share</span>
                   </Button>
                   {user && (
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="gap-2"
+                      className="gap-1 sm:gap-2 px-2 sm:px-3"
                       onClick={handleBookmark}
                     >
                       {isBookmarked ? (
@@ -483,16 +483,16 @@ const Post = () => {
                       ) : (
                         <Bookmark className="h-4 w-4" />
                       )}
-                      {isBookmarked ? "Saved" : "Save"}
+                      <span className="hidden xs:inline">{isBookmarked ? "Saved" : "Save"}</span>
                     </Button>
                   )}
                   
                   {isAdmin && (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive ml-auto">
+                        <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3 text-destructive hover:text-destructive sm:ml-auto">
                           <Trash2 className="h-4 w-4" />
-                          Delete Post
+                          <span className="hidden sm:inline">Delete Post</span>
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>

@@ -431,7 +431,7 @@ const StudyPost = memo(({
           </figure>
         )}
 
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border">
+        <div className="flex flex-wrap items-center gap-1 sm:gap-2 pt-2 border-t border-border">
           {user ? (
             <>
               {/* Hide comments button for update posts */}

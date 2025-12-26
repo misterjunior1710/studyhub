@@ -92,7 +92,7 @@ const SessionExpiredHandler = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <AuthProvider>
         <ThemeInitializer>
           <TooltipProvider>

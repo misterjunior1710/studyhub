@@ -261,15 +261,15 @@ export function FlashcardSystem() {
   if (selectedDeck) {
     return (
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <Button variant="ghost" onClick={() => setSelectedDeck(null)} className="mb-2">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <Button variant="ghost" onClick={() => setSelectedDeck(null)} className="mb-2 -ml-2">
               ← Back to Decks
             </Button>
-            <h3 className="text-xl font-semibold">{selectedDeck.title}</h3>
+            <h3 className="text-xl font-semibold truncate">{selectedDeck.title}</h3>
             <p className="text-sm text-muted-foreground">{cards.length} cards • {dueCards.length} due for review</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 shrink-0">
             <Dialog open={createCardOpen} onOpenChange={setCreateCardOpen}>
               <DialogTrigger asChild>
                 <Button size="sm"><Plus className="h-4 w-4 mr-2" /> Add Card</Button>
