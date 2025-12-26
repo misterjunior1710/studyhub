@@ -1,4 +1,4 @@
-import { Filter, ChevronDown } from "lucide-react";
+import { Filter, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -12,8 +12,30 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+const MOBILE_FILTER_STATE_KEY = "studyhub-mobile-filter-collapse-state";
+
+interface FilterCollapseState {
+  country: boolean;
+  subject: boolean;
+  grade: boolean;
+  stream: boolean;
+}
+
+const getInitialState = (): FilterCollapseState => {
+  try {
+    const saved = localStorage.getItem(MOBILE_FILTER_STATE_KEY);
+    if (saved) {
+      return JSON.parse(saved);
+    }
+  } catch {
+    // Ignore localStorage errors
+  }
+  // Default: all collapsed
+  return { country: false, subject: false, grade: false, stream: false };
+};
 
 interface MobileFilterSheetProps {
   selectedCountry: string | null;
@@ -39,6 +61,7 @@ const MobileFilterSheet = ({
   onClearAll,
 }: MobileFilterSheetProps) => {
   const [open, setOpen] = useState(false);
+  const [openState, setOpenState] = useState<FilterCollapseState>(getInitialState);
 
   const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria"];
   const subjects = ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "General", "Career Advice", "Finance", "Technology", "Business", "Personal Development", "Dentistry", "Oral Health", "Dental Sciences"];
@@ -46,6 +69,25 @@ const MobileFilterSheet = ({
   const streams = ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Not Applicable", "Self-Learning", "Professional Development", "BDS", "MDS", "Dental Hygiene", "Dental Technology", "Dental Nursing"];
 
   const activeFiltersCount = [selectedCountry, selectedSubject, selectedGrade, selectedStream].filter(Boolean).length;
+
+  // Persist state to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(MOBILE_FILTER_STATE_KEY, JSON.stringify(openState));
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, [openState]);
+
+  const toggleFilter = (key: keyof FilterCollapseState) => {
+    setOpenState((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleClearAll = () => {
+    // Collapse all filters
+    setOpenState({ country: false, subject: false, grade: false, stream: false });
+    onClearAll();
+  };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -66,11 +108,15 @@ const MobileFilterSheet = ({
         </SheetHeader>
         <ScrollArea className="h-[calc(100vh-8rem)]">
           <div className="p-4 space-y-4">
-            <Collapsible defaultOpen>
+            <Collapsible open={openState.country} onOpenChange={() => toggleFilter("country")}>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" className="w-full justify-between p-2 h-auto">
                   <span className="font-medium">Country</span>
-                  <ChevronDown className="h-4 w-4" />
+                  {openState.country ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="space-y-1 pt-2">
@@ -87,11 +133,15 @@ const MobileFilterSheet = ({
               </CollapsibleContent>
             </Collapsible>
 
-            <Collapsible defaultOpen>
+            <Collapsible open={openState.subject} onOpenChange={() => toggleFilter("subject")}>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" className="w-full justify-between p-2 h-auto">
                   <span className="font-medium">Subject</span>
-                  <ChevronDown className="h-4 w-4" />
+                  {openState.subject ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="space-y-1 pt-2">
@@ -108,11 +158,15 @@ const MobileFilterSheet = ({
               </CollapsibleContent>
             </Collapsible>
 
-            <Collapsible defaultOpen>
+            <Collapsible open={openState.grade} onOpenChange={() => toggleFilter("grade")}>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" className="w-full justify-between p-2 h-auto">
                   <span className="font-medium">Grade</span>
-                  <ChevronDown className="h-4 w-4" />
+                  {openState.grade ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="space-y-1 pt-2">
@@ -129,11 +183,15 @@ const MobileFilterSheet = ({
               </CollapsibleContent>
             </Collapsible>
 
-            <Collapsible defaultOpen>
+            <Collapsible open={openState.stream} onOpenChange={() => toggleFilter("stream")}>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" className="w-full justify-between p-2 h-auto">
                   <span className="font-medium">Stream</span>
-                  <ChevronDown className="h-4 w-4" />
+                  {openState.stream ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="space-y-1 pt-2">
@@ -152,7 +210,7 @@ const MobileFilterSheet = ({
           </div>
         </ScrollArea>
         <div className="p-4 border-t border-border">
-          <Button variant="outline" className="w-full" onClick={onClearAll}>
+          <Button variant="outline" className="w-full" onClick={handleClearAll}>
             Clear All Filters
           </Button>
         </div>
