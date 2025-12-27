@@ -1,4 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, Trophy, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Users, Settings, Trophy, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -9,14 +9,18 @@ import ThemeToggle from "./ThemeToggle";
 import MobileNav from "./MobileNav";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useTheme } from "next-themes";
+
 interface NavbarProps {
   onPostCreated?: () => void;
 }
+
 const Navbar = ({
   onPostCreated
 }: NavbarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { theme, setTheme } = useTheme();
   const {
     user,
     username,
@@ -25,11 +29,18 @@ const Navbar = ({
     profileLoading,
     signOut
   } = useAuth();
+  
   const isActive = (path: string) => location.pathname === path;
+  
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
   };
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-card/95">
       <div className="container mx-auto px-4">
@@ -79,22 +90,13 @@ const Navbar = ({
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant={isActive("/support") ? "default" : "ghost"} 
-                  size="icon" 
-                  onClick={() => navigate("/support")}
-                >
-                  <LifeBuoy className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Need Help?</p>
-              </TooltipContent>
-            </Tooltip>
-            <ThemeToggle />
-            {user ? <>
+            {/* Mobile: Show theme toggle and notifications outside dropdown */}
+            <div className="md:hidden">
+              <ThemeToggle />
+            </div>
+            {user ? (
+              <>
+                {/* Show notifications popover - visible on all screens */}
                 <NotificationsPopover />
                 <div className="hidden sm:block">
                   <CreatePostDialog onPostCreated={onPostCreated} />
@@ -109,46 +111,83 @@ const Navbar = ({
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuContent align="end" className="w-56 bg-popover">
                     <DropdownMenuLabel>
                       <div className="flex flex-col space-y-1">
                         <div className="flex items-center gap-2">
-                          {profileLoading ? <div className="h-4 w-16 bg-muted animate-pulse rounded" /> : <p className="text-sm font-medium leading-none">{username || "User"}</p>}
-                          {isAdmin && <span className="text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded-full font-semibold">
+                          {profileLoading ? (
+                            <div className="h-4 w-16 bg-muted animate-pulse rounded" />
+                          ) : (
+                            <p className="text-sm font-medium leading-none">{username || "User"}</p>
+                          )}
+                          {isAdmin && (
+                            <span className="text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded-full font-semibold">
                               ADMIN
-                            </span>}
+                            </span>
+                          )}
                         </div>
                         <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <div className="px-2 py-2 space-y-1">
-                      {profileData.grade && <p className="text-xs text-muted-foreground">
+                      {profileData.grade && (
+                        <p className="text-xs text-muted-foreground">
                           <span className="font-medium">Grade:</span> {profileData.grade}
-                        </p>}
-                      {profileData.stream && <p className="text-xs text-muted-foreground">
+                        </p>
+                      )}
+                      {profileData.stream && (
+                        <p className="text-xs text-muted-foreground">
                           <span className="font-medium">Stream:</span> {profileData.stream}
-                        </p>}
-                      {profileData.country && <p className="text-xs text-muted-foreground">
+                        </p>
+                      )}
+                      {profileData.country && (
+                        <p className="text-xs text-muted-foreground">
                           <span className="font-medium">Country:</span> {profileData.country}
-                        </p>}
+                        </p>
+                      )}
                     </div>
                     <DropdownMenuSeparator />
+                    
                     <DropdownMenuItem onClick={() => navigate("/saved")}>
                       <Bookmark className="mr-2 h-4 w-4" />
                       <span>Saved Posts</span>
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/support")}>
+                      <LifeBuoy className="mr-2 h-4 w-4" />
+                      <span>Support</span>
+                    </DropdownMenuItem>
+                    
+                    {/* Desktop only: Theme toggle in dropdown */}
+                    <DropdownMenuItem onClick={toggleTheme} className="hidden md:flex">
+                      {theme === "dark" ? (
+                        <>
+                          <Sun className="mr-2 h-4 w-4" />
+                          <span>Light Mode</span>
+                        </>
+                      ) : (
+                        <>
+                          <Moon className="mr-2 h-4 w-4" />
+                          <span>Dark Mode</span>
+                        </>
+                      )}
+                    </DropdownMenuItem>
+                    
                     <DropdownMenuItem onClick={() => navigate("/settings")}>
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Settings</span>
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Sign out</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </> : <Button onClick={() => navigate("/auth")}>Sign In</Button>}
+              </>
+            ) : (
+              <Button onClick={() => navigate("/auth")}>Sign In</Button>
+            )}
           </div>
         </div>
       </div>
