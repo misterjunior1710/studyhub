@@ -411,18 +411,18 @@ ${generatedContent.examples.map((e, i) => `**Example ${i+1}:** ${e.problem}\n*So
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full max-w-lg grid-cols-3">
-            <TabsTrigger value="generate" className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4" />
-              Generate
+          <TabsList className="grid w-full max-w-lg grid-cols-3 h-auto p-1">
+            <TabsTrigger value="generate" className="flex items-center gap-1.5 py-2.5 px-2 text-xs sm:text-sm sm:gap-2 sm:px-3">
+              <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span>Generate</span>
             </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-2">
-              <History className="h-4 w-4" />
-              History
+            <TabsTrigger value="history" className="flex items-center gap-1.5 py-2.5 px-2 text-xs sm:text-sm sm:gap-2 sm:px-3">
+              <History className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span>History</span>
             </TabsTrigger>
-            <TabsTrigger value="sources" className="flex items-center gap-2">
-              <Globe className="h-4 w-4" />
-              Sources
+            <TabsTrigger value="sources" className="flex items-center gap-1.5 py-2.5 px-2 text-xs sm:text-sm sm:gap-2 sm:px-3">
+              <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span>Sources</span>
             </TabsTrigger>
           </TabsList>
 

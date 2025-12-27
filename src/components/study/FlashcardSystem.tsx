@@ -310,30 +310,50 @@ export function FlashcardSystem() {
           </Card>
         ) : (
           <>
-            <div className="grid gap-3">
-              {cards.map(card => (
-                <Card key={card.id} className="p-4">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <p className="font-medium">{card.front}</p>
-                      <p className="text-sm text-muted-foreground mt-1">{card.back}</p>
+            <div className="grid gap-4">
+              {cards.map((card, index) => (
+                <Card key={card.id} className="p-4 overflow-hidden">
+                  <div className="flex flex-col gap-3">
+                    {/* Question Section */}
+                    <div className="space-y-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="text-xs font-medium text-primary uppercase tracking-wide">
+                          Q{index + 1}
+                        </span>
+                        <span className={cn(
+                          "text-xs px-2 py-0.5 rounded shrink-0",
+                          card.box_number === 1 && "bg-red-500/20 text-red-500",
+                          card.box_number === 2 && "bg-orange-500/20 text-orange-500",
+                          card.box_number === 3 && "bg-yellow-500/20 text-yellow-500",
+                          card.box_number === 4 && "bg-blue-500/20 text-blue-500",
+                          card.box_number === 5 && "bg-green-500/20 text-green-500",
+                        )}>
+                          Box {card.box_number}
+                        </span>
+                      </div>
+                      <p className="font-medium text-sm sm:text-base leading-relaxed">{card.front}</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className={cn(
-                        "text-xs px-2 py-1 rounded",
-                        card.box_number === 1 && "bg-red-500/20 text-red-500",
-                        card.box_number === 2 && "bg-orange-500/20 text-orange-500",
-                        card.box_number === 3 && "bg-yellow-500/20 text-yellow-500",
-                        card.box_number === 4 && "bg-blue-500/20 text-blue-500",
-                        card.box_number === 5 && "bg-green-500/20 text-green-500",
-                      )}>
-                        Box {card.box_number}
+                    
+                    {/* Divider */}
+                    <div className="h-px bg-border" />
+                    
+                    {/* Answer Section */}
+                    <div className="space-y-1">
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                        Answer
                       </span>
-                      <Button variant="ghost" size="icon" onClick={() => openEditCard(card)}>
-                        <Edit2 className="h-4 w-4" />
+                      <p className="text-sm text-muted-foreground leading-relaxed">{card.back}</p>
+                    </div>
+                    
+                    {/* Actions */}
+                    <div className="flex items-center justify-end gap-1 pt-1 border-t border-border/50">
+                      <Button variant="ghost" size="sm" onClick={() => openEditCard(card)} className="h-8 px-2">
+                        <Edit2 className="h-3.5 w-3.5 mr-1.5" />
+                        <span className="text-xs">Edit</span>
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteCardMutation.mutate(card.id)}>
-                        <Trash2 className="h-4 w-4" />
+                      <Button variant="ghost" size="sm" onClick={() => deleteCardMutation.mutate(card.id)} className="h-8 px-2 text-destructive hover:text-destructive">
+                        <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                        <span className="text-xs">Delete</span>
                       </Button>
                     </div>
                   </div>
