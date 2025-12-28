@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Loader2, Upload, X } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Plus, Loader2, Upload, X, Eye, EyeOff, BellOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import RichTextEditor from "./RichTextEditor";
@@ -25,6 +26,8 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   const [postType, setPostType] = useState("doubt");
   const [file, setFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [quietMode, setQuietMode] = useState(false);
 
   const isAdult = grade === "Adult (18+)" || grade === "Working Professional";
   const subjects = isAdult 
@@ -174,6 +177,8 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         country,
         post_type: postType,
         file_url: fileUrl,
+        is_anonymous: isAnonymous,
+        quiet_mode: quietMode,
       });
 
       if (error) {
@@ -188,6 +193,8 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       setFile(null);
       setFilePreview(null);
       setPostType("doubt");
+      setIsAnonymous(false);
+      setQuietMode(false);
       setOpen(false);
       onPostCreated?.();
     } catch (error: any) {
@@ -350,6 +357,39 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+
+          {/* Privacy & Notification Options */}
+          <div className="space-y-4 pt-2 border-t">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {isAnonymous ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                <div>
+                  <Label htmlFor="anonymous" className="text-sm font-medium">Post Anonymously</Label>
+                  <p className="text-xs text-muted-foreground">Your username won't be shown</p>
+                </div>
+              </div>
+              <Switch
+                id="anonymous"
+                checked={isAnonymous}
+                onCheckedChange={setIsAnonymous}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <BellOff className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <Label htmlFor="quietMode" className="text-sm font-medium">Quiet Mode</Label>
+                  <p className="text-xs text-muted-foreground">Don't notify me about replies</p>
+                </div>
+              </div>
+              <Switch
+                id="quietMode"
+                checked={quietMode}
+                onCheckedChange={setQuietMode}
+              />
             </div>
           </div>
 

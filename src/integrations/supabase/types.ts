@@ -103,38 +103,82 @@ export type Database = {
           },
         ]
       }
+      comment_helpful_votes: {
+        Row: {
+          comment_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_helpful_votes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comments: {
         Row: {
           content: string
           created_at: string
+          helpful_count: number | null
           id: string
           is_accepted: boolean | null
+          is_helpful: boolean | null
+          is_verified: boolean | null
           post_id: string
           quality_score: number | null
           updated_at: string
           user_id: string
+          verified_at: string | null
+          verified_by: string | null
           xp_awarded: boolean | null
         }
         Insert: {
           content: string
           created_at?: string
+          helpful_count?: number | null
           id?: string
           is_accepted?: boolean | null
+          is_helpful?: boolean | null
+          is_verified?: boolean | null
           post_id: string
           quality_score?: number | null
           updated_at?: string
           user_id: string
+          verified_at?: string | null
+          verified_by?: string | null
           xp_awarded?: boolean | null
         }
         Update: {
           content?: string
           created_at?: string
+          helpful_count?: number | null
           id?: string
           is_accepted?: boolean | null
+          is_helpful?: boolean | null
+          is_verified?: boolean | null
           post_id?: string
           quality_score?: number | null
           updated_at?: string
           user_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
           xp_awarded?: boolean | null
         }
         Relationships: [
@@ -757,9 +801,11 @@ export type Database = {
           flagged_by: string | null
           grade: string
           id: string
+          is_anonymous: boolean | null
           is_flagged: boolean | null
           is_hidden: boolean | null
           post_type: string
+          quiet_mode: boolean | null
           stream: string
           subject: string
           title: string
@@ -778,9 +824,11 @@ export type Database = {
           flagged_by?: string | null
           grade: string
           id?: string
+          is_anonymous?: boolean | null
           is_flagged?: boolean | null
           is_hidden?: boolean | null
           post_type?: string
+          quiet_mode?: boolean | null
           stream: string
           subject: string
           title: string
@@ -799,9 +847,11 @@ export type Database = {
           flagged_by?: string | null
           grade?: string
           id?: string
+          is_anonymous?: boolean | null
           is_flagged?: boolean | null
           is_hidden?: boolean | null
           post_type?: string
+          quiet_mode?: boolean | null
           stream?: string
           subject?: string
           title?: string
@@ -1450,10 +1500,11 @@ export type Database = {
         Args: { _group_id: string; _user_id: string }
         Returns: boolean
       }
+      is_verifier: { Args: { _user_id: string }; Returns: boolean }
       reset_weekly_xp: { Args: never; Returns: undefined }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "moderator" | "user" | "verifier"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1581,7 +1632,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "moderator", "user", "verifier"],
     },
   },
 } as const
