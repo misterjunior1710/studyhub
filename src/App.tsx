@@ -33,6 +33,7 @@ const DirectMessage = lazy(() => import("./pages/DirectMessage"));
 const ContentGenerator = lazy(() => import("./pages/ContentGenerator"));
 const Updates = lazy(() => import("./pages/Updates"));
 const SavedPosts = lazy(() => import("./pages/SavedPosts"));
+const Install = lazy(() => import("./pages/Install"));
 
 // Optimized QueryClient with proper caching and garbage collection
 const queryClient = new QueryClient({
@@ -118,6 +119,7 @@ const App = () => (
                   <Route path="/content-generator" element={<ContentGenerator />} />
                   <Route path="/updates" element={<Updates />} />
                   <Route path="/saved" element={<SavedPosts />} />
+                  <Route path="/install" element={<Install />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/terms" element={<Terms />} />
                   <Route path="/support" element={<Support />} />
