@@ -1761,6 +1761,14 @@ export type Database = {
         }
         Returns: Json
       }
+      can_edit_whiteboard: {
+        Args: { _user_id: string; _whiteboard_id: string }
+        Returns: boolean
+      }
+      can_view_whiteboard: {
+        Args: { _user_id: string; _whiteboard_id: string }
+        Returns: boolean
+      }
       get_daily_answer_xp_remaining: {
         Args: { p_user_id: string }
         Returns: number
@@ -1783,6 +1791,10 @@ export type Database = {
         Returns: boolean
       }
       is_verifier: { Args: { _user_id: string }; Returns: boolean }
+      is_whiteboard_owner: {
+        Args: { _user_id: string; _whiteboard_id: string }
+        Returns: boolean
+      }
       reset_weekly_xp: { Args: never; Returns: undefined }
     }
     Enums: {

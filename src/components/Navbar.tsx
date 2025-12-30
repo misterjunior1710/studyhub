@@ -114,89 +114,119 @@ const Navbar = ({
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-popover">
-                    <DropdownMenuLabel>
-                      <div className="flex flex-col space-y-1">
-                        <div className="flex items-center gap-2">
-                          {profileLoading ? (
-                            <div className="h-4 w-16 bg-muted animate-pulse rounded" />
-                          ) : (
-                            <p className="text-sm font-medium leading-none">{username || "User"}</p>
+                  <DropdownMenuContent
+                    align="end"
+                    className="w-64 bg-popover text-popover-foreground border border-border shadow-md z-50 p-0"
+                  >
+                    <DropdownMenuLabel className="py-3">
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-col space-y-1">
+                          <div className="flex items-center gap-2">
+                            {profileLoading ? (
+                              <div className="h-4 w-16 bg-muted animate-pulse rounded" />
+                            ) : (
+                              <p className="text-sm font-medium leading-none">{username || "User"}</p>
+                            )}
+                            {isAdmin && (
+                              <span className="text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded-full font-semibold">
+                                ADMIN
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                        </div>
+
+                        <div className="space-y-1">
+                          {profileData.grade && (
+                            <p className="text-xs text-muted-foreground">
+                              <span className="font-medium">Grade:</span> {profileData.grade}
+                            </p>
                           )}
-                          {isAdmin && (
-                            <span className="text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded-full font-semibold">
-                              ADMIN
-                            </span>
+                          {profileData.stream && (
+                            <p className="text-xs text-muted-foreground">
+                              <span className="font-medium">Stream:</span> {profileData.stream}
+                            </p>
+                          )}
+                          {profileData.country && (
+                            <p className="text-xs text-muted-foreground">
+                              <span className="font-medium">Country:</span> {profileData.country}
+                            </p>
                           )}
                         </div>
-                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                       </div>
                     </DropdownMenuLabel>
+
                     <DropdownMenuSeparator />
-                    <div className="px-2 py-2 space-y-1">
-                      {profileData.grade && (
-                        <p className="text-xs text-muted-foreground">
-                          <span className="font-medium">Grade:</span> {profileData.grade}
-                        </p>
-                      )}
-                      {profileData.stream && (
-                        <p className="text-xs text-muted-foreground">
-                          <span className="font-medium">Stream:</span> {profileData.stream}
-                        </p>
-                      )}
-                      {profileData.country && (
-                        <p className="text-xs text-muted-foreground">
-                          <span className="font-medium">Country:</span> {profileData.country}
-                        </p>
-                      )}
+
+                    {/* Study actions */}
+                    <div className="py-1">
+                      <DropdownMenuItem onClick={() => navigate("/calendar")}
+                      >
+                        <Calendar className="mr-2 h-4 w-4" />
+                        <span>Calendar</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/whiteboards")}
+                      >
+                        <Palette className="mr-2 h-4 w-4" />
+                        <span>Whiteboards</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/saved")}
+                      >
+                        <Bookmark className="mr-2 h-4 w-4" />
+                        <span>Saved Posts</span>
+                      </DropdownMenuItem>
                     </div>
+
                     <DropdownMenuSeparator />
-                    
-                    <DropdownMenuItem onClick={() => navigate("/calendar")}>
-                      <Calendar className="mr-2 h-4 w-4" />
-                      <span>Calendar</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/whiteboards")}>
-                      <Palette className="mr-2 h-4 w-4" />
-                      <span>Whiteboards</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/saved")}>
-                      <Bookmark className="mr-2 h-4 w-4" />
-                      <span>Saved Posts</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/install")}>
-                      <Download className="mr-2 h-4 w-4" />
-                      <span>Install App</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/support")}>
-                      <LifeBuoy className="mr-2 h-4 w-4" />
-                      <span>Support</span>
-                    </DropdownMenuItem>
-                    
-                    {/* Desktop only: Theme toggle in dropdown */}
-                    <DropdownMenuItem onClick={toggleTheme} className="hidden md:flex">
-                      {theme === "dark" ? (
-                        <>
-                          <Sun className="mr-2 h-4 w-4" />
-                          <span>Light Mode</span>
-                        </>
-                      ) : (
-                        <>
-                          <Moon className="mr-2 h-4 w-4" />
-                          <span>Dark Mode</span>
-                        </>
-                      )}
-                    </DropdownMenuItem>
-                    
-                    <DropdownMenuItem onClick={() => navigate("/settings")}>
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </DropdownMenuItem>
+
+                    {/* Utilities */}
+                    <div className="py-1">
+                      <DropdownMenuItem onClick={() => navigate("/install")}
+                      >
+                        <Download className="mr-2 h-4 w-4" />
+                        <span>Install App</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/support")}
+                      >
+                        <LifeBuoy className="mr-2 h-4 w-4" />
+                        <span>Support</span>
+                      </DropdownMenuItem>
+                    </div>
+
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleSignOut}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Sign out</span>
-                    </DropdownMenuItem>
+
+                    {/* Preferences */}
+                    <div className="py-1">
+                      {/* Desktop only: Theme toggle in dropdown */}
+                      <DropdownMenuItem onClick={toggleTheme} className="hidden md:flex">
+                        {theme === "dark" ? (
+                          <>
+                            <Sun className="mr-2 h-4 w-4" />
+                            <span>Light Mode</span>
+                          </>
+                        ) : (
+                          <>
+                            <Moon className="mr-2 h-4 w-4" />
+                            <span>Dark Mode</span>
+                          </>
+                        )}
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem onClick={() => navigate("/settings")}
+                      >
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Settings</span>
+                      </DropdownMenuItem>
+                    </div>
+
+                    <DropdownMenuSeparator />
+
+                    <div className="py-1">
+                      <DropdownMenuItem onClick={handleSignOut}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Sign out</span>
+                      </DropdownMenuItem>
+                    </div>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </>
