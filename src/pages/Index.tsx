@@ -1,4 +1,4 @@
-import { memo, useState, useCallback, useMemo } from "react";
+import { memo, useState, useCallback, useMemo, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FilterSidebar from "@/components/FilterSidebar";
@@ -15,6 +15,7 @@ import heroImage from "@/assets/hero-bg.jpg";
 import { usePosts, getTimeAgo } from "@/hooks/usePosts";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useAuth } from "@/contexts/AuthContext";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 const Index = () => {
   const [sortBy, setSortBy] = useState<"hot" | "new" | "top">("hot");
@@ -28,7 +29,25 @@ const Index = () => {
   const searchQuery = useDebounce(searchInput, 300);
 
   // Get user data from auth context
-  const { profileData, isAdmin } = useAuth();
+  const { profileData, isAdmin, user } = useAuth();
+  
+  // Onboarding
+  const { completeTask, isOnboardingComplete } = useOnboarding();
+  
+  // Track feed browsing for onboarding
+  useEffect(() => {
+    if (!user || isOnboardingComplete) return;
+    
+    const handleScroll = () => {
+      if (window.scrollY > 200) {
+        completeTask("browse");
+        window.removeEventListener("scroll", handleScroll);
+      }
+    };
+    
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [user, isOnboardingComplete, completeTask]);
 
   // Get posts with React Query caching
   const { data: posts = [], isLoading: loading, invalidatePosts } = usePosts({

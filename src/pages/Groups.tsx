@@ -10,6 +10,7 @@ import { Loader2, Users, Globe, Lock } from "lucide-react";
 import { toast } from "sonner";
 import CreateGroupDialog from "@/components/CreateGroupDialog";
 import BrowseGroupsSection from "@/components/BrowseGroupsSection";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 interface GroupChat {
   id: string;
@@ -68,6 +69,7 @@ const Groups = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [userId, setUserId] = useState<string | null>(null);
+  const { completeTask } = useOnboarding();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -91,7 +93,8 @@ const Groups = () => {
 
   const handleGroupCreated = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["groups"] });
-  }, [queryClient]);
+    completeTask("group");
+  }, [queryClient, completeTask]);
 
   const breadcrumbData = useMemo(() => getBreadcrumbSchema([
     { name: "Home", url: "https://studyhub-studentportal.lovable.app/" },
