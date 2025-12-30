@@ -9,7 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Megaphone, Sparkles, Bug, Wrench, Calendar } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "react-router-dom";
+
 import { format } from "date-fns";
 
 const PostSkeletonList = memo(() => (
@@ -60,13 +60,12 @@ const updateTypeConfig = {
 };
 
 interface UpdateCardProps {
-  id: string;
   title: string;
   content: string;
   createdAt: string;
 }
 
-const UpdateCard = memo(({ id, title, content, createdAt }: UpdateCardProps) => {
+const UpdateCard = memo(({ title, content, createdAt }: Omit<UpdateCardProps, 'id'>) => {
   const updateType = getUpdateType(content);
   const config = updateTypeConfig[updateType];
   const Icon = config.icon;
@@ -77,36 +76,34 @@ const UpdateCard = memo(({ id, title, content, createdAt }: UpdateCardProps) => 
     return doc.body.textContent || "";
   };
   
-  const description = stripHtml(content).slice(0, 150) + (stripHtml(content).length > 150 ? "..." : "");
+  const description = stripHtml(content).slice(0, 200) + (stripHtml(content).length > 200 ? "..." : "");
   const formattedDate = format(new Date(createdAt), "MMM d, yyyy");
 
   return (
-    <Link to={`/post/${id}`} className="block group">
-      <Card className="h-full transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30 hover:-translate-y-1 bg-card/50 backdrop-blur-sm border-border/50">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                {title}
-              </h3>
-            </div>
-            <Badge variant="outline" className={`shrink-0 ${config.className}`}>
-              <Icon className="h-3 w-3 mr-1" />
-              {config.label}
-            </Badge>
+    <Card className="h-full bg-card/50 backdrop-blur-sm border-border/50">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-lg leading-tight line-clamp-2">
+              {title}
+            </h3>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-2">
-            <Calendar className="h-3 w-3" />
-            {formattedDate}
-          </div>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-            {description}
-          </p>
-        </CardContent>
-      </Card>
-    </Link>
+          <Badge variant="outline" className={`shrink-0 ${config.className}`}>
+            <Icon className="h-3 w-3 mr-1" />
+            {config.label}
+          </Badge>
+        </div>
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-2">
+          <Calendar className="h-3 w-3" />
+          {formattedDate}
+        </div>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          {description}
+        </p>
+      </CardContent>
+    </Card>
   );
 });
 
@@ -226,7 +223,6 @@ const Updates = () => {
                   {posts.map((post) => (
                     <UpdateCard
                       key={post.id}
-                      id={post.id}
                       title={post.title}
                       content={post.content}
                       createdAt={post.created_at}
