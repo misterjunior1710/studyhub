@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Megaphone, Sparkles, Bug, Wrench, Calendar } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 import { format } from "date-fns";
 
@@ -63,9 +64,11 @@ interface UpdateCardProps {
   title: string;
   content: string;
   createdAt: string;
+  isVisible: boolean;
+  index: number;
 }
 
-const UpdateCard = memo(({ title, content, createdAt }: Omit<UpdateCardProps, 'id'>) => {
+const UpdateCard = memo(({ title, content, createdAt, isVisible, index }: UpdateCardProps) => {
   const updateType = getUpdateType(content);
   const config = updateTypeConfig[updateType];
   const Icon = config.icon;
@@ -80,7 +83,10 @@ const UpdateCard = memo(({ title, content, createdAt }: Omit<UpdateCardProps, 'i
   const formattedDate = format(new Date(createdAt), "MMM d, yyyy");
 
   return (
-    <Card className="h-full bg-card/50 backdrop-blur-sm border-border/50">
+    <Card 
+      className={`h-full bg-card/50 backdrop-blur-sm border-border/50 ${isVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
+      style={{ animationDelay: `${Math.min(index * 100, 400)}ms` }}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
@@ -123,6 +129,9 @@ const Updates = () => {
   const handleRefresh = async () => {
     await refetch();
   };
+  
+  // Scroll reveal for cards
+  const [cardsRef, cardsVisible] = useScrollReveal<HTMLDivElement>();
 
   const structuredData = useMemo(
     () => ({
@@ -169,26 +178,28 @@ const Updates = () => {
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/10">
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/10 opacity-0 animate-hero-fade-up">
                     <Megaphone className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+                    <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
                       Updates & Announcements
                     </h1>
-                    <p className="text-muted-foreground text-sm mt-1">
+                    <p className="text-muted-foreground text-sm mt-1 opacity-0 animate-hero-fade-up" style={{ animationDelay: "150ms" }}>
                       Latest features, improvements, and platform news
                     </p>
                   </div>
                 </div>
                 {/* Only show create button for admin user */}
                 {isAdminUser && (
-                  <CreateUpdatePostDialog onPostCreated={handleRefresh} />
+                  <div className="opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
+                    <CreateUpdatePostDialog onPostCreated={handleRefresh} />
+                  </div>
                 )}
               </div>
 
               {/* Category badges */}
-              <div className="flex flex-wrap gap-2 mt-6">
+              <div className="flex flex-wrap gap-2 mt-6 opacity-0 animate-hero-fade-up" style={{ animationDelay: "250ms" }}>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-medium border border-accent/20">
                   <Sparkles className="h-3 w-3" />
                   New Features
@@ -219,13 +230,15 @@ const Updates = () => {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {posts.map((post) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6" ref={cardsRef}>
+                  {posts.map((post, index) => (
                     <UpdateCard
                       key={post.id}
                       title={post.title}
                       content={post.content}
                       createdAt={post.created_at}
+                      isVisible={cardsVisible}
+                      index={index}
                     />
                   ))}
                 </div>

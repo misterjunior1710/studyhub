@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import CreateGroupDialog from "@/components/CreateGroupDialog";
 import BrowseGroupsSection from "@/components/BrowseGroupsSection";
 import { useOnboarding } from "@/contexts/OnboardingContext";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 interface GroupChat {
   id: string;
@@ -70,6 +71,9 @@ const Groups = () => {
   const queryClient = useQueryClient();
   const [userId, setUserId] = useState<string | null>(null);
   const { completeTask } = useOnboarding();
+  
+  // Scroll reveal for cards section
+  const [cardsRef, cardsVisible] = useScrollReveal<HTMLDivElement>();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -129,13 +133,13 @@ const Groups = () => {
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
           <div className="flex-1">
-            <h1 className="text-2xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <h1 className="text-2xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent opacity-0 animate-hero-fade-up">
               Study Groups
             </h1>
-            <p className="text-sm sm:text-base text-muted-foreground max-w-xl">
+            <p className="text-sm sm:text-base text-muted-foreground max-w-xl opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
               Create or join study groups to collaborate with fellow students.
             </p>
-            <nav className="mt-2 sm:mt-3 text-xs sm:text-sm hidden sm:block" aria-label="Related pages">
+            <nav className="mt-2 sm:mt-3 text-xs sm:text-sm hidden sm:block opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }} aria-label="Related pages">
               <span className="text-muted-foreground">Explore: </span>
               <a href="/questions" className="text-primary hover:underline">Ask Questions</a>
               <span className="text-muted-foreground mx-2">•</span>
@@ -144,7 +148,9 @@ const Groups = () => {
               <a href="/leaderboard" className="text-primary hover:underline">Leaderboard</a>
             </nav>
           </div>
-          <CreateGroupDialog onGroupCreated={handleGroupCreated} />
+          <div className="opacity-0 animate-hero-fade-up" style={{ animationDelay: "150ms" }}>
+            <CreateGroupDialog onGroupCreated={handleGroupCreated} />
+          </div>
         </header>
 
         <Tabs defaultValue="my-groups" className="w-full">
@@ -154,7 +160,7 @@ const Groups = () => {
           </TabsList>
 
           <TabsContent value="my-groups">
-            <section aria-label="Your study groups">
+            <section aria-label="Your study groups" ref={cardsRef}>
               {loading ? (
                 <div className="flex justify-center items-center py-12" role="status" aria-label="Loading groups">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -173,10 +179,11 @@ const Groups = () => {
                 </Card>
               ) : (
                 <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                  {groups.map((group) => (
+                  {groups.map((group, index) => (
                     <Card
                       key={group.id}
-                      className="cursor-pointer hover:shadow-lg transition-shadow"
+                      className={`cursor-pointer hover:shadow-lg transition-shadow ${cardsVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
+                      style={{ animationDelay: `${Math.min(index * 100, 400)}ms` }}
                       onClick={() => navigate(`/groups/${group.id}`)}
                       role="article"
                     >
