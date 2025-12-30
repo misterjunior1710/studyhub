@@ -103,6 +103,44 @@ export type Database = {
           },
         ]
       }
+      collaborative_docs: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          created_by: string
+          group_id: string
+          id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          created_by: string
+          group_id: string
+          id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          created_by?: string
+          group_id?: string
+          id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collaborative_docs_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "group_chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comment_helpful_votes: {
         Row: {
           comment_id: string
@@ -311,6 +349,44 @@ export type Database = {
             columns: ["conversation_id"]
             isOneToOne: false
             referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_rsvps: {
+        Row: {
+          created_at: string | null
+          event_id: string
+          id: string
+          reminder_enabled: boolean | null
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_id: string
+          id?: string
+          reminder_enabled?: boolean | null
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string
+          id?: string
+          reminder_enabled?: boolean | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_rsvps_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "study_events"
             referencedColumns: ["id"]
           },
         ]
@@ -1241,6 +1317,68 @@ export type Database = {
           },
         ]
       }
+      study_events: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          description: string | null
+          end_time: string
+          group_id: string | null
+          id: string
+          is_public: boolean | null
+          is_virtual: boolean | null
+          location: string | null
+          max_attendees: number | null
+          meeting_link: string | null
+          reminder_sent: boolean | null
+          start_time: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          end_time: string
+          group_id?: string | null
+          id?: string
+          is_public?: boolean | null
+          is_virtual?: boolean | null
+          location?: string | null
+          max_attendees?: number | null
+          meeting_link?: string | null
+          reminder_sent?: boolean | null
+          start_time: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          end_time?: string
+          group_id?: string | null
+          id?: string
+          is_public?: boolean | null
+          is_virtual?: boolean | null
+          location?: string | null
+          max_attendees?: number | null
+          meeting_link?: string | null
+          reminder_sent?: boolean | null
+          start_time?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_events_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "group_chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       study_sessions: {
         Row: {
           created_at: string
@@ -1424,6 +1562,44 @@ export type Database = {
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whiteboards: {
+        Row: {
+          canvas_data: Json | null
+          created_at: string | null
+          created_by: string
+          group_id: string
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          canvas_data?: Json | null
+          created_at?: string | null
+          created_by: string
+          group_id: string
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Update: {
+          canvas_data?: Json | null
+          created_at?: string | null
+          created_by?: string
+          group_id?: string
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whiteboards_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "group_chats"
             referencedColumns: ["id"]
           },
         ]

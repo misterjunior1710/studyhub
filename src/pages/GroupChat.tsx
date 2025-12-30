@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ArrowLeft, Users, Loader2, Image, Paperclip, X } from "lucide-react";
+import { ArrowLeft, Users, Loader2, Image, Paperclip, X, Wrench } from "lucide-react";
 import { toast } from "sonner";
 import GroupMembersDialog from "@/components/GroupMembersDialog";
 import EditGroupDialog from "@/components/EditGroupDialog";
@@ -353,6 +353,15 @@ const GroupChat = () => {
             </div>
             {id && groupInfo && (
               <div className="flex items-center gap-1 sm:gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => navigate(`/groups/${id}/tools`)}
+                  className="h-8 w-8 sm:h-10 sm:w-10"
+                  aria-label="Group tools"
+                >
+                  <Wrench className="h-4 w-4 sm:h-5 sm:w-5" />
+                </Button>
                 {isAdmin && (
                   <EditGroupDialog
                     groupId={id}

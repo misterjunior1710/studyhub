@@ -56,7 +56,7 @@ const BrowseGroupsSection = ({ userId, onJoinGroup }: BrowseGroupsSectionProps) 
 
       const pendingGroupIds = new Set(pendingRequests?.map(r => r.group_id) || []);
 
-      // Get member counts
+      // Get member counts and filter out groups with no members (deleted groups)
       const groupsWithCounts = await Promise.all(
         (allGroups || []).map(async (group) => {
           const { count } = await supabase
@@ -73,7 +73,8 @@ const BrowseGroupsSection = ({ userId, onJoinGroup }: BrowseGroupsSectionProps) 
         })
       );
 
-      return groupsWithCounts;
+      // Filter out groups with no members (likely deleted/abandoned groups)
+      return groupsWithCounts.filter(group => group.member_count > 0);
     },
     enabled: !!userId,
     staleTime: 30 * 1000,
