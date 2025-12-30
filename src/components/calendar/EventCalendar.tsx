@@ -5,10 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   Calendar as CalendarIcon, Plus, Loader2, MapPin, 
-  Video, Users, Clock, Bell, Check, X 
+  Video, Users, Clock, Bell, Check, X, Share2 
 } from "lucide-react";
 import { toast } from "sonner";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, addMonths, subMonths } from "date-fns";
+import ShareEventDialog from "./ShareEventDialog";
 import CreateEventDialog from "./CreateEventDialog";
 
 interface StudyEvent {
@@ -245,9 +246,18 @@ const EventCalendar = ({ userId, groupId }: EventCalendarProps) => {
                   >
                     <div className="flex items-start justify-between gap-2">
                       <h4 className="font-medium text-sm">{event.title}</h4>
-                      <Badge variant={event.is_virtual ? "secondary" : "outline"}>
-                        {event.is_virtual ? <Video className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}
-                      </Badge>
+                      <div className="flex items-center gap-1">
+                        {event.created_by === userId && (
+                          <ShareEventDialog 
+                            eventId={event.id} 
+                            eventTitle={event.title}
+                            userId={userId}
+                          />
+                        )}
+                        <Badge variant={event.is_virtual ? "secondary" : "outline"}>
+                          {event.is_virtual ? <Video className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}
+                        </Badge>
+                      </div>
                     </div>
                     <p className="text-xs text-muted-foreground line-clamp-2">
                       {event.description}

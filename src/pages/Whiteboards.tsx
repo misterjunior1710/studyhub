@@ -43,6 +43,24 @@ const Whiteboards = () => {
         return;
       }
       setUserId(user.id);
+      
+      // Check for shared whiteboard via URL
+      const params = new URLSearchParams(window.location.search);
+      const shareToken = params.get("share");
+      if (shareToken) {
+        const { data: sharedBoard } = await supabase
+          .from("whiteboards")
+          .select("id")
+          .eq("share_token", shareToken)
+          .single();
+        
+        if (sharedBoard) {
+          setSelectedWhiteboard(sharedBoard.id);
+          // Clean URL
+          window.history.replaceState({}, "", "/whiteboards");
+        }
+      }
+      
       await loadWhiteboards(user.id);
       setLoading(false);
     };

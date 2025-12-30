@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -13,37 +12,34 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Share2, Loader2, X, UserPlus, Link2, Copy, Check } from "lucide-react";
+import { Share2, Loader2, X, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-interface ShareWhiteboardDialogProps {
-  whiteboardId: string;
-  whiteboardName: string;
+interface ShareEventDialogProps {
+  eventId: string;
+  eventTitle: string;
+  userId: string;
   onShare?: () => void;
 }
 
 interface SharedUser {
   id: string;
   user_id: string;
-  can_edit: boolean;
   username?: string;
 }
 
-const ShareWhiteboardDialog = ({ whiteboardId, whiteboardName, onShare }: ShareWhiteboardDialogProps) => {
+const ShareEventDialog = ({ eventId, eventTitle, userId, onShare }: ShareEventDialogProps) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<{ id: string; username: string }[]>([]);
   const [sharedUsers, setSharedUsers] = useState<SharedUser[]>([]);
   const [searching, setSearching] = useState(false);
-  const [shareToken, setShareToken] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (open) {
       loadSharedUsers();
-      loadShareToken();
     }
   }, [open]);
 
@@ -59,21 +55,11 @@ const ShareWhiteboardDialog = ({ whiteboardId, whiteboardName, onShare }: ShareW
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const loadShareToken = async () => {
-    const { data } = await supabase
-      .from("whiteboards")
-      .select("share_token")
-      .eq("id", whiteboardId)
-      .single();
-    
-    setShareToken(data?.share_token || null);
-  };
-
   const loadSharedUsers = async () => {
     const { data: shares } = await supabase
-      .from("whiteboard_shares")
-      .select("id, shared_with_user_id, can_edit")
-      .eq("whiteboard_id", whiteboardId);
+      .from("event_shares")
+      .select("id, shared_with_user_id")
+      .eq("event_id", eventId);
 
     if (shares && shares.length > 0) {
       const userIds = shares.map(s => s.shared_with_user_id);
@@ -85,7 +71,6 @@ const ShareWhiteboardDialog = ({ whiteboardId, whiteboardName, onShare }: ShareW
       const usersWithNames = shares.map(s => ({
         id: s.id,
         user_id: s.shared_with_user_id,
-        can_edit: s.can_edit,
         username: profiles?.find(p => p.id === s.shared_with_user_id)?.username || "Unknown"
       }));
 
@@ -98,14 +83,13 @@ const ShareWhiteboardDialog = ({ whiteboardId, whiteboardName, onShare }: ShareW
   const searchUsers = async () => {
     setSearching(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       const sharedUserIds = sharedUsers.map(s => s.user_id);
 
       const { data } = await supabase
         .from("profiles")
         .select("id, username")
         .ilike("username", `%${searchQuery}%`)
-        .neq("id", user?.id)
+        .neq("id", userId)
         .limit(5);
 
       const filtered = (data || []).filter(u => !sharedUserIds.includes(u.id));
@@ -117,81 +101,30 @@ const ShareWhiteboardDialog = ({ whiteboardId, whiteboardName, onShare }: ShareW
     }
   };
 
-  const generateShareLink = async () => {
-    setLoading(true);
-    try {
-      const token = crypto.randomUUID();
-      const { error } = await supabase
-        .from("whiteboards")
-        .update({ share_token: token, is_public: true })
-        .eq("id", whiteboardId);
-
-      if (error) throw error;
-      
-      setShareToken(token);
-      toast.success("Share link generated!");
-      onShare?.();
-    } catch (error) {
-      console.error("Error generating share link:", error);
-      toast.error("Failed to generate share link");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const copyShareLink = async () => {
-    const link = `${window.location.origin}/whiteboards?share=${shareToken}`;
-    await navigator.clipboard.writeText(link);
-    setCopied(true);
-    toast.success("Link copied to clipboard!");
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const disableShareLink = async () => {
+  const shareWithUser = async (targetUserId: string, username: string) => {
     setLoading(true);
     try {
       const { error } = await supabase
-        .from("whiteboards")
-        .update({ share_token: null, is_public: false })
-        .eq("id", whiteboardId);
-
-      if (error) throw error;
-      
-      setShareToken(null);
-      toast.success("Share link disabled");
-      onShare?.();
-    } catch (error) {
-      console.error("Error disabling share link:", error);
-      toast.error("Failed to disable share link");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const shareWithUser = async (userId: string, username: string) => {
-    setLoading(true);
-    try {
-      const { error } = await supabase
-        .from("whiteboard_shares")
+        .from("event_shares")
         .insert({
-          whiteboard_id: whiteboardId,
-          shared_with_user_id: userId,
-          can_edit: true,
+          event_id: eventId,
+          shared_with_user_id: targetUserId,
+          shared_by_user_id: userId,
         });
 
       if (error) throw error;
 
-      toast.success(`Shared with ${username}`);
+      toast.success(`Event shared with ${username}`);
       setSearchQuery("");
       setSearchResults([]);
       await loadSharedUsers();
       onShare?.();
     } catch (error: any) {
-      console.error("Error sharing whiteboard:", error);
+      console.error("Error sharing event:", error);
       if (error.code === "23505") {
         toast.error("Already shared with this user");
       } else {
-        toast.error("Failed to share whiteboard");
+        toast.error("Failed to share event");
       }
     } finally {
       setLoading(false);
@@ -201,83 +134,37 @@ const ShareWhiteboardDialog = ({ whiteboardId, whiteboardName, onShare }: ShareW
   const removeShare = async (shareId: string) => {
     try {
       const { error } = await supabase
-        .from("whiteboard_shares")
+        .from("event_shares")
         .delete()
         .eq("id", shareId);
 
       if (error) throw error;
 
-      toast.success("Access removed");
+      toast.success("Share removed");
       await loadSharedUsers();
       onShare?.();
     } catch (error) {
       console.error("Error removing share:", error);
-      toast.error("Failed to remove access");
-    }
-  };
-
-  const toggleEditAccess = async (shareId: string, currentValue: boolean) => {
-    try {
-      const { error } = await supabase
-        .from("whiteboard_shares")
-        .update({ can_edit: !currentValue })
-        .eq("id", shareId);
-
-      if (error) throw error;
-      await loadSharedUsers();
-    } catch (error) {
-      console.error("Error updating access:", error);
-      toast.error("Failed to update access");
+      toast.error("Failed to remove share");
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <Share2 className="h-4 w-4" />
+        <Button variant="ghost" size="icon" className="h-6 w-6">
+          <Share2 className="h-3 w-3" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Share Whiteboard</DialogTitle>
+          <DialogTitle>Share Event</DialogTitle>
           <DialogDescription>
-            Share "{whiteboardName}" with friends to collaborate together.
+            Share "{eventTitle}" with friends so they can see and join.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Shareable Link Section */}
-          <div className="p-3 rounded-lg bg-muted/50 space-y-2">
-            <div className="flex items-center gap-2">
-              <Link2 className="h-4 w-4" />
-              <Label className="font-medium">Shareable Link</Label>
-            </div>
-            {shareToken ? (
-              <div className="flex gap-2">
-                <Input
-                  readOnly
-                  value={`${window.location.origin}/whiteboards?share=${shareToken}`}
-                  className="text-xs"
-                />
-                <Button size="sm" variant="outline" onClick={copyShareLink}>
-                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                </Button>
-                <Button size="sm" variant="destructive" onClick={disableShareLink} disabled={loading}>
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            ) : (
-              <Button size="sm" onClick={generateShareLink} disabled={loading} className="w-full">
-                {loading ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Link2 className="h-4 w-4 mr-1" />}
-                Generate Link
-              </Button>
-            )}
-            <p className="text-xs text-muted-foreground">
-              Anyone with this link can view the whiteboard
-            </p>
-          </div>
-
           <div>
             <Label htmlFor="search-user">Add people</Label>
             <div className="relative">
@@ -338,23 +225,14 @@ const ShareWhiteboardDialog = ({ whiteboardId, whiteboardName, onShare }: ShareW
                       </Avatar>
                       <span className="text-sm">{shared.username}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs text-muted-foreground">Edit</span>
-                        <Switch
-                          checked={shared.can_edit}
-                          onCheckedChange={() => toggleEditAccess(shared.id, shared.can_edit)}
-                        />
-                      </div>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-6 w-6 text-muted-foreground hover:text-destructive"
-                        onClick={() => removeShare(shared.id)}
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                      onClick={() => removeShare(shared.id)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -372,4 +250,4 @@ const ShareWhiteboardDialog = ({ whiteboardId, whiteboardName, onShare }: ShareW
   );
 };
 
-export default ShareWhiteboardDialog;
+export default ShareEventDialog;
