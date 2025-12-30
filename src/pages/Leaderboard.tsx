@@ -12,6 +12,7 @@ import {
   Trophy, Medal, Award, Flame, Star, TrendingUp, 
   Loader2, Crown, Zap, Target, BookOpen 
 } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 interface LeaderboardUser {
   id: string;
@@ -170,11 +171,11 @@ const Leaderboard = () => {
       
       <header className="bg-gradient-to-br from-primary via-primary to-accent py-12">
         <div className="container mx-auto px-4 text-center text-white">
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-4 opacity-0 animate-hero-fade-up">
             <Trophy className="h-16 w-16 animate-float" aria-hidden="true" />
           </div>
-          <h1 className="text-4xl font-bold mb-2">Student Leaderboard</h1>
-          <p className="text-white/80 max-w-lg mx-auto">
+          <h1 className="text-4xl font-bold mb-2 opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>Student Leaderboard</h1>
+          <p className="text-white/80 max-w-lg mx-auto opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
             Discover the top performers in our global study community. Earn points by asking questions, 
             helping others, and maintaining daily study streaks. Compete with fellow students and climb the ranks!
           </p>
