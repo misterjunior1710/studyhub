@@ -46,6 +46,7 @@
     "@tiptap/extension-mention": "^3.14.0",
     "@tiptap/react": "^3.11.1",
     "@tiptap/starter-kit": "^3.11.1",
+    "@tiptap/suggestion": "^3.14.0",
     "@types/dompurify": "^3.0.5",
     "@types/katex": "^0.16.7",
     "class-variance-authority": "^0.7.1",
