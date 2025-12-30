@@ -17,6 +17,8 @@ import { Loader2 } from "lucide-react";
 // Eager load critical pages
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import ProfileOnboarding from "./pages/ProfileOnboarding";
+import ProfileOnboardingGuard from "@/components/ProfileOnboardingGuard";
 
 // Lazy load non-critical pages for better initial load
 const Feed = lazy(() => import("./pages/Feed"));
@@ -112,12 +114,14 @@ const App = () => (
                 <SessionExpiredHandler />
                 <OnboardingFlow />
                 <Suspense fallback={<PageLoader />}>
-                  <PageTransition>
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/feed" element={<Feed />} />
-                      <Route path="/auth" element={<Auth />} />
-                      <Route path="/post/:id" element={<Post />} />
+                  <ProfileOnboardingGuard>
+                    <PageTransition>
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/feed" element={<Feed />} />
+                        <Route path="/auth" element={<Auth />} />
+                        <Route path="/profile-onboarding" element={<ProfileOnboarding />} />
+                        <Route path="/post/:id" element={<Post />} />
                       <Route path="/questions" element={<Questions />} />
                       <Route path="/groups" element={<Groups />} />
                       <Route path="/groups/:id" element={<GroupChat />} />
@@ -137,10 +141,11 @@ const App = () => (
                       <Route path="/privacy" element={<Privacy />} />
                       <Route path="/terms" element={<Terms />} />
                       <Route path="/support" element={<Support />} />
-                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </PageTransition>
+                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </PageTransition>
+                  </ProfileOnboardingGuard>
                 </Suspense>
               </BrowserRouter>
             </TooltipProvider>
