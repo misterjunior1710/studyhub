@@ -215,8 +215,8 @@ const StudyMode = () => {
       
       <main className="flex-1 container mx-auto px-4 py-8 max-w-5xl">
         <header className="text-center space-y-2 mb-6">
-          <h1 className="text-3xl font-bold">Study Mode</h1>
-          <p className="text-muted-foreground max-w-lg mx-auto">Your complete learning toolkit with proven study techniques.</p>
+          <h1 className="text-3xl font-bold opacity-0 animate-hero-fade-up">Study Mode</h1>
+          <p className="text-muted-foreground max-w-lg mx-auto opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>Your complete learning toolkit with proven study techniques.</p>
         </header>
 
         <Tabs defaultValue="timer" className="space-y-6">

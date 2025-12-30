@@ -5,6 +5,7 @@ import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHe
 import { PostSkeletonList } from "@/components/PostSkeleton";
 import PullToRefresh from "@/components/PullToRefresh";
 import { usePosts, getTimeAgo } from "@/hooks/usePosts";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 import {
   Pagination,
   PaginationContent,
@@ -92,16 +93,16 @@ const Questions = () => {
       <Navbar onPostCreated={invalidatePosts} />
       <main className="container mx-auto px-4 py-8">
         <header className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent opacity-0 animate-hero-fade-up">
             Academic Questions
           </h1>
-          <p className="text-muted-foreground max-w-2xl">
+          <p className="text-muted-foreground max-w-2xl opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
             Stuck on a problem? Post your question and get help from students around the world. 
             Whether it's calculus, chemistry, or creative writing, the community is here to help.
           </p>
-          <nav className="mt-3 text-sm" aria-label="Related pages">
+          <nav className="mt-3 text-sm opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }} aria-label="Related pages">
             <span className="text-muted-foreground">See also: </span>
-            <a href="/" className="text-primary hover:underline">Home Feed</a>
+            <a href="/feed" className="text-primary hover:underline">Home Feed</a>
             <span className="text-muted-foreground mx-2">•</span>
             <a href="/groups" className="text-primary hover:underline">Study Groups</a>
             <span className="text-muted-foreground mx-2">•</span>

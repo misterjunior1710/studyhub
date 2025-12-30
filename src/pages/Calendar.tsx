@@ -41,7 +41,17 @@ const Calendar = () => {
       />
       <Navbar />
       <main className="container mx-auto px-4 py-6 max-w-6xl">
-        {userId && <EventCalendar userId={userId} />}
+        <header className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2 opacity-0 animate-hero-fade-up">
+            Event Calendar
+          </h1>
+          <p className="text-muted-foreground opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
+            View and join study sessions, workshops, and office hours
+          </p>
+        </header>
+        <div className="opacity-0 animate-reveal-up" style={{ animationDelay: "200ms" }}>
+          {userId && <EventCalendar userId={userId} />}
+        </div>
       </main>
     </div>
   );

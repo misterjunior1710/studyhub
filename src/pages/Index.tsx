@@ -1,83 +1,36 @@
-import { memo, useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { memo, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import FilterSidebar from "@/components/FilterSidebar";
-import MobileFilterSheet from "@/components/MobileFilterSheet";
-import StudyPost from "@/components/StudyPost";
 import CookieConsent from "@/components/CookieConsent";
 import SEOHead, { StructuredData, getOrganizationSchema, getCommunitySchema } from "@/components/SEOHead";
-import { PostSkeletonList } from "@/components/PostSkeleton";
-import PullToRefresh from "@/components/PullToRefresh";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { TrendingUp, Clock, Star, Sparkles, Search } from "lucide-react";
-import heroImage from "@/assets/hero-bg.jpg";
-import { usePosts, getTimeAgo } from "@/hooks/usePosts";
-import { useDebounce } from "@/hooks/useDebounce";
+import { BookOpen, Users, Trophy, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useOnboarding } from "@/contexts/OnboardingContext";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useParallax } from "@/hooks/useParallax";
 
 const Index = () => {
-  const [sortBy, setSortBy] = useState<"hot" | "new" | "top">("hot");
-  const [searchInput, setSearchInput] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
-  const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
-  const [selectedStream, setSelectedStream] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const parallaxOffset = useParallax(0.3, 80);
 
-  // Debounce search to prevent excessive API calls
-  const searchQuery = useDebounce(searchInput, 300);
-
-  // Get user data from auth context
-  const { profileData, isAdmin, user } = useAuth();
-  
-  // Onboarding
-  const { completeTask, isOnboardingComplete } = useOnboarding();
-  
-  // Track feed browsing for onboarding
-  useEffect(() => {
-    if (!user || isOnboardingComplete) return;
-    
-    const handleScroll = () => {
-      if (window.scrollY > 200) {
-        completeTask("browse");
-        window.removeEventListener("scroll", handleScroll);
-      }
-    };
-    
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [user, isOnboardingComplete, completeTask]);
-
-  // Get posts with React Query caching
-  const { data: posts = [], isLoading: loading, invalidatePosts } = usePosts({
-    postType: "general",
-    sortBy,
-    searchQuery,
-    selectedCountry,
-    selectedSubject,
-    selectedGrade,
-    selectedStream,
-    userGrade: profileData?.grade,
-    isAdmin,
-  });
-
-  const handleClearFilters = useCallback(() => {
-    setSelectedCountry(null);
-    setSelectedSubject(null);
-    setSelectedGrade(null);
-    setSelectedStream(null);
-  }, []);
-
-  // Memoize structured data
   const structuredData = useMemo(() => ({
     "@context": "https://schema.org",
     "@graph": [getOrganizationSchema(), getCommunitySchema()],
   }), []);
 
-  // Scroll reveal for posts section
-  const [postsRef, postsVisible] = useScrollReveal<HTMLDivElement>();
+  const [featuresRef, featuresVisible] = useScrollReveal<HTMLDivElement>();
+  const [stepsRef, stepsVisible] = useScrollReveal<HTMLDivElement>();
+  const [ctaRef, ctaVisible] = useScrollReveal<HTMLDivElement>();
+
+  const handleGetStarted = () => {
+    if (user) {
+      navigate("/feed");
+    } else {
+      navigate("/auth");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -88,156 +41,177 @@ const Index = () => {
       />
       <StructuredData data={structuredData} />
       
-      <Navbar onPostCreated={invalidatePosts} />
+      <Navbar />
       
-      <header 
-        className="relative bg-cover bg-center overflow-hidden"
-        style={{ backgroundImage: `url(${heroImage})` }}
-        role="img"
-        aria-label="Students collaborating and studying together"
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-accent/80 to-primary/90" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent)]" />
-        <div className="relative container mx-auto px-4 py-8 sm:py-12 md:py-16">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 leading-tight opacity-0 animate-hero-fade-up">
-            Study Smarter, Win Harder
-          </h1>
-          <p className="text-white/90 text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 max-w-2xl opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
-            Connect with students worldwide, share knowledge, and ace your exams ✨
-          </p>
-          
-          <div className="max-w-2xl opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
-            <div className="relative">
-              <Search className="absolute left-3 sm:left-4 top-1/2 h-4 w-4 sm:h-5 sm:w-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-              <Input
-                placeholder="Search questions, topics..."
-                className="w-full pl-10 sm:pl-12 pr-4 py-4 sm:py-6 text-sm sm:text-base md:text-lg bg-background/95 backdrop-blur-sm border-0 shadow-xl rounded-xl focus:ring-2 focus:ring-white/50"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                aria-label="Search posts"
-              />
+      {/* Hero Section */}
+      <header className="relative overflow-hidden">
+        {/* Soft gradient background with parallax */}
+        <div 
+          className="absolute inset-0 bg-gradient-to-br from-primary/8 via-accent/5 to-background"
+          style={{ transform: `translateY(${parallaxOffset}px)` }}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.1),transparent_50%)]" />
+        
+        <div className="relative container mx-auto px-4 py-16 sm:py-24 md:py-32">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight opacity-0 animate-hero-fade-up">
+              Study Smarter,{" "}
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Win Harder
+              </span>
+            </h1>
+            
+            <p className="text-muted-foreground text-base sm:text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
+              A calm space for students to connect, share knowledge, and help each other succeed. 
+              Join a global community focused on learning together.
+            </p>
+            
+            <div className="opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
+              <Button 
+                size="lg" 
+                onClick={handleGetStarted}
+                className="gap-2 text-base px-8 py-6"
+              >
+                {user ? "Go to Feed" : "Get Started"}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-4 sm:py-6 flex-1">
-        <div className="flex gap-4 lg:gap-6">
-          <aside className="hidden lg:block" aria-label="Filters">
-            <FilterSidebar
-              selectedCountry={selectedCountry}
-              selectedSubject={selectedSubject}
-              selectedGrade={selectedGrade}
-              selectedStream={selectedStream}
-              onCountryChange={setSelectedCountry}
-              onSubjectChange={setSelectedSubject}
-              onGradeChange={setSelectedGrade}
-              onStreamChange={setSelectedStream}
-              onClearAll={handleClearFilters}
-            />
-          </aside>
-          
-          <main className="flex-1 space-y-4 sm:space-y-6 min-w-0">
-            <nav className="flex flex-wrap items-center justify-between gap-2" aria-label="Sort options">
-              <div className="flex gap-1 sm:gap-2">
-                <Button
-                  variant={sortBy === "hot" ? "default" : "ghost"}
-                  size="sm"
-                  className="gap-1 sm:gap-2 text-xs sm:text-sm"
-                  onClick={() => setSortBy("hot")}
-                  aria-pressed={sortBy === "hot"}
-                >
-                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
-                  Hot
-                </Button>
-                <Button
-                  variant={sortBy === "new" ? "default" : "ghost"}
-                  size="sm"
-                  className="gap-1 sm:gap-2 text-xs sm:text-sm"
-                  onClick={() => setSortBy("new")}
-                  aria-pressed={sortBy === "new"}
-                >
-                  <Clock className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
-                  New
-                </Button>
-                <Button
-                  variant={sortBy === "top" ? "default" : "ghost"}
-                  size="sm"
-                  className="gap-1 sm:gap-2 text-xs sm:text-sm"
-                  onClick={() => setSortBy("top")}
-                  aria-pressed={sortBy === "top"}
-                >
-                  <Star className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
-                  Top
-                </Button>
-              </div>
-              
-              <MobileFilterSheet
-                selectedCountry={selectedCountry}
-                selectedSubject={selectedSubject}
-                selectedGrade={selectedGrade}
-                selectedStream={selectedStream}
-                onCountryChange={setSelectedCountry}
-                onSubjectChange={setSelectedSubject}
-                onGradeChange={setSelectedGrade}
-                onStreamChange={setSelectedStream}
-                onClearAll={handleClearFilters}
-              />
-            </nav>
-
-            <section aria-label="Posts feed" ref={postsRef}>
-              <PullToRefresh onRefresh={invalidatePosts}>
-                {loading ? (
-                  <PostSkeletonList count={4} />
-                ) : posts.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-4">
-                      <Sparkles className="h-8 w-8 text-primary" aria-hidden="true" />
-                    </div>
-                    <h2 className="text-lg font-semibold mb-2">No posts yet</h2>
-                    <p className="text-muted-foreground mb-4">
-                      Be the first to share your knowledge or ask a question!
-                    </p>
-                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                      StudyHub is a community where students from around the world help each other succeed. 
-                      Start by asking a question or sharing study materials in any subject — from Mathematics 
-                      and Physics to Languages and History.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {posts.map((post, index) => (
-                      <article 
-                        key={post.id}
-                        className={postsVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}
-                        style={{ animationDelay: `${Math.min(index * 100, 400)}ms` }}
-                      >
-                        <StudyPost
-                          id={post.id}
-                          title={post.title}
-                          content={post.content}
-                          author={post.profiles?.username ?? "Anonymous"}
-                          authorId={post.user_id}
-                          upvotes={post.upvotes}
-                          downvotes={post.downvotes}
-                          comments={Array.isArray(post.comments) ? post.comments.length : 0}
-                          subject={post.subject}
-                          grade={post.grade}
-                          stream={post.stream}
-                          country={post.country}
-                          timeAgo={getTimeAgo(post.created_at)}
-                          fileUrl={post.file_url ?? undefined}
-                          onVoteChange={invalidatePosts}
-                        />
-                      </article>
-                    ))}
-                  </div>
-                )}
-              </PullToRefresh>
-            </section>
-          </main>
+      {/* Trust Section */}
+      <section className="border-y border-border bg-muted/30">
+        <div className="container mx-auto px-4 py-8 sm:py-12">
+          <p className="text-center text-muted-foreground text-sm sm:text-base">
+            Trusted by students from around the world
+          </p>
         </div>
-      </div>
+      </section>
+
+      {/* What is StudyHub Section */}
+      <section ref={featuresRef} className="py-16 sm:py-24">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 
+              className={`text-2xl sm:text-3xl font-bold mb-4 ${featuresVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
+            >
+              What is StudyHub?
+            </h2>
+            <p 
+              className={`text-muted-foreground max-w-2xl mx-auto ${featuresVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
+              style={{ animationDelay: "100ms" }}
+            >
+              A platform designed for focused learning and genuine peer support. 
+              No distractions, just students helping students.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: BookOpen,
+                title: "Share Knowledge",
+                description: "Post questions, share study materials, and learn from peers across all subjects."
+              },
+              {
+                icon: Users,
+                title: "Study Groups",
+                description: "Join or create groups for collaborative learning and real-time discussions."
+              },
+              {
+                icon: Trophy,
+                title: "Stay Motivated",
+                description: "Track your progress, earn points, and maintain study streaks."
+              }
+            ].map((feature, index) => (
+              <div
+                key={feature.title}
+                className={`p-6 rounded-xl bg-card border border-border ${featuresVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
+                style={{ animationDelay: `${200 + index * 100}ms` }}
+              >
+                <feature.icon className="h-8 w-8 text-primary mb-4" />
+                <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground text-sm">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section ref={stepsRef} className="py-16 sm:py-24 bg-muted/30">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <div className="text-center mb-12">
+            <h2 
+              className={`text-2xl sm:text-3xl font-bold mb-4 ${stepsVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
+            >
+              How It Works
+            </h2>
+          </div>
+
+          <div className="space-y-6">
+            {[
+              { step: "1", text: "Sign up and set your grade, subjects, and learning goals" },
+              { step: "2", text: "Ask questions or browse posts from students worldwide" },
+              { step: "3", text: "Help others, earn points, and grow together" }
+            ].map((item, index) => (
+              <div
+                key={item.step}
+                className={`flex items-start gap-4 ${stepsVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
+                style={{ animationDelay: `${100 + index * 100}ms` }}
+              >
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                </div>
+                <div className="pt-2">
+                  <p className="text-foreground">{item.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section ref={ctaRef} className="py-16 sm:py-24">
+        <div className="container mx-auto px-4 text-center">
+          <div 
+            className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-6 ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
+          >
+            <Sparkles className="h-8 w-8 text-primary" />
+          </div>
+          
+          <h2 
+            className={`text-2xl sm:text-3xl font-bold mb-4 ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
+            style={{ animationDelay: "100ms" }}
+          >
+            Ready to start learning?
+          </h2>
+          
+          <p 
+            className={`text-muted-foreground mb-8 max-w-md mx-auto ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
+            style={{ animationDelay: "150ms" }}
+          >
+            Join thousands of students who are already helping each other succeed.
+          </p>
+          
+          <div 
+            className={ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}
+            style={{ animationDelay: "200ms" }}
+          >
+            <Button 
+              size="lg" 
+              onClick={handleGetStarted}
+              className="gap-2"
+            >
+              {user ? "Browse Feed" : "Join StudyHub"}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
       <Footer />
       <CookieConsent />
     </div>

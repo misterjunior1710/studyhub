@@ -14,6 +14,7 @@ import {
 import { toast } from "sonner";
 import Whiteboard from "@/components/collaborative/Whiteboard";
 import ShareWhiteboardDialog from "@/components/collaborative/ShareWhiteboardDialog";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 interface WhiteboardItem {
   id: string;
@@ -198,23 +199,25 @@ const Whiteboards = () => {
           <>
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h1 className="text-2xl font-bold flex items-center gap-2">
+                <h1 className="text-2xl font-bold flex items-center gap-2 opacity-0 animate-hero-fade-up">
                   <Palette className="h-6 w-6" />
                   My Whiteboards
                 </h1>
-                <p className="text-muted-foreground">Create and share whiteboards with friends or groups</p>
+                <p className="text-muted-foreground opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>Create and share whiteboards with friends or groups</p>
               </div>
-              <Button onClick={createWhiteboard} disabled={creating}>
-                {creating ? (
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                ) : (
-                  <Plus className="h-4 w-4 mr-1" />
-                )}
-                New Whiteboard
-              </Button>
+              <div className="opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
+                <Button onClick={createWhiteboard} disabled={creating}>
+                  {creating ? (
+                    <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                  ) : (
+                    <Plus className="h-4 w-4 mr-1" />
+                  )}
+                  New Whiteboard
+                </Button>
+              </div>
             </div>
 
-            <div className="relative mb-6">
+            <div className="relative mb-6 opacity-0 animate-reveal-up" style={{ animationDelay: "150ms" }}>
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search whiteboards..."
