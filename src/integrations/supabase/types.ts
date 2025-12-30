@@ -1566,13 +1566,46 @@ export type Database = {
           },
         ]
       }
+      whiteboard_shares: {
+        Row: {
+          can_edit: boolean | null
+          created_at: string | null
+          id: string
+          shared_with_user_id: string
+          whiteboard_id: string
+        }
+        Insert: {
+          can_edit?: boolean | null
+          created_at?: string | null
+          id?: string
+          shared_with_user_id: string
+          whiteboard_id: string
+        }
+        Update: {
+          can_edit?: boolean | null
+          created_at?: string | null
+          id?: string
+          shared_with_user_id?: string
+          whiteboard_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whiteboard_shares_whiteboard_id_fkey"
+            columns: ["whiteboard_id"]
+            isOneToOne: false
+            referencedRelation: "whiteboards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       whiteboards: {
         Row: {
           canvas_data: Json | null
           created_at: string | null
           created_by: string
-          group_id: string
+          group_id: string | null
           id: string
+          is_public: boolean | null
           name: string
           updated_at: string | null
         }
@@ -1580,8 +1613,9 @@ export type Database = {
           canvas_data?: Json | null
           created_at?: string | null
           created_by: string
-          group_id: string
+          group_id?: string | null
           id?: string
+          is_public?: boolean | null
           name?: string
           updated_at?: string | null
         }
@@ -1589,20 +1623,13 @@ export type Database = {
           canvas_data?: Json | null
           created_at?: string | null
           created_by?: string
-          group_id?: string
+          group_id?: string | null
           id?: string
+          is_public?: boolean | null
           name?: string
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "whiteboards_group_id_fkey"
-            columns: ["group_id"]
-            isOneToOne: false
-            referencedRelation: "group_chats"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       xp_events: {
         Row: {
