@@ -111,25 +111,28 @@ const Whiteboards = () => {
   };
 
   const createWhiteboard = async () => {
-    if (!userId) return;
+    if (!userId) {
+      navigate("/auth");
+      return;
+    }
     setCreating(true);
     try {
-      const { data, error } = await supabase
-        .from("whiteboards")
-        .insert({
-          created_by: userId,
-          name: `Whiteboard ${whiteboards.length + 1}`,
-        })
-        .select()
-        .single();
+      const { data, error } = await supabase.rpc("create_whiteboard", {
+        p_name: `Whiteboard ${whiteboards.length + 1}`,
+        p_group_id: null,
+      });
 
-      if (error) throw error;
+      if (error) {
+        console.error("RPC error:", error.code, error.message);
+        throw error;
+      }
+      
       toast.success("Whiteboard created");
       await loadWhiteboards(userId);
-      setSelectedWhiteboard(data.id);
-    } catch (error) {
+      setSelectedWhiteboard(data);
+    } catch (error: any) {
       console.error("Error creating whiteboard:", error);
-      toast.error("Failed to create whiteboard");
+      toast.error(error?.message || "Failed to create whiteboard");
     } finally {
       setCreating(false);
     }

@@ -1769,6 +1769,10 @@ export type Database = {
         Args: { _user_id: string; _whiteboard_id: string }
         Returns: boolean
       }
+      create_whiteboard: {
+        Args: { p_group_id?: string; p_name?: string }
+        Returns: string
+      }
       get_daily_answer_xp_remaining: {
         Args: { p_user_id: string }
         Returns: number
