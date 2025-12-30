@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { useThemePersistence } from "@/hooks/useThemePersistence";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { OnboardingProvider } from "@/contexts/OnboardingContext";
+import OnboardingFlow from "@/components/onboarding";
 import SessionExpiredDialog from "@/components/SessionExpiredDialog";
 import { lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
@@ -98,44 +100,47 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <AuthProvider>
-        <ThemeInitializer>
-          <TooltipProvider>
-            <OfflineBanner />
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <SessionExpiredHandler />
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/post/:id" element={<Post />} />
-                  <Route path="/questions" element={<Questions />} />
-                  <Route path="/groups" element={<Groups />} />
-                  <Route path="/groups/:id" element={<GroupChat />} />
-                  <Route path="/groups/:id/tools" element={<GroupTools />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/leaderboard" element={<Leaderboard />} />
-                  <Route path="/friends" element={<Friends />} />
-                  <Route path="/dm/:friendId" element={<DirectMessage />} />
-                  <Route path="/user/:userId" element={<UserProfile />} />
-                  <Route path="/study" element={<StudyMode />} />
-                  <Route path="/content-generator" element={<ContentGenerator />} />
-                  <Route path="/updates" element={<Updates />} />
-                  <Route path="/saved" element={<SavedPosts />} />
-                  <Route path="/install" element={<Install />} />
-                  <Route path="/calendar" element={<Calendar />} />
-                  <Route path="/whiteboards" element={<Whiteboards />} />
-                  <Route path="/privacy" element={<Privacy />} />
-                  <Route path="/terms" element={<Terms />} />
-                  <Route path="/support" element={<Support />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </BrowserRouter>
-          </TooltipProvider>
-        </ThemeInitializer>
+        <OnboardingProvider>
+          <ThemeInitializer>
+            <TooltipProvider>
+              <OfflineBanner />
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <SessionExpiredHandler />
+                <OnboardingFlow />
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/post/:id" element={<Post />} />
+                    <Route path="/questions" element={<Questions />} />
+                    <Route path="/groups" element={<Groups />} />
+                    <Route path="/groups/:id" element={<GroupChat />} />
+                    <Route path="/groups/:id/tools" element={<GroupTools />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/leaderboard" element={<Leaderboard />} />
+                    <Route path="/friends" element={<Friends />} />
+                    <Route path="/dm/:friendId" element={<DirectMessage />} />
+                    <Route path="/user/:userId" element={<UserProfile />} />
+                    <Route path="/study" element={<StudyMode />} />
+                    <Route path="/content-generator" element={<ContentGenerator />} />
+                    <Route path="/updates" element={<Updates />} />
+                    <Route path="/saved" element={<SavedPosts />} />
+                    <Route path="/install" element={<Install />} />
+                    <Route path="/calendar" element={<Calendar />} />
+                    <Route path="/whiteboards" element={<Whiteboards />} />
+                    <Route path="/privacy" element={<Privacy />} />
+                    <Route path="/terms" element={<Terms />} />
+                    <Route path="/support" element={<Support />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </BrowserRouter>
+            </TooltipProvider>
+          </ThemeInitializer>
+        </OnboardingProvider>
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>

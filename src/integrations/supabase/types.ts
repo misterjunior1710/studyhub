@@ -1055,6 +1055,8 @@ export type Database = {
           notify_mentions: boolean | null
           notify_mock_tests: boolean | null
           notify_weekly_report: boolean | null
+          onboarding_completed: boolean | null
+          onboarding_tasks: Json | null
           points: number | null
           safe_mode: boolean | null
           show_online_status: boolean | null
@@ -1094,6 +1096,8 @@ export type Database = {
           notify_mentions?: boolean | null
           notify_mock_tests?: boolean | null
           notify_weekly_report?: boolean | null
+          onboarding_completed?: boolean | null
+          onboarding_tasks?: Json | null
           points?: number | null
           safe_mode?: boolean | null
           show_online_status?: boolean | null
@@ -1133,6 +1137,8 @@ export type Database = {
           notify_mentions?: boolean | null
           notify_mock_tests?: boolean | null
           notify_weekly_report?: boolean | null
+          onboarding_completed?: boolean | null
+          onboarding_tasks?: Json | null
           points?: number | null
           safe_mode?: boolean | null
           show_online_status?: boolean | null

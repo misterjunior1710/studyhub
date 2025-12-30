@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 interface FriendRequest {
   id: string;
@@ -78,6 +79,7 @@ const Friends = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
   const [searching, setSearching] = useState(false);
+  const { completeTask } = useOnboarding();
 
   const searchQuery = useDebounce(searchInput, 300);
 
@@ -142,6 +144,7 @@ const Friends = () => {
     onSuccess: () => {
       toast.success("Friend request sent!");
       queryClient.invalidateQueries({ queryKey: ["friends"] });
+      completeTask("friend");
     },
     onError: (error: { code?: string }) => {
       if (error.code === "23505") {

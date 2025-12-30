@@ -9,6 +9,7 @@ import { Plus, Loader2, Upload, X, Eye, EyeOff, BellOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import RichTextEditor from "./RichTextEditor";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 interface CreatePostDialogProps {
   onPostCreated?: () => void;
@@ -28,6 +29,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [quietMode, setQuietMode] = useState(false);
+  const { completeTask } = useOnboarding();
 
   const isAdult = grade === "Adult (18+)" || grade === "Working Professional";
   const subjects = isAdult 
@@ -187,6 +189,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       }
 
       toast.success("Post created successfully!");
+      completeTask("post");
       setTitle("");
       setContent("");
       setSubject("");
