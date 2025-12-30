@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +19,7 @@ interface EditGroupDialogProps {
   groupId: string;
   currentName: string;
   currentDescription: string;
+  showInBrowse?: boolean;
   onGroupUpdated: () => void;
 }
 
@@ -25,17 +27,20 @@ const EditGroupDialog = ({
   groupId,
   currentName,
   currentDescription,
+  showInBrowse = true,
   onGroupUpdated,
 }: EditGroupDialogProps) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(currentName);
   const [description, setDescription] = useState(currentDescription);
+  const [showInBrowseState, setShowInBrowseState] = useState(showInBrowse);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setName(currentName);
     setDescription(currentDescription);
-  }, [currentName, currentDescription]);
+    setShowInBrowseState(showInBrowse);
+  }, [currentName, currentDescription, showInBrowse]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,6 +57,7 @@ const EditGroupDialog = ({
         .update({
           name: name.trim(),
           description: description.trim() || null,
+          show_in_browse: showInBrowseState,
         })
         .eq("id", groupId);
 
@@ -99,6 +105,20 @@ const EditGroupDialog = ({
               placeholder="Enter group description (optional)"
               disabled={loading}
               rows={3}
+            />
+          </div>
+          <div className="flex items-center justify-between py-2">
+            <div className="space-y-0.5">
+              <Label htmlFor="show-in-browse">Show in Browse</Label>
+              <p className="text-xs text-muted-foreground">
+                Allow others to find this group
+              </p>
+            </div>
+            <Switch
+              id="show-in-browse"
+              checked={showInBrowseState}
+              onCheckedChange={setShowInBrowseState}
+              disabled={loading}
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
