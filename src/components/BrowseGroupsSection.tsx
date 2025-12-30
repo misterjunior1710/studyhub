@@ -74,7 +74,10 @@ const BrowseGroupsSection = ({ userId, onJoinGroup }: BrowseGroupsSectionProps) 
       );
 
       // Filter out groups with no members (likely deleted/abandoned groups)
-      return groupsWithCounts.filter(group => group.member_count > 0);
+      // Also filter out groups where admin has disabled browse visibility
+      return groupsWithCounts.filter(group => 
+        group.member_count > 0 && group.show_in_browse !== false
+      );
     },
     enabled: !!userId,
     staleTime: 30 * 1000,

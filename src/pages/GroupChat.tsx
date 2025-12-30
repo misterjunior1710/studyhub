@@ -34,6 +34,7 @@ interface GroupInfo {
   name: string;
   description: string;
   member_count: number;
+  show_in_browse: boolean;
 }
 
 const GroupChat = () => {
@@ -129,7 +130,7 @@ const GroupChat = () => {
     try {
       const { data: groupData, error: groupError } = await supabase
         .from("group_chats")
-        .select("name, description")
+        .select("name, description, show_in_browse")
         .eq("id", id)
         .single();
 
@@ -144,6 +145,7 @@ const GroupChat = () => {
         name: groupData.name,
         description: groupData.description,
         member_count: count || 0,
+        show_in_browse: groupData.show_in_browse ?? true,
       });
     } catch (error: any) {
       console.error("Error loading group info:", error);
@@ -367,6 +369,7 @@ const GroupChat = () => {
                     groupId={id}
                     currentName={groupInfo.name}
                     currentDescription={groupInfo.description || ""}
+                    showInBrowse={groupInfo.show_in_browse}
                     onGroupUpdated={loadGroupInfo}
                   />
                 )}
