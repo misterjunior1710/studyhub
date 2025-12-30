@@ -1,19 +1,16 @@
-import { useEditor, EditorContent, ReactRenderer } from '@tiptap/react';
+import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-import Mention from '@tiptap/extension-mention';
 import Link from '@tiptap/extension-link';
 import { common, createLowlight } from 'lowlight';
-import tippy, { Instance as TippyInstance } from 'tippy.js';
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Button } from './ui/button';
 import { 
   Bold, Italic, List, ListOrdered, Heading2, Quote, Undo, Redo,
   Code2, Hash, AtSign, Sigma, Link2
 } from 'lucide-react';
-import { FormulaDialog, MentionSuggestion, HashtagSuggestion, AIWritingMenu } from './editor';
+import { FormulaDialog, AIWritingMenu } from './editor';
 import katex from 'katex';
-import 'katex/dist/katex.min.css';
 
 // Create lowlight instance with common languages
 const lowlight = createLowlight(common);
@@ -54,23 +51,6 @@ const RichTextEditor = ({
 }: RichTextEditorProps) => {
   const [showFormulaDialog, setShowFormulaDialog] = useState(false);
   const [selectedText, setSelectedText] = useState('');
-  const mentionsRef = useRef<string[]>([]);
-  const hashtagsRef = useRef<string[]>([]);
-
-  // Track mentions and hashtags
-  const updateMentions = useCallback((mention: string) => {
-    if (!mentionsRef.current.includes(mention)) {
-      mentionsRef.current = [...mentionsRef.current, mention];
-      onMentionsChange?.(mentionsRef.current);
-    }
-  }, [onMentionsChange]);
-
-  const updateHashtags = useCallback((hashtag: string) => {
-    if (!hashtagsRef.current.includes(hashtag)) {
-      hashtagsRef.current = [...hashtagsRef.current, hashtag];
-      onHashtagsChange?.(hashtagsRef.current);
-    }
-  }, [onHashtagsChange]);
 
   const editor = useEditor({
     extensions: [
@@ -90,130 +70,21 @@ const RichTextEditor = ({
           class: 'text-primary underline cursor-pointer',
         },
       }),
-      Mention.configure({
-        HTMLAttributes: {
-          class: 'mention bg-primary/10 text-primary px-1 py-0.5 rounded font-medium',
-        },
-        suggestion: {
-          char: '@',
-          items: ({ query }: { query: string }) => {
-            return []; // Handled by MentionSuggestion component
-          },
-          render: () => {
-            let component: ReactRenderer | null = null;
-            let popup: TippyInstance[] | null = null;
-
-            return {
-              onStart: (props: any) => {
-                component = new ReactRenderer(MentionSuggestion, {
-                  props,
-                  editor: props.editor,
-                });
-
-                if (!props.clientRect) return;
-
-                popup = tippy('body', {
-                  getReferenceClientRect: props.clientRect,
-                  appendTo: () => document.body,
-                  content: component.element,
-                  showOnCreate: true,
-                  interactive: true,
-                  trigger: 'manual',
-                  placement: 'bottom-start',
-                });
-              },
-              onUpdate: (props: any) => {
-                component?.updateProps(props);
-                if (props.clientRect && popup?.[0]) {
-                  popup[0].setProps({
-                    getReferenceClientRect: props.clientRect,
-                  });
-                }
-              },
-              onKeyDown: (props: any) => {
-                if (props.event.key === 'Escape') {
-                  popup?.[0]?.hide();
-                  return true;
-                }
-                return (component?.ref as any)?.onKeyDown(props) ?? false;
-              },
-              onExit: () => {
-                popup?.[0]?.destroy();
-                component?.destroy();
-              },
-            };
-          },
-        },
-        renderLabel: ({ node }) => {
-          const label = node.attrs.label || node.attrs.id;
-          updateMentions(label);
-          return `@${label}`;
-        },
-      }),
-      Mention.extend({ name: 'hashtag' }).configure({
-        HTMLAttributes: {
-          class: 'hashtag bg-accent/20 text-accent-foreground px-1 py-0.5 rounded font-medium',
-        },
-        suggestion: {
-          char: '#',
-          items: ({ query }: { query: string }) => {
-            return []; // Handled by HashtagSuggestion component
-          },
-          render: () => {
-            let component: ReactRenderer | null = null;
-            let popup: TippyInstance[] | null = null;
-
-            return {
-              onStart: (props: any) => {
-                component = new ReactRenderer(HashtagSuggestion, {
-                  props,
-                  editor: props.editor,
-                });
-
-                if (!props.clientRect) return;
-
-                popup = tippy('body', {
-                  getReferenceClientRect: props.clientRect,
-                  appendTo: () => document.body,
-                  content: component.element,
-                  showOnCreate: true,
-                  interactive: true,
-                  trigger: 'manual',
-                  placement: 'bottom-start',
-                });
-              },
-              onUpdate: (props: any) => {
-                component?.updateProps(props);
-                if (props.clientRect && popup?.[0]) {
-                  popup[0].setProps({
-                    getReferenceClientRect: props.clientRect,
-                  });
-                }
-              },
-              onKeyDown: (props: any) => {
-                if (props.event.key === 'Escape') {
-                  popup?.[0]?.hide();
-                  return true;
-                }
-                return (component?.ref as any)?.onKeyDown(props) ?? false;
-              },
-              onExit: () => {
-                popup?.[0]?.destroy();
-                component?.destroy();
-              },
-            };
-          },
-        },
-        renderLabel: ({ node }) => {
-          const label = node.attrs.label || node.attrs.id;
-          updateHashtags(label);
-          return `#${label}`;
-        },
-      }),
     ],
     content,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      const html = editor.getHTML();
+      onChange(html);
+      
+      // Extract mentions and hashtags from content
+      const mentionMatches = html.match(/@(\w+)/g) || [];
+      const hashtagMatches = html.match(/#(\w+)/g) || [];
+      
+      const mentions = mentionMatches.map(m => m.slice(1));
+      const hashtags = hashtagMatches.map(h => h.slice(1));
+      
+      onMentionsChange?.(mentions);
+      onHashtagsChange?.(hashtags);
     },
     onSelectionUpdate: ({ editor }) => {
       const { from, to } = editor.state.selection;
