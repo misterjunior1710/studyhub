@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, Globe, Lock } from "lucide-react";
 import { toast } from "sonner";
 
 interface CreateGroupDialogProps {
@@ -24,6 +25,7 @@ const CreateGroupDialog = ({ onGroupCreated }: CreateGroupDialogProps) => {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [isPublic, setIsPublic] = useState(true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +51,7 @@ const CreateGroupDialog = ({ onGroupCreated }: CreateGroupDialogProps) => {
           name: name.trim(),
           description: description.trim(),
           created_by: user.id,
+          is_public: isPublic,
         })
         .select()
         .single();
@@ -69,6 +72,7 @@ const CreateGroupDialog = ({ onGroupCreated }: CreateGroupDialogProps) => {
       toast.success("Group created successfully!");
       setName("");
       setDescription("");
+      setIsPublic(true);
       setOpen(false);
       onGroupCreated?.();
     } catch (error: any) {
@@ -114,6 +118,30 @@ const CreateGroupDialog = ({ onGroupCreated }: CreateGroupDialogProps) => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
+            />
+          </div>
+          <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/50">
+            <div className="flex items-center gap-2">
+              {isPublic ? (
+                <Globe className="h-4 w-4 text-primary" />
+              ) : (
+                <Lock className="h-4 w-4 text-muted-foreground" />
+              )}
+              <div>
+                <Label htmlFor="is-public" className="font-medium cursor-pointer">
+                  {isPublic ? "Open Group" : "Closed Group"}
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  {isPublic 
+                    ? "Anyone can find and join this group" 
+                    : "Users must request to join"}
+                </p>
+              </div>
+            </div>
+            <Switch
+              id="is-public"
+              checked={isPublic}
+              onCheckedChange={setIsPublic}
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
