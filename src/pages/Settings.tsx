@@ -433,7 +433,7 @@ const Settings = () => {
           )}
 
           <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className={`flex overflow-x-auto lg:grid lg:w-auto gap-1 ${isAdmin ? 'lg:grid-cols-8' : 'lg:grid-cols-7'}`}>
+            <TabsList className={`flex flex-wrap lg:grid lg:w-auto gap-1 ${isAdmin ? 'lg:grid-cols-8' : 'lg:grid-cols-7'}`}>
               <TabsTrigger value="profile" className="flex-shrink-0 gap-1 px-2 sm:px-3">
                 <User className="h-4 w-4 shrink-0" />
                 <span className="hidden lg:inline">Profile</span>
