@@ -1,4 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, Trophy, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Users, Settings, Trophy, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -152,6 +152,14 @@ const Navbar = ({
                     </div>
                     <DropdownMenuSeparator />
                     
+                    <DropdownMenuItem onClick={() => navigate("/calendar")}>
+                      <Calendar className="mr-2 h-4 w-4" />
+                      <span>Calendar</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/whiteboards")}>
+                      <Palette className="mr-2 h-4 w-4" />
+                      <span>Whiteboards</span>
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate("/saved")}>
                       <Bookmark className="mr-2 h-4 w-4" />
                       <span>Saved Posts</span>

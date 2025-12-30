@@ -110,9 +110,6 @@ const MessageInput = ({
         >
           <Italic className="h-3.5 w-3.5" />
         </Button>
-        <span className="text-[10px] text-muted-foreground ml-auto hidden sm:inline">
-          **bold** _italic_ • Shift+Enter for new line
-        </span>
       </div>
       <div className="flex items-end gap-2">
         <Textarea
