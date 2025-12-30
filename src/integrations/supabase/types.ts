@@ -1812,6 +1812,7 @@ export type Database = {
         Returns: boolean
       }
       reset_weekly_xp: { Args: never; Returns: undefined }
+      update_user_streak: { Args: { p_user_id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user" | "verifier"
