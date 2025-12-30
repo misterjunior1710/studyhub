@@ -1,4 +1,4 @@
-import { memo, useState, useCallback, useMemo, useEffect } from "react";
+import { memo, useState, useCallback, useMemo, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FilterSidebar from "@/components/FilterSidebar";
@@ -16,6 +16,7 @@ import { usePosts, getTimeAgo } from "@/hooks/usePosts";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOnboarding } from "@/contexts/OnboardingContext";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const Index = () => {
   const [sortBy, setSortBy] = useState<"hot" | "new" | "top">("hot");
@@ -75,6 +76,9 @@ const Index = () => {
     "@graph": [getOrganizationSchema(), getCommunitySchema()],
   }), []);
 
+  // Scroll reveal for posts section
+  const [postsRef, postsVisible] = useScrollReveal<HTMLDivElement>();
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
@@ -95,14 +99,14 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-accent/80 to-primary/90" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent)]" />
         <div className="relative container mx-auto px-4 py-8 sm:py-12 md:py-16">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 leading-tight opacity-0 animate-hero-fade-up">
             Study Smarter, Win Harder
           </h1>
-          <p className="text-white/90 text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 max-w-2xl">
+          <p className="text-white/90 text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 max-w-2xl opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
             Connect with students worldwide, share knowledge, and ace your exams ✨
           </p>
           
-          <div className="max-w-2xl">
+          <div className="max-w-2xl opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
             <div className="relative">
               <Search className="absolute left-3 sm:left-4 top-1/2 h-4 w-4 sm:h-5 sm:w-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
               <Input
@@ -181,7 +185,7 @@ const Index = () => {
               />
             </nav>
 
-            <section aria-label="Posts feed">
+            <section aria-label="Posts feed" ref={postsRef}>
               <PullToRefresh onRefresh={invalidatePosts}>
                 {loading ? (
                   <PostSkeletonList count={4} />
@@ -202,8 +206,12 @@ const Index = () => {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {posts.map((post) => (
-                      <article key={post.id}>
+                    {posts.map((post, index) => (
+                      <article 
+                        key={post.id}
+                        className={postsVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}
+                        style={{ animationDelay: `${Math.min(index * 100, 400)}ms` }}
+                      >
                         <StudyPost
                           id={post.id}
                           title={post.title}

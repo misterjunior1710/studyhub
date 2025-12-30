@@ -17,6 +17,7 @@ import {
 import { toast } from "sonner";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useOnboarding } from "@/contexts/OnboardingContext";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 interface FriendRequest {
   id: string;
@@ -82,6 +83,9 @@ const Friends = () => {
   const { completeTask } = useOnboarding();
 
   const searchQuery = useDebounce(searchInput, 300);
+  
+  // Scroll reveal for cards
+  const [cardsRef, cardsVisible] = useScrollReveal<HTMLDivElement>();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -221,11 +225,11 @@ const Friends = () => {
       
       <header className="bg-gradient-to-br from-primary via-primary to-accent py-12">
         <div className="container mx-auto px-4 text-center text-white">
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-4 opacity-0 animate-hero-fade-up">
             <Users className="h-16 w-16 animate-float" aria-hidden="true" />
           </div>
-          <h1 className="text-4xl font-bold mb-2">Study Friends</h1>
-          <p className="text-white/80 max-w-lg mx-auto">
+          <h1 className="text-4xl font-bold mb-2 opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>Study Friends</h1>
+          <p className="text-white/80 max-w-lg mx-auto opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
             Build your academic network by connecting with fellow students. Find study partners 
             who share your interests, collaborate on challenging topics, and support each other's learning journey.
           </p>
@@ -233,7 +237,7 @@ const Friends = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
-        <Card className="mb-8 -mt-8" variant="elevated">
+        <Card className="mb-8 -mt-8 opacity-0 animate-hero-fade-up" style={{ animationDelay: "300ms" }} variant="elevated">
           <CardContent className="pt-6">
             <div className="flex gap-2">
               <div className="relative flex-1">
@@ -300,7 +304,7 @@ const Friends = () => {
               <CardHeader>
                 <CardTitle>My Friends</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent ref={cardsRef}>
               {friends.length === 0 ? (
                   <div className="text-center py-8">
                     <p className="text-muted-foreground mb-3">
@@ -313,8 +317,13 @@ const Friends = () => {
                   </div>
                 ) : (
                   <div className="space-y-3" role="list" aria-label="Friends list">
-                    {friends.map((friend) => (
-                      <div key={friend.id} className="flex items-center gap-4 p-4 bg-secondary/30 rounded-lg hover:bg-secondary/50 transition-colors" role="listitem">
+                    {friends.map((friend, index) => (
+                      <div 
+                        key={friend.id} 
+                        className={`flex items-center gap-4 p-4 bg-secondary/30 rounded-lg hover:bg-secondary/50 transition-colors ${cardsVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
+                        style={{ animationDelay: `${Math.min(index * 100, 400)}ms` }}
+                        role="listitem"
+                      >
                         <Avatar className="h-12 w-12">
                           <AvatarImage src={friend.profiles?.avatar_url} alt={`${friend.profiles?.username}'s avatar`} />
                           <AvatarFallback>{friend.profiles?.username?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
