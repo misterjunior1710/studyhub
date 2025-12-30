@@ -20,3 +20,6 @@ verify_jwt = true
 
 [functions.seed-test-data]
 verify_jwt = false
+
+[functions.ai-writing-assist]
+verify_jwt = true

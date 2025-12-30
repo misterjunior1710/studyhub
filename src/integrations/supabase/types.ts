@@ -952,10 +952,12 @@ export type Database = {
           flagged_at: string | null
           flagged_by: string | null
           grade: string
+          hashtags: string[] | null
           id: string
           is_anonymous: boolean | null
           is_flagged: boolean | null
           is_hidden: boolean | null
+          mentions: string[] | null
           post_type: string
           quiet_mode: boolean | null
           stream: string
@@ -975,10 +977,12 @@ export type Database = {
           flagged_at?: string | null
           flagged_by?: string | null
           grade: string
+          hashtags?: string[] | null
           id?: string
           is_anonymous?: boolean | null
           is_flagged?: boolean | null
           is_hidden?: boolean | null
+          mentions?: string[] | null
           post_type?: string
           quiet_mode?: boolean | null
           stream: string
@@ -998,10 +1002,12 @@ export type Database = {
           flagged_at?: string | null
           flagged_by?: string | null
           grade?: string
+          hashtags?: string[] | null
           id?: string
           is_anonymous?: boolean | null
           is_flagged?: boolean | null
           is_hidden?: boolean | null
+          mentions?: string[] | null
           post_type?: string
           quiet_mode?: boolean | null
           stream?: string
