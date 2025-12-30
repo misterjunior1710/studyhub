@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { AtSign, Loader2 } from 'lucide-react';
 
 export interface MentionSuggestionProps {
   query: string;
@@ -35,7 +36,7 @@ const MentionSuggestion = forwardRef<MentionSuggestionRef, MentionSuggestionProp
             .from('profiles')
             .select('id, username')
             .ilike('username', `%${query}%`)
-            .limit(5);
+            .limit(8);
 
           if (error) throw error;
           setUsers(data || []);
@@ -80,16 +81,19 @@ const MentionSuggestion = forwardRef<MentionSuggestionRef, MentionSuggestionProp
 
     if (loading) {
       return (
-        <div className="bg-popover border border-border rounded-md shadow-lg p-2 text-sm text-muted-foreground">
-          Searching...
+        <div className="bg-popover border border-border rounded-lg shadow-xl p-3 animate-fade-in">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="text-sm">Searching...</span>
+          </div>
         </div>
       );
     }
 
     if (users.length === 0 && query) {
       return (
-        <div className="bg-popover border border-border rounded-md shadow-lg p-2 text-sm text-muted-foreground">
-          No users found
+        <div className="bg-popover border border-border rounded-lg shadow-xl p-3 animate-fade-in">
+          <p className="text-sm text-muted-foreground">No users found</p>
         </div>
       );
     }
@@ -99,12 +103,14 @@ const MentionSuggestion = forwardRef<MentionSuggestionRef, MentionSuggestionProp
     }
 
     return (
-      <div className="bg-popover border border-border rounded-md shadow-lg overflow-hidden">
+      <div className="bg-popover border border-border rounded-lg shadow-xl overflow-hidden max-h-[240px] overflow-y-auto animate-scale-in">
         {users.map((user, index) => (
           <button
             key={user.id}
-            className={`w-full flex items-center gap-2 px-3 py-2 text-sm text-left transition-colors ${
-              index === selectedIndex ? 'bg-accent text-accent-foreground' : 'hover:bg-muted'
+            className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-all duration-200 ${
+              index === selectedIndex 
+                ? 'bg-gradient-to-r from-primary/20 to-accent/10 text-foreground' 
+                : 'hover:bg-muted/50'
             }`}
             onClick={() =>
               command({
@@ -113,12 +119,12 @@ const MentionSuggestion = forwardRef<MentionSuggestionRef, MentionSuggestionProp
               })
             }
           >
-            <Avatar className="h-6 w-6">
-              <AvatarFallback className="text-xs">
-                {user.username?.charAt(0).toUpperCase() || '?'}
-              </AvatarFallback>
-            </Avatar>
-            <span>@{user.username}</span>
+            <div className={`flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent transition-transform duration-200 ${
+              index === selectedIndex ? 'scale-110' : ''
+            }`}>
+              <AtSign className="h-4 w-4 text-primary-foreground" />
+            </div>
+            <span className="font-medium capitalize">@{user.username}</span>
           </button>
         ))}
       </div>
