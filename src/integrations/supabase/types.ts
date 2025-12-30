@@ -391,6 +391,38 @@ export type Database = {
           },
         ]
       }
+      event_shares: {
+        Row: {
+          created_at: string | null
+          event_id: string
+          id: string
+          shared_by_user_id: string
+          shared_with_user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_id: string
+          id?: string
+          shared_by_user_id: string
+          shared_with_user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string
+          id?: string
+          shared_by_user_id?: string
+          shared_with_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_shares_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "study_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feynman_notes: {
         Row: {
           concept: string
@@ -1607,6 +1639,7 @@ export type Database = {
           id: string
           is_public: boolean | null
           name: string
+          share_token: string | null
           updated_at: string | null
         }
         Insert: {
@@ -1617,6 +1650,7 @@ export type Database = {
           id?: string
           is_public?: boolean | null
           name?: string
+          share_token?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -1627,6 +1661,7 @@ export type Database = {
           id?: string
           is_public?: boolean | null
           name?: string
+          share_token?: string | null
           updated_at?: string | null
         }
         Relationships: []
