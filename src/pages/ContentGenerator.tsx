@@ -44,6 +44,102 @@ interface SavedContent {
   created_at: string;
 }
 
+// Component to format explanation into structured sections
+const FormattedExplanation = memo(({ content }: { content: string }) => {
+  // Parse the content and convert to structured format
+  const formatContent = (text: string) => {
+    const sections: { type: 'heading' | 'paragraph' | 'list' | 'numbered'; content: string; items?: string[] }[] = [];
+    
+    // Split by double newlines or common section indicators
+    const paragraphs = text.split(/\n\n+/).filter(p => p.trim());
+    
+    paragraphs.forEach((para, index) => {
+      const trimmed = para.trim();
+      
+      // Check if it's a heading-like line (short, ends with colon, or starts with numbers like "1.")
+      if (trimmed.length < 80 && (trimmed.endsWith(':') || /^[A-Z][^.!?]*[:]?$/.test(trimmed))) {
+        sections.push({ type: 'heading', content: trimmed.replace(/:$/, '') });
+      }
+      // Check for bullet points or numbered lists
+      else if (/^[-•*]\s/.test(trimmed) || /^\d+[.)]\s/.test(trimmed)) {
+        const lines = trimmed.split(/\n/).filter(l => l.trim());
+        const isNumbered = /^\d+[.)]\s/.test(lines[0]);
+        const items = lines.map(l => l.replace(/^[-•*\d.)\s]+/, '').trim());
+        sections.push({ 
+          type: isNumbered ? 'numbered' : 'list', 
+          content: '', 
+          items 
+        });
+      }
+      // Regular paragraph
+      else {
+        // Try to extract inline lists (sentences with commas listing items)
+        sections.push({ type: 'paragraph', content: trimmed });
+      }
+    });
+    
+    // If no structure was detected, try to add some
+    if (sections.length === 1 && sections[0].type === 'paragraph') {
+      const sentences = text.split(/(?<=[.!?])\s+/);
+      if (sentences.length > 3) {
+        // Create an introduction and key points
+        return [
+          { type: 'heading' as const, content: 'Overview' },
+          { type: 'paragraph' as const, content: sentences.slice(0, 2).join(' ') },
+          { type: 'heading' as const, content: 'Key Points' },
+          { type: 'list' as const, content: '', items: sentences.slice(2).map(s => s.trim()).filter(s => s.length > 10) }
+        ];
+      }
+    }
+    
+    return sections;
+  };
+
+  const sections = formatContent(content);
+
+  return (
+    <div className="space-y-4">
+      {sections.map((section, i) => {
+        switch (section.type) {
+          case 'heading':
+            return (
+              <h4 key={i} className="font-semibold text-base text-primary border-b border-primary/20 pb-1 mt-4 first:mt-0">
+                {section.content}
+              </h4>
+            );
+          case 'numbered':
+            return (
+              <ol key={i} className="space-y-2 ml-4 list-decimal list-outside">
+                {section.items?.map((item, j) => (
+                  <li key={j} className="text-sm leading-relaxed pl-2">{item}</li>
+                ))}
+              </ol>
+            );
+          case 'list':
+            return (
+              <ul key={i} className="space-y-2 ml-4">
+                {section.items?.map((item, j) => (
+                  <li key={j} className="text-sm leading-relaxed flex items-start gap-2">
+                    <span className="text-primary mt-1.5 text-xs">●</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            );
+          default:
+            return (
+              <p key={i} className="text-sm leading-relaxed text-muted-foreground">
+                {section.content}
+              </p>
+            );
+        }
+      })}
+    </div>
+  );
+});
+
+FormattedExplanation.displayName = 'FormattedExplanation';
+
 const ContentGenerator = memo(() => {
   const navigate = useNavigate();
   const { user, profileData } = useAuth();
@@ -689,9 +785,7 @@ ${generatedContent.examples.map((e, i) => `**Example ${i+1}:** ${e.problem}\n*So
                           </span>
                         </AccordionTrigger>
                         <AccordionContent>
-                          <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                            {generatedContent.explanation}
-                          </p>
+                          <FormattedExplanation content={generatedContent.explanation} />
                         </AccordionContent>
                       </AccordionItem>
 

@@ -31,12 +31,11 @@ const BrowseGroupsSection = ({ userId, onJoinGroup }: BrowseGroupsSectionProps) 
   const { data: groups = [], isLoading } = useQuery({
     queryKey: ["browse-groups", userId],
     queryFn: async () => {
-      // Get all public groups
-      const { data: publicGroups, error: groupsError } = await supabase
+      // Get all groups (both public and closed) for browsing
+      const { data: allGroups, error: groupsError } = await supabase
         .from("group_chats")
         .select("*")
-        .eq("is_public", true)
-        .order("created_at", { ascending: false });
+        .order("name", { ascending: true });
 
       if (groupsError) throw groupsError;
 
@@ -59,7 +58,7 @@ const BrowseGroupsSection = ({ userId, onJoinGroup }: BrowseGroupsSectionProps) 
 
       // Get member counts
       const groupsWithCounts = await Promise.all(
-        (publicGroups || []).map(async (group) => {
+        (allGroups || []).map(async (group) => {
           const { count } = await supabase
             .from("group_members")
             .select("*", { count: "exact", head: true })

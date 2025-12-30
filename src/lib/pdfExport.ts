@@ -4,20 +4,57 @@ import { GeneratedContent } from './api/contentGenerator';
 export const exportContentToPDF = (content: GeneratedContent): void => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 20;
   const maxWidth = pageWidth - margin * 2;
   let y = 20;
+
+  // Helper to add watermark to each page
+  const addWatermark = () => {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(50);
+    doc.setTextColor(230, 230, 230); // Very light gray
+    
+    // Rotate and center the watermark
+    const watermarkText = 'StudyHub';
+    const textWidth = doc.getTextWidth(watermarkText);
+    
+    doc.text(watermarkText, pageWidth / 2 - textWidth / 2, pageHeight / 2, {
+      angle: -35,
+    });
+    
+    // Reset text color
+    doc.setTextColor(0, 0, 0);
+  };
+
+  // Add watermark to first page
+  addWatermark();
 
   const addText = (text: string, fontSize: number, isBold = false, color: [number, number, number] = [0, 0, 0]) => {
     doc.setFontSize(fontSize);
     doc.setFont('helvetica', isBold ? 'bold' : 'normal');
     doc.setTextColor(color[0], color[1], color[2]);
     
-    const lines = doc.splitTextToSize(text, maxWidth);
+    // Clean text of any problematic characters
+    const cleanText = text
+      .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+      .replace(/[^\x20-\x7E\xA0-\xFF]/g, (char) => {
+        // Replace non-standard characters with closest ASCII equivalent
+        const charCode = char.charCodeAt(0);
+        if (charCode >= 0x2018 && charCode <= 0x201B) return "'"; // Smart quotes
+        if (charCode >= 0x201C && charCode <= 0x201F) return '"'; // Smart double quotes
+        if (charCode === 0x2013 || charCode === 0x2014) return '-'; // En/em dash
+        if (charCode === 0x2026) return '...'; // Ellipsis
+        if (charCode === 0x00D8 || charCode === 0x00DC) return 'O'; // Ø, Ü -> O
+        return ' '; // Replace other unknown chars with space
+      });
+    
+    const lines = doc.splitTextToSize(cleanText, maxWidth);
     
     lines.forEach((line: string) => {
       if (y > 270) {
         doc.addPage();
+        addWatermark();
         y = 20;
       }
       doc.text(line, margin, y);
@@ -29,9 +66,11 @@ export const exportContentToPDF = (content: GeneratedContent): void => {
   const addSection = (title: string) => {
     if (y > 250) {
       doc.addPage();
+      addWatermark();
       y = 20;
     }
     y += 5;
+    // Use simple ASCII characters for section icons
     addText(title, 14, true, [79, 70, 229]); // Primary color
     y += 2;
   };
@@ -46,11 +85,11 @@ export const exportContentToPDF = (content: GeneratedContent): void => {
   y += 15;
 
   // Explanation
-  addSection('📚 Topic Explanation');
+  addSection('Topic Explanation');
   addText(content.explanation, 11);
   
   // Key Concepts
-  addSection('💡 Key Concepts');
+  addSection('Key Concepts');
   content.keyConcepts.forEach((concept, i) => {
     addText(`${i + 1}. ${concept.term}`, 12, true);
     addText(concept.definition, 10);
@@ -59,13 +98,13 @@ export const exportContentToPDF = (content: GeneratedContent): void => {
   });
 
   // Revision Notes
-  addSection('📝 Revision Notes');
+  addSection('Revision Notes');
   content.revisionNotes.forEach((note) => {
-    addText(`• ${note}`, 10);
+    addText(`- ${note}`, 10);
   });
 
   // Worked Examples
-  addSection('📖 Worked Examples');
+  addSection('Worked Examples');
   content.examples.forEach((example, i) => {
     addText(`Example ${i + 1}:`, 11, true);
     addText(`Problem: ${example.problem}`, 10);
@@ -74,7 +113,7 @@ export const exportContentToPDF = (content: GeneratedContent): void => {
   });
 
   // Practice Questions
-  addSection('❓ Practice Questions');
+  addSection('Practice Questions');
   content.practiceQuestions.forEach((q, i) => {
     addText(`Q${i + 1}: ${q.question}`, 11, true);
     addText(`Answer: ${q.answer}`, 10, false, [34, 139, 34]);
@@ -83,13 +122,13 @@ export const exportContentToPDF = (content: GeneratedContent): void => {
 
   // Sources
   if (content.sources.length > 0) {
-    addSection('🔗 Sources');
+    addSection('Sources');
     content.sources.forEach((source) => {
       try {
         const hostname = new URL(source).hostname;
-        addText(`• ${hostname}`, 9, false, [100, 100, 100]);
+        addText(`- ${hostname}`, 9, false, [100, 100, 100]);
       } catch {
-        addText(`• ${source}`, 9, false, [100, 100, 100]);
+        addText(`- ${source}`, 9, false, [100, 100, 100]);
       }
     });
   }
