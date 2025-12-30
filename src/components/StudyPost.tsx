@@ -44,7 +44,7 @@ const getCategoryDisplay = (category: string): string => {
 };
 
 // Helper function to truncate HTML content
-const truncateContent = (html: string, maxLength: number = 150): { truncated: string; isTruncated: boolean } => {
+const truncateContent = (html: string, maxLength: number = 300): { truncated: string; isTruncated: boolean } => {
   // Strip HTML tags for length calculation
   const textOnly = html.replace(/<[^>]*>/g, '');
   if (textOnly.length <= maxLength) {
@@ -63,37 +63,71 @@ const truncateContent = (html: string, maxLength: number = 150): { truncated: st
 const TruncatedContent = ({ 
   content, 
   isLoggedIn, 
-  onSignInClick 
+  onSignInClick,
+  onReadMore,
 }: { 
   content: string; 
   isLoggedIn: boolean; 
   onSignInClick: () => void;
+  onReadMore: () => void;
 }) => {
-  if (isLoggedIn) {
+  const [expanded, setExpanded] = useState(false);
+  
+  if (!isLoggedIn) {
+    const { truncated, isTruncated } = truncateContent(content, 150);
+    
     return (
-      <div 
-        className="prose prose-sm max-w-none text-foreground leading-relaxed"
-        dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }}
-      />
+      <div className="space-y-3">
+        <p className="text-foreground leading-relaxed text-sm">{truncated}</p>
+        {isTruncated && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={onSignInClick}
+            className="gap-2"
+          >
+            <LogIn className="h-4 w-4" />
+            View Full Post
+          </Button>
+        )}
+      </div>
     );
   }
 
-  const { truncated, isTruncated } = truncateContent(content);
+  const { truncated, isTruncated } = truncateContent(content, 300);
+
+  if (expanded || !isTruncated) {
+    return (
+      <div className="space-y-2">
+        <div 
+          className="prose prose-sm max-w-none text-foreground leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }}
+        />
+        {isTruncated && (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setExpanded(false)}
+            className="text-primary p-0 h-auto font-medium"
+          >
+            Show less
+          </Button>
+        )}
+      </div>
+    );
+  }
   
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <p className="text-foreground leading-relaxed text-sm">{truncated}</p>
-      {isTruncated && (
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={onSignInClick}
-          className="gap-2"
-        >
-          <LogIn className="h-4 w-4" />
-          View Full Post
-        </Button>
-      )}
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        onClick={() => setExpanded(true)}
+        className="text-primary p-0 h-auto font-medium"
+      >
+        Read more
+      </Button>
     </div>
   );
 };
@@ -406,7 +440,8 @@ const StudyPost = memo(({
         <TruncatedContent 
           content={content} 
           isLoggedIn={!!user} 
-          onSignInClick={() => setShowSignInDialog(true)} 
+          onSignInClick={() => setShowSignInDialog(true)}
+          onReadMore={navigateToPost}
         />
 
         {user && fileUrl && (

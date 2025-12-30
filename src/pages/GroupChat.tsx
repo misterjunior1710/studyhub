@@ -4,9 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ArrowLeft, Send, Users, Loader2, Image, Paperclip, X } from "lucide-react";
+import { ArrowLeft, Users, Loader2, Image, Paperclip, X } from "lucide-react";
 import { toast } from "sonner";
 import GroupMembersDialog from "@/components/GroupMembersDialog";
 import EditGroupDialog from "@/components/EditGroupDialog";
@@ -14,6 +13,8 @@ import GroupChatMessage from "@/components/GroupChatMessage";
 import VoiceRecorder from "@/components/VoiceRecorder";
 import LeaveGroupDialog from "@/components/LeaveGroupDialog";
 import DeleteGroupDialog from "@/components/DeleteGroupDialog";
+import MessageInput from "@/components/MessageInput";
+import { formatMessage } from "@/lib/formatMessage";
 
 interface Message {
   id: string;
@@ -487,14 +488,21 @@ const GroupChat = () => {
               </Button>
             </div>
 
-            {/* Text Input */}
-            <Input
-              placeholder="Type a message..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              disabled={sending}
-              className="flex-1 h-9 sm:h-10 text-sm sm:text-base"
-            />
+            {/* Message Input with formatting */}
+            <div className="flex-1">
+              <MessageInput
+                value={newMessage}
+                onChange={setNewMessage}
+                onSend={() => {
+                  if (newMessage.trim() || selectedFile) {
+                    handleSendMessage({ preventDefault: () => {} } as React.FormEvent);
+                  }
+                }}
+                placeholder="Type a message..."
+                disabled={sending}
+                sending={sending}
+              />
+            </div>
 
             {/* Voice Recorder */}
             <VoiceRecorder
@@ -502,21 +510,6 @@ const GroupChat = () => {
               disabled={sending}
               className="shrink-0"
             />
-
-            {/* Send Button */}
-            <Button 
-              type="submit" 
-              disabled={sending || (!newMessage.trim() && !selectedFile)}
-              size="icon"
-              className="h-9 w-9 sm:h-10 sm:w-10 shrink-0"
-              aria-label="Send message"
-            >
-              {sending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
-            </Button>
           </form>
         </div>
       </div>

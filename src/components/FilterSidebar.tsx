@@ -79,9 +79,9 @@ const FilterSidebar = ({
   };
 
   return (
-    <aside className="w-72 shrink-0 border-r border-border bg-card p-4 space-y-4">
+    <aside className="w-72 shrink-0 border-r border-border bg-card p-3 space-y-2">
       <div>
-        <h2 className="text-lg font-semibold mb-4">Filters</h2>
+        <h2 className="text-lg font-semibold mb-3">Filters</h2>
       </div>
 
       <Collapsible open={openState.country} onOpenChange={() => toggleFilter("country")}>
@@ -95,12 +95,12 @@ const FilterSidebar = ({
             )}
           </Button>
         </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-1 pt-2">
+        <CollapsibleContent className="space-y-0.5 pt-1">
           {countries.map((country) => (
             <Button
               key={country}
               variant={selectedCountry === country ? "secondary" : "ghost"}
-              className="w-full justify-start text-sm"
+              className="w-full justify-start text-sm h-8"
               onClick={() => onCountryChange(selectedCountry === country ? null : country)}
             >
               {country}
@@ -120,12 +120,12 @@ const FilterSidebar = ({
             )}
           </Button>
         </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-1 pt-2">
+        <CollapsibleContent className="space-y-0.5 pt-1">
           {subjects.map((subject) => (
             <Button
               key={subject}
               variant={selectedSubject === subject ? "secondary" : "ghost"}
-              className="w-full justify-start text-sm"
+              className="w-full justify-start text-sm h-8"
               onClick={() => onSubjectChange(selectedSubject === subject ? null : subject)}
             >
               {subject}
@@ -145,12 +145,12 @@ const FilterSidebar = ({
             )}
           </Button>
         </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-1 pt-2">
+        <CollapsibleContent className="space-y-0.5 pt-1">
           {grades.map((grade) => (
             <Button
               key={grade}
               variant={selectedGrade === grade ? "secondary" : "ghost"}
-              className="w-full justify-start text-sm"
+              className="w-full justify-start text-sm h-8"
               onClick={() => onGradeChange(selectedGrade === grade ? null : grade)}
             >
               {grade}
@@ -170,12 +170,12 @@ const FilterSidebar = ({
             )}
           </Button>
         </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-1 pt-2">
+        <CollapsibleContent className="space-y-0.5 pt-1">
           {streams.map((stream) => (
             <Button
               key={stream}
               variant={selectedStream === stream ? "secondary" : "ghost"}
-              className="w-full justify-start text-sm"
+              className="w-full justify-start text-sm h-8"
               onClick={() => onStreamChange(selectedStream === stream ? null : stream)}
             >
               {stream}
@@ -184,7 +184,7 @@ const FilterSidebar = ({
         </CollapsibleContent>
       </Collapsible>
 
-      <div className="pt-4 border-t border-border">
+      <div className="pt-3 border-t border-border">
         <Button variant="outline" className="w-full" onClick={handleClearAll}>
           Clear All Filters
         </Button>

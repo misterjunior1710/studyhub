@@ -3,17 +3,18 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
-  ArrowLeft, Send, Loader2, Paperclip, Mic, Square, 
-  X, FileIcon, Image as ImageIcon, Play, Pause 
+  ArrowLeft, Loader2, Paperclip, Mic, Square, 
+  X, Play, Pause, FileIcon 
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
+import MessageInput from "@/components/MessageInput";
+import { formatMessage } from "@/lib/formatMessage";
 
 interface Message {
   id: string;
@@ -215,13 +216,6 @@ const DirectMessage = () => {
     const trimmed = message.trim();
     if (!trimmed) return;
     sendMutation.mutate({ content: trimmed });
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
   };
 
   // File upload
@@ -462,27 +456,17 @@ const DirectMessage = () => {
               >
                 <Paperclip className="h-5 w-5" />
               </Button>
-              <Input
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Type a message..."
-                className="flex-1"
-                disabled={sendMutation.isPending || uploading}
-              />
-              {message.trim() ? (
-                <Button
-                  size="icon"
-                  onClick={handleSend}
-                  disabled={sendMutation.isPending || uploading}
-                >
-                  {sendMutation.isPending ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <Send className="h-5 w-5" />
-                  )}
-                </Button>
-              ) : (
+              <div className="flex-1">
+                <MessageInput
+                  value={message}
+                  onChange={setMessage}
+                  onSend={handleSend}
+                  placeholder="Type a message..."
+                  disabled={uploading}
+                  sending={sendMutation.isPending}
+                />
+              </div>
+              {!message.trim() && (
                 <Button
                   variant="ghost"
                   size="icon"
@@ -585,9 +569,12 @@ const MessageBubble = ({ message, isSent }: { message: Message; isSent: boolean 
           </div>
         )}
 
-        {/* Text content (hide if it's just "Voice message" or file name) */}
-        {!message.audio_url && !message.file_url && (
-          <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+        {/* Text content with formatting */}
+        {!message.audio_url && !message.file_url && message.content && (
+          <div 
+            className="text-sm whitespace-pre-wrap break-words"
+            dangerouslySetInnerHTML={{ __html: formatMessage(message.content) }}
+          />
         )}
 
         {/* Timestamp */}

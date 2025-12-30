@@ -1,8 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import AudioPlayer from "@/components/AudioPlayer";
-import { FileIcon, ImageIcon, Download } from "lucide-react";
+import { FileIcon, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { formatMessage } from "@/lib/formatMessage";
 
 interface Message {
   id: string;
@@ -121,9 +122,10 @@ const GroupChatMessage = ({ message, isOwn, getTimeAgo }: GroupChatMessageProps)
               </span>
             </div>
             {message.content && (
-              <p className="text-xs sm:text-sm whitespace-pre-wrap break-words">
-                {message.content}
-              </p>
+              <div 
+                className="text-xs sm:text-sm whitespace-pre-wrap break-words"
+                dangerouslySetInnerHTML={{ __html: formatMessage(message.content) }}
+              />
             )}
             {renderFileContent()}
             {renderAudioContent()}
