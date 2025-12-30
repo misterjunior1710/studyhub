@@ -5,14 +5,17 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Users } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, Users, Globe, Lock } from "lucide-react";
 import { toast } from "sonner";
 import CreateGroupDialog from "@/components/CreateGroupDialog";
+import BrowseGroupsSection from "@/components/BrowseGroupsSection";
 
 interface GroupChat {
   id: string;
   name: string;
   description: string;
+  is_public: boolean;
   created_at: string;
   member_count?: number;
 }
@@ -141,50 +144,69 @@ const Groups = () => {
           <CreateGroupDialog onGroupCreated={handleGroupCreated} />
         </header>
 
-        <section aria-label="Your study groups">
-          {loading ? (
-            <div className="flex justify-center items-center py-12" role="status" aria-label="Loading groups">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : groups.length === 0 ? (
-            <Card className="text-center py-12">
-              <CardContent>
-                <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" aria-hidden="true" />
-                <h2 className="text-xl font-semibold mb-2">No study groups yet</h2>
-                <p className="text-muted-foreground mb-4 max-w-md mx-auto">
-                  Create your first study group to start collaborating with other students. 
-                  Invite friends, share study materials, and discuss topics in real-time.
-                </p>
-                <CreateGroupDialog onGroupCreated={handleGroupCreated} />
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-              {groups.map((group) => (
-                <Card
-                  key={group.id}
-                  className="cursor-pointer hover:shadow-lg transition-shadow"
-                  onClick={() => navigate(`/groups/${group.id}`)}
-                  role="article"
-                >
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Users className="h-5 w-5 text-primary" aria-hidden="true" />
-                      {group.name}
-                    </CardTitle>
-                    <CardDescription>{group.description || "No description"}</CardDescription>
-                  </CardHeader>
+        <Tabs defaultValue="my-groups" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="my-groups">My Groups</TabsTrigger>
+            <TabsTrigger value="browse">Browse Groups</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="my-groups">
+            <section aria-label="Your study groups">
+              {loading ? (
+                <div className="flex justify-center items-center py-12" role="status" aria-label="Loading groups">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : groups.length === 0 ? (
+                <Card className="text-center py-12">
                   <CardContent>
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <span>{group.member_count} members</span>
-                      <time>Created {getTimeAgo(group.created_at)}</time>
-                    </div>
+                    <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" aria-hidden="true" />
+                    <h2 className="text-xl font-semibold mb-2">No study groups yet</h2>
+                    <p className="text-muted-foreground mb-4 max-w-md mx-auto">
+                      Create your first study group or browse existing groups to join. 
+                      Collaborate with other students and learn together.
+                    </p>
+                    <CreateGroupDialog onGroupCreated={handleGroupCreated} />
                   </CardContent>
                 </Card>
-              ))}
-            </div>
-          )}
-        </section>
+              ) : (
+                <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                  {groups.map((group) => (
+                    <Card
+                      key={group.id}
+                      className="cursor-pointer hover:shadow-lg transition-shadow"
+                      onClick={() => navigate(`/groups/${group.id}`)}
+                      role="article"
+                    >
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          {group.is_public ? (
+                            <Globe className="h-5 w-5 text-primary" aria-hidden="true" />
+                          ) : (
+                            <Lock className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+                          )}
+                          {group.name}
+                        </CardTitle>
+                        <CardDescription>{group.description || "No description"}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between text-sm text-muted-foreground">
+                          <span>{group.member_count} members</span>
+                          <time>Created {getTimeAgo(group.created_at)}</time>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </section>
+          </TabsContent>
+
+          <TabsContent value="browse">
+            {userId && (
+              <BrowseGroupsSection userId={userId} onJoinGroup={handleGroupCreated} />
+            )}
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );

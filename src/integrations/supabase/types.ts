@@ -573,6 +573,7 @@ export type Database = {
           created_by: string
           description: string | null
           id: string
+          is_public: boolean | null
           name: string
           updated_at: string | null
         }
@@ -581,6 +582,7 @@ export type Database = {
           created_by: string
           description?: string | null
           id?: string
+          is_public?: boolean | null
           name: string
           updated_at?: string | null
         }
@@ -589,10 +591,49 @@ export type Database = {
           created_by?: string
           description?: string | null
           id?: string
+          is_public?: boolean | null
           name?: string
           updated_at?: string | null
         }
         Relationships: []
+      }
+      group_join_requests: {
+        Row: {
+          created_at: string | null
+          group_id: string
+          id: string
+          message: string | null
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          group_id: string
+          id?: string
+          message?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          group_id?: string
+          id?: string
+          message?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_join_requests_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "group_chats"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       group_members: {
         Row: {

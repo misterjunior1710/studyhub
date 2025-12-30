@@ -1,4 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, Trophy, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Users, Settings, Trophy, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -8,7 +8,7 @@ import NotificationsPopover from "./NotificationsPopover";
 import ThemeToggle from "./ThemeToggle";
 import MobileNav from "./MobileNav";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "next-themes";
 
 interface NavbarProps {
@@ -105,6 +105,9 @@ const Navbar = ({
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="relative" aria-label={`${username || 'User'}'s profile menu`}>
                       <Avatar className="h-8 w-8" title={`${username || 'User'}'s profile`}>
+                        {profileData.avatar_url && (
+                          <AvatarImage src={profileData.avatar_url} alt={username || 'User'} />
+                        )}
                         <AvatarFallback className="bg-primary text-primary-foreground">
                           {username.charAt(0).toUpperCase() || "U"}
                         </AvatarFallback>
@@ -152,6 +155,10 @@ const Navbar = ({
                     <DropdownMenuItem onClick={() => navigate("/saved")}>
                       <Bookmark className="mr-2 h-4 w-4" />
                       <span>Saved Posts</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/install")}>
+                      <Download className="mr-2 h-4 w-4" />
+                      <span>Install App</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate("/support")}>
                       <LifeBuoy className="mr-2 h-4 w-4" />
