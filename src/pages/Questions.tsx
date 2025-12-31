@@ -6,6 +6,9 @@ import { PostSkeletonList } from "@/components/PostSkeleton";
 import PullToRefresh from "@/components/PullToRefresh";
 import { usePosts, getTimeAgo } from "@/hooks/usePosts";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useDebounce } from "@/hooks/useDebounce";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -20,6 +23,8 @@ const POSTS_PER_PAGE = 10;
 
 const Questions = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchInput, setSearchInput] = useState("");
+  const searchQuery = useDebounce(searchInput, 300);
   
   const {
     data: allPosts = [],
@@ -27,7 +32,8 @@ const Questions = () => {
     invalidatePosts
   } = usePosts({
     postType: "doubt",
-    sortBy: "new"
+    sortBy: "new",
+    searchQuery
   });
 
   // Paginate posts
@@ -100,6 +106,20 @@ const Questions = () => {
             Stuck on a problem? Post your question and get help from students around the world. 
             Whether it's calculus, chemistry, or creative writing, the community is here to help.
           </p>
+          
+          <div className="max-w-2xl mt-4 opacity-0 animate-hero-fade-up" style={{ animationDelay: "150ms" }}>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search questions, topics..."
+                className="pl-10 pr-4 py-5"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label="Search questions"
+              />
+            </div>
+          </div>
+          
           <nav className="mt-3 text-sm opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }} aria-label="Related pages">
             <span className="text-muted-foreground">See also: </span>
             <a href="/feed" className="text-primary hover:underline">Home Feed</a>
