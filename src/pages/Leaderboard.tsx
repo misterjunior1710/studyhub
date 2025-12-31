@@ -35,6 +35,7 @@ const fetchLeaderboardData = async () => {
     supabase
       .from("public_profiles")
       .select("id, username, avatar_url, points, streak_days, country, grade")
+      .gt("streak_days", 0)
       .order("streak_days", { ascending: false })
       .limit(3),
     supabase
@@ -255,9 +256,10 @@ const Leaderboard = () => {
               </CardHeader>
               <CardContent className="space-y-2" role="list" aria-label="Top students by streak">
                 {topStreak.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-8">
-                    No streaks yet. Start learning daily!
-                  </p>
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground mb-2">No one on this leaderboard yet!</p>
+                    <p className="text-sm text-muted-foreground">Be the first to build a study streak by posting or commenting daily.</p>
+                  </div>
                 ) : (
                   topStreak.map((user, index) => (
                     <UserRow 
