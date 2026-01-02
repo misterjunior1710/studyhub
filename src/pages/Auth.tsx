@@ -212,9 +212,9 @@ const Auth = () => {
   };
   return <main className="min-h-screen flex flex-col">
       <SEOHead
-        title="Sign In - Join StudyHub"
-        description="Join StudyHub to connect with students worldwide. Sign in or create an account to ask questions, share knowledge, and collaborate in study groups. Study Smarter, Win Harder."
-        canonical="https://studyhub-studentportal.lovable.app/auth"
+        title="Sign In or Create Account - Join Free"
+        description="Join StudyHub for free to connect with students worldwide. Sign in or create an account to ask homework questions, join study groups, earn XP, and access AI-powered study tools. No credit card required."
+        canonical="https://studyhub.world/auth"
       />
       
       {/* SEO Content Section */}

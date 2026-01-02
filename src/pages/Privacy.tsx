@@ -6,16 +6,16 @@ import { Shield, Eye, Lock, Database, Bell, Users, Trash2, Mail, Server, Globe, 
 
 const Privacy = () => {
   const breadcrumbData = getBreadcrumbSchema([
-    { name: "Home", url: "https://studyhub-studentportal.lovable.app/" },
-    { name: "Privacy Policy", url: "https://studyhub-studentportal.lovable.app/privacy" },
+    { name: "Home", url: "https://studyhub.world/" },
+    { name: "Privacy Policy", url: "https://studyhub.world/privacy" },
   ]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Privacy Policy"
-        description="Learn how StudyHub protects your data and privacy. We're committed to keeping your personal information secure while you connect and learn with students worldwide."
-        canonical="https://studyhub-studentportal.lovable.app/privacy"
+        title="Privacy Policy - How We Protect Your Data"
+        description="Read StudyHub's Privacy Policy to understand how we collect, use, and protect your personal information. We never sell your data and are committed to student privacy and GDPR compliance."
+        canonical="https://studyhub.world/privacy"
       />
       <StructuredData data={breadcrumbData} />
       <Navbar />

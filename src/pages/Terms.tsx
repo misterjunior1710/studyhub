@@ -6,16 +6,16 @@ import { FileText, UserCheck, Shield, AlertTriangle, Scale, Ban, RefreshCw, Mail
 
 const Terms = () => {
   const breadcrumbData = getBreadcrumbSchema([
-    { name: "Home", url: "https://studyhub-studentportal.lovable.app/" },
-    { name: "Terms & Conditions", url: "https://studyhub-studentportal.lovable.app/terms" },
+    { name: "Home", url: "https://studyhub.world/" },
+    { name: "Terms & Conditions", url: "https://studyhub.world/terms" },
   ]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Terms & Conditions"
-        description="Read the Terms & Conditions for using StudyHub. Understand your rights and responsibilities as a member of our student community."
-        canonical="https://studyhub-studentportal.lovable.app/terms"
+        title="Terms of Service - User Agreement"
+        description="Read StudyHub's Terms of Service. Understand your rights, responsibilities, acceptable use policies, and community guidelines. By using StudyHub, you agree to these terms."
+        canonical="https://studyhub.world/terms"
       />
       <StructuredData data={breadcrumbData} />
       <Navbar />
