@@ -36,8 +36,9 @@ const Calendar = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Event Calendar | StudyHub"
-        description="View and join study sessions, workshops, and office hours on StudyHub."
+        title="Study Event Calendar - Sessions & Workshops"
+        description="View and join live study sessions, group workshops, office hours, and academic events on StudyHub. Schedule your own study events and invite classmates to learn together."
+        canonical="https://studyhub.world/calendar"
       />
       <Navbar />
       <main className="container mx-auto px-4 py-6 max-w-6xl">

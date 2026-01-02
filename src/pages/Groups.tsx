@@ -101,8 +101,8 @@ const Groups = () => {
   }, [queryClient, completeTask]);
 
   const breadcrumbData = useMemo(() => getBreadcrumbSchema([
-    { name: "Home", url: "https://studyhub-studentportal.lovable.app/" },
-    { name: "Groups", url: "https://studyhub-studentportal.lovable.app/groups" },
+    { name: "Home", url: "https://studyhub.world/" },
+    { name: "Groups", url: "https://studyhub.world/groups" },
   ]), []);
 
   const getTimeAgo = (dateString: string) => {
@@ -123,9 +123,9 @@ const Groups = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Study Groups - Collaborate with Students"
-        description="Join or create study groups on StudyHub. Collaborate with students in focused study groups, share resources, and learn together across subjects and grades."
-        canonical="https://studyhub-studentportal.lovable.app/groups"
+        title="Study Groups - Join & Create Collaborative Learning Groups"
+        description="Create or join free study groups on StudyHub. Collaborate with students worldwide, share resources, chat in real-time, and learn together. Find groups by subject, grade, or create your own."
+        canonical="https://studyhub.world/groups"
       />
       <StructuredData data={breadcrumbData} />
       

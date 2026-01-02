@@ -81,18 +81,18 @@ const Questions = () => {
 
   const breadcrumbData = getBreadcrumbSchema([{
     name: "Home",
-    url: "https://studyhub-studentportal.lovable.app/"
+    url: "https://studyhub.world/"
   }, {
     name: "Questions",
-    url: "https://studyhub-studentportal.lovable.app/questions"
+    url: "https://studyhub.world/questions"
   }]);
 
   return (
     <div className="min-h-screen bg-background">
       <SEOHead 
-        title="Academic Questions - Get Study Help" 
-        description="Get help with your studies from the StudyHub community. Post academic questions in any subject and receive answers from students worldwide. From math problems to essay feedback." 
-        canonical="https://studyhub-studentportal.lovable.app/questions" 
+        title="Ask Academic Questions & Get Homework Help" 
+        description="Get free homework help from students worldwide on StudyHub. Post questions in math, science, English, history, and more. Receive detailed answers from a global community of learners and tutors." 
+        canonical="https://studyhub.world/questions" 
       />
       <StructuredData data={breadcrumbData} />
       

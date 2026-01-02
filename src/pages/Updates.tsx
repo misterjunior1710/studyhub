@@ -164,9 +164,9 @@ const Updates = () => {
   return (
     <>
       <SEOHead
-        title="Platform Updates"
-        description="Stay informed about the latest features, improvements, bug fixes, and platform announcements from StudyHub."
-        canonical={`${window.location.origin}/updates`}
+        title="Platform Updates & New Features"
+        description="Stay up-to-date with the latest StudyHub features, improvements, and bug fixes. See what's new, what's been improved, and what's coming next to help you study smarter."
+        canonical="https://studyhub.world/updates"
       />
       <StructuredData data={structuredData} />
       <div className="min-h-screen bg-background">

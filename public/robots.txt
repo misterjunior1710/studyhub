@@ -1,20 +1,27 @@
+# StudyHub Robots.txt
+# https://studyhub.world
+
 User-agent: Googlebot
 Allow: /
 Disallow: /settings
 Disallow: /friends
-Disallow: /study
+Disallow: /saved
+Disallow: /dm/*
 Disallow: /post/*
 Disallow: /user/*
 Disallow: /groups/*
+Disallow: /profile-onboarding
 
 User-agent: Bingbot
 Allow: /
 Disallow: /settings
 Disallow: /friends
-Disallow: /study
+Disallow: /saved
+Disallow: /dm/*
 Disallow: /post/*
 Disallow: /user/*
 Disallow: /groups/*
+Disallow: /profile-onboarding
 
 User-agent: Twitterbot
 Allow: /
@@ -26,9 +33,11 @@ User-agent: *
 Allow: /
 Disallow: /settings
 Disallow: /friends
-Disallow: /study
+Disallow: /saved
+Disallow: /dm/*
 Disallow: /post/*
 Disallow: /user/*
 Disallow: /groups/*
+Disallow: /profile-onboarding
 
-Sitemap: https://studyhub-studentportal.lovable.app/sitemap.xml
+Sitemap: https://studyhub.world/sitemap.xml

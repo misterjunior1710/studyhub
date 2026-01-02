@@ -105,8 +105,8 @@ export const getOrganizationSchema = () => ({
   "@type": "Organization",
   name: "StudyHub",
   slogan: "Study Smarter, Win Harder",
-  description: "Connect with students worldwide on StudyHub. Share knowledge, ask questions, and collaborate.",
-  url: "https://studyhub-studentportal.lovable.app",
+  description: "StudyHub is a free global student community where learners connect, ask academic questions, share study materials, and collaborate in study groups. Join thousands of students from around the world.",
+  url: "https://studyhub.world",
   logo: "https://storage.googleapis.com/gpt-engineer-file-uploads/T6FlWUVm6DYTgcsVHeiIqQYaN6A2/uploads/1764745423647-Screenshot 2025-12-03 123228.png",
   sameAs: [],
   contactPoint: {
@@ -121,11 +121,11 @@ export const getCommunitySchema = () => ({
   "@type": "WebSite",
   name: "StudyHub",
   alternateName: "Study Smarter, Win Harder",
-  description: "A global study community for students to connect, share knowledge, and collaborate.",
-  url: "https://studyhub-studentportal.lovable.app",
+  description: "StudyHub is a free online learning community for students worldwide. Ask homework questions, join study groups, track your progress on leaderboards, and access AI-powered study tools.",
+  url: "https://studyhub.world",
   potentialAction: {
     "@type": "SearchAction",
-    target: "https://studyhub-studentportal.lovable.app/?search={search_term_string}",
+    target: "https://studyhub.world/questions?search={search_term_string}",
     "query-input": "required name=search_term_string",
   },
 });

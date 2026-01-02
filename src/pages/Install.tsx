@@ -27,8 +27,9 @@ const Install = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Install StudyHub App"
-        description="Install StudyHub on your device for instant access, offline support, and a native app experience."
+        title="Install StudyHub App - Get the PWA"
+        description="Install StudyHub on your phone, tablet, or computer for instant access, offline support, and push notifications. Works on iOS, Android, Windows, and Mac. No app store required."
+        canonical="https://studyhub.world/install"
       />
       <Navbar />
 

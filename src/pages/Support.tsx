@@ -62,8 +62,8 @@ const Support = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const breadcrumbData = useMemo(() => getBreadcrumbSchema([
-    { name: "Home", url: "https://studyhub-studentportal.lovable.app/" },
-    { name: "Support", url: "https://studyhub-studentportal.lovable.app/support" },
+    { name: "Home", url: "https://studyhub.world/" },
+    { name: "Support", url: "https://studyhub.world/support" },
   ]), []);
 
   const faqSchema = useMemo(() => getFAQSchema(FAQ_ITEMS), []);
@@ -108,9 +108,9 @@ const Support = () => {
   };
   return <div className="min-h-screen bg-background">
       <SEOHead
-        title="Help & Support"
-        description="Get help with StudyHub. Contact our support team, browse FAQs, and find answers to common questions about using the platform."
-        canonical="https://studyhub-studentportal.lovable.app/support"
+        title="Help Center & Support - Contact Us"
+        description="Need help with StudyHub? Contact our support team, browse frequently asked questions, report bugs, or request new features. We typically respond within 24-72 hours."
+        canonical="https://studyhub.world/support"
       />
       <StructuredData data={breadcrumbData} />
       <StructuredData data={faqSchema} />

@@ -64,16 +64,16 @@ const Feed = () => {
   const [postsRef, postsVisible] = useScrollReveal<HTMLDivElement>();
 
   const breadcrumbData = getBreadcrumbSchema([
-    { name: "Home", url: "https://studyhub-studentportal.lovable.app/" },
-    { name: "Feed", url: "https://studyhub-studentportal.lovable.app/feed" },
+    { name: "Home", url: "https://studyhub.world/" },
+    { name: "Feed", url: "https://studyhub.world/feed" },
   ]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Study Feed - Browse Posts"
-        description="Browse study materials, questions, and discussions from students worldwide. Filter by subject, grade, and country."
-        canonical="https://studyhub-studentportal.lovable.app/feed"
+        title="Study Feed - Browse Student Posts & Discussions"
+        description="Explore study materials, academic discussions, and student posts from around the world. Filter by subject, grade, country, and stream. Join the conversation and learn together on StudyHub."
+        canonical="https://studyhub.world/feed"
       />
       <StructuredData data={breadcrumbData} />
       
