@@ -55,8 +55,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="StudyHub - Free Online Student Community for Homework Help & Study Groups"
-        description="Join StudyHub, the free global student community. Ask homework questions, get answers from peers worldwide, join study groups, use AI study tools, and track your progress on leaderboards. Study Smarter, Win Harder."
+        title="Free Homework Help | Study Groups | Ask Questions Online"
+        description="Get free homework help from students worldwide. Join study groups, ask questions, get answers fast. Math help, science help, essay help. Free online tutoring and study tools for students."
         canonical="https://studyhub.world/"
       />
       <StructuredData data={structuredData} />

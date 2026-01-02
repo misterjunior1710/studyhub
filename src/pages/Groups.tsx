@@ -123,8 +123,8 @@ const Groups = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Study Groups - Join & Create Collaborative Learning Groups"
-        description="Create or join free study groups on StudyHub. Collaborate with students worldwide, share resources, chat in real-time, and learn together. Find groups by subject, grade, or create your own."
+        title="Free Study Groups Online | Join Group Chats | Find Study Partners"
+        description="Join free online study groups. Find study partners, group chat with students, collaborate on homework. Math study groups, science study groups, exam prep groups. Start studying together now."
         canonical="https://studyhub.world/groups"
       />
       <StructuredData data={breadcrumbData} />

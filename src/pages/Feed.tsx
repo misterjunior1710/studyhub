@@ -71,8 +71,8 @@ const Feed = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Study Feed - Browse Student Posts & Discussions"
-        description="Explore study materials, academic discussions, and student posts from around the world. Filter by subject, grade, country, and stream. Join the conversation and learn together on StudyHub."
+        title="Student Forum | Study Discussions | Share Notes & Resources"
+        description="Join student discussions, share study notes, find study partners. Browse posts about homework, exams, study tips. Connect with students from around the world."
         canonical="https://studyhub.world/feed"
       />
       <StructuredData data={breadcrumbData} />

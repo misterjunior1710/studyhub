@@ -162,8 +162,8 @@ const Leaderboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Student Leaderboard - Top Learners & Study Streaks"
-        description="See who's leading the pack on StudyHub! View rankings by XP points, study streaks, and contributions. Compete with students worldwide, climb the ranks, and earn recognition for your academic achievements."
+        title="Student Leaderboard | Top Students | Study Streak Rankings"
+        description="See top students and study streaks. Student rankings, XP points, most helpful students. Compete with students worldwide and climb the leaderboard."
         canonical="https://studyhub.world/leaderboard"
       />
       <StructuredData data={breadcrumbData} />

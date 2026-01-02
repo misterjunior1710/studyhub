@@ -210,7 +210,7 @@ const StudyMode = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <SEOHead title="Study Mode - Pomodoro Timer, Flashcards & Quizzes" description="Boost your productivity with StudyHub's study tools: Pomodoro timer for focused sessions, flashcard system with spaced repetition, self-grading quizzes, and visual mind maps. Track your progress and build study streaks." canonical="https://studyhub.world/study" />
+      <SEOHead title="Free Study Tools | Pomodoro Timer | Flashcards | Quizzes Online" description="Free study tools for students. Pomodoro timer, online flashcards, practice quizzes, mind maps. Track study time, build study streaks. Best free study app for students." canonical="https://studyhub.world/study" />
       <Navbar />
       
       <main className="flex-1 container mx-auto px-4 py-8 max-w-5xl">

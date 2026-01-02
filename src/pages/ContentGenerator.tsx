@@ -490,8 +490,8 @@ ${generatedContent.examples.map((e, i) => `**Example ${i+1}:** ${e.problem}\n*So
   return (
     <>
       <SEOHead
-        title="AI Study Content Generator - Create Study Materials"
-        description="Generate personalized study guides, revision notes, flashcards, and practice questions using AI. Get curriculum-aligned explanations for any topic in math, science, humanities, and more."
+        title="AI Study Guide Generator | Free Notes & Flashcard Maker"
+        description="Generate free study guides, revision notes, flashcards with AI. Math notes, science notes, history notes. Create study materials for any topic instantly."
         canonical="https://studyhub.world/content-generator"
       />
       <Navbar />

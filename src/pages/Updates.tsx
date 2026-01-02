@@ -164,8 +164,8 @@ const Updates = () => {
   return (
     <>
       <SEOHead
-        title="Platform Updates & New Features"
-        description="Stay up-to-date with the latest StudyHub features, improvements, and bug fixes. See what's new, what's been improved, and what's coming next to help you study smarter."
+        title="What's New | Updates & New Features | Changelog"
+        description="See the latest updates and new features. Bug fixes, improvements, new study tools. Stay updated on what's new."
         canonical="https://studyhub.world/updates"
       />
       <StructuredData data={structuredData} />
