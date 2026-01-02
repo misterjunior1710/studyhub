@@ -18,8 +18,8 @@ const SEOHead = ({
   noIndex = false,
 }: SEOHeadProps) => {
   useEffect(() => {
-    // Update document title
-    document.title = `${title} | StudyHub`;
+    // Update document title - use title as-is if it already contains "StudyHub"
+    document.title = title.toLowerCase().includes("studyhub") ? title : `${title} | StudyHub`;
 
     // Helper to update or create meta tag
     const setMetaTag = (name: string, content: string, isProperty = false) => {
@@ -39,7 +39,8 @@ const SEOHead = ({
     setMetaTag("robots", noIndex ? "noindex, nofollow" : "index, follow");
 
     // Open Graph tags
-    setMetaTag("og:title", `${title} | StudyHub`, true);
+    const ogTitle = title.toLowerCase().includes("studyhub") ? title : `${title} | StudyHub`;
+    setMetaTag("og:title", ogTitle, true);
     setMetaTag("og:description", description, true);
     setMetaTag("og:type", type, true);
     setMetaTag("og:image", image, true);
@@ -47,7 +48,7 @@ const SEOHead = ({
 
     // Twitter Card tags
     setMetaTag("twitter:card", "summary_large_image");
-    setMetaTag("twitter:title", `${title} | StudyHub`);
+    setMetaTag("twitter:title", ogTitle);
     setMetaTag("twitter:description", description);
     setMetaTag("twitter:image", image);
 
