@@ -177,8 +177,8 @@ const Whiteboards = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Collaborative Whiteboards - Draw & Share with Friends"
-        description="Create free digital whiteboards on StudyHub. Draw diagrams, brainstorm ideas, and collaborate in real-time with friends and study groups. Share your whiteboards instantly with anyone."
+        title="Free Online Whiteboard | Draw & Collaborate | Digital Canvas"
+        description="Free online whiteboard for students. Draw diagrams, brainstorm ideas, collaborate with friends. Digital whiteboard for homework, math problems, study notes."
         canonical="https://studyhub.world/whiteboards"
       />
       <Navbar />

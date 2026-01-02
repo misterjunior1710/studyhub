@@ -36,8 +36,8 @@ const Calendar = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Study Event Calendar - Sessions & Workshops"
-        description="View and join live study sessions, group workshops, office hours, and academic events on StudyHub. Schedule your own study events and invite classmates to learn together."
+        title="Study Calendar | Schedule Study Sessions | Exam Planner"
+        description="Plan your study schedule with our free study calendar. Schedule study sessions, track exams, set reminders. Online study planner for students."
         canonical="https://studyhub.world/calendar"
       />
       <Navbar />

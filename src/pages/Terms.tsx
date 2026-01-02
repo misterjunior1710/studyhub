@@ -13,8 +13,8 @@ const Terms = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Terms of Service - User Agreement"
-        description="Read StudyHub's Terms of Service. Understand your rights, responsibilities, acceptable use policies, and community guidelines. By using StudyHub, you agree to these terms."
+        title="Terms of Service | User Agreement | Community Rules"
+        description="Terms of service and community guidelines. User agreement for students. Rules for homework help, study groups, and community."
         canonical="https://studyhub.world/terms"
       />
       <StructuredData data={breadcrumbData} />

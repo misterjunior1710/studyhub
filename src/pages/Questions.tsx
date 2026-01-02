@@ -90,8 +90,8 @@ const Questions = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead 
-        title="Ask Academic Questions & Get Homework Help" 
-        description="Get free homework help from students worldwide on StudyHub. Post questions in math, science, English, history, and more. Receive detailed answers from a global community of learners and tutors." 
+        title="Ask Homework Questions | Get Answers Free | Math Science English Help" 
+        description="Ask any homework question and get free answers from students. Math homework help, science homework help, English essay help, history help. Post your question now and get help fast." 
         canonical="https://studyhub.world/questions" 
       />
       <StructuredData data={breadcrumbData} />

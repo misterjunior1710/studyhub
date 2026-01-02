@@ -108,8 +108,8 @@ const Support = () => {
   };
   return <div className="min-h-screen bg-background">
       <SEOHead
-        title="Help Center & Support - Contact Us"
-        description="Need help with StudyHub? Contact our support team, browse frequently asked questions, report bugs, or request new features. We typically respond within 24-72 hours."
+        title="Help & Support | Contact Us | FAQ"
+        description="Need help? Contact support, browse FAQ, report bugs. Get help with homework questions, study groups, account issues. Fast response time."
         canonical="https://studyhub.world/support"
       />
       <StructuredData data={breadcrumbData} />

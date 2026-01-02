@@ -13,8 +13,8 @@ const Privacy = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Privacy Policy - How We Protect Your Data"
-        description="Read StudyHub's Privacy Policy to understand how we collect, use, and protect your personal information. We never sell your data and are committed to student privacy and GDPR compliance."
+        title="Privacy Policy | Data Protection | Student Privacy"
+        description="Privacy policy for students. How we protect your data, student privacy, GDPR compliant. We never sell your information."
         canonical="https://studyhub.world/privacy"
       />
       <StructuredData data={breadcrumbData} />

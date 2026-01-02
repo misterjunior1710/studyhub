@@ -212,8 +212,8 @@ const Auth = () => {
   };
   return <main className="min-h-screen flex flex-col">
       <SEOHead
-        title="Sign In or Create Account - Join Free"
-        description="Join StudyHub for free to connect with students worldwide. Sign in or create an account to ask homework questions, join study groups, earn XP, and access AI-powered study tools. No credit card required."
+        title="Sign Up Free | Student Login | Create Account"
+        description="Sign up free to get homework help, join study groups, ask questions. Student login and registration. Free account, no credit card required."
         canonical="https://studyhub.world/auth"
       />
       
