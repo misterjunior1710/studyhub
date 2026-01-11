@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { 
   Play, 
@@ -26,7 +27,8 @@ import {
   Layers,
   ClipboardList,
   Network,
-  Settings2
+  Settings2,
+  AlertCircle
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
@@ -54,6 +56,8 @@ interface ProfileSettings {
 
 const DEFAULT_FOCUS_DURATION = 25 * 60;
 const DEFAULT_BREAK_DURATION = 5 * 60;
+const MIN_SESSION_DURATION_SECONDS = 180; // 3 minutes minimum
+const ENGAGEMENT_CHECK_INTERVAL = 300; // Check every 5 minutes
 
 const StudyMode = () => {
   const navigate = useNavigate();
@@ -67,8 +71,12 @@ const StudyMode = () => {
   const [sessionType, setSessionType] = useState<"focus" | "break">("focus");
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [showTimerSettings, setShowTimerSettings] = useState(false);
+  const [showEngagementCheck, setShowEngagementCheck] = useState(false);
+  const [engagementPaused, setEngagementPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const sessionStartRef = useRef<Date | null>(null);
+  const lastEngagementCheckRef = useRef<number>(0);
+  const engagementTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { data: profileSettings } = useQuery({
     queryKey: ["profile-settings", user?.id],
@@ -153,14 +161,33 @@ const StudyMode = () => {
 
   const stopTimer = useCallback(async () => {
     setIsRunning(false);
+    setShowEngagementCheck(false);
+    setEngagementPaused(false);
+    if (engagementTimeoutRef.current) {
+      clearTimeout(engagementTimeoutRef.current);
+    }
+    
     if (currentSessionId && sessionStartRef.current) {
       const elapsedSeconds = Math.floor((new Date().getTime() - sessionStartRef.current.getTime()) / 1000);
-      const elapsedMinutes = Math.max(1, Math.round(elapsedSeconds / 60));
-      await updateSession.mutateAsync({ id: currentSessionId, duration: elapsedMinutes });
-      toast({ title: "Session completed!", description: `You studied for ${elapsedMinutes} minute${elapsedMinutes !== 1 ? "s" : ""}.` });
+      const elapsedMinutes = Math.round(elapsedSeconds / 60);
+      
+      // Only count sessions that are 3+ minutes
+      if (elapsedSeconds >= MIN_SESSION_DURATION_SECONDS) {
+        await updateSession.mutateAsync({ id: currentSessionId, duration: elapsedMinutes });
+        toast({ title: "Session completed!", description: `You studied for ${elapsedMinutes} minute${elapsedMinutes !== 1 ? "s" : ""}.` });
+      } else {
+        // Delete the session if it's too short
+        await supabase.from("study_sessions").delete().eq("id", currentSessionId);
+        toast({ 
+          title: "Session too short", 
+          description: "Sessions must be at least 3 minutes to count toward your goals.",
+          variant: "destructive"
+        });
+      }
     }
     setCurrentSessionId(null);
     sessionStartRef.current = null;
+    lastEngagementCheckRef.current = 0;
     setTimeRemaining(sessionType === "focus" ? focusDuration : breakDuration);
   }, [currentSessionId, sessionType, updateSession, focusDuration, breakDuration]);
 
@@ -168,6 +195,12 @@ const StudyMode = () => {
     setIsRunning(false);
     setCurrentSessionId(null);
     sessionStartRef.current = null;
+    lastEngagementCheckRef.current = 0;
+    setShowEngagementCheck(false);
+    setEngagementPaused(false);
+    if (engagementTimeoutRef.current) {
+      clearTimeout(engagementTimeoutRef.current);
+    }
     setTimeRemaining(sessionType === "focus" ? focusDuration : breakDuration);
   }, [sessionType, focusDuration, breakDuration]);
 
@@ -180,6 +213,25 @@ const StudyMode = () => {
     setTimeRemaining(type === "focus" ? focusDuration : breakDuration);
   }, [isRunning, focusDuration, breakDuration]);
 
+  // Engagement verification - confirm student is still studying
+  const confirmEngagement = useCallback(() => {
+    setShowEngagementCheck(false);
+    setEngagementPaused(false);
+    setIsRunning(true);
+    lastEngagementCheckRef.current = Date.now();
+    if (engagementTimeoutRef.current) {
+      clearTimeout(engagementTimeoutRef.current);
+    }
+    toast({ title: "Great!", description: "Keep up the good work! 📚" });
+  }, []);
+
+  const skipEngagementCheck = useCallback(() => {
+    setShowEngagementCheck(false);
+    setEngagementPaused(false);
+    stopTimer();
+    toast({ title: "Session ended", description: "Take a break if you need one!" });
+  }, [stopTimer]);
+
   const updateTimerDurations = useCallback((newFocus: number, newBreak: number) => {
     setFocusDuration(newFocus);
     setBreakDuration(newBreak);
@@ -191,7 +243,7 @@ const StudyMode = () => {
   }, [isRunning, sessionType]);
 
   useEffect(() => {
-    if (isRunning) {
+    if (isRunning && !engagementPaused) {
       intervalRef.current = setInterval(() => {
         setTimeRemaining((prev) => {
           if (prev <= 1) {
@@ -199,6 +251,20 @@ const StudyMode = () => {
             toast({ title: sessionType === "focus" ? "Focus session complete!" : "Break time over!", description: sessionType === "focus" ? "Great work! Time for a break." : "Ready to focus again?" });
             return 0;
           }
+          
+          // Check for engagement verification (every 5 minutes during focus sessions)
+          if (sessionType === "focus" && sessionStartRef.current) {
+            const elapsedSinceLastCheck = (Date.now() - lastEngagementCheckRef.current) / 1000;
+            if (elapsedSinceLastCheck >= ENGAGEMENT_CHECK_INTERVAL && lastEngagementCheckRef.current > 0) {
+              setEngagementPaused(true);
+              setShowEngagementCheck(true);
+              // Auto-stop after 30 seconds if no response
+              engagementTimeoutRef.current = setTimeout(() => {
+                skipEngagementCheck();
+              }, 30000);
+            }
+          }
+          
           return prev - 1;
         });
       }, 1000);
@@ -206,7 +272,14 @@ const StudyMode = () => {
       clearInterval(intervalRef.current);
     }
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [isRunning, sessionType, stopTimer]);
+  }, [isRunning, sessionType, stopTimer, engagementPaused, skipEngagementCheck]);
+
+  // Initialize engagement check timer when session starts
+  useEffect(() => {
+    if (isRunning && sessionStartRef.current && lastEngagementCheckRef.current === 0) {
+      lastEngagementCheckRef.current = Date.now();
+    }
+  }, [isRunning]);
 
   useEffect(() => {
     if (profileSettings?.auto_start_focus_timer && user && !isRunning && !currentSessionId) {
@@ -325,6 +398,30 @@ const StudyMode = () => {
           <TabsContent value="quizzes"><QuizSystem /></TabsContent>
           <TabsContent value="mindmaps"><MindMapBuilder /></TabsContent>
         </Tabs>
+
+        {/* Engagement Verification Dialog */}
+        <Dialog open={showEngagementCheck} onOpenChange={(open) => !open && skipEngagementCheck()}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-primary" />
+                Still Studying?
+              </DialogTitle>
+              <DialogDescription>
+                Click "I'm here!" to confirm you're still actively studying. This helps us track your study time accurately.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex gap-3 justify-end mt-4">
+              <Button variant="outline" onClick={skipEngagementCheck}>
+                Take a Break
+              </Button>
+              <Button onClick={confirmEngagement} className="gap-2">
+                <Play className="h-4 w-4" />
+                I'm Here!
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </main>
       
       <Footer />

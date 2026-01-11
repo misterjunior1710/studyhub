@@ -185,14 +185,26 @@ export function MindMapBuilder() {
 
   const getColorClass = (color: string) => {
     const colors: Record<string, string> = {
-      blue: "bg-blue-500",
-      green: "bg-green-500",
-      purple: "bg-purple-500",
-      orange: "bg-orange-500",
-      pink: "bg-pink-500",
-      cyan: "bg-cyan-500",
+      blue: "bg-blue-500 shadow-blue-500/30",
+      green: "bg-green-500 shadow-green-500/30",
+      purple: "bg-purple-500 shadow-purple-500/30",
+      orange: "bg-orange-500 shadow-orange-500/30",
+      pink: "bg-pink-500 shadow-pink-500/30",
+      cyan: "bg-cyan-500 shadow-cyan-500/30",
     };
-    return colors[color] || "bg-blue-500";
+    return colors[color] || "bg-blue-500 shadow-blue-500/30";
+  };
+
+  const getBorderColor = (color: string) => {
+    const colors: Record<string, string> = {
+      blue: "stroke-blue-400",
+      green: "stroke-green-400",
+      purple: "stroke-purple-400",
+      orange: "stroke-orange-400",
+      pink: "stroke-pink-400",
+      cyan: "stroke-cyan-400",
+    };
+    return colors[color] || "stroke-blue-400";
   };
 
   if (selectedMap) {
@@ -204,95 +216,142 @@ export function MindMapBuilder() {
               ← Back to Mind Maps
             </Button>
             <h3 className="text-xl font-semibold">{selectedMap.title}</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Click a node to select it, then add child nodes. Drag to reposition.
+            </p>
           </div>
-          <div className="flex gap-2 items-center">
-            <Button variant="outline" size="icon" onClick={() => setZoom(z => Math.min(z + 0.1, 2))}>
-              <ZoomIn className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="icon" onClick={() => setZoom(z => Math.max(z - 0.1, 0.5))}>
-              <ZoomOut className="h-4 w-4" />
-            </Button>
-            <Input
-              value={newNodeContent}
-              onChange={e => setNewNodeContent(e.target.value)}
-              placeholder="New node..."
-              className="w-40"
-            />
-            <Button
-              size="sm"
-              onClick={() => addNodeMutation.mutate({ parentId: selectedNode, content: newNodeContent })}
-              disabled={!newNodeContent}
-            >
-              <Plus className="h-4 w-4 mr-1" /> Add
-            </Button>
+          <div className="flex gap-2 items-center flex-wrap">
+            <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+              <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.min(z + 0.1, 2))} className="h-8 w-8">
+                <ZoomIn className="h-4 w-4" />
+              </Button>
+              <span className="text-xs font-mono px-2">{Math.round(zoom * 100)}%</span>
+              <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.max(z - 0.1, 0.5))} className="h-8 w-8">
+                <ZoomOut className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="flex gap-2 items-center">
+              <Input
+                value={newNodeContent}
+                onChange={e => setNewNodeContent(e.target.value)}
+                placeholder="New node..."
+                className="w-32 sm:w-40"
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && newNodeContent) {
+                    addNodeMutation.mutate({ parentId: selectedNode, content: newNodeContent });
+                  }
+                }}
+              />
+              <Button
+                size="sm"
+                onClick={() => addNodeMutation.mutate({ parentId: selectedNode, content: newNodeContent })}
+                disabled={!newNodeContent}
+              >
+                <Plus className="h-4 w-4 mr-1" /> Add
+              </Button>
+            </div>
           </div>
         </div>
 
         <div
           ref={canvasRef}
-          className="relative w-full h-[500px] bg-muted/30 rounded-lg overflow-hidden border"
+          className="relative w-full h-[500px] bg-gradient-to-br from-muted/30 via-background to-muted/20 rounded-xl overflow-hidden border-2 border-dashed border-muted"
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
         >
+          {/* Grid pattern background */}
+          <div className="absolute inset-0 opacity-30" style={{
+            backgroundImage: 'radial-gradient(circle, hsl(var(--muted-foreground) / 0.2) 1px, transparent 1px)',
+            backgroundSize: '20px 20px',
+          }} />
+          
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ transform: `scale(${zoom})`, transformOrigin: "center" }}>
+            <defs>
+              <linearGradient id="lineGradient" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="hsl(var(--primary) / 0.6)" />
+                <stop offset="100%" stopColor="hsl(var(--accent) / 0.6)" />
+              </linearGradient>
+            </defs>
             {nodes.map(node => {
               if (!node.parent_id) return null;
               const parent = nodes.find(n => n.id === node.parent_id);
               if (!parent) return null;
+              
+              // Calculate control points for curved lines
+              const midX = (parent.position_x + node.position_x) / 2;
+              const midY = (parent.position_y + node.position_y) / 2;
+              const dx = node.position_x - parent.position_x;
+              const curveOffset = Math.min(Math.abs(dx) * 0.3, 50);
+              
               return (
-                <line
-                  key={`line-${node.id}`}
-                  x1={parent.position_x}
-                  y1={parent.position_y}
-                  x2={node.position_x}
-                  y2={node.position_y}
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  className="text-muted-foreground/50"
-                />
+                <g key={`line-${node.id}`}>
+                  {/* Shadow line */}
+                  <path
+                    d={`M ${parent.position_x} ${parent.position_y} Q ${midX} ${parent.position_y + curveOffset} ${node.position_x} ${node.position_y}`}
+                    fill="none"
+                    stroke="hsl(var(--muted-foreground) / 0.1)"
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                  />
+                  {/* Main line */}
+                  <path
+                    d={`M ${parent.position_x} ${parent.position_y} Q ${midX} ${parent.position_y + curveOffset} ${node.position_x} ${node.position_y}`}
+                    fill="none"
+                    stroke="url(#lineGradient)"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    className="transition-all"
+                  />
+                </g>
               );
             })}
           </svg>
 
           <div style={{ transform: `scale(${zoom})`, transformOrigin: "center" }}>
-            {nodes.map(node => (
-              <div
-                key={node.id}
-                className={cn(
-                  "absolute cursor-move select-none px-3 py-2 rounded-lg text-white text-sm font-medium shadow-lg transition-shadow",
-                  getColorClass(node.color),
-                  selectedNode === node.id && "ring-2 ring-white ring-offset-2",
-                  draggingNode === node.id && "opacity-70"
-                )}
-                style={{
-                  left: node.position_x - 50,
-                  top: node.position_y - 15,
-                  minWidth: "100px",
-                  textAlign: "center",
-                }}
-                onMouseDown={e => handleMouseDown(e, node.id)}
-                onClick={e => { e.stopPropagation(); setSelectedNode(node.id === selectedNode ? null : node.id); }}
-              >
-                {node.content}
-                {selectedNode === node.id && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute -top-2 -right-2 h-6 w-6 bg-destructive text-destructive-foreground rounded-full"
-                    onClick={e => { e.stopPropagation(); deleteNodeMutation.mutate(node.id); }}
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </Button>
-                )}
-              </div>
-            ))}
+            {nodes.map(node => {
+              const isRoot = !node.parent_id;
+              return (
+                <div
+                  key={node.id}
+                  className={cn(
+                    "absolute cursor-move select-none px-4 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200",
+                    getColorClass(node.color),
+                    isRoot ? "text-base px-5 py-3 font-semibold" : "",
+                    selectedNode === node.id && "ring-2 ring-white ring-offset-2 ring-offset-background scale-105",
+                    draggingNode === node.id && "opacity-70 scale-110 cursor-grabbing"
+                  )}
+                  style={{
+                    left: node.position_x - (isRoot ? 60 : 50),
+                    top: node.position_y - (isRoot ? 20 : 15),
+                    minWidth: isRoot ? "120px" : "100px",
+                    textAlign: "center",
+                    boxShadow: `0 4px 20px -4px`,
+                  }}
+                  onMouseDown={e => handleMouseDown(e, node.id)}
+                  onClick={e => { e.stopPropagation(); setSelectedNode(node.id === selectedNode ? null : node.id); }}
+                >
+                  {node.content}
+                  {selectedNode === node.id && !isRoot && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute -top-2 -right-2 h-6 w-6 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90 shadow-lg"
+                      onClick={e => { e.stopPropagation(); deleteNodeMutation.mutate(node.id); }}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          
+          {/* Legend */}
+          <div className="absolute bottom-3 left-3 bg-background/80 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-muted-foreground">
+            <span className="font-medium">Tip:</span> Drag nodes to arrange • Click to select • Add children to selected node
           </div>
         </div>
-
-        <p className="text-sm text-muted-foreground text-center">
-          Click a node to select it, then add child nodes. Drag nodes to reposition them.
-        </p>
       </div>
     );
   }
