@@ -190,7 +190,7 @@ const EventCalendar = ({ userId, groupId }: EventCalendarProps) => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-2">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
                 <div
                   key={day}
@@ -236,7 +236,7 @@ const EventCalendar = ({ userId, groupId }: EventCalendarProps) => {
                 : "Select a date"}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 max-h-[400px] overflow-y-auto">
+          <CardContent className="space-y-4 max-h-[400px] overflow-y-auto">
             {selectedDate ? (
               selectedDateEvents.length > 0 ? (
                 selectedDateEvents.map((event) => (

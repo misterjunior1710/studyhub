@@ -78,7 +78,7 @@ const Install = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Share className="h-5 w-5" />
-                Install on iOS
+                Install on iOS (iPhone / iPad)
               </CardTitle>
               <CardDescription>
                 Follow these steps to add StudyHub to your home screen
@@ -90,15 +90,26 @@ const Install = () => {
                   <span className="text-sm font-bold text-primary">1</span>
                 </div>
                 <div>
-                  <p className="font-medium">Tap the Share button</p>
+                  <p className="font-medium">Open in Safari browser</p>
                   <p className="text-sm text-muted-foreground">
-                    Look for the share icon (box with arrow) in Safari's toolbar
+                    Make sure you're using Safari (not Chrome or other browsers)
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <span className="text-sm font-bold text-primary">2</span>
+                </div>
+                <div>
+                  <p className="font-medium">Tap the Share button</p>
+                  <p className="text-sm text-muted-foreground">
+                    Look for the share icon (box with arrow) at the bottom of the screen
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <span className="text-sm font-bold text-primary">3</span>
                 </div>
                 <div>
                   <p className="font-medium">Scroll and tap "Add to Home Screen"</p>
@@ -109,7 +120,7 @@ const Install = () => {
               </div>
               <div className="flex items-start gap-4">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <span className="text-sm font-bold text-primary">3</span>
+                  <span className="text-sm font-bold text-primary">4</span>
                 </div>
                 <div>
                   <p className="font-medium">Tap "Add" to confirm</p>
@@ -123,7 +134,7 @@ const Install = () => {
         ) : (
           <Card>
             <CardHeader>
-              <CardTitle>Install Instructions</CardTitle>
+              <CardTitle>Install on Your Device</CardTitle>
               <CardDescription>
                 Add StudyHub to your home screen for quick access
               </CardDescription>
@@ -132,12 +143,33 @@ const Install = () => {
               <p className="text-muted-foreground">
                 Use your browser's menu to install this app:
               </p>
-              <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
-                <li><strong>Chrome:</strong> Menu → "Install app" or "Add to Home screen"</li>
-                <li><strong>Edge:</strong> Menu → "Apps" → "Install this site as an app"</li>
-                <li><strong>Firefox:</strong> Menu → "Install" (if available)</li>
-                <li><strong>Safari (iOS):</strong> Share → "Add to Home Screen"</li>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-start gap-3">
+                  <span className="font-semibold text-primary">Chrome (Android):</span>
+                  <span className="text-muted-foreground">Menu (⋮) → "Install app" or "Add to Home screen"</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="font-semibold text-primary">Chrome (Desktop):</span>
+                  <span className="text-muted-foreground">Menu (⋮) → "Install StudyHub..." or look for install icon in address bar</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="font-semibold text-primary">Edge:</span>
+                  <span className="text-muted-foreground">Menu → "Apps" → "Install this site as an app"</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="font-semibold text-primary">Firefox (Android):</span>
+                  <span className="text-muted-foreground">Menu → "Install" (if available) or "Add to Home screen"</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="font-semibold text-primary">Samsung Internet:</span>
+                  <span className="text-muted-foreground">Menu → "Add page to" → "Home screen"</span>
+                </li>
               </ul>
+              <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                <p className="text-xs text-muted-foreground">
+                  <strong>Note:</strong> After installation, you can open StudyHub directly from your home screen like any other app. The app will also work offline for cached content.
+                </p>
+              </div>
             </CardContent>
           </Card>
         )}

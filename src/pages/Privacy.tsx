@@ -29,7 +29,7 @@ const Privacy = () => {
               Privacy Policy
             </h1>
             <p className="text-muted-foreground">
-              Last updated: {new Date().toLocaleDateString()}
+              Last updated: January 1, 2025
             </p>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               At StudyHub, we are committed to protecting your privacy and ensuring transparency about how we collect, use, and safeguard your personal information. This Privacy Policy explains our practices in clear, student-friendly language.

@@ -29,7 +29,7 @@ const Terms = () => {
               Terms & Conditions
             </h1>
             <p className="text-muted-foreground">
-              Last updated: {new Date().toLocaleDateString()}
+              Last updated: January 1, 2025
             </p>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Welcome to StudyHub! These Terms & Conditions govern your use of our platform. By creating an account or using StudyHub, you agree to these terms. Please read them carefully.
