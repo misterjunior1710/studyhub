@@ -33,11 +33,26 @@ const CATEGORIES = [{
   value: "account",
   label: "Account Help"
 }, {
+  value: "login",
+  label: "Login Problems"
+}, {
+  value: "password",
+  label: "Password Reset"
+}, {
   value: "bug",
   label: "Bug Report"
 }, {
   value: "feature",
   label: "Feature Request"
+}, {
+  value: "groups",
+  label: "Study Groups"
+}, {
+  value: "content",
+  label: "Content Issues"
+}, {
+  value: "moderation",
+  label: "Moderation Appeal"
 }, {
   value: "other",
   label: "Other"

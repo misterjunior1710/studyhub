@@ -25,8 +25,11 @@ import {
   Loader2,
   Layers,
   ClipboardList,
-  Network
+  Network,
+  Settings2
 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Slider } from "@/components/ui/slider";
 import { format, startOfWeek, endOfWeek, isToday } from "date-fns";
 import { FlashcardSystem } from "@/components/study/FlashcardSystem";
 import { QuizSystem } from "@/components/study/QuizSystem";
@@ -49,18 +52,21 @@ interface ProfileSettings {
   streak_days: number;
 }
 
-const FOCUS_DURATION = 25 * 60;
-const BREAK_DURATION = 5 * 60;
+const DEFAULT_FOCUS_DURATION = 25 * 60;
+const DEFAULT_BREAK_DURATION = 5 * 60;
 
 const StudyMode = () => {
   const navigate = useNavigate();
   const { user, isLoading: authLoading } = useAuth();
   const queryClient = useQueryClient();
   
-  const [timeRemaining, setTimeRemaining] = useState(FOCUS_DURATION);
+  const [focusDuration, setFocusDuration] = useState(DEFAULT_FOCUS_DURATION);
+  const [breakDuration, setBreakDuration] = useState(DEFAULT_BREAK_DURATION);
+  const [timeRemaining, setTimeRemaining] = useState(DEFAULT_FOCUS_DURATION);
   const [isRunning, setIsRunning] = useState(false);
   const [sessionType, setSessionType] = useState<"focus" | "break">("focus");
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [showTimerSettings, setShowTimerSettings] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const sessionStartRef = useRef<Date | null>(null);
 
@@ -155,15 +161,15 @@ const StudyMode = () => {
     }
     setCurrentSessionId(null);
     sessionStartRef.current = null;
-    setTimeRemaining(sessionType === "focus" ? FOCUS_DURATION : BREAK_DURATION);
-  }, [currentSessionId, sessionType, updateSession]);
+    setTimeRemaining(sessionType === "focus" ? focusDuration : breakDuration);
+  }, [currentSessionId, sessionType, updateSession, focusDuration, breakDuration]);
 
   const resetTimer = useCallback(() => {
     setIsRunning(false);
     setCurrentSessionId(null);
     sessionStartRef.current = null;
-    setTimeRemaining(sessionType === "focus" ? FOCUS_DURATION : BREAK_DURATION);
-  }, [sessionType]);
+    setTimeRemaining(sessionType === "focus" ? focusDuration : breakDuration);
+  }, [sessionType, focusDuration, breakDuration]);
 
   const switchSessionType = useCallback((type: "focus" | "break") => {
     if (isRunning) {
@@ -171,8 +177,18 @@ const StudyMode = () => {
       return;
     }
     setSessionType(type);
-    setTimeRemaining(type === "focus" ? FOCUS_DURATION : BREAK_DURATION);
-  }, [isRunning]);
+    setTimeRemaining(type === "focus" ? focusDuration : breakDuration);
+  }, [isRunning, focusDuration, breakDuration]);
+
+  const updateTimerDurations = useCallback((newFocus: number, newBreak: number) => {
+    setFocusDuration(newFocus);
+    setBreakDuration(newBreak);
+    if (!isRunning) {
+      setTimeRemaining(sessionType === "focus" ? newFocus : newBreak);
+    }
+    setShowTimerSettings(false);
+    toast({ title: "Timer updated", description: `Focus: ${newFocus / 60}min, Break: ${newBreak / 60}min` });
+  }, [isRunning, sessionType]);
 
   useEffect(() => {
     if (isRunning) {
@@ -240,6 +256,26 @@ const StudyMode = () => {
                   <p className="text-muted-foreground mt-2">{sessionType === "focus" ? "Stay focused!" : "Take a break!"}</p>
                 </div>
                 <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3">
+                  <Popover open={showTimerSettings} onOpenChange={setShowTimerSettings}>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="icon" disabled={isRunning} title="Timer Settings">
+                        <Settings2 className="h-4 w-4" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-72">
+                      <div className="space-y-4">
+                        <h4 className="font-medium">Timer Settings</h4>
+                        <div className="space-y-2">
+                          <label className="text-sm">Focus: {focusDuration / 60} min</label>
+                          <Slider value={[focusDuration / 60]} min={5} max={60} step={5} onValueChange={([v]) => updateTimerDurations(v * 60, breakDuration)} />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm">Break: {breakDuration / 60} min</label>
+                          <Slider value={[breakDuration / 60]} min={1} max={30} step={1} onValueChange={([v]) => updateTimerDurations(focusDuration, v * 60)} />
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                   {!isRunning ? (
                     <Button onClick={startTimer} disabled={createSession.isPending} className="px-4 sm:px-6 h-10 sm:h-11">
                       {createSession.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Play className="h-4 w-4 mr-1.5" />Start</>}

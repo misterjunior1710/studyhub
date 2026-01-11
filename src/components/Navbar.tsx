@@ -48,7 +48,7 @@ const Navbar = ({
           <div className="flex items-center gap-2 sm:gap-6">
             <MobileNav />
             <h1 
-              className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent cursor-pointer" 
+              className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent cursor-pointer px-2 py-1 rounded-lg transition-colors hover:bg-accent/10" 
               onClick={() => navigate("/")}
             >
               StudyHub

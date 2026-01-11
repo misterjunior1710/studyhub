@@ -26,28 +26,40 @@ interface LeaderboardUser {
 }
 
 const fetchLeaderboardData = async () => {
+  // First, get admin user IDs to exclude from leaderboard
+  const { data: adminRoles } = await supabase
+    .from("user_roles")
+    .select("user_id")
+    .eq("role", "admin");
+  
+  const adminUserIds = adminRoles?.map(r => r.user_id) || [];
+
   const [pointsResult, streakResult, postsResult, userResult] = await Promise.all([
     supabase
       .from("public_profiles")
       .select("id, username, avatar_url, points, streak_days, country, grade")
       .order("points", { ascending: false })
-      .limit(3),
+      .limit(10), // Get more to filter out admins
     supabase
       .from("public_profiles")
       .select("id, username, avatar_url, points, streak_days, country, grade")
       .gt("streak_days", 0)
       .order("streak_days", { ascending: false })
-      .limit(3),
+      .limit(10),
     supabase
       .from("posts")
       .select("user_id, public_profiles!posts_user_id_fkey(id, username, avatar_url, points, streak_days, country, grade)"),
     supabase.auth.getUser(),
   ]);
 
-  // Process top posters
+  // Filter out admins from results
+  const filterAdmins = (users: LeaderboardUser[]) => 
+    users.filter(u => !adminUserIds.includes(u.id)).slice(0, 3);
+
+  // Process top posters (excluding admins)
   const postCounts: Record<string, { user: LeaderboardUser; count: number }> = {};
-  (postsResult.data || []).forEach((post: { public_profiles?: LeaderboardUser }) => {
-    if (post.public_profiles) {
+  (postsResult.data || []).forEach((post: { user_id: string; public_profiles?: LeaderboardUser }) => {
+    if (post.public_profiles && !adminUserIds.includes(post.user_id)) {
       const userId = post.public_profiles.id;
       if (!postCounts[userId]) {
         postCounts[userId] = { user: post.public_profiles, count: 0 };
@@ -65,8 +77,8 @@ const fetchLeaderboardData = async () => {
     }));
 
   return {
-    topUsers: (pointsResult.data || []) as LeaderboardUser[],
-    topStreak: (streakResult.data || []) as LeaderboardUser[],
+    topUsers: filterAdmins((pointsResult.data || []) as LeaderboardUser[]),
+    topStreak: filterAdmins((streakResult.data || []) as LeaderboardUser[]),
     topPosters,
     currentUserId: userResult.data.user?.id || null,
   };

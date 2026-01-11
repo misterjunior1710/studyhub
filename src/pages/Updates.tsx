@@ -1,15 +1,30 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import { usePosts } from "@/hooks/usePosts";
 import Navbar from "@/components/Navbar";
 import PostSkeleton from "@/components/PostSkeleton";
 import PullToRefresh from "@/components/PullToRefresh";
 import SEOHead, { StructuredData } from "@/components/SEOHead";
 import CreateUpdatePostDialog from "@/components/CreateUpdatePostDialog";
+import EditUpdatePostDialog from "@/components/EditUpdatePostDialog";
 import { useAuth } from "@/contexts/AuthContext";
-import { Megaphone, Sparkles, Bug, Wrench, Calendar } from "lucide-react";
+import { Megaphone, Sparkles, Bug, Wrench, Calendar, Pencil, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 import { format } from "date-fns";
 
@@ -61,14 +76,19 @@ const updateTypeConfig = {
 };
 
 interface UpdateCardProps {
+  postId: string;
   title: string;
   content: string;
   createdAt: string;
+  subject: string;
   isVisible: boolean;
   index: number;
+  isAdmin: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-const UpdateCard = memo(({ title, content, createdAt, isVisible, index }: UpdateCardProps) => {
+const UpdateCard = memo(({ postId, title, content, createdAt, subject, isVisible, index, isAdmin, onEdit, onDelete }: UpdateCardProps) => {
   const updateType = getUpdateType(content);
   const config = updateTypeConfig[updateType];
   const Icon = config.icon;
@@ -94,10 +114,40 @@ const UpdateCard = memo(({ title, content, createdAt, isVisible, index }: Update
               {title}
             </h3>
           </div>
-          <Badge variant="outline" className={`shrink-0 ${config.className}`}>
-            <Icon className="h-3 w-3 mr-1" />
-            {config.label}
-          </Badge>
+          <div className="flex items-center gap-2 shrink-0">
+            <Badge variant="outline" className={config.className}>
+              <Icon className="h-3 w-3 mr-1" />
+              {config.label}
+            </Badge>
+            {isAdmin && (
+              <div className="flex gap-1">
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onEdit}>
+                  <Pencil className="h-3.5 w-3.5" />
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Update Post</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete "{title}"? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={onDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-2">
           <Calendar className="h-3 w-3" />
@@ -117,6 +167,7 @@ UpdateCard.displayName = "UpdateCard";
 
 const Updates = () => {
   const { user } = useAuth();
+  const [editingPost, setEditingPost] = useState<{ id: string; title: string; content: string; subject: string; createdAt: string } | null>(null);
   
   // Check if current user is the specific admin
   const isAdminUser = user?.email === "misterjunior1710@gmail.com";
@@ -128,6 +179,21 @@ const Updates = () => {
 
   const handleRefresh = async () => {
     await refetch();
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    try {
+      const { error } = await supabase
+        .from("posts")
+        .delete()
+        .eq("id", postId);
+
+      if (error) throw error;
+      toast.success("Update post deleted successfully");
+      refetch();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete post");
+    }
   };
   
   // Scroll reveal for cards
@@ -234,11 +300,22 @@ const Updates = () => {
                   {posts.map((post, index) => (
                     <UpdateCard
                       key={post.id}
+                      postId={post.id}
                       title={post.title}
                       content={post.content}
                       createdAt={post.created_at}
+                      subject={post.subject}
                       isVisible={cardsVisible}
                       index={index}
+                      isAdmin={isAdminUser}
+                      onEdit={() => setEditingPost({
+                        id: post.id,
+                        title: post.title,
+                        content: post.content,
+                        subject: post.subject,
+                        createdAt: post.created_at
+                      })}
+                      onDelete={() => handleDeletePost(post.id)}
                     />
                   ))}
                 </div>
@@ -247,6 +324,23 @@ const Updates = () => {
           </div>
         </main>
       </div>
+
+      {/* Edit Dialog */}
+      {editingPost && (
+        <EditUpdatePostDialog
+          postId={editingPost.id}
+          currentTitle={editingPost.title}
+          currentContent={editingPost.content}
+          currentCategory={editingPost.subject}
+          currentDate={editingPost.createdAt}
+          open={!!editingPost}
+          onOpenChange={(open) => !open && setEditingPost(null)}
+          onPostUpdated={() => {
+            setEditingPost(null);
+            refetch();
+          }}
+        />
+      )}
     </>
   );
 };

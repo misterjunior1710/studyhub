@@ -40,7 +40,7 @@ const CookieConsent = () => {
   if (!showBanner) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 left-4 sm:left-auto z-[100] animate-slide-up">
+    <div className="fixed bottom-4 right-4 left-4 sm:left-auto z-[100] animate-slide-up" style={{ position: 'fixed' }}>
       <Card className="sm:max-w-sm p-4 bg-card/95 backdrop-blur-md border-border/50 shadow-lg">
         <div className="space-y-3">
           <div className="flex items-start justify-between gap-2">
