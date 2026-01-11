@@ -10,6 +10,7 @@ import MobileNav from "./MobileNav";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "next-themes";
+import { useEasterEggs } from "./EasterEggs";
 
 interface NavbarProps {
   onPostCreated?: () => void;
@@ -21,6 +22,7 @@ const Navbar = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { theme, setTheme } = useTheme();
+  const { handleLogoClick } = useEasterEggs();
   const {
     user,
     username,
@@ -41,6 +43,11 @@ const Navbar = ({
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
+  const handleLogoClickWithNav = () => {
+    handleLogoClick();
+    navigate("/");
+  };
+
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-card/95">
       <div className="container mx-auto px-4">
@@ -48,8 +55,8 @@ const Navbar = ({
           <div className="flex items-center gap-2 sm:gap-6">
             <MobileNav />
             <h1 
-              className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent cursor-pointer px-2 py-1 rounded-lg transition-colors hover:bg-accent/10" 
-              onClick={() => navigate("/")}
+              className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent cursor-pointer px-2 py-1 rounded-lg transition-all hover:bg-accent/10 hover:scale-[1.02] active:scale-95" 
+              onClick={handleLogoClickWithNav}
             >
               StudyHub
             </h1>

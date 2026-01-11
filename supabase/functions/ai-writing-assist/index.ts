@@ -30,12 +30,12 @@ serve(async (req) => {
       );
     }
 
-    // Define prompts based on action
+    // Define prompts based on action - focused on STUDY-RELATED content only
     const prompts: Record<string, string> = {
-      improve: `Improve the following text to make it clearer, more professional, and better structured. Keep the same meaning and tone. Only return the improved text, nothing else:\n\n${text}`,
-      grammar: `Fix any grammar, spelling, and punctuation errors in the following text. Only return the corrected text, nothing else:\n\n${text}`,
-      summarize: `Summarize the following text in 2-3 concise sentences. Only return the summary, nothing else:\n\n${text}`,
-      simplify: `Rewrite the following text in simpler, easier-to-understand language while keeping the key information. Only return the simplified text, nothing else:\n\n${text}`,
+      improve: `You are an academic writing assistant for students. Improve the following STUDY-RELATED text to make it clearer, more academic, and better structured. Focus on educational content improvement only. If the text is not study-related (e.g., casual chat, off-topic content), politely indicate that and return the original text unchanged. Only return the improved text, nothing else:\n\n${text}`,
+      grammar: `You are an academic writing assistant for students. Fix any grammar, spelling, and punctuation errors in the following text. Focus on proper academic English. Only return the corrected text, nothing else:\n\n${text}`,
+      summarize: `You are an academic writing assistant for students. Summarize the following STUDY-RELATED text in 2-3 concise sentences suitable for revision notes. If the text is not study-related, indicate that briefly. Only return the summary, nothing else:\n\n${text}`,
+      simplify: `You are an academic writing assistant for students. Rewrite the following STUDY-RELATED text in simpler, easier-to-understand language while keeping the key educational concepts. Use language suitable for students. Only return the simplified text, nothing else:\n\n${text}`,
     };
 
     const prompt = prompts[action];
@@ -59,7 +59,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful writing assistant. Respond only with the requested text transformation, no explanations or additional text.',
+            content: 'You are an academic writing assistant exclusively for students on a study platform. Your purpose is to help with STUDY-RELATED content only - homework, essays, notes, academic writing, and educational materials. You should help improve, correct, summarize, or simplify academic text. If asked to help with non-academic or inappropriate content, politely decline and return the original text. Respond only with the requested text transformation, no explanations or additional text.',
           },
           {
             role: 'user',
