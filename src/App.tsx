@@ -21,7 +21,6 @@ import ProfileOnboarding from "./pages/ProfileOnboarding";
 import ProfileOnboardingGuard from "@/components/ProfileOnboardingGuard";
 
 // Lazy load non-critical pages for better initial load
-const Feed = lazy(() => import("./pages/Feed"));
 const Post = lazy(() => import("./pages/Post"));
 const Questions = lazy(() => import("./pages/Questions"));
 const Groups = lazy(() => import("./pages/Groups"));
@@ -118,7 +117,6 @@ const App = () => (
                     <PageTransition>
                       <Routes>
                         <Route path="/" element={<Index />} />
-                        <Route path="/feed" element={<Feed />} />
                         <Route path="/auth" element={<Auth />} />
                         <Route path="/profile-onboarding" element={<ProfileOnboarding />} />
                         <Route path="/post/:id" element={<Post />} />
