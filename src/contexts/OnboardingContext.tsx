@@ -25,7 +25,7 @@ const OnboardingContext = createContext<OnboardingContextType | null>(null);
 
 const ONBOARDING_TASKS: Omit<OnboardingTask, "completed">[] = [
   { id: "profile", label: "Complete your profile" },
-  { id: "browse", label: "Browse questions" },
+  { id: "browse", label: "Browse the study feed" },
   { id: "group", label: "Join or create a study group" },
   { id: "friend", label: "Add a friend" },
   { id: "post", label: "Create your first post" },
@@ -96,7 +96,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
       const updatedTasks: OnboardingTask[] = [
         { id: "profile", label: "Complete your profile", completed: profileComplete },
-        { id: "browse", label: "Browse questions", completed: browsedFeed },
+        { id: "browse", label: "Browse the study feed", completed: browsedFeed },
         { id: "group", label: "Join or create a study group", completed: joinedGroup },
         { id: "friend", label: "Add a friend", completed: addedFriend },
         { id: "post", label: "Create your first post", completed: createdPost },

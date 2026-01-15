@@ -31,7 +31,7 @@ const Index = () => {
 
   const handleGetStarted = () => {
     if (user) {
-      navigate("/questions");
+      navigate("/feed");
     } else {
       navigate("/auth");
     }
@@ -92,7 +92,7 @@ const Index = () => {
                 onClick={handleGetStarted}
                 className="gap-2 text-base px-8 py-6 btn-bounce hover-glow"
               >
-                {user ? "Browse Questions" : "Get Started"}
+                {user ? "Go to Feed" : "Get Started"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               {!user && (
@@ -261,7 +261,7 @@ const Index = () => {
               onClick={handleGetStarted}
               className="gap-2 btn-bounce hover-glow"
             >
-              {user ? "Browse Questions" : "Join StudyHub"}
+              {user ? "Browse Feed" : "Join StudyHub"}
               <ArrowRight className="h-4 w-4" />
             </Button>
             <Button 
