@@ -122,8 +122,6 @@ const Questions = () => {
           
           <nav className="mt-3 text-sm opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }} aria-label="Related pages">
             <span className="text-muted-foreground">See also: </span>
-            <a href="/feed" className="text-primary hover:underline">Home Feed</a>
-            <span className="text-muted-foreground mx-2">•</span>
             <a href="/groups" className="text-primary hover:underline">Study Groups</a>
             <span className="text-muted-foreground mx-2">•</span>
             <a href="/leaderboard" className="text-primary hover:underline">Leaderboard</a>
