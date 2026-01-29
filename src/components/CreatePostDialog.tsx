@@ -135,7 +135,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       });
 
       if (moderationResponse.error) {
-        console.error("Moderation error:", moderationResponse.error);
         // Continue anyway if moderation fails
       } else if (moderationResponse.data) {
         if (moderationResponse.data.isBanned) {
@@ -184,7 +183,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       });
 
       if (error) {
-        console.error("Post creation error:", error);
         throw error;
       }
 
@@ -279,7 +277,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
                 {file ? file.name : "Choose File"}
               </Button>
               {file && (
-                <Button type="button" variant="ghost" size="icon" onClick={removeFile}>
+                <Button type="button" variant="ghost" size="icon" onClick={removeFile} aria-label="Remove uploaded file">
                   <X className="h-4 w-4" />
                 </Button>
               )}

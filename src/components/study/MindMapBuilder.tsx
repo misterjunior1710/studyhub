@@ -222,11 +222,11 @@ export function MindMapBuilder() {
           </div>
           <div className="flex gap-2 items-center flex-wrap">
             <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
-              <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.min(z + 0.1, 2))} className="h-8 w-8">
+              <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.min(z + 0.1, 2))} className="h-8 w-8" aria-label="Zoom in">
                 <ZoomIn className="h-4 w-4" />
               </Button>
               <span className="text-xs font-mono px-2">{Math.round(zoom * 100)}%</span>
-              <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.max(z - 0.1, 0.5))} className="h-8 w-8">
+              <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.max(z - 0.1, 0.5))} className="h-8 w-8" aria-label="Zoom out">
                 <ZoomOut className="h-4 w-4" />
               </Button>
             </div>
@@ -338,6 +338,7 @@ export function MindMapBuilder() {
                       size="icon"
                       className="absolute -top-2 -right-2 h-6 w-6 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90 shadow-lg"
                       onClick={e => { e.stopPropagation(); deleteNodeMutation.mutate(node.id); }}
+                      aria-label="Delete node"
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>
@@ -408,7 +409,7 @@ export function MindMapBuilder() {
                   <h4 className="font-medium">{map.title}</h4>
                   {map.description && <p className="text-sm text-muted-foreground">{map.description}</p>}
                 </div>
-                <Button variant="ghost" size="icon" onClick={e => { e.stopPropagation(); deleteMapMutation.mutate(map.id); }}>
+                <Button variant="ghost" size="icon" onClick={e => { e.stopPropagation(); deleteMapMutation.mutate(map.id); }} aria-label="Delete mind map">
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>

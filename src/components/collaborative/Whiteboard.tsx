@@ -377,6 +377,7 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
               variant={tool === "select" ? "default" : "outline"}
               size="icon"
               onClick={() => setTool("select")}
+              aria-label="Select tool"
             >
               <MousePointer className="h-4 w-4" />
             </Button>
@@ -384,6 +385,7 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
               variant={tool === "pencil" ? "default" : "outline"}
               size="icon"
               onClick={() => setTool("pencil")}
+              aria-label="Pencil tool"
             >
               <Pencil className="h-4 w-4" />
             </Button>
@@ -391,6 +393,7 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
               variant={tool === "line" ? "default" : "outline"}
               size="icon"
               onClick={() => setTool("line")}
+              aria-label="Line tool"
             >
               <Minus className="h-4 w-4" />
             </Button>
@@ -398,6 +401,7 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
               variant={tool === "rectangle" ? "default" : "outline"}
               size="icon"
               onClick={() => setTool("rectangle")}
+              aria-label="Rectangle tool"
             >
               <Square className="h-4 w-4" />
             </Button>
@@ -405,6 +409,7 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
               variant={tool === "circle" ? "default" : "outline"}
               size="icon"
               onClick={() => setTool("circle")}
+              aria-label="Circle tool"
             >
               <Circle className="h-4 w-4" />
             </Button>
@@ -412,6 +417,7 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
               variant={tool === "text" ? "default" : "outline"}
               size="icon"
               onClick={() => setTool("text")}
+              aria-label="Text tool"
             >
               <Type className="h-4 w-4" />
             </Button>
@@ -419,6 +425,7 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
               variant={tool === "eraser" ? "default" : "outline"}
               size="icon"
               onClick={() => setTool("eraser")}
+              aria-label="Eraser tool"
             >
               <Eraser className="h-4 w-4" />
             </Button>
