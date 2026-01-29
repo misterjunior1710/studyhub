@@ -33,9 +33,12 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import { format, startOfWeek, endOfWeek, isToday } from "date-fns";
-import { FlashcardSystem } from "@/components/study/FlashcardSystem";
-import { QuizSystem } from "@/components/study/QuizSystem";
-import { MindMapBuilder } from "@/components/study/MindMapBuilder";
+import { lazy, Suspense } from "react";
+
+// Lazy load heavy study components to reduce initial bundle
+const FlashcardSystem = lazy(() => import("@/components/study/FlashcardSystem").then(m => ({ default: m.FlashcardSystem })));
+const QuizSystem = lazy(() => import("@/components/study/QuizSystem").then(m => ({ default: m.QuizSystem })));
+const MindMapBuilder = lazy(() => import("@/components/study/MindMapBuilder").then(m => ({ default: m.MindMapBuilder })));
 
 interface StudySession {
   id: string;
@@ -394,9 +397,21 @@ const StudyMode = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="flashcards"><FlashcardSystem /></TabsContent>
-          <TabsContent value="quizzes"><QuizSystem /></TabsContent>
-          <TabsContent value="mindmaps"><MindMapBuilder /></TabsContent>
+          <TabsContent value="flashcards">
+            <Suspense fallback={<div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+              <FlashcardSystem />
+            </Suspense>
+          </TabsContent>
+          <TabsContent value="quizzes">
+            <Suspense fallback={<div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+              <QuizSystem />
+            </Suspense>
+          </TabsContent>
+          <TabsContent value="mindmaps">
+            <Suspense fallback={<div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+              <MindMapBuilder />
+            </Suspense>
+          </TabsContent>
         </Tabs>
 
         {/* Engagement Verification Dialog */}

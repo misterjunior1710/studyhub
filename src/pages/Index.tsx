@@ -12,12 +12,10 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { useParallax } from "@/hooks/useParallax";
 
 const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const parallaxOffset = useParallax(0.3, 80);
 
   const structuredData = useMemo(() => ({
     "@context": "https://schema.org",
@@ -65,12 +63,9 @@ const Index = () => {
       
       {/* Hero Section */}
       <header className="relative overflow-hidden">
-        {/* Soft gradient background with parallax */}
-        <div 
-          className="absolute inset-0 bg-gradient-to-br from-primary/8 via-accent/5 to-background"
-          style={{ transform: `translateY(${parallaxOffset}px)` }}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.1),transparent_50%)]" />
+        {/* CSS-only gradient background for performance - no JS animation */}
+        <div className="absolute inset-0 hero-gradient-bg" />
+        <div className="absolute inset-0 hero-radial-bg" />
         
         <div className="relative container mx-auto px-4 py-16 sm:py-24 md:py-32">
           <div className="max-w-3xl mx-auto text-center">

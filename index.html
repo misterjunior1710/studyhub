@@ -15,6 +15,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
+    <!-- Non-blocking font loading with font-display: swap -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=EB+Garamond:wght@400;500;600;700&family=Fira+Code:wght@400;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=EB+Garamond:wght@400;500;600;700&family=Fira+Code:wght@400;700&display=swap" media="print" onload="this.media='all'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=EB+Garamond:wght@400;500;600;700&family=Fira+Code:wght@400;700&display=swap" />
+    </noscript>
+    
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://studyhub.world/" />
@@ -29,8 +36,44 @@
     <meta name="twitter:description" content="Get free homework help from students worldwide. Join study groups, ask questions, get answers fast. Math help, science help, essay help. Free online tutoring." />
     <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/T6FlWUVm6DYTgcsVHeiIqQYaN6A2/social-images/social-1764745412327-Screenshot 2025-12-03 123228.png">
     
-    <!-- Loading skeleton styles - prevents white flash -->
+    <!-- Critical CSS for hero section - inlined to prevent render blocking -->
     <style>
+      /* Font fallback while loading */
+      body {
+        font-family: 'Lato', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      }
+      
+      /* Critical hero gradient - CSS-only, no JS */
+      .hero-gradient-bg {
+        background: linear-gradient(135deg, 
+          hsl(243 75% 58% / 0.08) 0%, 
+          hsl(215 20% 65% / 0.05) 50%, 
+          transparent 100%);
+      }
+      .hero-radial-bg {
+        background: radial-gradient(ellipse at top, hsl(243 75% 58% / 0.1), transparent 50%);
+      }
+      
+      /* Dark mode hero gradients */
+      .dark .hero-gradient-bg {
+        background: linear-gradient(135deg, 
+          hsl(234 89% 73% / 0.08) 0%, 
+          hsl(261 72% 22% / 0.05) 50%, 
+          transparent 100%);
+      }
+      .dark .hero-radial-bg {
+        background: radial-gradient(ellipse at top, hsl(234 89% 73% / 0.1), transparent 50%);
+      }
+      
+      /* Critical hero animations - CSS only */
+      @keyframes hero-fade-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-hero-fade-up {
+        animation: hero-fade-up 0.5s ease-out forwards;
+      }
+      
       /* Hide SEO fallback content only - not React rendered content */
       #root > .seo-fallback {
         display: none !important;
@@ -41,7 +84,7 @@
         position: fixed;
         inset: 0;
         z-index: 9999;
-        background: hsl(0 0% 100%);
+        background: hsl(0 0% 96%);
         display: flex;
         flex-direction: column;
         transition: opacity 0.3s ease-out;
@@ -50,38 +93,38 @@
       /* Dark mode support - OS preference */
       @media (prefers-color-scheme: dark) {
         #loading-skeleton {
-          background: hsl(240 10% 4%);
+          background: hsl(0 0% 9%);
         }
         #loading-skeleton .skeleton-bar {
-          background: hsl(240 4% 16%);
+          background: hsl(0 0% 14%);
         }
         #loading-skeleton .skeleton-nav {
-          border-color: hsl(240 4% 16%);
+          border-color: hsl(0 0% 32%);
         }
       }
       
       /* Dark mode support - .dark class on html */
       .dark #loading-skeleton {
-        background: hsl(240 10% 4%);
+        background: hsl(0 0% 9%);
       }
       .dark #loading-skeleton .skeleton-bar {
-        background: hsl(240 4% 16%);
+        background: hsl(0 0% 14%);
       }
       .dark #loading-skeleton .skeleton-nav {
-        border-color: hsl(240 4% 16%);
+        border-color: hsl(0 0% 32%);
       }
       
       .skeleton-bar {
-        background: hsl(240 6% 90%);
+        background: hsl(0 0% 90%);
         border-radius: 8px;
-        animation: skeleton-pulse 1.5s ease-in-out infinite;
+        animation: skeleton-shimmer 1.5s ease-in-out infinite;
       }
       
       .skeleton-nav {
-        border-bottom: 1px solid hsl(240 6% 90%);
+        border-bottom: 1px solid hsl(0 0% 83%);
       }
       
-      @keyframes skeleton-pulse {
+      @keyframes skeleton-shimmer {
         0%, 100% { opacity: 1; }
         50% { opacity: 0.5; }
       }
