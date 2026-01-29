@@ -76,9 +76,6 @@ export function useEasterEggs() {
       document.body.classList.remove("party-mode");
       setPartyMode(false);
     }, 3000);
-
-    // Log for fun
-    console.log("%c🎮 KONAMI CODE UNLOCKED! 🎮", "font-size: 24px; color: gold; text-shadow: 2px 2px 0 #000;");
   };
 
   const triggerLogoEaster = () => {
@@ -87,7 +84,6 @@ export function useEasterEggs() {
       description: randomTip,
       duration: 6000,
     });
-    console.log("%c📚 SECRET TIP: " + randomTip, "font-size: 14px; color: #4CAF50;");
   };
 
   return {

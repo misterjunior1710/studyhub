@@ -218,6 +218,7 @@ const GroupTools = () => {
             variant="ghost"
             size="icon"
             onClick={() => navigate(`/groups/${id}`)}
+            aria-label="Back to group chat"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -290,6 +291,7 @@ const GroupTools = () => {
                                   e.stopPropagation();
                                   deleteWhiteboard(wb.id);
                                 }}
+                                aria-label="Delete whiteboard"
                               >
                                 <Trash2 className="h-3 w-3" />
                               </Button>
@@ -367,6 +369,7 @@ const GroupTools = () => {
                                   e.stopPropagation();
                                   deleteDoc(doc.id);
                                 }}
+                                aria-label="Delete document"
                               >
                                 <Trash2 className="h-3 w-3" />
                               </Button>
