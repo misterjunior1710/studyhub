@@ -208,6 +208,8 @@ const Support = () => {
                       <FormMessage />
                     </FormItem>} />
 
+                <div className="cf-turnstile" data-sitekey="0x4AAAAAACiGuBHNKghgkkXH"></div>
+
                 <Button type="submit" className="w-full" disabled={isSubmitting}>
                   {isSubmitting ? "Sending..." : <>
                       <Send className="h-4 w-4 mr-2" />
