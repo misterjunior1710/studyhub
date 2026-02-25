@@ -138,6 +138,13 @@ const Auth = () => {
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validate Turnstile token
+    const turnstileToken = document.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value;
+    if (!turnstileToken) {
+      toast.error("Please complete the CAPTCHA verification.");
+      return;
+    }
+
     // Validate email format
     const emailResult = emailSchema.safeParse(email);
     if (!emailResult.success) {
@@ -260,6 +267,7 @@ const Auth = () => {
                   <Label htmlFor="login-password">Password</Label>
                   <Input id="login-password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
                 </div>
+                <div className="cf-turnstile" data-sitekey="0x4AAAAAACiGuBHNKghgkkXH"></div>
                 <Button type="submit" className="w-full btn-bounce" disabled={loading}>
                   {loading ? <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
