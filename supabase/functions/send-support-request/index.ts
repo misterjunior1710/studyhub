@@ -13,6 +13,7 @@ interface SupportRequest {
   category: string;
   subject: string;
   message: string;
+  turnstileToken: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -22,15 +23,39 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email, category, subject, message }: SupportRequest = await req.json();
+    const { name, email, category, subject, message, turnstileToken }: SupportRequest = await req.json();
 
     // Validate required fields
     if (!name || !email || !category || !subject || !message) {
-      console.error("Missing required fields:", { name, email, category, subject, message: !!message });
       return new Response(
         JSON.stringify({ error: "All fields are required" }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
+    }
+
+    // Verify Turnstile token
+    if (!turnstileToken) {
+      return new Response(
+        JSON.stringify({ error: "CAPTCHA verification required" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    const turnstileSecret = Deno.env.get("TURNSTILE_SECRET_KEY");
+    if (turnstileSecret) {
+      const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ secret: turnstileSecret, response: turnstileToken }),
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success) {
+        console.error("Turnstile verification failed:", verifyData);
+        return new Response(
+          JSON.stringify({ error: "CAPTCHA verification failed" }),
+          { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
     }
 
     // Basic email validation
