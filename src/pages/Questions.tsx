@@ -99,19 +99,19 @@ const Questions = () => {
       <Navbar onPostCreated={invalidatePosts} />
       <main className="container mx-auto px-4 py-8">
         <header className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent opacity-0 animate-hero-fade-up">
-            Academic Questions
-          </h1>
-          <p className="text-muted-foreground max-w-2xl opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
-            Stuck on a problem? Post your question and get help from students around the world. 
-            Whether it's calculus, chemistry, or creative writing, the community is here to help.
-          </p>
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent opacity-0 animate-hero-fade-up">
+              Got a Question? Ask Away.
+            </h1>
+            <p className="text-muted-foreground max-w-2xl opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
+              Stuck on a problem? Post your doubt and get help from students around the world. 
+              Whether it's calculus, chemistry, or creative writing — someone here has your back.
+            </p>
           
           <div className="max-w-2xl mt-4 opacity-0 animate-hero-fade-up" style={{ animationDelay: "150ms" }}>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search questions, topics..."
+                placeholder="Search for a topic, subject, or keyword..."
                 className="pl-10 pr-4 py-5"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
@@ -136,13 +136,13 @@ const Questions = () => {
               <PostSkeletonList count={4} />
             ) : allPosts.length === 0 ? (
               <div className="text-center py-12">
-                <h2 className="text-lg font-semibold mb-2">No questions posted yet</h2>
+                <h2 className="text-lg font-semibold mb-2">No questions yet — be the first! 🎯</h2>
                 <p className="text-muted-foreground mb-4">
-                  Be the first to ask! Click the post button in the navigation to ask your question.
+                  Hit the Create Post button up top and drop your question.
                 </p>
                 <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                  Questions can be about any academic subject — homework help, exam preparation, 
-                  concept explanations, or study strategies. The community is ready to assist.
+                  Ask about anything — homework, exam prep, tricky concepts, study strategies. 
+                  The community is ready to help.
                 </p>
               </div>
             ) : (

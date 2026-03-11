@@ -86,7 +86,7 @@ const Auth = () => {
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!country || !grade || !stream) {
-      toast.error("Please fill in all fields");
+      toast.error("Almost there — fill in all the fields first!");
       return;
     }
 
@@ -130,7 +130,7 @@ const Auth = () => {
       setGrade("");
       setStream("");
     } catch (error: any) {
-      toast.error(error.message || "Failed to create account");
+      toast.error(error.message || "Something went wrong creating your account. Try again!");
     } finally {
       setLoading(false);
     }
@@ -141,7 +141,7 @@ const Auth = () => {
     // Validate Turnstile token
     const turnstileToken = document.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value;
     if (!turnstileToken) {
-      toast.error("Please complete the CAPTCHA verification.");
+      toast.error("Quick — prove you're not a robot first! Complete the CAPTCHA.");
       return;
     }
 
@@ -160,13 +160,13 @@ const Auth = () => {
         password
       });
       if (error) throw error;
-      toast.success("Welcome back!");
+      toast.success("Welcome back! Let's get studying 💪");
       navigate("/");
     } catch (error: any) {
       if (error.message?.includes("Email not confirmed")) {
-        toast.error("Please verify your email before signing in. Check your inbox for the verification link.");
+        toast.error("Hold on — you need to verify your email first. Check your inbox for the link!");
       } else {
-        toast.error(error.message || "Failed to sign in");
+        toast.error(error.message || "Couldn't sign you in. Give it another shot!");
       }
     } finally {
       setLoading(false);
@@ -192,11 +192,11 @@ const Auth = () => {
         }
       });
       if (error) throw error;
-      toast.success("Verification email sent! Please check your inbox and spam folder.");
+      toast.success("Verification email sent! Check your inbox (and spam folder, just in case).");
       setResendEmail("");
       setShowResendForm(false);
     } catch (error: any) {
-      toast.error(error.message || "Failed to resend verification email");
+      toast.error(error.message || "Couldn't resend the email. Try again in a moment.");
     } finally {
       setResendLoading(false);
     }
@@ -214,7 +214,7 @@ const Auth = () => {
       });
       if (error) throw error;
     } catch (error: any) {
-      toast.error(error.message || "Failed to sign in with Google");
+      toast.error(error.message || "Google sign-in didn't work. Try again?");
     }
   };
   return <main className="min-h-screen flex flex-col">
@@ -248,7 +248,7 @@ const Auth = () => {
               <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 StudyHub
               </CardTitle>
-              <CardDescription>Join the global study community</CardDescription>
+              <CardDescription>Your study crew is waiting 📚</CardDescription>
             </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" ref={tabsRef}>
@@ -260,8 +260,8 @@ const Auth = () => {
             <TabsContent value="login">
               <form onSubmit={handleEmailSignIn} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
-                  <Input id="login-email" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
+                   <Label htmlFor="login-email">Email</Label>
+                  <Input id="login-email" type="email" placeholder="you@school.edu" value={email} onChange={e => setEmail(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="login-password">Password</Label>
@@ -280,7 +280,7 @@ const Auth = () => {
                     <span className="w-full border-t border-border" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">or continue with</span>
+                    <span className="bg-card px-2 text-muted-foreground">or jump in with</span>
                   </div>
                 </div>
 
@@ -327,12 +327,12 @@ const Auth = () => {
                   className="w-full text-sm" 
                   onClick={() => setShowResendForm(true)}
                 >
-                  Didn't receive verification email?
+                  Didn't get the verification email?
                 </Button>
               ) : (
                 <form onSubmit={handleResendVerification} className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border animate-fade-in">
-                  <p className="text-sm text-muted-foreground">
-                    Enter your email to resend the verification link
+                   <p className="text-sm text-muted-foreground">
+                    Pop your email in and we'll send the link again
                   </p>
                   <Input 
                     type="email" 
@@ -377,11 +377,11 @@ const Auth = () => {
               <form onSubmit={handleEmailSignUp} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signup-username">Username</Label>
-                  <Input id="signup-username" type="text" placeholder="johndoe" value={username} onChange={e => setUsername(e.target.value)} required />
+                  <Input id="signup-username" type="text" placeholder="studyking99" value={username} onChange={e => setUsername(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
-                  <Input id="signup-email" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
+                  <Input id="signup-email" type="email" placeholder="you@school.edu" value={email} onChange={e => setEmail(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
@@ -435,7 +435,7 @@ const Auth = () => {
                 <Button type="submit" className="w-full btn-bounce" disabled={loading}>
                   {loading ? <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating account...
+                       Setting you up...
                     </> : "Create Account"}
                 </Button>
 
@@ -444,7 +444,7 @@ const Auth = () => {
                     <span className="w-full border-t border-border" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">or continue with</span>
+                    <span className="bg-card px-2 text-muted-foreground">or jump in with</span>
                   </div>
                 </div>
 
@@ -490,11 +490,11 @@ const Auth = () => {
           {/* Additional SEO content below card */}
           <aside className="mt-6 text-center text-sm text-muted-foreground">
             <p className="mb-3">
-              Already have questions? <Link to="/" className="text-primary hover:underline font-medium">Browse the community</Link> or 
-              check the <Link to="/leaderboard" className="text-primary hover:underline font-medium">top students</Link>.
+              Got questions already? <Link to="/" className="text-primary hover:underline font-medium">Check out what others are asking</Link> or 
+              see who's at the <Link to="/leaderboard" className="text-primary hover:underline font-medium">top of the leaderboard</Link>.
             </p>
             <p>
-              Need help? Visit our <Link to="/support" className="text-primary hover:underline">Support Center</Link>.
+              Stuck? Hit up our <Link to="/support" className="text-primary hover:underline">Support page</Link>.
             </p>
           </aside>
         </article>

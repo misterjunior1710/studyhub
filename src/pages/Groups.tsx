@@ -137,7 +137,7 @@ const Groups = () => {
               Study Groups
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground max-w-xl opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
-              Create or join study groups to collaborate with fellow students.
+              Team up with other students. Create a group, join one, and study together in real time.
             </p>
             <nav className="mt-2 sm:mt-3 text-xs sm:text-sm hidden sm:block opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }} aria-label="Related pages">
               <span className="text-muted-foreground">Explore: </span>
@@ -169,10 +169,10 @@ const Groups = () => {
                 <Card className="text-center py-12">
                   <CardContent>
                     <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" aria-hidden="true" />
-                    <h2 className="text-xl font-semibold mb-2">No study groups yet</h2>
+                    <h2 className="text-xl font-semibold mb-2">You're not in any groups yet</h2>
                     <p className="text-muted-foreground mb-4 max-w-md mx-auto">
-                      Create your first study group or browse existing groups to join. 
-                      Collaborate with other students and learn together.
+                      Start your own study squad or browse existing groups. 
+                      Studying is way more fun (and effective) with others.
                     </p>
                     <CreateGroupDialog onGroupCreated={handleGroupCreated} />
                   </CardContent>

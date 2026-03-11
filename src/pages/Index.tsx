@@ -37,7 +37,7 @@ const Index = () => {
 
   // Quick action cards - different for logged in vs logged out users
   const quickActions = user ? [
-    { icon: MessageSquare, label: "Ask a Question", href: "/questions", color: "from-primary to-accent" },
+    { icon: MessageSquare, label: "Ask a Doubt", href: "/questions", color: "from-primary to-accent" },
     { icon: Users, label: "Your Groups", href: "/groups", color: "from-accent to-primary" },
     { icon: Bookmark, label: "Saved Posts", href: "/saved", color: "from-info to-primary" },
     { icon: Brain, label: "Study Mode", href: "/study", color: "from-success to-info" },
@@ -72,13 +72,13 @@ const Index = () => {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight opacity-0 animate-hero-fade-up">
               Study Smarter,{" "}
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Win Harder
+                Ace Everything
               </span>
             </h1>
             
             <p className="text-muted-foreground text-base sm:text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
-              A calm space for students to connect, share knowledge, and help each other succeed. 
-              Join a global community focused on learning together.
+              The place where students help students. Ask doubts, share notes, prep for exams, 
+              and actually enjoy studying (yes, really). Join a global crew of learners.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 justify-center opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
@@ -87,7 +87,7 @@ const Index = () => {
                 onClick={handleGetStarted}
                 className="gap-2 text-base px-8 py-6 btn-bounce hover-glow"
               >
-                {user ? "Go to Feed" : "Get Started"}
+                {user ? "Jump to Feed" : "Get Started — It's Free"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               {!user && (
@@ -98,7 +98,7 @@ const Index = () => {
                   className="gap-2 text-base px-8 py-6 btn-bounce"
                 >
                   <Zap className="h-4 w-4" />
-                  Explore First
+                  Browse First
                 </Button>
               )}
             </div>
@@ -133,7 +133,7 @@ const Index = () => {
       <section className="border-y border-border bg-muted/30">
         <div className="container mx-auto px-4 py-8 sm:py-12">
           <p className="text-center text-muted-foreground text-sm sm:text-base">
-            Trusted by students from around the world
+            Used by students across 16+ countries — and counting 🌍
           </p>
         </div>
       </section>
@@ -145,14 +145,14 @@ const Index = () => {
             <h2 
               className={`text-2xl sm:text-3xl font-bold mb-4 ${featuresVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
             >
-              What is StudyHub?
+              What's StudyHub?
             </h2>
             <p 
               className={`text-muted-foreground max-w-2xl mx-auto ${featuresVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
               style={{ animationDelay: "100ms" }}
             >
-              A platform designed for focused learning and genuine peer support. 
-              No distractions, just students helping students.
+              Think of it as your study buddy that never sleeps. No distractions, 
+              no nonsense — just students helping students crush their goals.
             </p>
           </div>
 
@@ -160,18 +160,18 @@ const Index = () => {
             {[
               {
                 icon: BookOpen,
-                title: "Share Knowledge",
-                description: "Post questions, share study materials, and learn from peers across all subjects."
+                title: "Share & Learn",
+                description: "Post questions, drop your notes, and learn from classmates across every subject imaginable."
               },
               {
                 icon: Users,
-                title: "Study Groups",
-                description: "Join or create groups for collaborative learning and real-time discussions."
+                title: "Study Squads",
+                description: "Team up in groups for real-time discussions, group study sessions, and exam prep."
               },
               {
                 icon: Trophy,
-                title: "Stay Motivated",
-                description: "Track your progress, earn points, and maintain study streaks."
+                title: "Stay on Track",
+                description: "Build streaks, earn XP, climb the leaderboard — because a little competition never hurt anyone. 😏"
               }
             ].map((feature, index) => (
               <div
@@ -203,9 +203,9 @@ const Index = () => {
 
           <div className="space-y-6">
             {[
-              { step: "1", text: "Sign up and set your grade, subjects, and learning goals" },
-              { step: "2", text: "Ask questions or browse posts from students worldwide" },
-              { step: "3", text: "Help others, earn points, and grow together" }
+              { step: "1", text: "Sign up (takes 30 seconds) and pick your grade, subjects, and goals" },
+              { step: "2", text: "Ask doubts or scroll through questions from students worldwide" },
+              { step: "3", text: "Help others out, rack up points, and level up together 🚀" }
             ].map((item, index) => (
               <div
                 key={item.step}
@@ -237,14 +237,14 @@ const Index = () => {
             className={`text-2xl sm:text-3xl font-bold mb-4 ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
             style={{ animationDelay: "100ms" }}
           >
-            Ready to start learning?
+            Ready to stop stressing and start studying?
           </h2>
           
           <p 
             className={`text-muted-foreground mb-8 max-w-md mx-auto ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
             style={{ animationDelay: "150ms" }}
           >
-            Join thousands of students who are already helping each other succeed.
+            Thousands of students are already here helping each other out. Your turn.
           </p>
           
           <div 
@@ -256,7 +256,7 @@ const Index = () => {
               onClick={handleGetStarted}
               className="gap-2 btn-bounce hover-glow"
             >
-              {user ? "Browse Feed" : "Join StudyHub"}
+              {user ? "Back to Feed" : "Join StudyHub — Free Forever"}
               <ArrowRight className="h-4 w-4" />
             </Button>
             <Button 

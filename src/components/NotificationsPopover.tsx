@@ -106,7 +106,7 @@ const NotificationsPopover = () => {
         <ScrollArea className="h-[300px]">
           {notifications.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
-              No notifications yet
+              No notifications yet — you're all caught up! ✨
             </p>
           ) : (
             <div className="space-y-2">

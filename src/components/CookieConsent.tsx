@@ -59,7 +59,7 @@ const CookieConsent = () => {
           </div>
           
           <p className="text-xs text-muted-foreground leading-relaxed">
-            We use cookies to enhance your experience.{" "}
+            We use cookies to make your experience better (not the chocolate chip kind, sadly).{" "}
             <Link to="/privacy" className="text-primary hover:underline">
               Learn more
             </Link>

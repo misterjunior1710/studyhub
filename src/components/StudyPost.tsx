@@ -246,7 +246,7 @@ const StudyPost = memo(({
 
   const handleVote = useCallback(async (voteType: "up" | "down") => {
     if (!user) {
-      toast.error("Please sign in to vote");
+      toast.error("Sign in first to vote!");
       navigate("/auth");
       return;
     }
@@ -266,13 +266,13 @@ const StudyPost = memo(({
       onVoteChange?.();
     } catch (error) {
       console.error("Vote error:", error);
-      toast.error("Failed to update vote");
+      toast.error("Vote didn't go through — try again");
     }
   }, [user, userVote, id, navigate, onVoteChange]);
 
   const handleBookmark = useCallback(async () => {
     if (!user) {
-      toast.error("Please sign in to bookmark");
+      toast.error("Sign in first to bookmark!");
       navigate("/auth");
       return;
     }
@@ -281,11 +281,11 @@ const StudyPost = memo(({
       if (isBookmarked) {
         await supabase.from("bookmarks").delete().eq("post_id", id).eq("user_id", user.id);
         setIsBookmarked(false);
-        toast.success("Bookmark removed");
+        toast.success("Removed from saved");
       } else {
         await supabase.from("bookmarks").insert({ post_id: id, user_id: user.id });
         setIsBookmarked(true);
-        toast.success("Post bookmarked!");
+        toast.success("Saved for later! 📌");
       }
     } catch (error) {
       console.error("Bookmark error:", error);
@@ -302,7 +302,7 @@ const StudyPost = memo(({
 
       if (error) throw error;
 
-      toast.success("Post deleted successfully");
+      toast.success("Post deleted");
       onVoteChange?.();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Failed to delete post";
@@ -324,7 +324,7 @@ const StudyPost = memo(({
 
       if (error) throw error;
 
-      toast.success("Post flagged for review");
+      toast.success("Flagged for review — thanks for keeping StudyHub clean!");
       onVoteChange?.();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Failed to flag post";
@@ -344,7 +344,7 @@ const StudyPost = memo(({
 
       if (error) throw error;
 
-      toast.success("Post hidden from public view");
+      toast.success("Post hidden from everyone");
       onVoteChange?.();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Failed to hide post";
@@ -535,7 +535,7 @@ const StudyPost = memo(({
                 onClick={() => setShowSignInDialog(true)}
               >
                 <LogIn className="h-4 w-4" aria-hidden="true" />
-                Sign in to interact
+                Sign in to join the conversation
               </Button>
               <Button variant="ghost" size="sm" className="gap-2" onClick={handleShare}>
                 <Share2 className="h-4 w-4" aria-hidden="true" />
@@ -569,7 +569,7 @@ const StudyPost = memo(({
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete this post?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete the post and all its comments.
+                    Heads up — this is permanent. The post and all its comments will be gone forever.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -590,10 +590,10 @@ const StudyPost = memo(({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <LogIn className="h-5 w-5" />
-              Sign In Required
+              Hold Up — You Need to Sign In
             </DialogTitle>
             <DialogDescription className="text-base pt-2">
-              Sign in to view full post, vote, or comment.
+              Sign in to see the full post, vote, comment, and more.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-3 pt-4">

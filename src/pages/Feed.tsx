@@ -85,14 +85,14 @@ const Feed = () => {
             Study Feed
           </h1>
           <p className="text-muted-foreground mb-4 opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
-            Explore posts from students around the world
+            See what students around the world are posting, asking, and sharing
           </p>
           
           <div className="max-w-2xl opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search questions, topics..."
+                placeholder="Search for topics, questions, subjects..."
                 className="pl-10 pr-4 py-5"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
@@ -173,9 +173,9 @@ const Feed = () => {
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-4">
                       <Sparkles className="h-8 w-8 text-primary" />
                     </div>
-                    <h2 className="text-lg font-semibold mb-2">No posts yet</h2>
+                     <h2 className="text-lg font-semibold mb-2">Nothing here yet!</h2>
                     <p className="text-muted-foreground mb-4">
-                      Be the first to share your knowledge or ask a question!
+                      Be the first to drop some knowledge or ask a question!
                     </p>
                   </div>
                 ) : (

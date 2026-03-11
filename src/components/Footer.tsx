@@ -12,13 +12,13 @@ const Footer = () => {
               StudyHub
             </h3>
             <p className="text-sm text-muted-foreground">
-              Study Smarter, Win Harder 🎯
+              Study Smarter, Ace Everything 🎯
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-3">
-            <h4 className="font-semibold text-foreground">Quick Links</h4>
+            <h4 className="font-semibold text-foreground">Explore</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link to="/" className="text-muted-foreground active:text-primary py-1 inline-block">
@@ -45,7 +45,7 @@ const Footer = () => {
 
           {/* Community */}
           <div className="space-y-3">
-            <h4 className="font-semibold text-foreground">Community</h4>
+            <h4 className="font-semibold text-foreground">Your Stuff</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link to="/friends" className="text-muted-foreground active:text-primary py-1 inline-block">
@@ -93,7 +93,7 @@ const Footer = () => {
             © {new Date().getFullYear()} StudyHub. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground flex items-center gap-1">
-            Made with <Heart className="h-4 w-4 text-destructive" /> for students
+            Built with <Heart className="h-4 w-4 text-destructive" /> by students, for students
           </p>
         </div>
       </div>

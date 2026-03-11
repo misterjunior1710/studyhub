@@ -108,13 +108,13 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     e.preventDefault();
     
     if (!title || !content || !subject || !grade || !stream || !country) {
-      toast.error("Please fill in all fields");
+      toast.error("Oops — fill in all the fields before posting!");
       return;
     }
 
     // Quick client-side link check
     if (containsLinks(title) || containsLinks(content)) {
-      toast.error("Links are not allowed in posts. Please remove any URLs.");
+      toast.error("No links allowed in posts — keep it original! Remove any URLs and try again.");
       return;
     }
 
@@ -124,12 +124,12 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        toast.error("You must be logged in to create a post");
+        toast.error("You need to be logged in to post");
         return;
       }
 
       // Content moderation check
-      toast.info("Checking content...");
+      toast.info("Running a quick check on your content...");
       const moderationResponse = await supabase.functions.invoke('moderate-content', {
         body: { title, content, userId: user.id }
       });
@@ -138,12 +138,12 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         // Continue anyway if moderation fails
       } else if (moderationResponse.data) {
         if (moderationResponse.data.isBanned) {
-          toast.error("Your account has been suspended. You cannot create posts.");
+          toast.error("Your account has been suspended — you can't create posts right now.");
           setLoading(false);
           return;
         }
         if (!moderationResponse.data.isAppropriate) {
-          toast.error(moderationResponse.data.reason || "Content not allowed");
+          toast.error(moderationResponse.data.reason || "That content isn't allowed — try rephrasing it");
           setLoading(false);
           return;
         }
@@ -186,7 +186,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         throw error;
       }
 
-      toast.success("Post created successfully!");
+      toast.success("Post is live! 🎉");
       completeTask("post");
       setTitle("");
       setContent("");
@@ -199,7 +199,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       setOpen(false);
       onPostCreated?.();
     } catch (error: any) {
-      toast.error(error.message || "Failed to create post");
+      toast.error(error.message || "Couldn't create your post — try again!");
     } finally {
       setLoading(false);
     }
@@ -215,9 +215,9 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create a Study Post</DialogTitle>
+         <DialogTitle>Create a Post</DialogTitle>
           <DialogDescription>
-            Share your questions, insights, or study materials with the community
+            Share a question, drop some notes, or start a discussion with the community
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -241,7 +241,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
             <Label htmlFor="title">Title</Label>
             <Input
               id="title"
-              placeholder="What's your question or topic?"
+              placeholder="What's on your mind? (Keep it study-related 📖)"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -253,12 +253,12 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
             <RichTextEditor
               content={content}
               onChange={setContent}
-              placeholder="Provide details, context, or your thoughts..."
+              placeholder="Give some context — the more detail, the better the answers..."
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="file">Upload File (PDF or JPG only)</Label>
+            <Label htmlFor="file">Attach a File (PDF or JPG — notes, screenshots, etc.)</Label>
             <div className="flex items-center gap-2">
               <Input
                 id="file"
@@ -367,8 +367,8 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
               <div className="flex items-center gap-2">
                 {isAnonymous ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                 <div>
-                  <Label htmlFor="anonymous" className="text-sm font-medium">Post Anonymously</Label>
-                  <p className="text-xs text-muted-foreground">Your username won't be shown</p>
+                   <Label htmlFor="anonymous" className="text-sm font-medium">Post Anonymously</Label>
+                  <p className="text-xs text-muted-foreground">Your name stays hidden — nobody will know it's you</p>
                 </div>
               </div>
               <Switch
@@ -382,8 +382,8 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
               <div className="flex items-center gap-2">
                 <BellOff className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <Label htmlFor="quietMode" className="text-sm font-medium">Quiet Mode</Label>
-                  <p className="text-xs text-muted-foreground">Don't notify me about replies</p>
+                   <Label htmlFor="quietMode" className="text-sm font-medium">Quiet Mode</Label>
+                  <p className="text-xs text-muted-foreground">Skip notifications for replies on this post</p>
                 </div>
               </div>
               <Switch
