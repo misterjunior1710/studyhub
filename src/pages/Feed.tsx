@@ -85,7 +85,7 @@ const Feed = () => {
             Study Feed
           </h1>
           <p className="text-muted-foreground mb-4 opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
-            Explore posts from students around the world
+            See what students around the world are posting, asking, and sharing
           </p>
           
           <div className="max-w-2xl opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
