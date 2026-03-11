@@ -160,7 +160,7 @@ const Auth = () => {
         password
       });
       if (error) throw error;
-      toast.success("Welcome back!");
+      toast.success("Welcome back! Let's get studying 💪");
       navigate("/");
     } catch (error: any) {
       if (error.message?.includes("Email not confirmed")) {
