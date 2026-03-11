@@ -192,7 +192,7 @@ const Auth = () => {
         }
       });
       if (error) throw error;
-      toast.success("Verification email sent! Please check your inbox and spam folder.");
+      toast.success("Verification email sent! Check your inbox (and spam folder, just in case).");
       setResendEmail("");
       setShowResendForm(false);
     } catch (error: any) {
