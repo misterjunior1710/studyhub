@@ -246,7 +246,7 @@ const StudyPost = memo(({
 
   const handleVote = useCallback(async (voteType: "up" | "down") => {
     if (!user) {
-      toast.error("Please sign in to vote");
+      toast.error("Sign in first to vote!");
       navigate("/auth");
       return;
     }
