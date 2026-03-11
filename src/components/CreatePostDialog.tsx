@@ -215,9 +215,9 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create a Study Post</DialogTitle>
+         <DialogTitle>Create a Post</DialogTitle>
           <DialogDescription>
-            Share your questions, insights, or study materials with the community
+            Share a question, drop some notes, or start a discussion with the community
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
