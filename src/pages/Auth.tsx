@@ -130,7 +130,7 @@ const Auth = () => {
       setGrade("");
       setStream("");
     } catch (error: any) {
-      toast.error(error.message || "Failed to create account");
+      toast.error(error.message || "Something went wrong creating your account. Try again!");
     } finally {
       setLoading(false);
     }
