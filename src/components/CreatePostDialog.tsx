@@ -382,8 +382,8 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
               <div className="flex items-center gap-2">
                 <BellOff className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <Label htmlFor="quietMode" className="text-sm font-medium">Quiet Mode</Label>
-                  <p className="text-xs text-muted-foreground">Don't notify me about replies</p>
+                   <Label htmlFor="quietMode" className="text-sm font-medium">Quiet Mode</Label>
+                  <p className="text-xs text-muted-foreground">Skip notifications for replies on this post</p>
                 </div>
               </div>
               <Switch
