@@ -490,11 +490,11 @@ const Auth = () => {
           {/* Additional SEO content below card */}
           <aside className="mt-6 text-center text-sm text-muted-foreground">
             <p className="mb-3">
-              Already have questions? <Link to="/" className="text-primary hover:underline font-medium">Browse the community</Link> or 
-              check the <Link to="/leaderboard" className="text-primary hover:underline font-medium">top students</Link>.
+              Got questions already? <Link to="/" className="text-primary hover:underline font-medium">Check out what others are asking</Link> or 
+              see who's at the <Link to="/leaderboard" className="text-primary hover:underline font-medium">top of the leaderboard</Link>.
             </p>
             <p>
-              Need help? Visit our <Link to="/support" className="text-primary hover:underline">Support Center</Link>.
+              Stuck? Hit up our <Link to="/support" className="text-primary hover:underline">Support page</Link>.
             </p>
           </aside>
         </article>
