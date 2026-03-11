@@ -114,7 +114,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
 
     // Quick client-side link check
     if (containsLinks(title) || containsLinks(content)) {
-      toast.error("Links are not allowed in posts. Please remove any URLs.");
+      toast.error("No links allowed in posts — keep it original! Remove any URLs and try again.");
       return;
     }
 
