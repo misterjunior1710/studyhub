@@ -367,8 +367,8 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
               <div className="flex items-center gap-2">
                 {isAnonymous ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                 <div>
-                  <Label htmlFor="anonymous" className="text-sm font-medium">Post Anonymously</Label>
-                  <p className="text-xs text-muted-foreground">Your username won't be shown</p>
+                   <Label htmlFor="anonymous" className="text-sm font-medium">Post Anonymously</Label>
+                  <p className="text-xs text-muted-foreground">Your name stays hidden — nobody will know it's you</p>
                 </div>
               </div>
               <Switch
