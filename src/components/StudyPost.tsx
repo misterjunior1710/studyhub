@@ -535,7 +535,7 @@ const StudyPost = memo(({
                 onClick={() => setShowSignInDialog(true)}
               >
                 <LogIn className="h-4 w-4" aria-hidden="true" />
-                Sign in to interact
+                Sign in to join the conversation
               </Button>
               <Button variant="ghost" size="sm" className="gap-2" onClick={handleShare}>
                 <Share2 className="h-4 w-4" aria-hidden="true" />
