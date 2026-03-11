@@ -272,7 +272,7 @@ const StudyPost = memo(({
 
   const handleBookmark = useCallback(async () => {
     if (!user) {
-      toast.error("Please sign in to bookmark");
+      toast.error("Sign in first to bookmark!");
       navigate("/auth");
       return;
     }
