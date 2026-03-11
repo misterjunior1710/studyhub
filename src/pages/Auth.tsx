@@ -141,7 +141,7 @@ const Auth = () => {
     // Validate Turnstile token
     const turnstileToken = document.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value;
     if (!turnstileToken) {
-      toast.error("Please complete the CAPTCHA verification.");
+      toast.error("Quick — prove you're not a robot first! Complete the CAPTCHA.");
       return;
     }
 
