@@ -260,8 +260,8 @@ const Auth = () => {
             <TabsContent value="login">
               <form onSubmit={handleEmailSignIn} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
-                  <Input id="login-email" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
+                   <Label htmlFor="login-email">Email</Label>
+                  <Input id="login-email" type="email" placeholder="you@school.edu" value={email} onChange={e => setEmail(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="login-password">Password</Label>
