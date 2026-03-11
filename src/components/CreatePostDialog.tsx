@@ -124,7 +124,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        toast.error("You must be logged in to create a post");
+        toast.error("You need to be logged in to post");
         return;
       }
 
