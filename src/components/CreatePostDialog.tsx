@@ -108,7 +108,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     e.preventDefault();
     
     if (!title || !content || !subject || !grade || !stream || !country) {
-      toast.error("Please fill in all fields");
+      toast.error("Oops — fill in all the fields before posting!");
       return;
     }
 
