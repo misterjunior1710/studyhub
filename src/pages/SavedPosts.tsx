@@ -117,9 +117,9 @@ const SavedPosts = () => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-          <h1 className="text-3xl font-bold mb-2 opacity-0 animate-hero-fade-up">Saved Posts</h1>
+           <h1 className="text-3xl font-bold mb-2 opacity-0 animate-hero-fade-up">Saved Posts</h1>
           <p className="text-muted-foreground opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
-            Your bookmarked posts for quick access
+            Your bookmarked stuff — all in one place for quick revision
           </p>
         </div>
 
