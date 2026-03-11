@@ -569,7 +569,7 @@ const StudyPost = memo(({
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete this post?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete the post and all its comments.
+                    Heads up — this is permanent. The post and all its comments will be gone forever.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
