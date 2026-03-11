@@ -302,7 +302,7 @@ const StudyPost = memo(({
 
       if (error) throw error;
 
-      toast.success("Post deleted successfully");
+      toast.success("Post deleted");
       onVoteChange?.();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Failed to delete post";

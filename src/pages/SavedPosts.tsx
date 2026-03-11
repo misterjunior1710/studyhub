@@ -130,9 +130,9 @@ const SavedPosts = () => {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
               <Bookmark className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h2 className="text-lg font-semibold mb-2">No saved posts yet</h2>
+             <h2 className="text-lg font-semibold mb-2">Nothing saved yet</h2>
             <p className="text-muted-foreground mb-4 max-w-md mx-auto">
-              When you save a post, it will appear here for easy access later.
+              Hit the bookmark icon on any post to save it here for later.
             </p>
             <Button onClick={() => navigate("/")} variant="outline">
               Browse Posts

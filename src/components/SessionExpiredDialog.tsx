@@ -26,8 +26,8 @@ const SessionExpiredDialog = ({ open, onRefresh, onSignIn }: SessionExpiredDialo
           </div>
           <DialogTitle className="text-xl">Session Timed Out</DialogTitle>
           <DialogDescription className="text-base">
-            You've been inactive for a while. For your security, your session has expired.
-            Please refresh to continue or sign in again.
+            Looks like you've been away for a bit. For security, your session expired.
+            Hit refresh to pick up where you left off, or sign in again.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex-col gap-2 sm:flex-row sm:gap-2">

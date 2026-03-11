@@ -99,7 +99,7 @@ const ReportPostDialog = ({ postId, postTitle }: ReportPostDialogProps) => {
         <DialogHeader>
           <DialogTitle>Report Post</DialogTitle>
           <DialogDescription>
-            Help us maintain a safe community by reporting inappropriate content.
+            Help us keep StudyHub a safe space by flagging anything that doesn't belong.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">

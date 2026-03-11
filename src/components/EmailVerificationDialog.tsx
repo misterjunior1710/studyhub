@@ -30,17 +30,17 @@ const EmailVerificationDialog = ({
             </div>
           </div>
           <AlertDialogTitle className="text-2xl text-center">
-            Check Your Email Inbox!
+            Check Your Inbox! 📬
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center space-y-3">
             <p>
-              We've sent a verification link to:
+              We just sent a verification link to:
             </p>
             <p className="font-semibold text-foreground bg-muted px-3 py-2 rounded-md">
               {email}
             </p>
             <p className="text-sm">
-              Please click the link in the email to verify your account before logging in.
+              Click the link in that email to activate your account, then come back and log in. (Check spam if you don't see it!)
             </p>
           </AlertDialogDescription>
         </AlertDialogHeader>
