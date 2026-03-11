@@ -281,7 +281,7 @@ const StudyPost = memo(({
       if (isBookmarked) {
         await supabase.from("bookmarks").delete().eq("post_id", id).eq("user_id", user.id);
         setIsBookmarked(false);
-        toast.success("Bookmark removed");
+        toast.success("Removed from saved");
       } else {
         await supabase.from("bookmarks").insert({ post_id: id, user_id: user.id });
         setIsBookmarked(true);
