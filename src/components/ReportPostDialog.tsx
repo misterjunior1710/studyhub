@@ -76,7 +76,7 @@ const ReportPostDialog = ({ postId, postTitle }: ReportPostDialogProps) => {
 
       if (error) throw error;
 
-      toast.success("Report submitted. Thank you for helping keep our community safe!");
+      toast.success("Report submitted — thanks for keeping StudyHub safe! 🛡️");
       setReason("");
       setDetails("");
       setOpen(false);
