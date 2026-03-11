@@ -143,7 +143,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
           return;
         }
         if (!moderationResponse.data.isAppropriate) {
-          toast.error(moderationResponse.data.reason || "Content not allowed");
+          toast.error(moderationResponse.data.reason || "That content isn't allowed — try rephrasing it");
           setLoading(false);
           return;
         }
