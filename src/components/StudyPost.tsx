@@ -324,7 +324,7 @@ const StudyPost = memo(({
 
       if (error) throw error;
 
-      toast.success("Post flagged for review");
+      toast.success("Flagged for review — thanks for keeping StudyHub clean!");
       onVoteChange?.();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Failed to flag post";
