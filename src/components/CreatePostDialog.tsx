@@ -186,7 +186,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         throw error;
       }
 
-      toast.success("Post created successfully!");
+      toast.success("Post is live! 🎉");
       completeTask("post");
       setTitle("");
       setContent("");
