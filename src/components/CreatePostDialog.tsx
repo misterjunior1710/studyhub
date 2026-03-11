@@ -129,7 +129,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       }
 
       // Content moderation check
-      toast.info("Checking content...");
+      toast.info("Running a quick check on your content...");
       const moderationResponse = await supabase.functions.invoke('moderate-content', {
         body: { title, content, userId: user.id }
       });
