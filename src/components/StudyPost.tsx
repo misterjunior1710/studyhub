@@ -285,7 +285,7 @@ const StudyPost = memo(({
       } else {
         await supabase.from("bookmarks").insert({ post_id: id, user_id: user.id });
         setIsBookmarked(true);
-        toast.success("Post bookmarked!");
+        toast.success("Saved for later! 📌");
       }
     } catch (error) {
       console.error("Bookmark error:", error);
