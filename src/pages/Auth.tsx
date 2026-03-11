@@ -248,7 +248,7 @@ const Auth = () => {
               <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 StudyHub
               </CardTitle>
-              <CardDescription>Join the global study community</CardDescription>
+              <CardDescription>Your study crew is waiting 📚</CardDescription>
             </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" ref={tabsRef}>
