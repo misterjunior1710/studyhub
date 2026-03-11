@@ -137,7 +137,7 @@ const Groups = () => {
               Study Groups
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground max-w-xl opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
-              Create or join study groups to collaborate with fellow students.
+              Team up with other students. Create a group, join one, and study together in real time.
             </p>
             <nav className="mt-2 sm:mt-3 text-xs sm:text-sm hidden sm:block opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }} aria-label="Related pages">
               <span className="text-muted-foreground">Explore: </span>
