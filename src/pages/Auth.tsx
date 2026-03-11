@@ -214,7 +214,7 @@ const Auth = () => {
       });
       if (error) throw error;
     } catch (error: any) {
-      toast.error(error.message || "Failed to sign in with Google");
+      toast.error(error.message || "Google sign-in didn't work. Try again?");
     }
   };
   return <main className="min-h-screen flex flex-col">
