@@ -435,7 +435,7 @@ const Auth = () => {
                 <Button type="submit" className="w-full btn-bounce" disabled={loading}>
                   {loading ? <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating account...
+                       Setting you up...
                     </> : "Create Account"}
                 </Button>
 
