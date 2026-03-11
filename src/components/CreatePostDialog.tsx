@@ -138,7 +138,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         // Continue anyway if moderation fails
       } else if (moderationResponse.data) {
         if (moderationResponse.data.isBanned) {
-          toast.error("Your account has been suspended. You cannot create posts.");
+          toast.error("Your account has been suspended — you can't create posts right now.");
           setLoading(false);
           return;
         }
