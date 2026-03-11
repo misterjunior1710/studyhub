@@ -344,7 +344,7 @@ const StudyPost = memo(({
 
       if (error) throw error;
 
-      toast.success("Post hidden from public view");
+      toast.success("Post hidden from everyone");
       onVoteChange?.();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Failed to hide post";
