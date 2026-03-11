@@ -199,7 +199,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       setOpen(false);
       onPostCreated?.();
     } catch (error: any) {
-      toast.error(error.message || "Failed to create post");
+      toast.error(error.message || "Couldn't create your post — try again!");
     } finally {
       setLoading(false);
     }
