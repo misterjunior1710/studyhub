@@ -266,7 +266,7 @@ const StudyPost = memo(({
       onVoteChange?.();
     } catch (error) {
       console.error("Vote error:", error);
-      toast.error("Failed to update vote");
+      toast.error("Vote didn't go through — try again");
     }
   }, [user, userVote, id, navigate, onVoteChange]);
 
