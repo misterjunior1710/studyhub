@@ -196,7 +196,7 @@ const Auth = () => {
       setResendEmail("");
       setShowResendForm(false);
     } catch (error: any) {
-      toast.error(error.message || "Failed to resend verification email");
+      toast.error(error.message || "Couldn't resend the email. Try again in a moment.");
     } finally {
       setResendLoading(false);
     }
