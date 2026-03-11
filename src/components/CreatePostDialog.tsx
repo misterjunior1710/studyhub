@@ -241,7 +241,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
             <Label htmlFor="title">Title</Label>
             <Input
               id="title"
-              placeholder="What's your question or topic?"
+              placeholder="What's on your mind? (Keep it study-related 📖)"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
