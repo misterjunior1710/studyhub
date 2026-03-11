@@ -590,10 +590,10 @@ const StudyPost = memo(({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <LogIn className="h-5 w-5" />
-              Sign In Required
+              Hold Up — You Need to Sign In
             </DialogTitle>
             <DialogDescription className="text-base pt-2">
-              Sign in to view full post, vote, or comment.
+              Sign in to see the full post, vote, comment, and more.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-3 pt-4">

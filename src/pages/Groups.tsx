@@ -169,10 +169,10 @@ const Groups = () => {
                 <Card className="text-center py-12">
                   <CardContent>
                     <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" aria-hidden="true" />
-                    <h2 className="text-xl font-semibold mb-2">No study groups yet</h2>
+                    <h2 className="text-xl font-semibold mb-2">You're not in any groups yet</h2>
                     <p className="text-muted-foreground mb-4 max-w-md mx-auto">
-                      Create your first study group or browse existing groups to join. 
-                      Collaborate with other students and learn together.
+                      Start your own study squad or browse existing groups. 
+                      Studying is way more fun (and effective) with others.
                     </p>
                     <CreateGroupDialog onGroupCreated={handleGroupCreated} />
                   </CardContent>

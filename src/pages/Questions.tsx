@@ -136,13 +136,13 @@ const Questions = () => {
               <PostSkeletonList count={4} />
             ) : allPosts.length === 0 ? (
               <div className="text-center py-12">
-                <h2 className="text-lg font-semibold mb-2">No questions posted yet</h2>
+                <h2 className="text-lg font-semibold mb-2">No questions yet — be the first! 🎯</h2>
                 <p className="text-muted-foreground mb-4">
-                  Be the first to ask! Click the post button in the navigation to ask your question.
+                  Hit the Create Post button up top and drop your question.
                 </p>
                 <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                  Questions can be about any academic subject — homework help, exam preparation, 
-                  concept explanations, or study strategies. The community is ready to assist.
+                  Ask about anything — homework, exam prep, tricky concepts, study strategies. 
+                  The community is ready to help.
                 </p>
               </div>
             ) : (
