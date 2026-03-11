@@ -253,7 +253,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
             <RichTextEditor
               content={content}
               onChange={setContent}
-              placeholder="Provide details, context, or your thoughts..."
+              placeholder="Give some context — the more detail, the better the answers..."
             />
           </div>
 
