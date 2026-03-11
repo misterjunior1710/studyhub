@@ -15,32 +15,32 @@ const OnboardingWelcome = () => {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm mb-4">
             <GraduationCap className="h-10 w-10" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold mb-2">Welcome to StudyHub!</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-2">Welcome to StudyHub! 🎉</h2>
           <p className="text-white/90 text-sm sm:text-base">
-            Your journey to academic success starts here
+            You just made your future self very happy
           </p>
         </div>
 
         {/* Content */}
         <div className="p-6 space-y-6">
           <p className="text-muted-foreground text-center">
-            Connect with students worldwide, share knowledge, and ace your exams together. 
-            Let's get you started with a few quick steps!
+            Connect with students worldwide, share knowledge, and crush your exams together. 
+            Here's a quick look at what you can do:
           </p>
 
           {/* Feature highlights */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center gap-2 p-3 rounded-lg bg-secondary/50">
               <Users className="h-5 w-5 text-primary shrink-0" />
-              <span className="text-sm">Study Groups</span>
+              <span className="text-sm">Study Squads</span>
             </div>
             <div className="flex items-center gap-2 p-3 rounded-lg bg-secondary/50">
               <MessageCircle className="h-5 w-5 text-primary shrink-0" />
-              <span className="text-sm">Ask Questions</span>
+              <span className="text-sm">Ask Doubts</span>
             </div>
             <div className="flex items-center gap-2 p-3 rounded-lg bg-secondary/50">
               <BookOpen className="h-5 w-5 text-primary shrink-0" />
-              <span className="text-sm">Share Resources</span>
+              <span className="text-sm">Share Notes</span>
             </div>
             <div className="flex items-center gap-2 p-3 rounded-lg bg-secondary/50">
               <Sparkles className="h-5 w-5 text-primary shrink-0" />
@@ -53,7 +53,7 @@ const OnboardingWelcome = () => {
             className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
             size="lg"
           >
-            Get Started
+            Let's Go!
             <Sparkles className="ml-2 h-4 w-4" />
           </Button>
         </div>

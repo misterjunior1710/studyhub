@@ -33,7 +33,7 @@ const OnboardingChecklist = () => {
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
-              Getting Started
+              Your First Steps
             </CardTitle>
             <div className="flex items-center gap-1">
               <Button
