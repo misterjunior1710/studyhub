@@ -258,7 +258,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="file">Upload File (PDF or JPG only)</Label>
+            <Label htmlFor="file">Attach a File (PDF or JPG — notes, screenshots, etc.)</Label>
             <div className="flex items-center gap-2">
               <Input
                 id="file"
