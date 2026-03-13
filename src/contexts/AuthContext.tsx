@@ -148,7 +148,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUsername("");
         setProfileData({});
         setIsAdmin(false);
-        toast.error("Session expired. Please sign in again.");
+        toast.error("Your session expired — please log in again.");
         return;
       }
       
