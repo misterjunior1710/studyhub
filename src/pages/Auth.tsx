@@ -331,7 +331,7 @@ const Auth = () => {
               ) : (
                 <form onSubmit={handleResendVerification} className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border animate-fade-in">
                    <p className="text-sm text-muted-foreground">
-                    Pop your email in and we'll send the link again
+                    Enter your email and we'll fire off another verification link ✉️
                   </p>
                   <Input 
                     type="email" 
