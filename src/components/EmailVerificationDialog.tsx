@@ -30,7 +30,7 @@ const EmailVerificationDialog = ({
             </div>
           </div>
           <AlertDialogTitle className="text-2xl text-center">
-            Check Your Inbox! 📬
+            Almost There! 📬
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center space-y-3">
             <p>
@@ -40,13 +40,13 @@ const EmailVerificationDialog = ({
               {email}
             </p>
             <p className="text-sm">
-              Click the link in that email to activate your account, then come back and log in. (Check spam if you don't see it!)
+              Click the link in that email to activate your account, then come back and log in. Don't see it? Check your spam folder!
             </p>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="sm:justify-center">
           <Button onClick={onGoToLogin} className="w-full sm:w-auto">
-            Go to Login
+            Take Me to Login
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

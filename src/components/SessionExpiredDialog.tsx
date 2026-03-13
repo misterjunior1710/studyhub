@@ -44,7 +44,7 @@ const SessionExpiredDialog = ({ open, onRefresh, onSignIn }: SessionExpiredDialo
             className="w-full sm:w-auto gap-2"
           >
             <RefreshCw className="h-4 w-4" />
-            Refresh Session
+            Jump Back In
           </Button>
         </DialogFooter>
       </DialogContent>

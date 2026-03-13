@@ -242,7 +242,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         // Handle token refresh errors
         if (event === "TOKEN_REFRESHED" && !currentSession) {
-          toast.error("Session expired. Please sign in again.");
+          toast.error("Your session expired — please log in again.");
         }
       }
     );
