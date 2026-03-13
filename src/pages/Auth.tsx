@@ -417,8 +417,8 @@ const Auth = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="signup-stream">Stream</Label>
+                 <div className="space-y-2">
+                  <Label htmlFor="signup-stream">Curriculum / Board</Label>
                   <Select value={stream} onValueChange={setStream} required>
                     <SelectTrigger id="signup-stream">
                       <SelectValue placeholder="Select stream" />
