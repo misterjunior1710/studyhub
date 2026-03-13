@@ -192,11 +192,11 @@ const Auth = () => {
         }
       });
       if (error) throw error;
-      toast.success("Verification email sent! Check your inbox (and spam folder, just in case).");
+      toast.success("Email sent! Check your inbox — and peek in spam just in case 👀");
       setResendEmail("");
       setShowResendForm(false);
     } catch (error: any) {
-      toast.error(error.message || "Couldn't resend the email. Try again in a moment.");
+      toast.error(error.message || "Hmm, that didn't work. Wait a sec and try again.");
     } finally {
       setResendLoading(false);
     }
