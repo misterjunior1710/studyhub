@@ -476,10 +476,10 @@ const Auth = () => {
               </form>
 
               <p className="text-center text-xs text-muted-foreground mt-4">
-                By signing up, you agree to our{" "}
+                By joining, you agree to our{" "}
                 <Link to="/terms" className="text-primary hover:underline">Terms</Link>
-                {" "}and{" "}
-                <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
+                {" "}&{" "}
+                <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
               </p>
             </TabsContent>
           </Tabs>
