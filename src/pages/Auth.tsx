@@ -326,7 +326,7 @@ const Auth = () => {
                   className="w-full text-sm" 
                   onClick={() => setShowResendForm(true)}
                 >
-                  Didn't get the verification email?
+                  Didn't get the verification email? Tap here
                 </Button>
               ) : (
                 <form onSubmit={handleResendVerification} className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border animate-fade-in">
