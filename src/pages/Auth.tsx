@@ -358,13 +358,13 @@ const Auth = () => {
                       className="flex-1"
                       disabled={resendLoading}
                     >
-                      {resendLoading ? (
+                       {resendLoading ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           Sending...
                         </>
                       ) : (
-                        "Resend Email"
+                        "Resend Link"
                       )}
                     </Button>
                   </div>
