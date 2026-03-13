@@ -24,10 +24,10 @@ const isValidEmailDomain = (email: string): boolean => {
   // Check if domain matches any allowed domain or ends with educational TLDs
   return allowedDomains.some(allowed => domain === allowed || domain.endsWith(`.${allowed}`));
 };
-const emailSchema = z.string().email("Please enter a valid email address").refine(isValidEmailDomain, {
-  message: "Please use a valid email from a known provider (Gmail, Yahoo, Outlook, etc.) or educational institution"
+const emailSchema = z.string().email("That email doesn't look right — double-check it!").refine(isValidEmailDomain, {
+  message: "Use a real email (Gmail, Yahoo, Outlook, school email, etc.) — we need to verify it!"
 });
-const passwordSchema = z.string().min(6, "Password must be at least 6 characters").max(72, "Password must be less than 72 characters");
+const passwordSchema = z.string().min(6, "Your password needs at least 6 characters — make it strong!").max(72, "Whoa, that's too long! Keep it under 72 characters");
 const Auth = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
