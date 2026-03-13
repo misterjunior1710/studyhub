@@ -226,13 +226,12 @@ const Auth = () => {
       
       {/* SEO Content Section */}
       <header className="sr-only">
-        <h1>Sign In to StudyHub - Study Smarter, Win Harder</h1>
+        <h1>Sign In to StudyHub — Your Study Crew Awaits</h1>
         <p>
-          Welcome to StudyHub, the ultimate collaborative learning platform for students worldwide. 
-          Create your free account or sign in to access features including asking academic questions, 
-          joining study groups, earning XP on the leaderboard, and connecting with peers across 
-          different countries, subjects, and educational streams. Whether you're in Grade 6 or 
-          pursuing postgraduate studies, StudyHub helps you learn better together.
+          Join StudyHub — the place where students help students ace their exams. 
+          Create your free account or sign in to ask questions, join study squads, 
+          earn XP, and connect with learners worldwide. From Grade 6 to postgrad, 
+          we've got your back.
         </p>
       </header>
       
