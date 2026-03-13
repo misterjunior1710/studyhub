@@ -148,7 +148,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUsername("");
         setProfileData({});
         setIsAdmin(false);
-        toast.error("Session expired. Please sign in again.");
+        toast.error("Your session expired — please log in again.");
         return;
       }
       
@@ -169,10 +169,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUsername("");
       setProfileData({});
       setIsAdmin(false);
-      toast.success("Signed out successfully");
+      toast.success("You're signed out. See you next study session! ✌️");
     } catch (error) {
       console.error("Error signing out:", error);
-      toast.error("Failed to sign out");
+      toast.error("Couldn't sign you out — try again");
     }
   }, []);
 
@@ -242,7 +242,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         // Handle token refresh errors
         if (event === "TOKEN_REFRESHED" && !currentSession) {
-          toast.error("Session expired. Please sign in again.");
+          toast.error("Your session expired — please log in again.");
         }
       }
     );

@@ -24,10 +24,10 @@ const isValidEmailDomain = (email: string): boolean => {
   // Check if domain matches any allowed domain or ends with educational TLDs
   return allowedDomains.some(allowed => domain === allowed || domain.endsWith(`.${allowed}`));
 };
-const emailSchema = z.string().email("Please enter a valid email address").refine(isValidEmailDomain, {
-  message: "Please use a valid email from a known provider (Gmail, Yahoo, Outlook, etc.) or educational institution"
+const emailSchema = z.string().email("That email doesn't look right — double-check it!").refine(isValidEmailDomain, {
+  message: "Use a real email (Gmail, Yahoo, Outlook, school email, etc.) — we need to verify it!"
 });
-const passwordSchema = z.string().min(6, "Password must be at least 6 characters").max(72, "Password must be less than 72 characters");
+const passwordSchema = z.string().min(6, "Your password needs at least 6 characters — make it strong!").max(72, "Whoa, that's too long! Keep it under 72 characters");
 const Auth = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -86,7 +86,7 @@ const Auth = () => {
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!country || !grade || !stream) {
-      toast.error("Almost there — fill in all the fields first!");
+      toast.error("You're so close! Just fill in all the fields to continue.");
       return;
     }
 
@@ -130,7 +130,7 @@ const Auth = () => {
       setGrade("");
       setStream("");
     } catch (error: any) {
-      toast.error(error.message || "Something went wrong creating your account. Try again!");
+      toast.error(error.message || "Oops — something went wrong. Give it another try!");
     } finally {
       setLoading(false);
     }
@@ -141,7 +141,7 @@ const Auth = () => {
     // Validate Turnstile token
     const turnstileToken = document.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value;
     if (!turnstileToken) {
-      toast.error("Quick — prove you're not a robot first! Complete the CAPTCHA.");
+      toast.error("Hold up — complete the CAPTCHA first so we know you're human! 🤖");
       return;
     }
 
@@ -160,13 +160,13 @@ const Auth = () => {
         password
       });
       if (error) throw error;
-      toast.success("Welcome back! Let's get studying 💪");
+      toast.success("You're back! Time to hit the books 📚");
       navigate("/");
     } catch (error: any) {
       if (error.message?.includes("Email not confirmed")) {
-        toast.error("Hold on — you need to verify your email first. Check your inbox for the link!");
+        toast.error("You haven't verified your email yet! Check your inbox for the confirmation link.");
       } else {
-        toast.error(error.message || "Couldn't sign you in. Give it another shot!");
+        toast.error(error.message || "Wrong email or password — try again!");
       }
     } finally {
       setLoading(false);
@@ -192,11 +192,11 @@ const Auth = () => {
         }
       });
       if (error) throw error;
-      toast.success("Verification email sent! Check your inbox (and spam folder, just in case).");
+      toast.success("Email sent! Check your inbox — and peek in spam just in case 👀");
       setResendEmail("");
       setShowResendForm(false);
     } catch (error: any) {
-      toast.error(error.message || "Couldn't resend the email. Try again in a moment.");
+      toast.error(error.message || "Hmm, that didn't work. Wait a sec and try again.");
     } finally {
       setResendLoading(false);
     }
@@ -214,25 +214,24 @@ const Auth = () => {
       });
       if (error) throw error;
     } catch (error: any) {
-      toast.error(error.message || "Google sign-in didn't work. Try again?");
+      toast.error(error.message || "Google sign-in hit a snag. Try again?");
     }
   };
   return <main className="min-h-screen flex flex-col">
       <SEOHead
-        title="Sign Up Free | Student Login | Create Account"
-        description="Sign up free to get homework help, join study groups, ask questions. Student login and registration. Free account, no credit card required."
+        title="Sign Up Free | Student Login | StudyHub"
+        description="Join thousands of students. Sign up free, ask questions, join study groups, and ace your exams. No credit card needed — ever."
         canonical="https://studyhub.world/auth"
       />
       
       {/* SEO Content Section */}
       <header className="sr-only">
-        <h1>Sign In to StudyHub - Study Smarter, Win Harder</h1>
+        <h1>Sign In to StudyHub — Your Study Crew Awaits</h1>
         <p>
-          Welcome to StudyHub, the ultimate collaborative learning platform for students worldwide. 
-          Create your free account or sign in to access features including asking academic questions, 
-          joining study groups, earning XP on the leaderboard, and connecting with peers across 
-          different countries, subjects, and educational streams. Whether you're in Grade 6 or 
-          pursuing postgraduate studies, StudyHub helps you learn better together.
+          Join StudyHub — the place where students help students ace their exams. 
+          Create your free account or sign in to ask questions, join study squads, 
+          earn XP, and connect with learners worldwide. From Grade 6 to postgrad, 
+          we've got your back.
         </p>
       </header>
       
@@ -248,13 +247,13 @@ const Auth = () => {
               <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 StudyHub
               </CardTitle>
-              <CardDescription>Your study crew is waiting 📚</CardDescription>
+              <CardDescription>Your study crew is waiting — let's go 📚</CardDescription>
             </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" ref={tabsRef}>
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                <TabsTrigger value="login">Log In</TabsTrigger>
+                <TabsTrigger value="signup">Join Free</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
@@ -269,10 +268,10 @@ const Auth = () => {
                 </div>
                 <div className="cf-turnstile" data-sitekey="0x4AAAAAACiGuBHNKghgkkXH"></div>
                 <Button type="submit" className="w-full btn-bounce" disabled={loading}>
-                  {loading ? <>
+                   {loading ? <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Signing in...
-                    </> : "Sign In"}
+                      Logging you in...
+                    </> : "Log In & Study"}
                 </Button>
 
                 <div className="relative my-4">
@@ -280,7 +279,7 @@ const Auth = () => {
                     <span className="w-full border-t border-border" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">or jump in with</span>
+                     <span className="bg-card px-2 text-muted-foreground">or use</span>
                   </div>
                 </div>
 
@@ -308,7 +307,7 @@ const Auth = () => {
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  Sign in with Google
+                  Continue with Google
                 </Button>
               </form>
 
@@ -327,12 +326,12 @@ const Auth = () => {
                   className="w-full text-sm" 
                   onClick={() => setShowResendForm(true)}
                 >
-                  Didn't get the verification email?
+                  Didn't get the verification email? Tap here
                 </Button>
               ) : (
                 <form onSubmit={handleResendVerification} className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border animate-fade-in">
                    <p className="text-sm text-muted-foreground">
-                    Pop your email in and we'll send the link again
+                    Enter your email and we'll fire off another verification link ✉️
                   </p>
                   <Input 
                     type="email" 
@@ -359,13 +358,13 @@ const Auth = () => {
                       className="flex-1"
                       disabled={resendLoading}
                     >
-                      {resendLoading ? (
+                       {resendLoading ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           Sending...
                         </>
                       ) : (
-                        "Resend Email"
+                        "Resend Link"
                       )}
                     </Button>
                   </div>
@@ -376,7 +375,7 @@ const Auth = () => {
             <TabsContent value="signup">
               <form onSubmit={handleEmailSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-username">Username</Label>
+                  <Label htmlFor="signup-username">Pick a Username</Label>
                   <Input id="signup-username" type="text" placeholder="studyking99" value={username} onChange={e => setUsername(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
@@ -384,13 +383,13 @@ const Auth = () => {
                   <Input id="signup-email" type="email" placeholder="you@school.edu" value={email} onChange={e => setEmail(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input id="signup-password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
+                  <Label htmlFor="signup-password">Create a Password</Label>
+                  <Input id="signup-password" type="password" placeholder="min 6 characters" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-country">Country</Label>
+                    <Label htmlFor="signup-country">Where are you?</Label>
                     <Select value={country} onValueChange={setCountry} required>
                       <SelectTrigger id="signup-country">
                         <SelectValue placeholder="Select country" />
@@ -403,8 +402,8 @@ const Auth = () => {
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-grade">Grade</Label>
+                   <div className="space-y-2">
+                    <Label htmlFor="signup-grade">What grade?</Label>
                     <Select value={grade} onValueChange={handleGradeChange} required>
                       <SelectTrigger id="signup-grade">
                         <SelectValue placeholder="Select grade" />
@@ -418,8 +417,8 @@ const Auth = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="signup-stream">Stream</Label>
+                 <div className="space-y-2">
+                  <Label htmlFor="signup-stream">Curriculum / Board</Label>
                   <Select value={stream} onValueChange={setStream} required>
                     <SelectTrigger id="signup-stream">
                       <SelectValue placeholder="Select stream" />
@@ -433,10 +432,10 @@ const Auth = () => {
                 </div>
 
                 <Button type="submit" className="w-full btn-bounce" disabled={loading}>
-                  {loading ? <>
+                 {loading ? <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                       Setting you up...
-                    </> : "Create Account"}
+                       Setting things up...
+                    </> : "Join StudyHub — It's Free 🚀"}
                 </Button>
 
                 <div className="relative my-4">
@@ -444,7 +443,7 @@ const Auth = () => {
                     <span className="w-full border-t border-border" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">or jump in with</span>
+                    <span className="bg-card px-2 text-muted-foreground">or use</span>
                   </div>
                 </div>
 
@@ -472,15 +471,15 @@ const Auth = () => {
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  Sign up with Google
+                  Continue with Google
                 </Button>
               </form>
 
               <p className="text-center text-xs text-muted-foreground mt-4">
-                By signing up, you agree to our{" "}
+                By joining, you agree to our{" "}
                 <Link to="/terms" className="text-primary hover:underline">Terms</Link>
-                {" "}and{" "}
-                <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
+                {" "}&{" "}
+                <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
               </p>
             </TabsContent>
           </Tabs>
@@ -490,11 +489,11 @@ const Auth = () => {
           {/* Additional SEO content below card */}
           <aside className="mt-6 text-center text-sm text-muted-foreground">
             <p className="mb-3">
-              Got questions already? <Link to="/" className="text-primary hover:underline font-medium">Check out what others are asking</Link> or 
-              see who's at the <Link to="/leaderboard" className="text-primary hover:underline font-medium">top of the leaderboard</Link>.
+              Curious? <Link to="/" className="text-primary hover:underline font-medium">See what students are asking</Link> or 
+              check the <Link to="/leaderboard" className="text-primary hover:underline font-medium">leaderboard</Link> to see who's on top.
             </p>
             <p>
-              Stuck? Hit up our <Link to="/support" className="text-primary hover:underline">Support page</Link>.
+              Need help? Visit our <Link to="/support" className="text-primary hover:underline">Support page</Link>.
             </p>
           </aside>
         </article>

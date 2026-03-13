@@ -52,10 +52,10 @@ const AgeVerificationDialog = ({ open, onConfirm, onCancel }: AgeVerificationDia
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center space-y-3">
             <p>
-              You have selected <span className="font-semibold text-foreground">Adult (18+)</span> as your grade level.
+              You selected <span className="font-semibold text-foreground">Adult (18+)</span> — just need to confirm a couple things before we continue.
             </p>
             <p className="text-sm">
-              By continuing, you confirm that you are 18 years of age or older and agree to our terms of service.
+              This helps us keep the platform safe for everyone.
             </p>
           </AlertDialogDescription>
         </AlertDialogHeader>

@@ -24,10 +24,10 @@ const SessionExpiredDialog = ({ open, onRefresh, onSignIn }: SessionExpiredDialo
           <div className="mx-auto sm:mx-0 mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
             <Clock className="h-6 w-6 text-muted-foreground" />
           </div>
-          <DialogTitle className="text-xl">Session Timed Out</DialogTitle>
+          <DialogTitle className="text-xl">Study Break? 😴</DialogTitle>
           <DialogDescription className="text-base">
-            Looks like you've been away for a bit. For security, your session expired.
-            Hit refresh to pick up where you left off, or sign in again.
+            You've been away for a while, so we logged you out for safety.
+            Refresh to jump back in, or sign in again.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex-col gap-2 sm:flex-row sm:gap-2">
@@ -37,14 +37,14 @@ const SessionExpiredDialog = ({ open, onRefresh, onSignIn }: SessionExpiredDialo
             className="w-full sm:w-auto gap-2"
           >
             <LogIn className="h-4 w-4" />
-            Sign In Again
+            Log In Again
           </Button>
           <Button
             onClick={onRefresh}
             className="w-full sm:w-auto gap-2"
           >
             <RefreshCw className="h-4 w-4" />
-            Refresh Session
+            Jump Back In
           </Button>
         </DialogFooter>
       </DialogContent>
