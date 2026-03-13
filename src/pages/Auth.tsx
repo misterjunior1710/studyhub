@@ -86,7 +86,7 @@ const Auth = () => {
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!country || !grade || !stream) {
-      toast.error("Almost there — fill in all the fields first!");
+      toast.error("You're so close! Just fill in all the fields to continue.");
       return;
     }
 
