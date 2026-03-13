@@ -268,10 +268,10 @@ const Auth = () => {
                 </div>
                 <div className="cf-turnstile" data-sitekey="0x4AAAAAACiGuBHNKghgkkXH"></div>
                 <Button type="submit" className="w-full btn-bounce" disabled={loading}>
-                  {loading ? <>
+                   {loading ? <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Signing in...
-                    </> : "Sign In"}
+                      Logging you in...
+                    </> : "Log In & Study"}
                 </Button>
 
                 <div className="relative my-4">
