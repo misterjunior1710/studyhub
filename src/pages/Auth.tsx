@@ -402,8 +402,8 @@ const Auth = () => {
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-grade">Grade</Label>
+                   <div className="space-y-2">
+                    <Label htmlFor="signup-grade">What grade?</Label>
                     <Select value={grade} onValueChange={handleGradeChange} required>
                       <SelectTrigger id="signup-grade">
                         <SelectValue placeholder="Select grade" />
