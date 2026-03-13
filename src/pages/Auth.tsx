@@ -389,7 +389,7 @@ const Auth = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-country">Country</Label>
+                    <Label htmlFor="signup-country">Where are you?</Label>
                     <Select value={country} onValueChange={setCountry} required>
                       <SelectTrigger id="signup-country">
                         <SelectValue placeholder="Select country" />
