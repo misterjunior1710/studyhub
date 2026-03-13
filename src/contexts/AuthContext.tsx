@@ -169,10 +169,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUsername("");
       setProfileData({});
       setIsAdmin(false);
-      toast.success("Signed out successfully");
+      toast.success("You're signed out. See you next study session! ✌️");
     } catch (error) {
       console.error("Error signing out:", error);
-      toast.error("Failed to sign out");
+      toast.error("Couldn't sign you out — try again");
     }
   }, []);
 
