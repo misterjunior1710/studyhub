@@ -383,8 +383,8 @@ const Auth = () => {
                   <Input id="signup-email" type="email" placeholder="you@school.edu" value={email} onChange={e => setEmail(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input id="signup-password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
+                  <Label htmlFor="signup-password">Create a Password</Label>
+                  <Input id="signup-password" type="password" placeholder="min 6 characters" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
