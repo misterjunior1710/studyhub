@@ -164,9 +164,9 @@ const Auth = () => {
       navigate("/");
     } catch (error: any) {
       if (error.message?.includes("Email not confirmed")) {
-        toast.error("Hold on — you need to verify your email first. Check your inbox for the link!");
+        toast.error("You haven't verified your email yet! Check your inbox for the confirmation link.");
       } else {
-        toast.error(error.message || "Couldn't sign you in. Give it another shot!");
+        toast.error(error.message || "Wrong email or password — try again!");
       }
     } finally {
       setLoading(false);
