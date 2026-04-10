@@ -50,6 +50,13 @@ const ProfileOnboarding = () => {
     }
   }, [user]);
 
+  // Auto-detect country
+  useEffect(() => {
+    if (detectedCountry && !country) {
+      setCountry(detectedCountry);
+    }
+  }, [detectedCountry]);
+
   // Check if profile is already complete
   useEffect(() => {
     const checkProfile = async () => {
