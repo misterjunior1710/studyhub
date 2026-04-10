@@ -14,7 +14,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { COUNTRIES, ALL_GRADES, getStreamsForGrade } from "@/lib/constants";
+import { COUNTRIES, ALL_GRADES, getStreamsForGrade, isAdultGrade } from "@/lib/constants";
+import { useCountryDetect } from "@/hooks/useCountryDetect";
+import { getStreamsForCountry } from "@/lib/countryEducation";
 import { Loader2, Sparkles, GraduationCap } from "lucide-react";
 
 const ProfileOnboarding = () => {
@@ -27,9 +29,16 @@ const ProfileOnboarding = () => {
   const [stream, setStream] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkingProfile, setCheckingProfile] = useState(true);
+  const { detectedCountry } = useCountryDetect();
 
-  // Get streams based on selected grade
-  const availableStreams = grade ? getStreamsForGrade(grade) : [];
+  // Get streams based on selected grade AND country
+  const availableStreams = grade 
+    ? isAdultGrade(grade) 
+      ? getStreamsForGrade(grade) 
+      : country 
+        ? getStreamsForCountry(country) 
+        : getStreamsForGrade(grade)
+    : [];
 
   // Pre-fill name from Google profile if available
   useEffect(() => {
@@ -40,6 +49,13 @@ const ProfileOnboarding = () => {
       }
     }
   }, [user]);
+
+  // Auto-detect country
+  useEffect(() => {
+    if (detectedCountry && !country) {
+      setCountry(detectedCountry);
+    }
+  }, [detectedCountry]);
 
   // Check if profile is already complete
   useEffect(() => {
@@ -93,12 +109,12 @@ const ProfileOnboarding = () => {
     }
   }, [authLoading, session, navigate]);
 
-  // Reset stream when grade changes
+  // Reset stream when grade or country changes
   useEffect(() => {
-    if (grade && !availableStreams.includes(stream)) {
+    if (grade && stream && !availableStreams.includes(stream)) {
       setStream("");
     }
-  }, [grade, availableStreams, stream]);
+  }, [grade, country, availableStreams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
