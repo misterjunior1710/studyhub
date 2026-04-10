@@ -109,10 +109,12 @@ const ProfileOnboarding = () => {
     }
   }, [authLoading, session, navigate]);
 
-  // Reset stream when grade changes
+  // Reset stream when grade or country changes
   useEffect(() => {
-    if (grade && !availableStreams.includes(stream)) {
+    if (grade && stream && !availableStreams.includes(stream)) {
       setStream("");
+    }
+  }, [grade, country, availableStreams]);
     }
   }, [grade, availableStreams, stream]);
 
