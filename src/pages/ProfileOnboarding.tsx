@@ -115,8 +115,6 @@ const ProfileOnboarding = () => {
       setStream("");
     }
   }, [grade, country, availableStreams]);
-    }
-  }, [grade, availableStreams, stream]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
