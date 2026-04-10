@@ -48,10 +48,15 @@ const Auth = () => {
   const [verificationEmail, setVerificationEmail] = useState("");
   const [activeTab, setActiveTab] = useState("login");
   const tabsRef = useRef<HTMLDivElement>(null);
+  const { detectedCountry } = useCountryDetect();
   const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria", "Other"];
   const isAdult = grade === "Adult (18+)" || grade === "Working Professional";
   const grades = ["Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate", "Postgraduate", "Adult (18+)", "Working Professional"];
-  const streams = isAdult ? ["Not Applicable", "Self-Learning", "Professional Development", "Other"] : ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Other"];
+  const streams = isAdult 
+    ? ["Not Applicable", "Self-Learning", "Professional Development", "Other"] 
+    : country 
+      ? getStreamsForCountry(country) 
+      : ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Other"];
   const handleGradeChange = (value: string) => {
     const isNewAdult = value === "Adult (18+)" || value === "Working Professional";
     const wasAdult = grade === "Adult (18+)" || grade === "Working Professional";
@@ -73,6 +78,23 @@ const Auth = () => {
     setShowAgeVerification(false);
     setPendingAdultGrade("");
   };
+  // Auto-detect country on mount
+  useEffect(() => {
+    if (detectedCountry && !country) {
+      setCountry(detectedCountry);
+    }
+  }, [detectedCountry]);
+
+  // Reset stream when country changes (streams are country-dependent)
+  useEffect(() => {
+    if (country && stream && !isAdult) {
+      const available = getStreamsForCountry(country);
+      if (!available.includes(stream)) {
+        setStream("");
+      }
+    }
+  }, [country]);
+
   useEffect(() => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({
