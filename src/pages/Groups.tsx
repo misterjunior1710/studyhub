@@ -144,8 +144,6 @@ const Groups = () => {
               <a href="/questions" className="text-primary hover:underline">Ask Questions</a>
               <span className="text-muted-foreground mx-2">•</span>
               <a href="/friends" className="text-primary hover:underline">Find Friends</a>
-              <span className="text-muted-foreground mx-2">•</span>
-              <a href="/leaderboard" className="text-primary hover:underline">Leaderboard</a>
             </nav>
           </div>
           <div className="opacity-0 animate-hero-fade-up" style={{ animationDelay: "150ms" }}>

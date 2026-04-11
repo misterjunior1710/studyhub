@@ -53,11 +53,8 @@ const NotFound = () => {
                   Study Groups
                 </Link>
               </li>
-              <li>
-                <Link to="/leaderboard" className="text-primary hover:underline">
-                  Leaderboard
-                </Link>
-              </li>
+
+
               <li>
                 <Link to="/support" className="text-primary hover:underline inline-flex items-center gap-1">
                   <HelpCircle className="h-3 w-3" aria-hidden="true" />

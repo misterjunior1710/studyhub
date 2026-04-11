@@ -35,11 +35,8 @@ const Footer = () => {
                   Study Groups
                 </Link>
               </li>
-              <li>
-                <Link to="/leaderboard" className="text-muted-foreground active:text-primary py-1 inline-block">
-                  Leaderboard
-                </Link>
-              </li>
+
+
             </ul>
           </div>
 

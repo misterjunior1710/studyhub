@@ -42,12 +42,10 @@ const Index = () => {
     { icon: Bookmark, label: "Saved Posts", href: "/saved", color: "from-info to-primary" },
     { icon: Brain, label: "Study Mode", href: "/study", color: "from-success to-info" },
     { icon: Calendar, label: "Calendar", href: "/calendar", color: "from-warning to-destructive" },
-    { icon: TrendingUp, label: "Leaderboard", href: "/leaderboard", color: "from-primary to-success" },
   ] : [
     { icon: MessageSquare, label: "Browse Questions", href: "/questions", color: "from-primary to-accent" },
     { icon: Users, label: "Study Groups", href: "/groups", color: "from-accent to-primary" },
     { icon: Brain, label: "AI Study Tools", href: "/content-generator", color: "from-success to-info" },
-    { icon: TrendingUp, label: "Leaderboard", href: "/leaderboard", color: "from-primary to-success" },
   ];
 
   return (
@@ -171,7 +169,7 @@ const Index = () => {
               {
                 icon: Trophy,
                 title: "Stay on Track",
-                description: "Build streaks, earn XP, climb the leaderboard — because a little competition never hurt anyone. 😏"
+                description: "Build streaks, earn XP, and keep your study momentum going — consistency is the real flex. 😏"
               }
             ].map((feature, index) => (
               <div

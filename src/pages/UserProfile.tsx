@@ -49,7 +49,7 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [subjectStats, setSubjectStats] = useState<SubjectStats[]>([]);
-  const [leaderboardRank, setLeaderboardRank] = useState<number | null>(null);
+  
   const [postCount, setPostCount] = useState(0);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [currentUserGrade, setCurrentUserGrade] = useState<string | null>(null);
@@ -148,16 +148,8 @@ const UserProfile = () => {
       setSubjectStats(stats);
     }
 
-    // Get leaderboard rank from public_profiles
-    const { data: allProfiles } = await supabase
-      .from("public_profiles")
-      .select("id, points")
-      .order("points", { ascending: false });
 
-    if (allProfiles) {
-      const rank = allProfiles.findIndex(p => p.id === userId) + 1;
-      setLeaderboardRank(rank > 0 ? rank : null);
-    }
+
 
     setLoading(false);
   };
@@ -169,14 +161,8 @@ const UserProfile = () => {
     });
   };
 
-  const getRankBadge = (rank: number) => {
-    if (rank === 1) return { text: "🥇 #1", class: "bg-yellow-500/20 text-yellow-600" };
-    if (rank === 2) return { text: "🥈 #2", class: "bg-gray-400/20 text-gray-600" };
-    if (rank === 3) return { text: "🥉 #3", class: "bg-amber-600/20 text-amber-600" };
-    if (rank <= 10) return { text: `🏆 Top 10`, class: "bg-primary/20 text-primary" };
-    if (rank <= 50) return { text: `Top 50`, class: "bg-muted text-muted-foreground" };
-    return { text: `#${rank}`, class: "bg-muted text-muted-foreground" };
-  };
+
+
 
   if (loading) {
     return (
@@ -297,22 +283,8 @@ const UserProfile = () => {
             <p className="text-2xl font-bold text-primary">{postCount}</p>
             <p className="text-xs text-muted-foreground">Posts</p>
           </Card>
-          <Card variant="elevated" className="text-center p-4">
-            <Trophy className="h-6 w-6 mx-auto text-purple-500 mb-2" />
-            {leaderboardRank ? (
-              <>
-                <Badge className={getRankBadge(leaderboardRank).class}>
-                  {getRankBadge(leaderboardRank).text}
-                </Badge>
-                <p className="text-xs text-muted-foreground mt-1">Leaderboard</p>
-              </>
-            ) : (
-              <>
-                <p className="text-lg font-bold text-muted-foreground">-</p>
-                <p className="text-xs text-muted-foreground">Not Ranked</p>
-              </>
-            )}
-          </Card>
+
+
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -360,15 +332,8 @@ const UserProfile = () => {
           </Card>
         </div>
 
-        {/* View on Leaderboard Button */}
-        {leaderboardRank && (
-          <div className="mt-6 text-center">
-            <Button onClick={() => navigate("/leaderboard")} variant="outline" className="gap-2">
-              <Trophy className="h-4 w-4" />
-              View Full Leaderboard
-            </Button>
-          </div>
-        )}
+
+
       </div>
     </div>
   );

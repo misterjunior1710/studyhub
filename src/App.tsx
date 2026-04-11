@@ -27,7 +27,7 @@ const Questions = lazy(() => import("./pages/Questions"));
 const Groups = lazy(() => import("./pages/Groups"));
 const GroupChat = lazy(() => import("./pages/GroupChat"));
 const Settings = lazy(() => import("./pages/Settings"));
-const Leaderboard = lazy(() => import("./pages/Leaderboard"));
+
 const Friends = lazy(() => import("./pages/Friends"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
@@ -127,7 +127,7 @@ const App = () => (
                       <Route path="/groups/:id" element={<GroupChat />} />
                       <Route path="/groups/:id/tools" element={<GroupTools />} />
                       <Route path="/settings" element={<Settings />} />
-                      <Route path="/leaderboard" element={<Leaderboard />} />
+                      
                       <Route path="/friends" element={<Friends />} />
                       <Route path="/dm/:friendId" element={<DirectMessage />} />
                       <Route path="/user/:userId" element={<UserProfile />} />

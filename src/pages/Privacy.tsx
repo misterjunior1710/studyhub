@@ -99,7 +99,7 @@ const Privacy = () => {
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li><strong>Provide our services:</strong> Enable you to create posts, join study groups, connect with other students, and use all platform features</li>
                 <li><strong>Personalize your experience:</strong> Show relevant content based on your grade, stream, and country; recommend study groups and resources</li>
-                <li><strong>Track your progress:</strong> Calculate XP points, maintain streaks, and display your position on leaderboards</li>
+                <li><strong>Track your progress:</strong> Calculate XP points, maintain streaks, and track your study achievements</li>
                 <li><strong>Send notifications:</strong> Alert you about replies to your posts, mentions, group updates, and important announcements</li>
                 <li><strong>Improve our platform:</strong> Analyze usage patterns to enhance features and fix issues</li>
                 <li><strong>Ensure safety:</strong> Moderate content, prevent abuse, and maintain a positive learning environment</li>
