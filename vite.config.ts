@@ -18,9 +18,26 @@ export default defineConfig(({ mode }) => ({
       includeAssets: ["favicon.ico", "robots.txt", "sitemap.xml"],
       manifest: false, // We use public/manifest.json
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        runtimeCaching: [
-          {
+      globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+      navigateFallback: "index.html",
+      navigateFallbackDenylist: [/^\/api/],
+      // Skip waiting so new SW activates immediately
+      skipWaiting: true,
+      clientsClaim: true,
+      runtimeCaching: [
+        {
+          // Always fetch HTML from network first — users see the latest page
+          urlPattern: ({ request }) => request.mode === 'navigate',
+          handler: "NetworkFirst",
+          options: {
+            cacheName: "html-cache",
+            expiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60, // 1 hour max
+            },
+            networkTimeoutSeconds: 3,
+          },
+        },
             urlPattern: /^https:\/\/qrquegcexsqrbtwtcicq\.supabase\.co\/rest\/v1\/.*/i,
             handler: "NetworkFirst",
             options: {
