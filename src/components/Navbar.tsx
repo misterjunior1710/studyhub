@@ -1,4 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, Trophy, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -61,6 +61,14 @@ const Navbar = ({
               StudyHub
             </h1>
             <div className="hidden md:flex items-center gap-1">
+              <Button variant={isActive("/study") ? "default" : "ghost"} size="sm" onClick={() => navigate("/study")}>
+                <Timer className="h-4 w-4 mr-2" />
+                Study
+              </Button>
+              <Button variant={isActive("/content-generator") ? "default" : "ghost"} size="sm" onClick={() => navigate("/content-generator")}>
+                <Sparkles className="h-4 w-4 mr-2" />
+                AI
+              </Button>
               <Button variant={isActive("/") || isActive("/feed") ? "default" : "ghost"} size="sm" onClick={() => navigate("/feed")}>
                 <Home className="h-4 w-4 mr-2" />
                 Feed
@@ -73,21 +81,9 @@ const Navbar = ({
                 <Users className="h-4 w-4 mr-2" />
                 Groups
               </Button>
-              <Button variant={isActive("/leaderboard") ? "default" : "ghost"} size="sm" onClick={() => navigate("/leaderboard")}>
-                <Trophy className="h-4 w-4 mr-2" />
-                Leaderboard
-              </Button>
               <Button variant={isActive("/friends") ? "default" : "ghost"} size="sm" onClick={() => navigate("/friends")}>
                 <UserPlus className="h-4 w-4 mr-2" />
                 Friends
-              </Button>
-              <Button variant={isActive("/study") ? "default" : "ghost"} size="sm" onClick={() => navigate("/study")}>
-                <Timer className="h-4 w-4 mr-2" />
-                Study
-              </Button>
-              <Button variant={isActive("/content-generator") ? "default" : "ghost"} size="sm" onClick={() => navigate("/content-generator")}>
-                <Sparkles className="h-4 w-4 mr-2" />
-                AI
               </Button>
               <Button variant={isActive("/updates") ? "default" : "ghost"} size="sm" onClick={() => navigate("/updates")}>
                 <Megaphone className="h-4 w-4 mr-2" />

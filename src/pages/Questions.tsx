@@ -125,8 +125,6 @@ const Questions = () => {
             <a href="/feed" className="text-primary hover:underline">Home Feed</a>
             <span className="text-muted-foreground mx-2">•</span>
             <a href="/groups" className="text-primary hover:underline">Study Groups</a>
-            <span className="text-muted-foreground mx-2">•</span>
-            <a href="/leaderboard" className="text-primary hover:underline">Leaderboard</a>
           </nav>
         </header>
 

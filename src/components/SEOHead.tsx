@@ -122,7 +122,7 @@ export const getCommunitySchema = () => ({
   "@type": "WebSite",
   name: "StudyHub",
   alternateName: "Study Smarter, Win Harder",
-  description: "StudyHub is a free online learning community for students worldwide. Ask homework questions, join study groups, track your progress on leaderboards, and access AI-powered study tools.",
+  description: "StudyHub is a free online learning community for students worldwide. Ask homework questions, join study groups, track your progress, and access AI-powered study tools.",
   url: "https://studyhub.world",
   potentialAction: {
     "@type": "SearchAction",

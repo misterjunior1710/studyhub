@@ -27,12 +27,8 @@
     <changefreq>daily</changefreq>
     <priority>0.85</priority>
   </url>
-  <url>
-    <loc>https://studyhub.world/leaderboard</loc>
-    <lastmod>2026-01-02</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
+
+
   
   <!-- Feature Pages -->
   <url>

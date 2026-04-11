@@ -49,7 +49,7 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [subjectStats, setSubjectStats] = useState<SubjectStats[]>([]);
-  const [leaderboardRank, setLeaderboardRank] = useState<number | null>(null);
+  
   const [postCount, setPostCount] = useState(0);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [currentUserGrade, setCurrentUserGrade] = useState<string | null>(null);
@@ -148,16 +148,8 @@ const UserProfile = () => {
       setSubjectStats(stats);
     }
 
-    // Get leaderboard rank from public_profiles
-    const { data: allProfiles } = await supabase
-      .from("public_profiles")
-      .select("id, points")
-      .order("points", { ascending: false });
 
-    if (allProfiles) {
-      const rank = allProfiles.findIndex(p => p.id === userId) + 1;
-      setLeaderboardRank(rank > 0 ? rank : null);
-    }
+
 
     setLoading(false);
   };
@@ -297,22 +289,8 @@ const UserProfile = () => {
             <p className="text-2xl font-bold text-primary">{postCount}</p>
             <p className="text-xs text-muted-foreground">Posts</p>
           </Card>
-          <Card variant="elevated" className="text-center p-4">
-            <Trophy className="h-6 w-6 mx-auto text-purple-500 mb-2" />
-            {leaderboardRank ? (
-              <>
-                <Badge className={getRankBadge(leaderboardRank).class}>
-                  {getRankBadge(leaderboardRank).text}
-                </Badge>
-                <p className="text-xs text-muted-foreground mt-1">Leaderboard</p>
-              </>
-            ) : (
-              <>
-                <p className="text-lg font-bold text-muted-foreground">-</p>
-                <p className="text-xs text-muted-foreground">Not Ranked</p>
-              </>
-            )}
-          </Card>
+
+
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -360,15 +338,8 @@ const UserProfile = () => {
           </Card>
         </div>
 
-        {/* View on Leaderboard Button */}
-        {leaderboardRank && (
-          <div className="mt-6 text-center">
-            <Button onClick={() => navigate("/leaderboard")} variant="outline" className="gap-2">
-              <Trophy className="h-4 w-4" />
-              View Full Leaderboard
-            </Button>
-          </div>
-        )}
+
+
       </div>
     </div>
   );

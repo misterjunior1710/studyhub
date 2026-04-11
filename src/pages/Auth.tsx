@@ -513,8 +513,7 @@ const Auth = () => {
           {/* Additional SEO content below card */}
           <aside className="mt-6 text-center text-sm text-muted-foreground">
             <p className="mb-3">
-              Curious? <Link to="/" className="text-primary hover:underline font-medium">See what students are asking</Link> or 
-              check the <Link to="/leaderboard" className="text-primary hover:underline font-medium">leaderboard</Link> to see who's on top.
+              Curious? <Link to="/" className="text-primary hover:underline font-medium">See what students are asking</Link> or explore our <Link to="/content-generator" className="text-primary hover:underline font-medium">AI study tools</Link>.
             </p>
             <p>
               Need help? Visit our <Link to="/support" className="text-primary hover:underline">Support page</Link>.
