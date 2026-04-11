@@ -161,14 +161,8 @@ const UserProfile = () => {
     });
   };
 
-  const getRankBadge = (rank: number) => {
-    if (rank === 1) return { text: "🥇 #1", class: "bg-yellow-500/20 text-yellow-600" };
-    if (rank === 2) return { text: "🥈 #2", class: "bg-gray-400/20 text-gray-600" };
-    if (rank === 3) return { text: "🥉 #3", class: "bg-amber-600/20 text-amber-600" };
-    if (rank <= 10) return { text: `🏆 Top 10`, class: "bg-primary/20 text-primary" };
-    if (rank <= 50) return { text: `Top 50`, class: "bg-muted text-muted-foreground" };
-    return { text: `#${rank}`, class: "bg-muted text-muted-foreground" };
-  };
+
+
 
   if (loading) {
     return (
