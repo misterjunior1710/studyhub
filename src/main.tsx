@@ -2,6 +2,15 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 
+// Force service worker update on every page load so users get the latest version
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach((registration) => {
+      registration.update();
+    });
+  });
+}
+
 // Hide loading skeleton after React mounts
 const hideLoadingSkeleton = () => {
   const skeleton = document.getElementById('loading-skeleton');
