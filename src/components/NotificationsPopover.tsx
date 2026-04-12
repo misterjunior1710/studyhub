@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 interface Notification {
   id: string;
@@ -20,6 +21,7 @@ const NotificationsPopover = () => {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     loadNotifications();
@@ -63,8 +65,22 @@ const NotificationsPopover = () => {
       .update({ is_read: true })
       .eq("id", id);
 
+    setOpen(false);
+
     if (postId) {
-      navigate(`/post/${postId}`);
+      // Check if post exists before navigating
+      const { data: post } = await supabase
+        .from("posts")
+        .select("id")
+        .eq("id", postId)
+        .maybeSingle();
+
+      if (post) {
+        navigate(`/post/${postId}`);
+        setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 100);
+      } else {
+        toast.error("This content is no longer available");
+      }
     }
 
     loadNotifications();
@@ -80,7 +96,7 @@ const NotificationsPopover = () => {
   };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative" aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}>
           <Bell className="h-5 w-5" />
