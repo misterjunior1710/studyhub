@@ -112,7 +112,7 @@ const Friends = () => {
   // Search effect
   useEffect(() => {
     const search = async () => {
-      if (!searchQuery.trim() || !currentUserId) {
+      if (!searchQuery.trim() || searchQuery.trim().length < 3 || !currentUserId) {
         setSearchResults([]);
         return;
       }
@@ -122,8 +122,9 @@ const Friends = () => {
         .from("profiles")
         .select("id, username, avatar_url, country, grade")
         .ilike("username", `%${searchQuery}%`)
+        .eq("is_public", true)
         .neq("id", currentUserId)
-        .limit(20);
+        .limit(10);
 
       if (!error) {
         setSearchResults(data || []);
@@ -254,6 +255,12 @@ const Friends = () => {
                 {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : "Search"}
               </Button>
             </div>
+
+            {searchInput.trim().length > 0 && searchInput.trim().length < 3 && (
+              <p className="text-sm text-muted-foreground mt-3 text-center">
+                Type at least 3 characters to search
+              </p>
+            )}
 
             {searchResults.length > 0 && (
               <div className="mt-4 space-y-2">
