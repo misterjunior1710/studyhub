@@ -94,23 +94,13 @@ const Support = () => {
     }
   });
   const onSubmit = async (data: SupportFormValues) => {
-    const turnstileToken = document.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value;
-    if (!turnstileToken) {
-      toast({
-        title: "Verification required",
-        description: "Please complete the CAPTCHA challenge.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       const {
         data: response,
         error
       } = await supabase.functions.invoke("send-support-request", {
-        body: { ...data, turnstileToken }
+        body: data
       });
       if (error) {
         throw error;
@@ -217,8 +207,6 @@ const Support = () => {
                       </FormControl>
                       <FormMessage />
                     </FormItem>} />
-
-                <div className="cf-turnstile" data-sitekey="0x4AAAAAACiGuBHNKghgkkXH"></div>
 
                 <Button type="submit" className="w-full" disabled={isSubmitting}>
                   {isSubmitting ? "Sending..." : <>
