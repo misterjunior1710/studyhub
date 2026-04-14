@@ -326,6 +326,35 @@ All colors MUST be HSL.
   animation: party-rainbow 0.5s linear infinite;
 }
 
+/* Cursor highlighter */
+.cursor-highlight-circle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  background: hsl(var(--primary) / 0.12);
+  border: 1.5px solid hsl(var(--primary) / 0.25);
+  transition: width 0.2s ease, height 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  will-change: transform;
+}
+
+.cursor-highlight-circle.cursor-click {
+  width: 32px;
+  height: 32px;
+  background: hsl(var(--primary) / 0.25);
+  border-color: hsl(var(--primary) / 0.5);
+}
+
+@media (pointer: coarse) {
+  .cursor-highlight-circle {
+    display: none;
+  }
+}
+
 /* Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -11,6 +11,7 @@ import { OnboardingProvider } from "@/contexts/OnboardingContext";
 import OnboardingFlow from "@/components/onboarding";
 import SessionExpiredDialog from "@/components/SessionExpiredDialog";
 import PageTransition from "@/components/PageTransition";
+import CursorHighlighter from "@/components/CursorHighlighter";
 import { lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -107,6 +108,7 @@ const App = () => (
         <OnboardingProvider>
           <ThemeInitializer>
             <TooltipProvider>
+              <CursorHighlighter />
               <OfflineBanner />
               <Toaster />
               <Sonner />
