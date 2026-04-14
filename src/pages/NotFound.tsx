@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { Home, HelpCircle, BookOpen, Users } from "lucide-react";
+import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 
@@ -66,6 +67,8 @@ const NotFound = () => {
         </nav>
       </article>
     </main>
+    <Footer />
+    </>
   );
 };
 
