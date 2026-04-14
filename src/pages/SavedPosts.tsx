@@ -1,6 +1,7 @@
 import { memo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import StudyPost from "@/components/StudyPost";
 import SEOHead from "@/components/SEOHead";
 import { PostSkeletonList } from "@/components/PostSkeleton";
@@ -165,6 +166,7 @@ const SavedPosts = () => {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 };

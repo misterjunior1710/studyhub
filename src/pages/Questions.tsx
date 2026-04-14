@@ -1,5 +1,6 @@
 import { memo, useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import StudyPost from "@/components/StudyPost";
 import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { PostSkeletonList } from "@/components/PostSkeleton";
@@ -214,6 +215,7 @@ const Questions = () => {
           </PullToRefresh>
         </section>
       </main>
+      <Footer />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import EventCalendar from "@/components/calendar/EventCalendar";
 import { Loader2 } from "lucide-react";
@@ -54,6 +55,7 @@ const Calendar = () => {
           {userId && <EventCalendar userId={userId} />}
         </div>
       </main>
+      <Footer />
     </div>
   );
 };
