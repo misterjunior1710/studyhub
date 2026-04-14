@@ -108,6 +108,7 @@ const App = () => (
         <OnboardingProvider>
           <ThemeInitializer>
             <TooltipProvider>
+              <CursorHighlighter />
               <OfflineBanner />
               <Toaster />
               <Sonner />
