@@ -238,6 +238,9 @@ const Navbar = ({
                 </DropdownMenu>
               </>
             ) : (
+              <div className="hidden md:block">
+                <ThemeToggle />
+              </div>
               <Button onClick={() => navigate("/auth")}>Sign In</Button>
             )}
           </div>

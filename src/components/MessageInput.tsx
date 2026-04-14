@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Bold, Italic, Send, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import EmojiPicker from "@/components/EmojiPicker";
 
 interface MessageInputProps {
   value: string;
@@ -24,6 +25,22 @@ const MessageInput = ({
   className,
 }: MessageInputProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleEmojiSelect = (emoji: string) => {
+    const textarea = textareaRef.current;
+    if (!textarea) {
+      onChange(value + emoji);
+      return;
+    }
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const newValue = value.substring(0, start) + emoji + value.substring(end);
+    onChange(newValue);
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + emoji.length, start + emoji.length);
+    }, 0);
+  };
 
   const insertFormatting = (format: "bold" | "italic") => {
     const textarea = textareaRef.current;
@@ -110,6 +127,7 @@ const MessageInput = ({
         >
           <Italic className="h-3.5 w-3.5" />
         </Button>
+        <EmojiPicker onEmojiSelect={handleEmojiSelect} disabled={disabled} />
       </div>
       <div className="flex items-end gap-2">
         <Textarea

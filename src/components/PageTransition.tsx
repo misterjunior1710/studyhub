@@ -10,6 +10,9 @@ const PageTransition = ({ children }: PageTransitionProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // Scroll to top on route change (except browser back/forward)
+    window.scrollTo({ top: 0, left: 0 });
+    
     setIsVisible(false);
     const timer = requestAnimationFrame(() => {
       setIsVisible(true);
