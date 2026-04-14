@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -1040,6 +1041,7 @@ ${generatedContent.examples.map((e, i) => `**Example ${i+1}:** ${e.problem}\n*So
           </TabsContent>
         </Tabs>
       </main>
+      <Footer />
 
       {/* Create Post Dialog */}
       <Dialog open={showCreatePostDialog} onOpenChange={setShowCreatePostDialog}>
