@@ -77,7 +77,6 @@ const Navbar = ({
                 <Rss className="h-4 w-4 mr-2" />
                 Feed
               </Button>
-              </Button>
               <Button variant={isActive("/questions") ? "default" : "ghost"} size="sm" onClick={() => navigate("/questions")}>
                 <HelpCircle className="h-4 w-4 mr-2" />
                 Questions
