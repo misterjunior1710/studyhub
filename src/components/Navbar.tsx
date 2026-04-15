@@ -1,4 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette, Rss } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -74,8 +74,9 @@ const Navbar = ({
                 Home
               </Button>
               <Button variant={isActive("/feed") ? "default" : "ghost"} size="sm" onClick={() => navigate("/feed")}>
-                <Megaphone className="h-4 w-4 mr-2" />
+                <Rss className="h-4 w-4 mr-2" />
                 Feed
+              </Button>
               </Button>
               <Button variant={isActive("/questions") ? "default" : "ghost"} size="sm" onClick={() => navigate("/questions")}>
                 <HelpCircle className="h-4 w-4 mr-2" />
