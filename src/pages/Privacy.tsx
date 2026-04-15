@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, Eye, Lock, Database, Bell, Users, Trash2, Mail, Server, Globe, UserCheck } from "lucide-react";
+import { Shield, Eye, Lock, Database, Bell, Users, Trash2, Mail, Server, Globe, UserCheck, Cookie } from "lucide-react";
 
 const Privacy = () => {
   const breadcrumbData = getBreadcrumbSchema([
@@ -29,7 +29,7 @@ const Privacy = () => {
               Privacy Policy
             </h1>
             <p className="text-muted-foreground">
-              Last updated: January 1, 2025
+              Last updated: April 15, 2026
             </p>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               At StudyHub, we are committed to protecting your privacy and ensuring transparency about how we collect, use, and safeguard your personal information. This Privacy Policy explains our practices in clear, student-friendly language.
@@ -52,8 +52,8 @@ const Privacy = () => {
                   <h4 className="font-medium text-foreground">Account Information</h4>
                   <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                     <li>Full name and username</li>
-                    <li>Email address</li>
-                    <li>Country of residence</li>
+                    <li>Email address (provided directly or via <strong>Google Sign-In</strong>)</li>
+                    <li>Country of residence (may be <strong>auto-detected from your IP address</strong> and editable by you)</li>
                     <li>Grade level (e.g., Class 11, Class 12)</li>
                     <li>Academic stream (e.g., Science, Commerce, Arts)</li>
                     <li>Profile picture (optional)</li>
@@ -64,10 +64,12 @@ const Privacy = () => {
                   <h4 className="font-medium text-foreground">Content You Create</h4>
                   <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                     <li>Questions, answers, and comments you post</li>
-                    <li>Study notes, flashcards, and quizzes</li>
+                    <li>Study notes, flashcards, quizzes, and mind maps</li>
                     <li>Messages in group chats and direct messages</li>
                     <li>Files and documents you upload</li>
                     <li>Whiteboard drawings and collaborative documents</li>
+                    <li>Calendar events and study session data</li>
+                    <li>AI-generated study content you create or save</li>
                   </ul>
                 </div>
                 <div>
@@ -78,10 +80,51 @@ const Privacy = () => {
                     <li>Device type and browser information</li>
                     <li>IP address and general location data</li>
                     <li>Login times and activity timestamps</li>
-                    <li>XP points and streak information</li>
+                    <li>XP points, streak information, and leaderboard data</li>
+                    <li>Cookie preferences and consent choices</li>
                   </ul>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5 text-primary" />
+                Google Sign-In & Third-Party Authentication
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                StudyHub offers <strong>Google Sign-In</strong> as an authentication option. When you choose to sign in with Google:
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li>We receive your name, email address, and profile picture from Google</li>
+                <li>We do not receive or store your Google account password</li>
+                <li>Google's own Privacy Policy and Terms of Service govern the data Google collects during the sign-in process</li>
+                <li>You can revoke StudyHub's access to your Google account at any time via your Google Account settings</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.18s" }}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5 text-primary" />
+                Automatic Country Detection
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                To personalise your experience, StudyHub may automatically detect your country based on your IP address:
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li>This is used only to pre-fill your country during onboarding and to recommend relevant study groups and content</li>
+                <li>Your precise location (city, street) is never stored — only the country-level result</li>
+                <li>You can change your country at any time in your profile settings</li>
+                <li>IP-based detection is performed client-side and no raw IP addresses are stored for this purpose</li>
+              </ul>
             </CardContent>
           </Card>
 
@@ -97,11 +140,11 @@ const Privacy = () => {
                 We use the information we collect for the following purposes:
               </p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                <li><strong>Provide our services:</strong> Enable you to create posts, join study groups, connect with other students, and use all platform features</li>
-                <li><strong>Personalize your experience:</strong> Show relevant content based on your grade, stream, and country; recommend study groups and resources</li>
+                <li><strong>Provide our services:</strong> Enable you to create posts, join study groups, connect with other students, use AI tools, whiteboards, calendars, and all platform features</li>
+                <li><strong>Personalise your experience:</strong> Show relevant content based on your grade, stream, and country; recommend study groups and resources</li>
                 <li><strong>Track your progress:</strong> Calculate XP points, maintain streaks, and track your study achievements</li>
                 <li><strong>Send notifications:</strong> Alert you about replies to your posts, mentions, group updates, and important announcements</li>
-                <li><strong>Improve our platform:</strong> Analyze usage patterns to enhance features and fix issues</li>
+                <li><strong>Improve our platform:</strong> Analyse usage patterns to enhance features and fix issues</li>
                 <li><strong>Ensure safety:</strong> Moderate content, prevent abuse, and maintain a positive learning environment</li>
                 <li><strong>Communicate with you:</strong> Respond to support requests and send service-related updates</li>
               </ul>
@@ -109,6 +152,28 @@ const Privacy = () => {
           </Card>
 
           <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.25s" }}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Cookie className="h-5 w-5 text-primary" />
+                Cookies & Preferences
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                StudyHub uses cookies and similar technologies to operate and improve the platform:
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li><strong>Essential cookies:</strong> Required for authentication, session management, and core functionality. These cannot be disabled</li>
+                <li><strong>Preference cookies:</strong> Store your theme choice (light/dark mode), language, and display preferences</li>
+                <li><strong>Analytics cookies:</strong> Help us understand how the platform is used so we can improve it (e.g., Google Analytics)</li>
+                <li>When you first visit StudyHub, a <strong>cookie consent banner</strong> allows you to accept or customise your cookie preferences</li>
+                <li>You can update your cookie preferences at any time via your browser settings</li>
+                <li>We do not use cookies for advertising or tracking across other websites</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.28s" }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Server className="h-5 w-5 text-primary" />
@@ -122,8 +187,8 @@ const Privacy = () => {
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li><strong>Encryption:</strong> All data is encrypted in transit using HTTPS/TLS and at rest using industry-standard encryption</li>
                 <li><strong>Secure infrastructure:</strong> We use reputable cloud service providers with robust security certifications</li>
-                <li><strong>Access controls:</strong> Only authorized personnel can access user data, and only when necessary for service operation</li>
-                <li><strong>Authentication:</strong> We use secure authentication methods to protect your account</li>
+                <li><strong>Access controls:</strong> Only authorised personnel can access user data, and only when necessary for service operation</li>
+                <li><strong>Authentication:</strong> We use secure authentication methods including Google OAuth and email-based verification</li>
                 <li><strong>Regular audits:</strong> We conduct security reviews and assessments to identify and address vulnerabilities</li>
                 <li><strong>Data backups:</strong> Regular backups ensure your data is not lost due to technical issues</li>
               </ul>
@@ -163,8 +228,9 @@ const Privacy = () => {
               </p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li><strong>Cloud hosting:</strong> Our platform is hosted on secure cloud infrastructure that stores your data</li>
-                <li><strong>Authentication services:</strong> We use secure authentication providers to manage login and account security</li>
-                <li><strong>Analytics:</strong> We may use analytics tools to understand how our platform is used and improve user experience</li>
+                <li><strong>Authentication services:</strong> Google OAuth and secure email authentication for login and account security</li>
+                <li><strong>AI services:</strong> AI models used for content generation and writing assistance process your prompts but do not retain them</li>
+                <li><strong>Analytics:</strong> Google Analytics to understand platform usage and improve user experience</li>
                 <li><strong>Email services:</strong> To send notifications and support communications</li>
                 <li><strong>Content delivery:</strong> To ensure fast and reliable access to platform resources</li>
               </ul>
@@ -178,20 +244,20 @@ const Privacy = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-primary" />
-                Sharing Your Information
+                Study Groups & Social Features
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                We may share your information only in the following limited circumstances:
+                StudyHub includes collaborative features. Here is how your data is handled in social contexts:
               </p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                <li><strong>With your consent:</strong> When you explicitly agree to share information</li>
-                <li><strong>Public content:</strong> Posts, comments, and profile information you choose to make public are visible to other users</li>
-                <li><strong>Legal requirements:</strong> When required by law, court order, or government request</li>
-                <li><strong>Safety and rights:</strong> To protect the safety of users, enforce our terms, or protect our legal rights</li>
-                <li><strong>Service providers:</strong> With third-party vendors who help operate our platform (as described above)</li>
-                <li><strong>Business transfers:</strong> In connection with a merger, acquisition, or sale of assets (with prior notice)</li>
+                <li>Your <strong>username and avatar</strong> are visible to members of groups you join and users you interact with</li>
+                <li>Messages sent in <strong>group chats</strong> are visible to all group members</li>
+                <li><strong>Direct messages</strong> are private between you and the recipient</li>
+                <li>Group admins can see membership lists and manage join requests</li>
+                <li>Collaborative documents and whiteboards shared within a group are accessible to all group members</li>
+                <li>You can control whether your profile is <strong>public or private</strong> and who can send you direct messages via Settings</li>
               </ul>
             </CardContent>
           </Card>
@@ -214,6 +280,7 @@ const Privacy = () => {
                 <li><strong>Data portability:</strong> Request your data in a commonly used format</li>
                 <li><strong>Withdraw consent:</strong> Opt out of optional data collection at any time</li>
                 <li><strong>Object to processing:</strong> Object to certain uses of your data</li>
+                <li><strong>Cookie preferences:</strong> Manage your cookie consent via the banner or browser settings</li>
               </ul>
               <p className="text-muted-foreground text-sm">
                 To exercise any of these rights, please contact us using the information provided below or visit your Settings page.
@@ -238,6 +305,7 @@ const Privacy = () => {
                 <li>Choose who can send you direct messages</li>
                 <li>Enable or disable online status visibility</li>
                 <li>Manage blocked subjects and content filters</li>
+                <li>Update your country, grade, and stream at any time</li>
                 <li>Delete your account and all associated data</li>
               </ul>
             </CardContent>
@@ -258,7 +326,7 @@ const Privacy = () => {
                 <li>Account data is retained until you request deletion</li>
                 <li>Upon account deletion, we remove your personal data within 30 days</li>
                 <li>Some data may be retained longer if required by law or for legitimate business purposes</li>
-                <li>Anonymized data may be retained for analytics and platform improvement</li>
+                <li>Anonymised data may be retained for analytics and platform improvement</li>
                 <li>Content you shared publicly may remain visible if others have interacted with it</li>
               </ul>
               <p className="text-muted-foreground text-sm">
