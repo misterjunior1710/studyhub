@@ -1,4 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette, Rss } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -69,8 +69,12 @@ const Navbar = ({
                 <Sparkles className="h-4 w-4 mr-2" />
                 AI
               </Button>
-              <Button variant={isActive("/") || isActive("/feed") ? "default" : "ghost"} size="sm" onClick={() => navigate("/feed")}>
+              <Button variant={isActive("/") ? "default" : "ghost"} size="sm" onClick={() => navigate("/")}>
                 <Home className="h-4 w-4 mr-2" />
+                Home
+              </Button>
+              <Button variant={isActive("/feed") ? "default" : "ghost"} size="sm" onClick={() => navigate("/feed")}>
+                <Rss className="h-4 w-4 mr-2" />
                 Feed
               </Button>
               <Button variant={isActive("/questions") ? "default" : "ghost"} size="sm" onClick={() => navigate("/questions")}>
