@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, UserCheck, Shield, AlertTriangle, Scale, Ban, RefreshCw, Mail, BookOpen, Users, Gavel, Clock } from "lucide-react";
+import { FileText, UserCheck, Shield, AlertTriangle, Scale, Ban, RefreshCw, Mail, BookOpen, Users, Gavel, Clock, Globe, Sparkles } from "lucide-react";
 
 const Terms = () => {
   const breadcrumbData = getBreadcrumbSchema([
@@ -29,7 +29,7 @@ const Terms = () => {
               Terms & Conditions
             </h1>
             <p className="text-muted-foreground">
-              Last updated: January 1, 2025
+              Last updated: April 15, 2026
             </p>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Welcome to StudyHub! These Terms & Conditions govern your use of our platform. By creating an account or using StudyHub, you agree to these terms. Please read them carefully.
@@ -84,7 +84,7 @@ const Terms = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-primary" />
-                User Accounts
+                User Accounts & Authentication
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -93,6 +93,8 @@ const Terms = () => {
               </p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li>Provide accurate, current, and complete information during registration</li>
+                <li>You may sign up using your email and password, or via <strong>Google Sign-In</strong> (OAuth). By using Google Sign-In, you also agree to Google's Terms of Service and Privacy Policy</li>
+                <li>Complete the <strong>profile onboarding</strong> process by providing your username, country, grade, and stream before accessing the platform</li>
                 <li>Maintain and update your information to keep it accurate and current</li>
                 <li>Keep your password confidential and secure</li>
                 <li>Not share your account credentials with others</li>
@@ -106,25 +108,71 @@ const Terms = () => {
             </CardContent>
           </Card>
 
-          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.25s" }}>
+          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.22s" }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-primary" />
-                Acceptable Use
+                <Globe className="h-5 w-5 text-primary" />
+                User Profiles & Country Detection
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                StudyHub is a platform for learning and academic collaboration. You agree to use the platform responsibly:
+                StudyHub collects profile information to personalise your experience:
               </p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li>During onboarding you provide your <strong>username, country, grade, and academic stream</strong></li>
+                <li>Your <strong>country may be auto-detected</strong> from your IP address to pre-fill the country field. You can change this at any time</li>
+                <li>Profile data (including avatar, bio, and study preferences) is used to recommend relevant study groups, content, and peers</li>
+                <li>You can control profile visibility (public or private) and who can message you via Settings</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.25s" }}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-primary" />
+                Platform Features & Acceptable Use
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                StudyHub provides a suite of educational tools. You agree to use them responsibly:
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li><strong>Feed & Posts:</strong> Share study content, questions, and resources with the community</li>
+                <li><strong>Study Groups:</strong> Create or join public and private groups for collaborative learning. Admins manage membership, join requests, and group visibility</li>
+                <li><strong>Group Chat & Direct Messages:</strong> Communicate with group members and friends in real time</li>
+                <li><strong>Study Mode:</strong> Use the Pomodoro timer, flashcards, quizzes, and mind maps to study effectively</li>
+                <li><strong>AI Content Generator:</strong> Generate study materials using AI. AI-generated content is for study aid only and should be verified independently</li>
+                <li><strong>Whiteboards:</strong> Create and share collaborative whiteboards for visual learning</li>
+                <li><strong>Calendar & Events:</strong> Schedule study sessions and share events with friends or groups</li>
+                <li><strong>Note-Taking & Collaborative Docs:</strong> Create, edit, and share notes and documents within groups</li>
                 <li>Use the platform only for educational and learning purposes</li>
                 <li>Engage respectfully with other students and community members</li>
                 <li>Share helpful, accurate, and constructive content</li>
                 <li>Cite sources when sharing external information or resources</li>
-                <li>Respect intellectual property rights of others</li>
                 <li>Report content that violates our guidelines</li>
-                <li>Follow the instructions and guidance of moderators and administrators</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.28s" }}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary" />
+                AI-Generated Content
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                StudyHub offers AI-powered features including content generation and writing assistance:
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li>AI-generated content is provided for study assistance only and may contain errors or inaccuracies</li>
+                <li>You are responsible for verifying any AI-generated information before relying on it academically</li>
+                <li>AI features must not be used to produce content that violates academic integrity policies at your institution</li>
+                <li>We do not guarantee the accuracy, completeness, or suitability of AI outputs</li>
               </ul>
             </CardContent>
           </Card>
@@ -198,7 +246,7 @@ const Terms = () => {
               </p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li><strong>Academic Results:</strong> Using StudyHub does not guarantee improved grades, test scores, or academic performance</li>
-                <li><strong>Content Accuracy:</strong> Information shared by users may contain errors or inaccuracies; always verify important information with official sources</li>
+                <li><strong>Content Accuracy:</strong> Information shared by users or generated by AI may contain errors; always verify with official sources</li>
                 <li><strong>Answer Correctness:</strong> Answers provided by other students are not professionally verified and may be incorrect</li>
                 <li><strong>Educational Value:</strong> The quality of learning depends on individual effort and engagement</li>
                 <li><strong>Availability:</strong> Continuous, uninterrupted access to the platform</li>
