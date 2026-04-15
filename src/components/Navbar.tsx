@@ -69,8 +69,12 @@ const Navbar = ({
                 <Sparkles className="h-4 w-4 mr-2" />
                 AI
               </Button>
-              <Button variant={isActive("/") || isActive("/feed") ? "default" : "ghost"} size="sm" onClick={() => navigate("/feed")}>
+              <Button variant={isActive("/") ? "default" : "ghost"} size="sm" onClick={() => navigate("/")}>
                 <Home className="h-4 w-4 mr-2" />
+                Home
+              </Button>
+              <Button variant={isActive("/feed") ? "default" : "ghost"} size="sm" onClick={() => navigate("/feed")}>
+                <Megaphone className="h-4 w-4 mr-2" />
                 Feed
               </Button>
               <Button variant={isActive("/questions") ? "default" : "ghost"} size="sm" onClick={() => navigate("/questions")}>

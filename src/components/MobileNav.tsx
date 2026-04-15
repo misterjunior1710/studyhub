@@ -21,6 +21,7 @@ const MobileNav = () => {
     { path: "/study", label: "Study Mode", icon: Timer },
     { path: "/content-generator", label: "AI Generator", icon: Sparkles },
     { path: "/", label: "Home", icon: Home },
+    { path: "/feed", label: "Feed", icon: Megaphone },
     { path: "/questions", label: "Questions", icon: HelpCircle },
     { path: "/groups", label: "Groups", icon: Users },
     { path: "/friends", label: "Friends", icon: UserPlus },
