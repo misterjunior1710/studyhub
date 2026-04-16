@@ -22,10 +22,10 @@ const CreateUpdatePostDialog = ({ onPostCreated }: CreateUpdatePostDialogProps) 
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [updateCategory, setUpdateCategory] = useState("feature");
+  const [category, setCategory] = useState("feature");
   const [customDate, setCustomDate] = useState<Date | undefined>(undefined);
 
-  const updateCategories = [
+  const categories = [
     { value: "feature", label: "🚀 New Feature" },
     { value: "improvement", label: "⚡ Improvement" },
     { value: "bugfix", label: "🐛 Bug Fix" },
@@ -34,102 +34,39 @@ const CreateUpdatePostDialog = ({ onPostCreated }: CreateUpdatePostDialogProps) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!title || !content) {
-      toast.error("Please fill in all fields");
-      return;
-    }
+    if (!title || !content) { toast.error("Please fill in all fields"); return; }
 
     setLoading(true);
-
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        toast.error("You must be logged in to create an update");
-        return;
-      }
+      if (!user) { toast.error("You must be logged in"); return; }
 
-      // Verify admin access
-      if (user.email !== "misterjunior1710@gmail.com") {
-        toast.error("Only admins can post updates");
-        return;
-      }
-
-      // Build the insert object
-      const postData: {
-        user_id: string;
-        title: string;
-        content: string;
-        subject: string;
-        grade: string;
-        stream: string;
-        country: string;
-        post_type: string;
-        created_at?: string;
-      } = {
-        user_id: user.id,
+      const { error } = await supabase.from("announcements").insert({
         title,
         content,
-        subject: updateCategory,
-        grade: "Platform",
-        stream: "Update",
-        country: "Global",
-        post_type: "update",
-      };
+        category,
+        author_id: user.id,
+        ...(customDate ? { published_at: customDate.toISOString() } : {}),
+      });
 
-      // If custom date is set, use it for created_at
-      if (customDate) {
-        postData.created_at = customDate.toISOString();
+      if (error) throw error;
+
+      // Notify users who opted in
+      const { data: optedIn } = await supabase.from("profiles").select("id").eq("notify_feature_updates", true);
+      if (optedIn && optedIn.length > 0) {
+        await supabase.from("notifications").insert(
+          optedIn.map((p) => ({ user_id: p.id, type: "feature_update", content: `New update: ${title}`, is_read: false }))
+        );
       }
 
-      const { error } = await supabase.from("posts").insert(postData);
-
-      if (error) {
-        console.error("Update creation error:", error);
-        throw error;
-      }
-
-      // Send notifications to users who opted in
-      await sendUpdateNotifications(title);
-
-      toast.success("Update posted successfully!");
-      setTitle("");
-      setContent("");
-      setUpdateCategory("feature");
-      setCustomDate(undefined);
+      toast.success("Announcement posted!");
+      setTitle(""); setContent(""); setCategory("feature"); setCustomDate(undefined);
       setOpen(false);
       onPostCreated?.();
     } catch (error: any) {
-      toast.error(error.message || "Failed to create update");
+      toast.error(error.message || "Failed to create announcement");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const sendUpdateNotifications = async (updateTitle: string) => {
-    try {
-      // Get users who have opted in to feature update notifications
-      const { data: optedInUsers, error } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("notify_feature_updates", true);
-
-      if (error || !optedInUsers) return;
-
-      // Create notifications for opted-in users
-      const notifications = optedInUsers.map((profile) => ({
-        user_id: profile.id,
-        type: "feature_update",
-        content: `New update: ${updateTitle}`,
-        is_read: false,
-      }));
-
-      if (notifications.length > 0) {
-        await supabase.from("notifications").insert(notifications);
-      }
-    } catch (error) {
-      console.error("Failed to send update notifications:", error);
     }
   };
 
@@ -137,112 +74,58 @@ const CreateUpdatePostDialog = ({ onPostCreated }: CreateUpdatePostDialogProps) 
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="bg-gradient-to-r from-accent to-accent hover:opacity-90">
-          <Plus className="h-4 w-4 mr-2" />
-          Post Update
+          <Plus className="h-4 w-4 mr-2" /> Post Update
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Post Platform Update</DialogTitle>
-          <DialogDescription>
-            Share feature announcements, improvements, or bug fixes with the community
-          </DialogDescription>
+          <DialogDescription>Share feature announcements, improvements, or bug fixes</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="updateCategory">Update Type</Label>
-              <Select value={updateCategory} onValueChange={setUpdateCategory}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+              <Label>Update Type</Label>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {updateCategories.map((cat) => (
-                    <SelectItem key={cat.value} value={cat.value}>
-                      {cat.label}
-                    </SelectItem>
-                  ))}
+                  {categories.map((c) => (<SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>))}
                 </SelectContent>
               </Select>
             </div>
-
             <div className="space-y-2">
               <Label>Post Date (optional)</Label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !customDate && "text-muted-foreground"
-                    )}
-                  >
+                  <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !customDate && "text-muted-foreground")}>
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {customDate ? format(customDate, "PPP") : "Use current date"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={customDate}
-                    onSelect={setCustomDate}
-                    disabled={(date) => date > new Date()}
-                    initialFocus
-                    className={cn("p-3 pointer-events-auto")}
-                  />
+                  <Calendar mode="single" selected={customDate} onSelect={setCustomDate} disabled={(date) => date > new Date()} initialFocus className="p-3 pointer-events-auto" />
                   {customDate && (
                     <div className="p-2 border-t">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => setCustomDate(undefined)}
-                      >
-                        Clear date
-                      </Button>
+                      <Button variant="ghost" size="sm" className="w-full" onClick={() => setCustomDate(undefined)}>Clear date</Button>
                     </div>
                   )}
                 </PopoverContent>
               </Popover>
-              <p className="text-xs text-muted-foreground">
-                Set a past date to backdate this post
-              </p>
+              <p className="text-xs text-muted-foreground">Set a past date to backdate this post</p>
             </div>
           </div>
-
           <div className="space-y-2">
             <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              placeholder="What's new?"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
+            <Input id="title" placeholder="What's new?" value={title} onChange={(e) => setTitle(e.target.value)} required />
           </div>
-
           <div className="space-y-2">
-            <Label htmlFor="content">Content</Label>
-            <RichTextEditor
-              content={content}
-              onChange={setContent}
-              placeholder="Describe the update, new feature, or fix..."
-            />
+            <Label>Content</Label>
+            <RichTextEditor content={content} onChange={setContent} placeholder="Describe the update..." />
           </div>
-
           <div className="flex gap-2 justify-end">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
             <Button type="submit" disabled={loading}>
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Posting...
-                </>
-              ) : (
-                "Post Update"
-              )}
+              {loading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Posting...</>) : "Post Update"}
             </Button>
           </div>
         </form>
