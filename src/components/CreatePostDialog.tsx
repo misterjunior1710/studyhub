@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import RichTextEditor from "./RichTextEditor";
 import { useOnboarding } from "@/contexts/OnboardingContext";
+import { ALL_GRADES, getStreamsForGrade, getSubjectsForGrade, COUNTRIES, isAdultGrade } from "@/lib/constants";
 
 interface CreatePostDialogProps {
   onPostCreated?: () => void;
@@ -31,15 +32,10 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   const [quietMode, setQuietMode] = useState(false);
   const { completeTask } = useOnboarding();
 
-  const isAdult = grade === "Adult (18+)" || grade === "Working Professional";
-  const subjects = isAdult 
-    ? ["General", "Career Advice", "Finance", "Technology", "Business", "Personal Development", "Health & Wellness", "Dentistry", "Oral Health", "Dental Sciences", "Other", "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "History", "Geography"]
-    : ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "English", "History", "Geography", "General"];
-  const grades = ["Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate", "Postgraduate", "Adult (18+)", "Working Professional"];
-  const streams = isAdult 
-    ? ["Not Applicable", "Self-Learning", "Professional Development", "BDS", "MDS", "Dental Hygiene", "Dental Technology", "Dental Nursing", "Other"]
-    : ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Other"];
-  const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria", "Other"];
+  const subjects = getSubjectsForGrade(grade);
+  const grades = ALL_GRADES;
+  const streams = getStreamsForGrade(grade);
+  const countries = COUNTRIES;
   const postTypes = [
     { value: "doubt", label: "Ask a Question" },
     { value: "general", label: "General Post" }
