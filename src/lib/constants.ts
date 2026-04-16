@@ -4,7 +4,7 @@ export const BRAND_TAGLINE = "Study Smarter, Win Harder";
 export const BRAND_URL = "https://studyhub-studentportal.lovable.app";
 export const BRAND_DESCRIPTION = "Connect with students worldwide on StudyHub. Share knowledge, ask questions, and collaborate across different countries, subjects, grades, and streams.";
 
-// Grade levels - includes adult option (minimum age 13+, so starting from Grade 9)
+// Grade levels
 export const STUDENT_GRADES = [
   "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate", "Postgraduate"
 ];
@@ -15,56 +15,37 @@ export const ALL_GRADES = [...STUDENT_GRADES, ...ADULT_GRADES];
 
 // Streams/Curriculum
 export const STUDENT_STREAMS = [
-  "CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", 
-  "State Board", "Cambridge", "Edexcel", "German Abitur", 
+  "CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE",
+  "State Board", "Cambridge", "Edexcel", "German Abitur",
   "French Baccalauréat", "Dutch VWO", "Other"
 ];
 
 export const ADULT_STREAMS = [
-  "Not Applicable", "Self-Learning", "Professional Development",
-  // Dental Degrees
-  "BDS", "MDS",
-  // UK Royal College Qualifications
-  "LDSRCS(Eng)", "MFDSRCS(Eng)", "MFDSRCS(Edin)", "MFDSRCPS(Glas)",
-  "MIMPDent RCSEd",
-  // Registration Status
-  "GDC Registered", "DCI Registered",
-  // Support Roles
-  "Dental Hygiene", "Dental Technology", "Dental Nursing",
-  "Other"
+  "Not Applicable", "Self-Learning", "Professional Development", "Other"
 ];
 
-// Subjects
+// Subjects — max 50, commonly used academic subjects only
 export const STUDENT_SUBJECTS = [
-  "Mathematics", "Physics", "Chemistry", "Biology", 
-  "Computer Science", "English", "History", "Geography"
+  "Mathematics", "Physics", "Chemistry", "Biology",
+  "Computer Science", "English", "History", "Geography",
+  "Economics", "Business Studies", "Accounting",
+  "Psychology", "Sociology", "Political Science",
+  "Art", "Music", "Physical Education",
+  "Environmental Science", "Statistics"
 ];
 
 export const ADULT_SUBJECTS = [
-  "General", "Career Advice", "Finance", "Technology", 
-  "Business", "Personal Development", "Health & Wellness", 
-  // Dental General
-  "Dentistry", "Oral Health", "Dental Sciences",
-  // Dental Specialties
-  "Implant Dentistry", "Oral Surgery", "Endodontics", 
-  "Prosthodontics", "Orthodontics", "Periodontics",
-  "Paediatric Dentistry", "Oral Medicine", "Dental Radiology",
+  "General", "Career Advice", "Finance", "Technology",
+  "Business", "Personal Development", "Health & Wellness",
   "Other"
-];
-
-export const DENTAL_STREAMS = [
-  "BDS", "MDS",
-  "LDSRCS(Eng)", "MFDSRCS(Eng)", "MFDSRCS(Edin)", "MFDSRCPS(Glas)",
-  "MIMPDent RCSEd", "GDC Registered", "DCI Registered",
-  "Dental Hygiene", "Dental Technology", "Dental Nursing"
 ];
 
 export const ALL_SUBJECTS = [...STUDENT_SUBJECTS, ...ADULT_SUBJECTS];
 
 // Countries
 export const COUNTRIES = [
-  "United States", "United Kingdom", "India", "Canada", "Australia", 
-  "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", 
+  "United States", "United Kingdom", "India", "Canada", "Australia",
+  "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden",
   "Poland", "Switzerland", "Belgium", "Austria", "Other"
 ];
 
