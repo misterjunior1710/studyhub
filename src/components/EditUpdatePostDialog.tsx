@@ -24,16 +24,7 @@ interface EditUpdatePostDialogProps {
   onPostUpdated?: () => void;
 }
 
-const EditUpdatePostDialog = ({ 
-  postId, 
-  currentTitle, 
-  currentContent,
-  currentCategory,
-  currentDate,
-  open, 
-  onOpenChange, 
-  onPostUpdated 
-}: EditUpdatePostDialogProps) => {
+const EditUpdatePostDialog = ({ postId, currentTitle, currentContent, currentCategory, currentDate, open, onOpenChange, onPostUpdated }: EditUpdatePostDialogProps) => {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState(currentTitle);
   const [content, setContent] = useState(currentContent);
@@ -42,49 +33,21 @@ const EditUpdatePostDialog = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!title.trim() || !content.trim()) {
-      toast.error("Title and content are required");
-      return;
-    }
+    if (!title.trim() || !content.trim()) { toast.error("Title and content are required"); return; }
 
     setLoading(true);
-
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        toast.error("You must be logged in to edit a post");
-        return;
-      }
-
-      // Check if user is admin
-      if (user.email !== "misterjunior1710@gmail.com") {
-        toast.error("Only admins can edit update posts");
-        return;
-      }
-
       const { error } = await supabase
-        .from("posts")
-        .update({
-          title: title.trim(),
-          content: content.trim(),
-          subject: category,
-          created_at: postDate.toISOString(),
-          updated_at: new Date().toISOString(),
-        })
+        .from("announcements")
+        .update({ title: title.trim(), content: content.trim(), category, published_at: postDate.toISOString() })
         .eq("id", postId);
 
-      if (error) {
-        console.error("Post update error:", error);
-        throw error;
-      }
-
-      toast.success("Update post edited successfully!");
+      if (error) throw error;
+      toast.success("Announcement updated!");
       onOpenChange(false);
       onPostUpdated?.();
     } catch (error: any) {
-      toast.error(error.message || "Failed to update post");
+      toast.error(error.message || "Failed to update");
     } finally {
       setLoading(false);
     }
@@ -94,19 +57,15 @@ const EditUpdatePostDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Update Post</DialogTitle>
-          <DialogDescription>
-            Edit your platform update announcement
-          </DialogDescription>
+          <DialogTitle>Edit Announcement</DialogTitle>
+          <DialogDescription>Edit your platform update announcement</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Update Type</Label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="feature">✨ New Feature</SelectItem>
                   <SelectItem value="improvement">🔧 Improvement</SelectItem>
@@ -115,67 +74,33 @@ const EditUpdatePostDialog = ({
                 </SelectContent>
               </Select>
             </div>
-
             <div className="space-y-2">
               <Label>Post Date</Label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !postDate && "text-muted-foreground"
-                    )}
-                  >
+                  <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !postDate && "text-muted-foreground")}>
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {postDate ? format(postDate, "PPP") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={postDate}
-                    onSelect={(date) => date && setPostDate(date)}
-                    initialFocus
-                  />
+                  <Calendar mode="single" selected={postDate} onSelect={(date) => date && setPostDate(date)} initialFocus />
                 </PopoverContent>
               </Popover>
             </div>
           </div>
-
           <div className="space-y-2">
-            <Label htmlFor="edit-title">Title</Label>
-            <Input
-              id="edit-title"
-              placeholder="Update title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
+            <Label>Title</Label>
+            <Input placeholder="Update title" value={title} onChange={(e) => setTitle(e.target.value)} required />
           </div>
-
           <div className="space-y-2">
-            <Label htmlFor="edit-content">Content</Label>
-            <RichTextEditor
-              content={content}
-              onChange={setContent}
-              placeholder="Describe the update..."
-            />
+            <Label>Content</Label>
+            <RichTextEditor content={content} onChange={setContent} placeholder="Describe the update..." />
           </div>
-
           <div className="flex gap-2 justify-end">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
             <Button type="submit" disabled={loading}>
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                "Save Changes"
-              )}
+              {loading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving...</>) : "Save Changes"}
             </Button>
           </div>
         </form>

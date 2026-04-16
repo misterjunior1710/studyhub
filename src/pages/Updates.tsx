@@ -1,13 +1,13 @@
 import { memo, useMemo, useState } from "react";
-import { usePosts } from "@/hooks/usePosts";
+import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
-import PostSkeleton from "@/components/PostSkeleton";
 import PullToRefresh from "@/components/PullToRefresh";
 import SEOHead, { StructuredData } from "@/components/SEOHead";
 import CreateUpdatePostDialog from "@/components/CreateUpdatePostDialog";
 import EditUpdatePostDialog from "@/components/EditUpdatePostDialog";
 import { useAuth } from "@/contexts/AuthContext";
-import { Megaphone, Sparkles, Bug, Wrench, Calendar, Pencil, Trash2 } from "lucide-react";
+import { useUserRole } from "@/hooks/useUserRole";
+import { Megaphone, Sparkles, Bug, Wrench, Calendar, Pencil, Trash2, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,8 +25,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
 import { format } from "date-fns";
+import Footer from "@/components/Footer";
 
 const PostSkeletonList = memo(() => (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -46,41 +46,21 @@ const PostSkeletonList = memo(() => (
     ))}
   </div>
 ));
-
 PostSkeletonList.displayName = "PostSkeletonList";
 
-// Helper to get update type from content
-const getUpdateType = (content: string): "feature" | "improvement" | "bugfix" => {
-  const lowerContent = content.toLowerCase();
-  if (lowerContent.includes("bug") || lowerContent.includes("fix")) return "bugfix";
-  if (lowerContent.includes("improve") || lowerContent.includes("enhance") || lowerContent.includes("update")) return "improvement";
-  return "feature";
-};
-
 const updateTypeConfig = {
-  feature: {
-    icon: Sparkles,
-    label: "New Feature",
-    className: "bg-accent/10 text-accent border-accent/20",
-  },
-  improvement: {
-    icon: Wrench,
-    label: "Improvement",
-    className: "bg-primary/10 text-primary border-primary/20",
-  },
-  bugfix: {
-    icon: Bug,
-    label: "Bug Fix",
-    className: "bg-destructive/10 text-destructive border-destructive/20",
-  },
+  feature: { icon: Sparkles, label: "New Feature", className: "bg-accent/10 text-accent border-accent/20" },
+  improvement: { icon: Wrench, label: "Improvement", className: "bg-primary/10 text-primary border-primary/20" },
+  bugfix: { icon: Bug, label: "Bug Fix", className: "bg-destructive/10 text-destructive border-destructive/20" },
+  announcement: { icon: Megaphone, label: "Announcement", className: "bg-primary/10 text-primary border-primary/20" },
 };
 
 interface UpdateCardProps {
-  postId: string;
+  id: string;
   title: string;
   content: string;
-  createdAt: string;
-  subject: string;
+  publishedAt: string;
+  category: string;
   isVisible: boolean;
   index: number;
   isAdmin: boolean;
@@ -88,31 +68,27 @@ interface UpdateCardProps {
   onDelete: () => void;
 }
 
-const UpdateCard = memo(({ postId, title, content, createdAt, subject, isVisible, index, isAdmin, onEdit, onDelete }: UpdateCardProps) => {
-  const updateType = getUpdateType(content);
-  const config = updateTypeConfig[updateType];
+const UpdateCard = memo(({ id, title, content, publishedAt, category, isVisible, index, isAdmin, onEdit, onDelete }: UpdateCardProps) => {
+  const config = updateTypeConfig[category as keyof typeof updateTypeConfig] || updateTypeConfig.announcement;
   const Icon = config.icon;
-  
-  // Strip HTML tags and truncate for description
+
   const stripHtml = (html: string) => {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const doc = new DOMParser().parseFromString(html, "text/html");
     return doc.body.textContent || "";
   };
-  
+
   const description = stripHtml(content).slice(0, 200) + (stripHtml(content).length > 200 ? "..." : "");
-  const formattedDate = format(new Date(createdAt), "MMM d, yyyy");
+  const formattedDate = format(new Date(publishedAt), "MMM d, yyyy");
 
   return (
-    <Card 
+    <Card
       className={`h-full bg-card/50 backdrop-blur-sm border-border/50 ${isVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
       style={{ animationDelay: `${Math.min(index * 100, 400)}ms` }}
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-lg leading-tight line-clamp-2">
-              {title}
-            </h3>
+            <h3 className="font-bold text-lg leading-tight line-clamp-2">{title}</h3>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Badge variant="outline" className={config.className}>
@@ -132,7 +108,7 @@ const UpdateCard = memo(({ postId, title, content, createdAt, subject, isVisible
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Update Post</AlertDialogTitle>
+                      <AlertDialogTitle>Delete Announcement</AlertDialogTitle>
                       <AlertDialogDescription>
                         Are you sure you want to delete "{title}"? This action cannot be undone.
                       </AlertDialogDescription>
@@ -155,92 +131,65 @@ const UpdateCard = memo(({ postId, title, content, createdAt, subject, isVisible
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {description}
-        </p>
+        <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
       </CardContent>
     </Card>
   );
 });
-
 UpdateCard.displayName = "UpdateCard";
 
 const Updates = () => {
   const { user } = useAuth();
-  const [editingPost, setEditingPost] = useState<{ id: string; title: string; content: string; subject: string; createdAt: string } | null>(null);
-  
-  // Check if current user is the specific admin
-  const isAdminUser = user?.email === "misterjunior1710@gmail.com";
+  const { isAdmin } = useUserRole(user?.id);
+  const [editingPost, setEditingPost] = useState<{ id: string; title: string; content: string; category: string; publishedAt: string } | null>(null);
 
-  const { data: posts, isLoading, refetch } = usePosts({
-    postType: "update",
-    sortBy: "new",
+  const { data: announcements, isLoading, isError, refetch } = useQuery({
+    queryKey: ["announcements"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("announcements")
+        .select("*")
+        .order("published_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
   });
 
-  const handleRefresh = async () => {
-    await refetch();
-  };
+  const handleRefresh = async () => { await refetch(); };
 
-  const handleDeletePost = async (postId: string) => {
+  const handleDelete = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from("posts")
-        .delete()
-        .eq("id", postId);
-
+      const { error } = await supabase.from("announcements").delete().eq("id", id);
       if (error) throw error;
-      toast.success("Update post deleted successfully");
+      toast.success("Announcement deleted");
       refetch();
     } catch (error: any) {
-      toast.error(error.message || "Failed to delete post");
+      toast.error(error.message || "Failed to delete");
     }
   };
-  
-  // Scroll reveal for cards
+
   const [cardsRef, cardsVisible] = useScrollReveal<HTMLDivElement>();
 
-  const structuredData = useMemo(
-    () => ({
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      name: "Platform Updates - StudyHub",
-      description: "Latest features, improvements, and announcements from StudyHub",
-      url: `${window.location.origin}/updates`,
-      breadcrumb: {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: window.location.origin,
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Updates",
-            item: `${window.location.origin}/updates`,
-          },
-        ],
-      },
-    }),
-    []
-  );
+  const structuredData = useMemo(() => ({
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Platform Updates - StudyHub",
+    description: "Latest features, improvements, and announcements from StudyHub",
+    url: `${window.location.origin}/updates`,
+  }), []);
 
   return (
     <>
       <SEOHead
         title="What's New | Updates & New Features | Changelog"
-        description="See the latest updates and new features. Bug fixes, improvements, new study tools. Stay updated on what's new."
+        description="See the latest updates and new features. Bug fixes, improvements, new study tools."
         canonical="https://studyhub.world/updates"
       />
       <StructuredData data={structuredData} />
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background flex flex-col">
         <Navbar onPostCreated={handleRefresh} />
-
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto px-4 py-8 flex-1">
           <div className="max-w-5xl mx-auto">
-            {/* Header */}
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -256,36 +205,40 @@ const Updates = () => {
                     </p>
                   </div>
                 </div>
-                {/* Only show create button for admin user */}
-                {isAdminUser && (
+                {isAdmin && (
                   <div className="opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
                     <CreateUpdatePostDialog onPostCreated={handleRefresh} />
                   </div>
                 )}
               </div>
-
-              {/* Category badges */}
               <div className="flex flex-wrap gap-2 mt-6 opacity-0 animate-hero-fade-up" style={{ animationDelay: "250ms" }}>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-medium border border-accent/20">
-                  <Sparkles className="h-3 w-3" />
-                  New Features
+                  <Sparkles className="h-3 w-3" /> New Features
                 </div>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium border border-primary/20">
-                  <Wrench className="h-3 w-3" />
-                  Improvements
+                  <Wrench className="h-3 w-3" /> Improvements
                 </div>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-destructive/10 text-destructive text-xs font-medium border border-destructive/20">
-                  <Bug className="h-3 w-3" />
-                  Bug Fixes
+                  <Bug className="h-3 w-3" /> Bug Fixes
                 </div>
               </div>
             </div>
 
-            {/* Posts Grid */}
             <PullToRefresh onRefresh={handleRefresh}>
               {isLoading ? (
                 <PostSkeletonList />
-              ) : !posts || posts.length === 0 ? (
+              ) : isError ? (
+                <div className="text-center py-16 bg-card/50 rounded-2xl border border-border/50 backdrop-blur-sm">
+                  <div className="p-4 rounded-full bg-destructive/10 w-fit mx-auto mb-4">
+                    <AlertCircle className="h-12 w-12 text-destructive" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">Failed to load updates</h3>
+                  <p className="text-muted-foreground max-w-sm mx-auto mb-4">
+                    Something went wrong while fetching announcements. Please try again.
+                  </p>
+                  <Button variant="outline" onClick={() => refetch()}>Retry</Button>
+                </div>
+              ) : !announcements || announcements.length === 0 ? (
                 <div className="text-center py-16 bg-card/50 rounded-2xl border border-border/50 backdrop-blur-sm">
                   <div className="p-4 rounded-full bg-muted/50 w-fit mx-auto mb-4">
                     <Megaphone className="h-12 w-12 text-muted-foreground" />
@@ -297,25 +250,19 @@ const Updates = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6" ref={cardsRef}>
-                  {posts.map((post, index) => (
+                  {announcements.map((a, index) => (
                     <UpdateCard
-                      key={post.id}
-                      postId={post.id}
-                      title={post.title}
-                      content={post.content}
-                      createdAt={post.created_at}
-                      subject={post.subject}
+                      key={a.id}
+                      id={a.id}
+                      title={a.title}
+                      content={a.content}
+                      publishedAt={a.published_at}
+                      category={a.category}
                       isVisible={cardsVisible}
                       index={index}
-                      isAdmin={isAdminUser}
-                      onEdit={() => setEditingPost({
-                        id: post.id,
-                        title: post.title,
-                        content: post.content,
-                        subject: post.subject,
-                        createdAt: post.created_at
-                      })}
-                      onDelete={() => handleDeletePost(post.id)}
+                      isAdmin={isAdmin}
+                      onEdit={() => setEditingPost({ id: a.id, title: a.title, content: a.content, category: a.category, publishedAt: a.published_at })}
+                      onDelete={() => handleDelete(a.id)}
                     />
                   ))}
                 </div>
@@ -323,22 +270,19 @@ const Updates = () => {
             </PullToRefresh>
           </div>
         </main>
+        <Footer />
       </div>
 
-      {/* Edit Dialog */}
       {editingPost && (
         <EditUpdatePostDialog
           postId={editingPost.id}
           currentTitle={editingPost.title}
           currentContent={editingPost.content}
-          currentCategory={editingPost.subject}
-          currentDate={editingPost.createdAt}
+          currentCategory={editingPost.category}
+          currentDate={editingPost.publishedAt}
           open={!!editingPost}
           onOpenChange={(open) => !open && setEditingPost(null)}
-          onPostUpdated={() => {
-            setEditingPost(null);
-            refetch();
-          }}
+          onPostUpdated={() => { setEditingPost(null); refetch(); }}
         />
       )}
     </>
