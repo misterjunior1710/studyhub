@@ -71,6 +71,45 @@ export type Database = {
         }
         Relationships: []
       }
+      badges: {
+        Row: {
+          created_at: string
+          criteria_type: string
+          criteria_value: number
+          description: string
+          icon: string
+          id: string
+          name: string
+          rarity: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          criteria_type: string
+          criteria_value?: number
+          description: string
+          icon: string
+          id?: string
+          name: string
+          rarity: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          criteria_type?: string
+          criteria_value?: number
+          description?: string
+          icon?: string
+          id?: string
+          name?: string
+          rarity?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       ban_appeals: {
         Row: {
           admin_response: string | null
@@ -933,6 +972,33 @@ export type Database = {
           },
         ]
       }
+      leagues: {
+        Row: {
+          color: string
+          icon: string
+          min_weekly_xp: number
+          name: string
+          slug: string
+          tier: number
+        }
+        Insert: {
+          color: string
+          icon: string
+          min_weekly_xp: number
+          name: string
+          slug: string
+          tier: number
+        }
+        Update: {
+          color?: string
+          icon?: string
+          min_weekly_xp?: number
+          name?: string
+          slug?: string
+          tier?: number
+        }
+        Relationships: []
+      }
       mind_map_nodes: {
         Row: {
           color: string | null
@@ -1186,6 +1252,7 @@ export type Database = {
           blocked_subjects: string[] | null
           country: string | null
           created_at: string
+          current_league: string
           daily_hours_target: number | null
           daily_reminder_time: string | null
           daily_xp_date: string | null
@@ -1230,6 +1297,7 @@ export type Database = {
           blocked_subjects?: string[] | null
           country?: string | null
           created_at?: string
+          current_league?: string
           daily_hours_target?: number | null
           daily_reminder_time?: string | null
           daily_xp_date?: string | null
@@ -1274,6 +1342,7 @@ export type Database = {
           blocked_subjects?: string[] | null
           country?: string | null
           created_at?: string
+          current_league?: string
           daily_hours_target?: number | null
           daily_reminder_time?: string | null
           daily_xp_date?: string | null
@@ -1660,6 +1729,38 @@ export type Database = {
         }
         Relationships: []
       }
+      user_badges: {
+        Row: {
+          badge_slug: string
+          id: string
+          seen: boolean
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          badge_slug: string
+          id?: string
+          seen?: boolean
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          badge_slug?: string
+          id?: string
+          seen?: boolean
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_slug_fkey"
+            columns: ["badge_slug"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -1988,6 +2089,7 @@ export type Database = {
         Args: { _user_id: string; _whiteboard_id: string }
         Returns: boolean
       }
+      check_and_award_badges: { Args: { p_user_id: string }; Returns: number }
       create_whiteboard: {
         Args: { p_group_id?: string; p_name?: string }
         Returns: string
@@ -1999,6 +2101,23 @@ export type Database = {
       get_daily_answer_xp_remaining: {
         Args: { p_user_id: string }
         Returns: number
+      }
+      get_leaderboard: {
+        Args: { p_limit?: number; p_period?: string; p_scope?: string }
+        Returns: {
+          avatar_url: string
+          country: string
+          current_league: string
+          rank: number
+          user_id: string
+          username: string
+          xp: number
+        }[]
+      }
+      get_user_level: { Args: { p_total_xp: number }; Returns: Json }
+      get_user_rank: {
+        Args: { p_period?: string; p_scope?: string }
+        Returns: Json
       }
       get_xp_tier: { Args: { p_event_type: string }; Returns: number }
       has_role: {
@@ -2023,6 +2142,7 @@ export type Database = {
         Returns: boolean
       }
       purchase_streak_freeze: { Args: never; Returns: Json }
+      recalculate_leagues: { Args: never; Returns: undefined }
       reset_weekly_xp: { Args: never; Returns: undefined }
       update_daily_goal: {
         Args: { p_goal_type: string; p_increment?: number; p_user_id: string }
