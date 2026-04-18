@@ -21,7 +21,12 @@ import { useNavigate } from "react-router-dom";
 import { useDebounce } from "@/hooks/useDebounce";
 import { toast } from "sonner";
 import { sanitizeHtml } from "@/lib/sanitize";
-import { getSubjectsForGrade } from "@/lib/curriculumTemplates";
+const DEFAULT_SUBJECTS = [
+  "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science",
+  "English", "History", "Geography", "Economics", "Business Studies",
+  "Accounting", "Psychology", "Sociology", "Political Science",
+  "Literature", "Foreign Language", "Art", "Music", "General",
+];
 import {
   Plus, Search, Trash2, FileText, Loader2, Check, AlertCircle, NotebookPen,
 } from "lucide-react";
