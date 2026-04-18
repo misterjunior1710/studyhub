@@ -195,6 +195,15 @@ export default {
   			'menu-slide': {
   				'0%': { opacity: '0', transform: 'translateY(-8px)' },
   				'100%': { opacity: '1', transform: 'translateY(0)' }
+  			},
+  			'coin-pop': {
+  				'0%': { opacity: '0', transform: 'translate(-50%, 0) scale(0.5)' },
+  				'30%': { opacity: '1', transform: 'translate(-50%, -8px) scale(1.2)' },
+  				'100%': { opacity: '0', transform: 'translate(-50%, -32px) scale(1)' }
+  			},
+  			'pulse-slow': {
+  				'0%, 100%': { opacity: '1', transform: 'scale(1)' },
+  				'50%': { opacity: '0.85', transform: 'scale(1.08)' }
   			}
   		},
   		animation: {
@@ -225,7 +234,9 @@ export default {
   			'button-press': 'button-press 0.15s ease-out',
   			'input-focus': 'input-focus 0.2s ease-out forwards',
   			'tooltip-in': 'tooltip-in 0.15s ease-out',
-  			'menu-slide': 'menu-slide 0.2s ease-out'
+  			'menu-slide': 'menu-slide 0.2s ease-out',
+  			'coin-pop': 'coin-pop 1.5s ease-out forwards',
+  			'pulse-slow': 'pulse-slow 2s ease-in-out infinite'
   		},
   		boxShadow: {
   			'2xs': 'var(--shadow-2xs)',

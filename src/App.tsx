@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { useThemePersistence } from "@/hooks/useThemePersistence";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { GamificationProvider } from "@/contexts/GamificationContext";
 import { OnboardingProvider } from "@/contexts/OnboardingContext";
 import OnboardingFlow from "@/components/onboarding";
 import SessionExpiredDialog from "@/components/SessionExpiredDialog";
@@ -106,6 +107,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <AuthProvider>
+        <GamificationProvider>
         <OnboardingProvider>
           <ThemeInitializer>
             <TooltipProvider>
@@ -155,6 +157,7 @@ const App = () => (
             </TooltipProvider>
           </ThemeInitializer>
         </OnboardingProvider>
+        </GamificationProvider>
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>
