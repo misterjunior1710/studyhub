@@ -194,6 +194,7 @@ const Feed = () => {
                           authorId={post.user_id}
                           upvotes={post.upvotes}
                           downvotes={post.downvotes}
+                          shareCount={post.share_count ?? 0}
                           comments={Array.isArray(post.comments) ? post.comments.length : 0}
                           subject={post.subject}
                           grade={post.grade}

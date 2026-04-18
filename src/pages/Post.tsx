@@ -379,11 +379,10 @@ const Post = () => {
   };
 
   const handleShare = async () => {
-    const url = `${window.location.origin}/post/${id}`;
+    if (!id) return;
     await sharePost({
+      postId: id,
       title: post?.title || "StudyHub Post",
-      text: `Check out this post on StudyHub`,
-      url,
     });
   };
 
