@@ -44,6 +44,7 @@ const Install = lazy(() => import("./pages/Install"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const GroupTools = lazy(() => import("./pages/GroupTools"));
 const Whiteboards = lazy(() => import("./pages/Whiteboards"));
+const Notes = lazy(() => import("./pages/Notes"));
 
 // Optimized QueryClient with proper caching and garbage collection
 const queryClient = new QueryClient({
@@ -140,6 +141,7 @@ const App = () => (
                       <Route path="/install" element={<Install />} />
                       <Route path="/calendar" element={<Calendar />} />
                       <Route path="/whiteboards" element={<Whiteboards />} />
+                      <Route path="/notes" element={<Notes />} />
                       <Route path="/privacy" element={<Privacy />} />
                       <Route path="/terms" element={<Terms />} />
                       <Route path="/support" element={<Support />} />

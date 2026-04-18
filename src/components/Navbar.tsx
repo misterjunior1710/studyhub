@@ -1,4 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette, Rss } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -180,6 +180,11 @@ const Navbar = ({
                       >
                         <Palette className="mr-2 h-4 w-4" />
                         <span>Whiteboards</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/notes")}
+                      >
+                        <NotebookPen className="mr-2 h-4 w-4" />
+                        <span>Notes</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate("/saved")}
                       >
