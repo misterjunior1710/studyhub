@@ -294,6 +294,29 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Social Share Section */}
+      <section className="border-t border-border py-10">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-sm text-muted-foreground mb-4">
+            Love StudyHub? Share it with your classmates 💙
+          </p>
+          <div className="flex flex-row items-center justify-center gap-3">
+            {SOCIAL_SHARES.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                className={`inline-flex items-center justify-center w-11 h-11 rounded-full border border-border bg-card text-muted-foreground transition-all duration-200 hover:scale-110 hover:-translate-y-0.5 ${s.hover}`}
+              >
+                <s.icon className="h-5 w-5" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <Footer />
       <CookieConsent />
     </div>
