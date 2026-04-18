@@ -284,6 +284,36 @@ const ProfileOnboarding = () => {
               </Select>
             </div>
 
+            {/* Subjects multi-select */}
+            {grade && (
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">
+                  Subjects of Interest <span className="text-muted-foreground text-xs">(optional)</span>
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Pick subjects to auto-join global communities.
+                </p>
+                <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto rounded-md border p-3">
+                  {getSubjectsForGrade(grade).map((s) => (
+                    <label
+                      key={s}
+                      className="flex items-center gap-2 text-sm cursor-pointer"
+                    >
+                      <Checkbox
+                        checked={subjects.includes(s)}
+                        onCheckedChange={(checked) => {
+                          setSubjects((prev) =>
+                            checked ? [...prev, s] : prev.filter((x) => x !== s)
+                          );
+                        }}
+                      />
+                      <span>{s}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <Button 
               type="submit" 
               className="w-full h-11 text-base font-medium mt-6"
