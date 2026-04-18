@@ -59,7 +59,8 @@ const NotificationsPopover = () => {
     }
   };
 
-  const markAsRead = async (id: string, postId: string | null) => {
+  const markAsRead = async (notification: Notification) => {
+    const { id, post_id: postId, type } = notification;
     await supabase
       .from("notifications")
       .update({ is_read: true })
@@ -68,7 +69,6 @@ const NotificationsPopover = () => {
     setOpen(false);
 
     if (postId) {
-      // Check if post exists before navigating
       const { data: post } = await supabase
         .from("posts")
         .select("id")
@@ -76,8 +76,8 @@ const NotificationsPopover = () => {
         .maybeSingle();
 
       if (post) {
-        navigate(`/post/${postId}`);
-        setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 100);
+        const hash = type === "comment" || type === "reply" ? "#comments" : "#post";
+        navigate(`/post/${postId}${hash}`);
       } else {
         toast.error("This content is no longer available");
       }
