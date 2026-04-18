@@ -8,8 +8,32 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   BookOpen, Users, Trophy, Sparkles, ArrowRight, CheckCircle2, 
-  MessageSquare, Brain, Calendar, Bookmark, TrendingUp, Zap
+  MessageSquare, Brain, Calendar, Bookmark, TrendingUp, Zap,
+  Twitter, Facebook, Linkedin
 } from "lucide-react";
+
+const SHARE_URL = "https://studyhub.world";
+const SHARE_TEXT = "Check out StudyHub — free homework help and study groups for students worldwide.";
+const SOCIAL_SHARES = [
+  {
+    label: "Share on Twitter",
+    icon: Twitter,
+    href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(SHARE_TEXT)}&url=${encodeURIComponent(SHARE_URL)}`,
+    hover: "hover:bg-sky-500/10 hover:text-sky-500",
+  },
+  {
+    label: "Share on Facebook",
+    icon: Facebook,
+    href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(SHARE_URL)}`,
+    hover: "hover:bg-blue-600/10 hover:text-blue-600",
+  },
+  {
+    label: "Share on LinkedIn",
+    icon: Linkedin,
+    href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(SHARE_URL)}`,
+    hover: "hover:bg-blue-700/10 hover:text-blue-700",
+  },
+];
 import { useAuth } from "@/contexts/AuthContext";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
@@ -266,6 +290,29 @@ const Index = () => {
               <Brain className="h-4 w-4" />
               Try AI Study Tools
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Social Share Section */}
+      <section className="border-t border-border py-10">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-sm text-muted-foreground mb-4">
+            Love StudyHub? Share it with your classmates 💙
+          </p>
+          <div className="flex flex-row items-center justify-center gap-3">
+            {SOCIAL_SHARES.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                className={`inline-flex items-center justify-center w-11 h-11 rounded-full border border-border bg-card text-muted-foreground transition-all duration-200 hover:scale-110 hover:-translate-y-0.5 ${s.hover}`}
+              >
+                <s.icon className="h-5 w-5" />
+              </a>
+            ))}
           </div>
         </div>
       </section>
