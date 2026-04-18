@@ -14,7 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { COUNTRIES, ALL_GRADES, getStreamsForGrade, isAdultGrade } from "@/lib/constants";
+import { COUNTRIES, ALL_GRADES, getStreamsForGrade, isAdultGrade, getSubjectsForGrade } from "@/lib/constants";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useCountryDetect } from "@/hooks/useCountryDetect";
 import { getStreamsForCountry } from "@/lib/countryEducation";
 import { Loader2, Sparkles, GraduationCap } from "lucide-react";
@@ -27,6 +28,7 @@ const ProfileOnboarding = () => {
   const [country, setCountry] = useState("");
   const [grade, setGrade] = useState("");
   const [stream, setStream] = useState("");
+  const [subjects, setSubjects] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkingProfile, setCheckingProfile] = useState(true);
   const { detectedCountry } = useCountryDetect();
@@ -68,7 +70,7 @@ const ProfileOnboarding = () => {
       try {
         const { data: profile, error } = await supabase
           .from("profiles")
-          .select("username, country, grade, stream")
+          .select("username, country, grade, stream, subjects")
           .eq("id", user.id)
           .maybeSingle();
 
@@ -89,6 +91,7 @@ const ProfileOnboarding = () => {
         if (profile?.country) setCountry(profile.country);
         if (profile?.grade) setGrade(profile.grade);
         if (profile?.stream) setStream(profile.stream);
+        if (profile?.subjects) setSubjects(profile.subjects as string[]);
 
         setCheckingProfile(false);
       } catch (error) {
@@ -152,6 +155,7 @@ const ProfileOnboarding = () => {
           country,
           grade,
           stream,
+          subjects,
         })
         .eq("id", user.id);
 
@@ -279,6 +283,36 @@ const ProfileOnboarding = () => {
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Subjects multi-select */}
+            {grade && (
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">
+                  Subjects of Interest <span className="text-muted-foreground text-xs">(optional)</span>
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Pick subjects to auto-join global communities.
+                </p>
+                <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto rounded-md border p-3">
+                  {getSubjectsForGrade(grade).map((s) => (
+                    <label
+                      key={s}
+                      className="flex items-center gap-2 text-sm cursor-pointer"
+                    >
+                      <Checkbox
+                        checked={subjects.includes(s)}
+                        onCheckedChange={(checked) => {
+                          setSubjects((prev) =>
+                            checked ? [...prev, s] : prev.filter((x) => x !== s)
+                          );
+                        }}
+                      />
+                      <span>{s}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <Button 
               type="submit" 
