@@ -1,7 +1,7 @@
 import { memo, useState, useEffect, useCallback, useRef } from "react";
-import { ArrowUp, ArrowDown, MessageSquare, Share2, Bookmark, BookmarkCheck, Trash2, Flag, EyeOff, LogIn, Pencil } from "lucide-react";
+import { ArrowUp, ArrowDown, MessageSquare, Bookmark, BookmarkCheck, Trash2, Flag, EyeOff, LogIn, Pencil } from "lucide-react";
 import { sanitizeHtml } from "@/lib/sanitize";
-import { sharePost } from "@/lib/share";
+import SharePopover from "./SharePopover";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -141,6 +141,7 @@ interface StudyPostProps {
   upvotes: number;
   downvotes: number;
   comments: number;
+  shareCount?: number;
   subject: string;
   grade: string;
   stream: string;
@@ -161,6 +162,7 @@ const StudyPost = memo(({
   upvotes,
   downvotes,
   comments,
+  shareCount = 0,
   subject,
   grade,
   stream,
@@ -187,15 +189,7 @@ const StudyPost = memo(({
   const isUpdatePost = postType === "update";
   const isAdminUser = user?.email === "misterjunior1710@gmail.com";
 
-  // Handle share
-  const handleShare = useCallback(async () => {
-    const url = `${window.location.origin}/post/${id}`;
-    await sharePost({
-      title,
-      text: `Check out this post on StudyHub: ${title}`,
-      url,
-    });
-  }, [id, title]);
+  // Share handled via SharePopover component
 
   // Cleanup on unmount
   useEffect(() => {
@@ -481,10 +475,7 @@ const StudyPost = memo(({
                   {commentCount} Comments
                 </Button>
               )}
-              <Button variant="ghost" size="sm" className="gap-2" onClick={handleShare}>
-                <Share2 className="h-4 w-4" aria-hidden="true" />
-                Share
-              </Button>
+              <SharePopover postId={id} title={title} shareCount={shareCount} />
               <Button
                 variant="ghost"
                 size="sm"
@@ -537,10 +528,7 @@ const StudyPost = memo(({
                 <LogIn className="h-4 w-4" aria-hidden="true" />
                 Sign in to join the conversation
               </Button>
-              <Button variant="ghost" size="sm" className="gap-2" onClick={handleShare}>
-                <Share2 className="h-4 w-4" aria-hidden="true" />
-                Share
-              </Button>
+              <SharePopover postId={id} title={title} shareCount={shareCount} />
             </>
           )}
           
