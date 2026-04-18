@@ -316,6 +316,17 @@ All colors MUST be HSL.
   }
 }
 
+/* Notification target highlight */
+@keyframes notification-highlight {
+  0% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.6); background-color: hsl(var(--primary) / 0.12); }
+  60% { box-shadow: 0 0 0 8px hsl(var(--primary) / 0); background-color: hsl(var(--primary) / 0.08); }
+  100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0); background-color: transparent; }
+}
+.notification-target-highlight {
+  animation: notification-highlight 2.4s ease-out;
+  border-radius: var(--radius);
+}
+
 /* Easter egg party mode */
 @keyframes party-rainbow {
   0% { filter: hue-rotate(0deg); }
