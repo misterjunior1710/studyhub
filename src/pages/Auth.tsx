@@ -365,10 +365,58 @@ const Auth = () => {
                 </div>
               </div>
 
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">or magic link</span>
+                </div>
+              </div>
+
+              {magicSent ? (
+                <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 text-center space-y-2 animate-fade-in">
+                  <Mail className="h-6 w-6 mx-auto text-primary" />
+                  <p className="text-sm font-medium">Check your email ✨</p>
+                  <p className="text-xs text-muted-foreground">
+                    We sent a secure sign-in link to <span className="font-medium">{magicEmail}</span>. Click it to log in — no password needed.
+                  </p>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => { setMagicSent(false); setMagicEmail(""); }}
+                  >
+                    Use a different email
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={handleMagicLink} className="space-y-3">
+                  <p className="text-xs text-muted-foreground text-center">
+                    No password? No problem. We'll email you a secure link to sign in or sign up.
+                  </p>
+                  <Input
+                    type="email"
+                    placeholder="you@school.edu"
+                    value={magicEmail}
+                    onChange={e => setMagicEmail(e.target.value)}
+                    required
+                    aria-label="Email for magic link"
+                  />
+                  <Button type="submit" variant="outline" className="w-full gap-2" disabled={magicLoading}>
+                    {magicLoading ? (
+                      <><Loader2 className="h-4 w-4 animate-spin" /> Sending link...</>
+                    ) : (
+                      <><Mail className="h-4 w-4" /> Email me a magic link</>
+                    )}
+                  </Button>
+                </form>
+              )}
+
               {!showResendForm ? (
                 <Button 
                   variant="ghost" 
-                  className="w-full text-sm" 
+                  className="w-full text-sm mt-2" 
                   onClick={() => setShowResendForm(true)}
                 >
                   Didn't get the verification email? Tap here
