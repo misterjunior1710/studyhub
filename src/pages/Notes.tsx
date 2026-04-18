@@ -71,10 +71,7 @@ const Notes = () => {
   const lastSavedRef = useRef<{ title: string; subject: string; content: string } | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const subjectOptions = useMemo(() => {
-    const list = getSubjectsForGrade(profileData?.grade ?? "");
-    return list.length ? list : ["General", "Mathematics", "Science", "English", "Other"];
-  }, [profileData?.grade]);
+  const subjectOptions = useMemo(() => DEFAULT_SUBJECTS, []);
 
   // Redirect unauthenticated users
   useEffect(() => {
