@@ -416,6 +416,7 @@ const Post = () => {
           Back to Feed
         </Button>
 
+        <div ref={postRef}>
         <Card>
           <CardContent className="pt-6">
             <div className="flex gap-4">
