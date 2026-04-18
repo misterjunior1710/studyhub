@@ -14,7 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { COUNTRIES, ALL_GRADES, getStreamsForGrade, isAdultGrade } from "@/lib/constants";
+import { COUNTRIES, ALL_GRADES, getStreamsForGrade, isAdultGrade, getSubjectsForGrade } from "@/lib/constants";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useCountryDetect } from "@/hooks/useCountryDetect";
 import { getStreamsForCountry } from "@/lib/countryEducation";
 import { Loader2, Sparkles, GraduationCap } from "lucide-react";
