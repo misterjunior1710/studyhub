@@ -50,7 +50,7 @@ const noteSchema = z.object({
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 const Notes = () => {
-  const { user, profileData } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [notes, setNotes] = useState<Note[]>([]);
