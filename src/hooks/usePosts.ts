@@ -12,6 +12,7 @@ interface Post {
   country: string;
   upvotes: number;
   downvotes: number;
+  share_count: number;
   created_at: string;
   file_url: string | null;
   user_id: string;
