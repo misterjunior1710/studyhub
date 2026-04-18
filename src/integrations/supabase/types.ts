@@ -1023,6 +1023,7 @@ export type Database = {
           mentions: string[] | null
           post_type: string
           quiet_mode: boolean | null
+          share_count: number
           stream: string
           subject: string
           title: string
@@ -1048,6 +1049,7 @@ export type Database = {
           mentions?: string[] | null
           post_type?: string
           quiet_mode?: boolean | null
+          share_count?: number
           stream: string
           subject: string
           title: string
@@ -1073,6 +1075,7 @@ export type Database = {
           mentions?: string[] | null
           post_type?: string
           quiet_mode?: boolean | null
+          share_count?: number
           stream?: string
           subject?: string
           title?: string
