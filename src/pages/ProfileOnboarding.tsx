@@ -28,6 +28,7 @@ const ProfileOnboarding = () => {
   const [country, setCountry] = useState("");
   const [grade, setGrade] = useState("");
   const [stream, setStream] = useState("");
+  const [subjects, setSubjects] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkingProfile, setCheckingProfile] = useState(true);
   const { detectedCountry } = useCountryDetect();
@@ -69,7 +70,7 @@ const ProfileOnboarding = () => {
       try {
         const { data: profile, error } = await supabase
           .from("profiles")
-          .select("username, country, grade, stream")
+          .select("username, country, grade, stream, subjects")
           .eq("id", user.id)
           .maybeSingle();
 
@@ -90,6 +91,7 @@ const ProfileOnboarding = () => {
         if (profile?.country) setCountry(profile.country);
         if (profile?.grade) setGrade(profile.grade);
         if (profile?.stream) setStream(profile.stream);
+        if (profile?.subjects) setSubjects(profile.subjects as string[]);
 
         setCheckingProfile(false);
       } catch (error) {
@@ -153,6 +155,7 @@ const ProfileOnboarding = () => {
           country,
           grade,
           stream,
+          subjects,
         })
         .eq("id", user.id);
 
