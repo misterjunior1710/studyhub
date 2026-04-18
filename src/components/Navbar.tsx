@@ -7,6 +7,8 @@ import CreatePostDialog from "./CreatePostDialog";
 import NotificationsPopover from "./NotificationsPopover";
 import ThemeToggle from "./ThemeToggle";
 import MobileNav from "./MobileNav";
+import CoinWallet from "./gamification/CoinWallet";
+import StreakIndicator from "./gamification/StreakIndicator";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "next-themes";
@@ -107,6 +109,11 @@ const Navbar = ({
             </div>
             {user ? (
               <>
+                {/* Gamification widgets - hidden on tiny screens */}
+                <div className="hidden xs:flex items-center gap-1.5 sm:gap-2 mr-1">
+                  <StreakIndicator />
+                  <CoinWallet />
+                </div>
                 {/* Show notifications popover - visible on all screens */}
                 <NotificationsPopover />
                 <div className="hidden sm:block">
