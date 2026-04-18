@@ -652,6 +652,9 @@ const Settings = () => {
                       />
                     </div>
                   ))}
+
+                  {/* Sound effects toggle (gamification) */}
+                  <SoundEffectsToggle />
                 </CardContent>
               </Card>
 
