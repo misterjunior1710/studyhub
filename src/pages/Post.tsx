@@ -61,6 +61,7 @@ interface Comment {
 const Post = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -71,6 +72,8 @@ const Post = () => {
   const [user, setUser] = useState<{ id: string } | null>(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const postRef = useRef<HTMLDivElement>(null);
+  const commentsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
