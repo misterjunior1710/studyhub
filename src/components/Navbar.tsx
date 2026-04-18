@@ -181,6 +181,11 @@ const Navbar = ({
                         <Palette className="mr-2 h-4 w-4" />
                         <span>Whiteboards</span>
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/notes")}
+                      >
+                        <NotebookPen className="mr-2 h-4 w-4" />
+                        <span>Notes</span>
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate("/saved")}
                       >
                         <Bookmark className="mr-2 h-4 w-4" />
