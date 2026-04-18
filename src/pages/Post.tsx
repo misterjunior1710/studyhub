@@ -537,10 +537,11 @@ const Post = () => {
             </div>
           </CardContent>
         </Card>
+        </div>
 
         {/* Comments section - only for logged in users */}
         {user ? (
-          <div className="mt-6 space-y-4">
+          <div ref={commentsRef} className="mt-6 space-y-4">
             <h2 className="text-xl font-semibold">Comments ({comments.length})</h2>
 
             <form onSubmit={handleComment} className="space-y-2">
