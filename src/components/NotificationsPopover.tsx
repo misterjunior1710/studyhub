@@ -132,7 +132,7 @@ const NotificationsPopover = () => {
                   className={`p-3 rounded-lg cursor-pointer hover:bg-muted transition-colors ${
                     !notification.is_read ? "bg-primary/5" : ""
                   }`}
-                  onClick={() => markAsRead(notification.id, notification.post_id)}
+                  onClick={() => markAsRead(notification)}
                 >
                   <p className="text-sm">{notification.content}</p>
                   <p className="text-xs text-muted-foreground mt-1">
