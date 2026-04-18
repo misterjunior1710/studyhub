@@ -8,8 +8,32 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   BookOpen, Users, Trophy, Sparkles, ArrowRight, CheckCircle2, 
-  MessageSquare, Brain, Calendar, Bookmark, TrendingUp, Zap
+  MessageSquare, Brain, Calendar, Bookmark, TrendingUp, Zap,
+  Twitter, Facebook, Linkedin
 } from "lucide-react";
+
+const SHARE_URL = "https://studyhub.world";
+const SHARE_TEXT = "Check out StudyHub — free homework help and study groups for students worldwide.";
+const SOCIAL_SHARES = [
+  {
+    label: "Share on Twitter",
+    icon: Twitter,
+    href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(SHARE_TEXT)}&url=${encodeURIComponent(SHARE_URL)}`,
+    hover: "hover:bg-sky-500/10 hover:text-sky-500",
+  },
+  {
+    label: "Share on Facebook",
+    icon: Facebook,
+    href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(SHARE_URL)}`,
+    hover: "hover:bg-blue-600/10 hover:text-blue-600",
+  },
+  {
+    label: "Share on LinkedIn",
+    icon: Linkedin,
+    href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(SHARE_URL)}`,
+    hover: "hover:bg-blue-700/10 hover:text-blue-700",
+  },
+];
 import { useAuth } from "@/contexts/AuthContext";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
