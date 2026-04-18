@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Mail } from "lucide-react";
 import { z } from "zod";
 import AgeVerificationDialog from "@/components/AgeVerificationDialog";
 import EmailVerificationDialog from "@/components/EmailVerificationDialog";
@@ -36,6 +36,9 @@ const Auth = () => {
   const [resendLoading, setResendLoading] = useState(false);
   const [resendEmail, setResendEmail] = useState("");
   const [showResendForm, setShowResendForm] = useState(false);
+  const [magicEmail, setMagicEmail] = useState("");
+  const [magicLoading, setMagicLoading] = useState(false);
+  const [magicSent, setMagicSent] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -219,6 +222,32 @@ const Auth = () => {
     }
   };
   
+  const handleMagicLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const emailResult = emailSchema.safeParse(magicEmail);
+    if (!emailResult.success) {
+      toast.error(emailResult.error.errors[0].message);
+      return;
+    }
+    setMagicLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: magicEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          shouldCreateUser: true,
+        },
+      });
+      if (error) throw error;
+      setMagicSent(true);
+      toast.success("Magic link sent! Check your inbox ✨");
+    } catch (error: any) {
+      toast.error(error.message || "Couldn't send the magic link. Try again!");
+    } finally {
+      setMagicLoading(false);
+    }
+  };
+
   const handleGoogleSignIn = async () => {
     try {
       const {
