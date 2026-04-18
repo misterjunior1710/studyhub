@@ -85,6 +85,23 @@ const Post = () => {
     // Only load comments if user is authenticated
   }, [id]);
 
+  // Scroll & highlight the target indicated by the URL hash (e.g. from notifications)
+  useEffect(() => {
+    if (loading || !post) return;
+    const hash = location.hash;
+    const target =
+      hash === "#comments" ? commentsRef.current : hash === "#post" ? postRef.current : postRef.current;
+    if (!target) return;
+    const t = setTimeout(() => {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (hash === "#comments" || hash === "#post") {
+        target.classList.add("notification-target-highlight");
+        setTimeout(() => target.classList.remove("notification-target-highlight"), 2500);
+      }
+    }, 100);
+    return () => clearTimeout(t);
+  }, [loading, post, location.hash, comments.length]);
+
   useEffect(() => {
     if (user) {
       loadComments();
