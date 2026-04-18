@@ -136,6 +136,42 @@ export type Database = {
           },
         ]
       }
+      coin_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          idempotency_key: string
+          metadata: Json | null
+          reason: string
+          source_id: string | null
+          source_type: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          metadata?: Json | null
+          reason: string
+          source_id?: string | null
+          source_type?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          metadata?: Json | null
+          reason?: string
+          source_id?: string | null
+          source_type?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       collaborative_docs: {
         Row: {
           content: string | null
@@ -297,6 +333,45 @@ export type Database = {
           updated_at?: string | null
           user1_id?: string
           user2_id?: string
+        }
+        Relationships: []
+      }
+      daily_goals: {
+        Row: {
+          completed: boolean
+          created_at: string
+          goal_type: string
+          id: string
+          local_date: string
+          progress: number
+          reward_claimed: boolean
+          target: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          goal_type: string
+          id?: string
+          local_date: string
+          progress?: number
+          reward_claimed?: boolean
+          target: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          goal_type?: string
+          id?: string
+          local_date?: string
+          progress?: number
+          reward_claimed?: boolean
+          target?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -1120,6 +1195,7 @@ export type Database = {
           is_banned: boolean | null
           is_public: boolean | null
           last_active_date: string | null
+          last_streak_date: string | null
           notify_announcements: boolean | null
           notify_doubt_replies: boolean | null
           notify_feature_updates: boolean | null
@@ -1133,6 +1209,7 @@ export type Database = {
           safe_mode: boolean | null
           show_online_status: boolean | null
           show_verified_only: boolean | null
+          sound_enabled: boolean
           streak_days: number | null
           stream: string | null
           strike_count: number | null
@@ -1162,6 +1239,7 @@ export type Database = {
           is_banned?: boolean | null
           is_public?: boolean | null
           last_active_date?: string | null
+          last_streak_date?: string | null
           notify_announcements?: boolean | null
           notify_doubt_replies?: boolean | null
           notify_feature_updates?: boolean | null
@@ -1175,6 +1253,7 @@ export type Database = {
           safe_mode?: boolean | null
           show_online_status?: boolean | null
           show_verified_only?: boolean | null
+          sound_enabled?: boolean
           streak_days?: number | null
           stream?: string | null
           strike_count?: number | null
@@ -1204,6 +1283,7 @@ export type Database = {
           is_banned?: boolean | null
           is_public?: boolean | null
           last_active_date?: string | null
+          last_streak_date?: string | null
           notify_announcements?: boolean | null
           notify_doubt_replies?: boolean | null
           notify_feature_updates?: boolean | null
@@ -1217,6 +1297,7 @@ export type Database = {
           safe_mode?: boolean | null
           show_online_status?: boolean | null
           show_verified_only?: boolean | null
+          sound_enabled?: boolean
           streak_days?: number | null
           stream?: string | null
           strike_count?: number | null
@@ -1600,6 +1681,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_wallet: {
+        Row: {
+          coins: number
+          streak_freezes: number
+          total_coins_earned: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          coins?: number
+          streak_freezes?: number
+          total_coins_earned?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          coins?: number
+          streak_freezes?: number
+          total_coins_earned?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_warnings: {
         Row: {
           created_at: string
@@ -1854,6 +1959,17 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: undefined
       }
+      award_coins: {
+        Args: {
+          p_amount: number
+          p_metadata?: Json
+          p_reason: string
+          p_source_id?: string
+          p_source_type?: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
       award_xp: {
         Args: {
           p_event_type: string
@@ -1906,8 +2022,15 @@ export type Database = {
         Args: { _user_id: string; _whiteboard_id: string }
         Returns: boolean
       }
+      purchase_streak_freeze: { Args: never; Returns: Json }
       reset_weekly_xp: { Args: never; Returns: undefined }
+      update_daily_goal: {
+        Args: { p_goal_type: string; p_increment?: number; p_user_id: string }
+        Returns: Json
+      }
       update_user_streak: { Args: { p_user_id: string }; Returns: undefined }
+      update_user_streak_v2: { Args: { p_user_id: string }; Returns: Json }
+      user_local_date: { Args: { p_user_id: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user" | "verifier"
