@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback, useRef, Re
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { sounds, setSoundEnabled } from "@/lib/sounds";
+import { computeLevel, type LevelInfo } from "@/lib/leveling";
 
 export interface DailyGoal {
   id: string;
@@ -20,6 +21,11 @@ interface GamificationState {
   goals: DailyGoal[];
   soundEnabled: boolean;
   loading: boolean;
+  totalXp: number;
+  weeklyXp: number;
+  level: number;
+  levelInfo: LevelInfo;
+  currentLeague: string;
 }
 
 interface GamificationContextValue extends GamificationState {
@@ -28,7 +34,13 @@ interface GamificationContextValue extends GamificationState {
   setSoundEnabled: (enabled: boolean) => Promise<void>;
   triggerCoinAnimation: (amount: number) => void;
   recentCoinGain: { amount: number; key: number } | null;
+  levelUpEvent: { level: number; key: number } | null;
+  dismissLevelUp: () => void;
+  newlyUnlockedBadges: string[];
+  clearNewlyUnlockedBadges: () => void;
 }
+
+const initialLevelInfo = computeLevel(0);
 
 const defaultState: GamificationState = {
   coins: 0,
@@ -38,6 +50,11 @@ const defaultState: GamificationState = {
   goals: [],
   soundEnabled: true,
   loading: true,
+  totalXp: 0,
+  weeklyXp: 0,
+  level: initialLevelInfo.level,
+  levelInfo: initialLevelInfo,
+  currentLeague: "bronze",
 };
 
 const GamificationContext = createContext<GamificationContextValue>({
@@ -47,6 +64,10 @@ const GamificationContext = createContext<GamificationContextValue>({
   setSoundEnabled: async () => {},
   triggerCoinAnimation: () => {},
   recentCoinGain: null,
+  levelUpEvent: null,
+  dismissLevelUp: () => {},
+  newlyUnlockedBadges: [],
+  clearNewlyUnlockedBadges: () => {},
 });
 
 export const useGamification = () => useContext(GamificationContext);
@@ -69,37 +90,47 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const [state, setState] = useState<GamificationState>(defaultState);
   const [recentCoinGain, setRecentCoinGain] = useState<{ amount: number; key: number } | null>(null);
+  const [levelUpEvent, setLevelUpEvent] = useState<{ level: number; key: number } | null>(null);
+  const [newlyUnlockedBadges, setNewlyUnlockedBadges] = useState<string[]>([]);
   const prevCoinsRef = useRef<number>(0);
   const prevStreakRef = useRef<number>(0);
+  const prevLevelRef = useRef<number>(0);
+  const knownBadgesRef = useRef<Set<string> | null>(null);
   const animKeyRef = useRef(0);
 
   const fetchAll = useCallback(async () => {
     if (!user) {
       setState({ ...defaultState, loading: false });
+      knownBadgesRef.current = null;
       return;
     }
 
     try {
-      const [walletRes, profileRes] = await Promise.all([
+      const [walletRes, profileRes, xpRes] = await Promise.all([
         supabase.from("user_wallet").select("*").eq("user_id", user.id).maybeSingle(),
         supabase
           .from("profiles")
-          .select("streak_days, sound_enabled, timezone")
+          .select("streak_days, sound_enabled, timezone, current_league")
           .eq("id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("user_xp_totals")
+          .select("total_xp, weekly_xp")
+          .eq("user_id", user.id)
           .maybeSingle(),
       ]);
 
       const tz = profileRes.data?.timezone || "UTC";
       const today = getLocalDate(tz);
 
-      const goalsRes = await supabase
-        .from("daily_goals")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("local_date", today);
+      const [goalsRes, badgesRes] = await Promise.all([
+        supabase.from("daily_goals").select("*").eq("user_id", user.id).eq("local_date", today),
+        supabase.from("user_badges").select("badge_slug").eq("user_id", user.id),
+      ]);
 
       const wallet = walletRes.data;
       const profile = profileRes.data;
+      const xp = xpRes.data;
       const goals = (goalsRes.data || []) as DailyGoal[];
 
       // Ensure all 3 goal types appear (with 0 progress) for UI
@@ -122,6 +153,9 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
       const newCoins = wallet?.coins ?? 0;
       const newStreak = profile?.streak_days ?? 0;
       const soundOn = profile?.sound_enabled ?? true;
+      const totalXp = xp?.total_xp ?? 0;
+      const weeklyXp = xp?.weekly_xp ?? 0;
+      const levelInfo = computeLevel(totalXp);
 
       // Detect coin gain → trigger animation
       if (prevCoinsRef.current > 0 && newCoins > prevCoinsRef.current) {
@@ -137,8 +171,26 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
         sounds.streakMilestone();
       }
 
+      // Detect level up
+      if (prevLevelRef.current > 0 && levelInfo.level > prevLevelRef.current) {
+        animKeyRef.current += 1;
+        setLevelUpEvent({ level: levelInfo.level, key: animKeyRef.current });
+      }
+
+      // Detect newly unlocked badges
+      const currentBadges = new Set((badgesRes.data || []).map((b: any) => b.badge_slug));
+      if (knownBadgesRef.current) {
+        const newOnes: string[] = [];
+        currentBadges.forEach((slug) => {
+          if (!knownBadgesRef.current!.has(slug)) newOnes.push(slug);
+        });
+        if (newOnes.length) setNewlyUnlockedBadges((prev) => [...prev, ...newOnes]);
+      }
+      knownBadgesRef.current = currentBadges;
+
       prevCoinsRef.current = newCoins;
       prevStreakRef.current = newStreak;
+      prevLevelRef.current = levelInfo.level;
       setSoundEnabled(soundOn);
 
       setState({
@@ -149,6 +201,11 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
         goals: fullGoals,
         soundEnabled: soundOn,
         loading: false,
+        totalXp,
+        weeklyXp,
+        level: levelInfo.level,
+        levelInfo,
+        currentLeague: (profile as any)?.current_league || "bronze",
       });
     } catch (err) {
       console.error("Gamification fetch error:", err);
@@ -175,13 +232,22 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
         "postgres_changes",
         { event: "*", schema: "public", table: "daily_goals", filter: `user_id=eq.${user.id}` },
         () => {
-          // Detect goal completion sound
           fetchAll().then(() => sounds.goalComplete());
         },
       )
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${user.id}` },
+        () => fetchAll(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "user_xp_totals", filter: `user_id=eq.${user.id}` },
+        () => fetchAll(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "user_badges", filter: `user_id=eq.${user.id}` },
         () => fetchAll(),
       )
       .subscribe();
@@ -197,7 +263,6 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
     const handler = () => fetchAll();
     window.addEventListener("focus", handler);
     window.addEventListener("online", handler);
-    // Heartbeat every 60s while visible
     const interval = setInterval(() => {
       if (document.visibilityState === "visible") fetchAll();
     }, 60000);
@@ -242,6 +307,9 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
     setTimeout(() => setRecentCoinGain(null), 2000);
   }, []);
 
+  const dismissLevelUp = useCallback(() => setLevelUpEvent(null), []);
+  const clearNewlyUnlockedBadges = useCallback(() => setNewlyUnlockedBadges([]), []);
+
   return (
     <GamificationContext.Provider
       value={{
@@ -251,6 +319,10 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
         setSoundEnabled: updateSoundEnabled,
         triggerCoinAnimation,
         recentCoinGain,
+        levelUpEvent,
+        dismissLevelUp,
+        newlyUnlockedBadges,
+        clearNewlyUnlockedBadges,
       }}
     >
       {children}

@@ -37,6 +37,7 @@ const SOCIAL_SHARES = [
 import { useAuth } from "@/contexts/AuthContext";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import GamificationDashboard from "@/components/gamification/GamificationDashboard";
+import LeaderboardPreview from "@/components/gamification/LeaderboardPreview";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -131,8 +132,9 @@ const Index = () => {
 
       {/* Gamification Dashboard - logged-in users only */}
       {user && (
-        <section className="container mx-auto px-4 max-w-5xl pt-6 -mt-4 relative z-10">
+        <section className="container mx-auto px-4 max-w-5xl pt-6 -mt-4 relative z-10 space-y-4">
           <GamificationDashboard />
+          <LeaderboardPreview />
         </section>
       )}
 

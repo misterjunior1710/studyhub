@@ -14,6 +14,8 @@ import {
   Flame, Target, ArrowLeft, Lock, Calendar
 } from "lucide-react";
 import { toast } from "sonner";
+import BadgeShelf from "@/components/gamification/BadgeShelf";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface UserProfile {
   id: string;
@@ -287,6 +289,12 @@ const UserProfile = () => {
 
 
         </div>
+
+        {profile.id && (
+          <div className="mb-6">
+            <BadgeShelf userId={profile.id} ownProfile={false} />
+          </div>
+        )}
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Bio Section */}
