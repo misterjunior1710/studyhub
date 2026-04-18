@@ -13,6 +13,8 @@ import OnboardingFlow from "@/components/onboarding";
 import SessionExpiredDialog from "@/components/SessionExpiredDialog";
 import PageTransition from "@/components/PageTransition";
 import CursorHighlighter from "@/components/CursorHighlighter";
+import LevelUpDialog from "@/components/gamification/LevelUpDialog";
+import BadgeUnlockToast from "@/components/gamification/BadgeUnlockToast";
 import { lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -46,6 +48,7 @@ const Calendar = lazy(() => import("./pages/Calendar"));
 const GroupTools = lazy(() => import("./pages/GroupTools"));
 const Whiteboards = lazy(() => import("./pages/Whiteboards"));
 const Notes = lazy(() => import("./pages/Notes"));
+const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 
 // Optimized QueryClient with proper caching and garbage collection
 const queryClient = new QueryClient({
@@ -118,6 +121,8 @@ const App = () => (
               <BrowserRouter>
                 <SessionExpiredHandler />
                 <OnboardingFlow />
+                <LevelUpDialog />
+                <BadgeUnlockToast />
                 <Suspense fallback={<PageLoader />}>
                   <ProfileOnboardingGuard>
                     <PageTransition>
@@ -144,6 +149,7 @@ const App = () => (
                       <Route path="/calendar" element={<Calendar />} />
                       <Route path="/whiteboards" element={<Whiteboards />} />
                       <Route path="/notes" element={<Notes />} />
+                      <Route path="/leaderboard" element={<Leaderboard />} />
                       <Route path="/privacy" element={<Privacy />} />
                       <Route path="/terms" element={<Terms />} />
                       <Route path="/support" element={<Support />} />
