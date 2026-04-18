@@ -1103,6 +1103,7 @@ export type Database = {
           streak_days: number | null
           stream: string | null
           strike_count: number | null
+          subjects: string[] | null
           theme_color: string | null
           timezone: string | null
           username: string | null
@@ -1144,6 +1145,7 @@ export type Database = {
           streak_days?: number | null
           stream?: string | null
           strike_count?: number | null
+          subjects?: string[] | null
           theme_color?: string | null
           timezone?: string | null
           username?: string | null
@@ -1185,6 +1187,7 @@ export type Database = {
           streak_days?: number | null
           stream?: string | null
           strike_count?: number | null
+          subjects?: string[] | null
           theme_color?: string | null
           timezone?: string | null
           username?: string | null
@@ -1525,6 +1528,24 @@ export type Database = {
         }
         Relationships: []
       }
+      system_config: {
+        Row: {
+          created_at: string
+          key: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          value?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -1796,6 +1817,10 @@ export type Database = {
       }
     }
     Functions: {
+      auto_assign_user_to_groups: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       award_xp: {
         Args: {
           p_event_type: string
@@ -1816,6 +1841,10 @@ export type Database = {
       }
       create_whiteboard: {
         Args: { p_group_id?: string; p_name?: string }
+        Returns: string
+      }
+      ensure_auto_group: {
+        Args: { p_description: string; p_name: string }
         Returns: string
       }
       get_daily_answer_xp_remaining: {
