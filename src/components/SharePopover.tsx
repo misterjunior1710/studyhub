@@ -1,5 +1,13 @@
 import { memo, useState } from "react";
-import { Share2, Link2, Instagram } from "lucide-react";
+import { Share2, Link2 } from "lucide-react";
+import {
+  FaWhatsapp,
+  FaXTwitter,
+  FaFacebook,
+  FaTelegram,
+  FaReddit,
+  FaInstagram,
+} from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -21,13 +29,13 @@ const PLATFORMS: Array<{
   icon: React.ReactNode;
   color: string;
 }> = [
-  { key: "whatsapp", label: "WhatsApp", icon: <span className="text-base">💬</span>, color: "hover:bg-green-500/10" },
-  { key: "twitter", label: "Twitter / X", icon: <span className="text-base">𝕏</span>, color: "hover:bg-foreground/10" },
-  { key: "facebook", label: "Facebook", icon: <span className="text-base">📘</span>, color: "hover:bg-blue-500/10" },
-  { key: "telegram", label: "Telegram", icon: <span className="text-base">✈️</span>, color: "hover:bg-sky-500/10" },
-  { key: "reddit", label: "Reddit", icon: <span className="text-base">🤖</span>, color: "hover:bg-orange-500/10" },
-  { key: "instagram", label: "Instagram", icon: <Instagram className="h-4 w-4" />, color: "hover:bg-pink-500/10" },
-  { key: "copy", label: "Copy link", icon: <Link2 className="h-4 w-4" />, color: "hover:bg-primary/10" },
+  { key: "whatsapp", label: "WhatsApp", icon: <FaWhatsapp className="h-4 w-4 text-[#25D366]" />, color: "hover:bg-green-500/10" },
+  { key: "twitter", label: "Twitter / X", icon: <FaXTwitter className="h-4 w-4 text-foreground" />, color: "hover:bg-foreground/10" },
+  { key: "facebook", label: "Facebook", icon: <FaFacebook className="h-4 w-4 text-[#1877F2]" />, color: "hover:bg-blue-500/10" },
+  { key: "telegram", label: "Telegram", icon: <FaTelegram className="h-4 w-4 text-[#26A5E4]" />, color: "hover:bg-sky-500/10" },
+  { key: "reddit", label: "Reddit", icon: <FaReddit className="h-4 w-4 text-[#FF4500]" />, color: "hover:bg-orange-500/10" },
+  { key: "instagram", label: "Instagram", icon: <FaInstagram className="h-4 w-4 text-[#E4405F]" />, color: "hover:bg-pink-500/10" },
+  { key: "copy", label: "Copy link", icon: <Link2 className="h-4 w-4 text-muted-foreground" />, color: "hover:bg-primary/10" },
 ];
 
 const SharePopover = memo(({ postId, title, shareCount = 0, size = "sm" }: SharePopoverProps) => {
