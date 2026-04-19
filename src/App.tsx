@@ -15,6 +15,7 @@ import PageTransition from "@/components/PageTransition";
 import CursorHighlighter from "@/components/CursorHighlighter";
 import LevelUpDialog from "@/components/gamification/LevelUpDialog";
 import BadgeUnlockToast from "@/components/gamification/BadgeUnlockToast";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -107,6 +108,7 @@ const SessionExpiredHandler = () => {
 };
 
 const App = () => (
+  <ErrorBoundary>
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <AuthProvider>
@@ -167,6 +169,7 @@ const App = () => (
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;
