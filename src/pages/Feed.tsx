@@ -15,6 +15,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import MissionsSidebar from "@/components/gamification/MissionsSidebar";
 
 const Feed = () => {
   const [sortBy, setSortBy] = useState<"hot" | "new" | "top">("hot");
@@ -105,7 +106,7 @@ const Feed = () => {
 
       <div className="container mx-auto px-4 py-4 sm:py-6 flex-1">
         <div className="flex gap-4 lg:gap-6">
-          <aside className="hidden lg:block">
+          <aside className="hidden lg:block space-y-4">
             <FilterSidebar
               selectedCountry={selectedCountry}
               selectedSubject={selectedSubject}
@@ -117,6 +118,7 @@ const Feed = () => {
               onStreamChange={setSelectedStream}
               onClearAll={handleClearFilters}
             />
+            {user && <MissionsSidebar />}
           </aside>
           
           <main className="flex-1 space-y-4 sm:space-y-6 min-w-0">
