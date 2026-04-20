@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { sounds, setSoundEnabled } from "@/lib/sounds";
+import { sounds, soundManager } from "@/lib/soundManager";
+const setSoundEnabled = (enabled: boolean) => soundManager.setEnabled(enabled);
 import { computeLevel, type LevelInfo } from "@/lib/leveling";
 
 export interface DailyGoal {
