@@ -72,7 +72,7 @@ const MissionCard = ({ mission, compact = false }: MissionCardProps) => {
                 {mission.progress}/{mission.target}
               </span>
               <div className="flex items-center gap-2">
-                <span className="flex items-center gap-0.5 text-amber-500 font-medium">
+                <span className="flex items-center gap-0.5 text-amber-600 dark:text-amber-400 font-medium">
                   <Coins className="h-3 w-3" />
                   {mission.coin_reward}
                 </span>

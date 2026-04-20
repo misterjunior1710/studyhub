@@ -11,10 +11,10 @@ import MissionCard from "@/components/gamification/MissionCard";
 import { Navigate } from "react-router-dom";
 
 const Missions = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const { dailyMissions, weeklyMissions, activeCount, completedCount, loading } = useMissions();
 
-  if (!authLoading && !user) return <Navigate to="/auth" replace />;
+  if (!user) return <Navigate to="/auth" replace />;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
