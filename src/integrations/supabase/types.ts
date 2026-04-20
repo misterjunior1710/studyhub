@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_feed: {
+        Row: {
+          actor_id: string
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json
+        }
+        Insert: {
+          actor_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json
+        }
+        Update: {
+          actor_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+        }
+        Relationships: []
+      }
       admin_settings: {
         Row: {
           created_at: string
@@ -712,6 +736,27 @@ export type Database = {
           },
         ]
       }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
       friends: {
         Row: {
           created_at: string
@@ -1077,6 +1122,57 @@ export type Database = {
         }
         Relationships: []
       }
+      missions: {
+        Row: {
+          coin_reward: number
+          created_at: string
+          description: string
+          difficulty: string
+          event_type: string
+          icon: string | null
+          id: string
+          is_active: boolean
+          period: string
+          slug: string
+          sort_order: number
+          target: number
+          title: string
+          xp_reward: number
+        }
+        Insert: {
+          coin_reward?: number
+          created_at?: string
+          description: string
+          difficulty?: string
+          event_type: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          period: string
+          slug: string
+          sort_order?: number
+          target?: number
+          title: string
+          xp_reward?: number
+        }
+        Update: {
+          coin_reward?: number
+          created_at?: string
+          description?: string
+          difficulty?: string
+          event_type?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          period?: string
+          slug?: string
+          sort_order?: number
+          target?: number
+          title?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       notes: {
         Row: {
           content: string | null
@@ -1111,6 +1207,7 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          dedupe_key: string | null
           id: string
           is_read: boolean
           post_id: string | null
@@ -1120,6 +1217,7 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
+          dedupe_key?: string | null
           id?: string
           is_read?: boolean
           post_id?: string | null
@@ -1129,6 +1227,7 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
+          dedupe_key?: string | null
           id?: string
           is_read?: boolean
           post_id?: string | null
@@ -1240,6 +1339,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      powerups: {
+        Row: {
+          category: string
+          cost_coins: number
+          created_at: string
+          description: string
+          duration_minutes: number
+          icon: string | null
+          id: string
+          is_active: boolean
+          multiplier: number
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          category: string
+          cost_coins?: number
+          created_at?: string
+          description: string
+          duration_minutes?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          multiplier?: number
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          category?: string
+          cost_coins?: number
+          created_at?: string
+          description?: string
+          duration_minutes?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          multiplier?: number
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -1761,6 +1905,94 @@ export type Database = {
           },
         ]
       }
+      user_missions: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          mission_id: string
+          period_start: string
+          progress: number
+          reward_claimed: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          mission_id: string
+          period_start: string
+          progress?: number
+          reward_claimed?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          mission_id?: string
+          period_start?: string
+          progress?: number
+          reward_claimed?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_missions_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_powerups: {
+        Row: {
+          activated_at: string
+          category: string
+          expires_at: string
+          id: string
+          multiplier: number
+          powerup_id: string
+          user_id: string
+        }
+        Insert: {
+          activated_at?: string
+          category: string
+          expires_at: string
+          id?: string
+          multiplier: number
+          powerup_id: string
+          user_id: string
+        }
+        Update: {
+          activated_at?: string
+          category?: string
+          expires_at?: string
+          id?: string
+          multiplier?: number
+          powerup_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_powerups_powerup_id_fkey"
+            columns: ["powerup_id"]
+            isOneToOne: false
+            referencedRelation: "powerups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -2056,6 +2288,9 @@ export type Database = {
       }
     }
     Functions: {
+      activate_powerup: { Args: { _slug: string }; Returns: Json }
+      assign_daily_missions: { Args: never; Returns: Json }
+      assign_weekly_missions: { Args: never; Returns: Json }
       auto_assign_user_to_groups: {
         Args: { p_user_id: string }
         Returns: undefined
@@ -2090,6 +2325,10 @@ export type Database = {
         Returns: boolean
       }
       check_and_award_badges: { Args: { p_user_id: string }; Returns: number }
+      claim_mission_reward: {
+        Args: { _user_mission_id: string }
+        Returns: Json
+      }
       create_whiteboard: {
         Args: { p_group_id?: string; p_name?: string }
         Returns: string
@@ -2097,6 +2336,20 @@ export type Database = {
       ensure_auto_group: {
         Args: { p_description: string; p_name: string }
         Returns: string
+      }
+      follow_user: { Args: { _target: string }; Returns: Json }
+      get_active_xp_multiplier: { Args: { _user_id: string }; Returns: number }
+      get_activity_feed: {
+        Args: { _limit?: number }
+        Returns: {
+          actor_avatar_url: string
+          actor_id: string
+          actor_username: string
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json
+        }[]
       }
       get_daily_answer_xp_remaining: {
         Args: { p_user_id: string }
@@ -2128,12 +2381,20 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      is_following: {
+        Args: { _follower: string; _following: string }
+        Returns: boolean
+      }
       is_group_admin: {
         Args: { _group_id: string; _user_id: string }
         Returns: boolean
       }
       is_group_member: {
         Args: { _group_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_mutual_friend: {
+        Args: { _user_a: string; _user_b: string }
         Returns: boolean
       }
       is_verifier: { Args: { _user_id: string }; Returns: boolean }
@@ -2144,9 +2405,14 @@ export type Database = {
       purchase_streak_freeze: { Args: never; Returns: Json }
       recalculate_leagues: { Args: never; Returns: undefined }
       reset_weekly_xp: { Args: never; Returns: undefined }
+      unfollow_user: { Args: { _target: string }; Returns: Json }
       update_daily_goal: {
         Args: { p_goal_type: string; p_increment?: number; p_user_id: string }
         Returns: Json
+      }
+      update_mission_progress: {
+        Args: { _event_type: string; _user_id: string; _value?: number }
+        Returns: undefined
       }
       update_user_streak: { Args: { p_user_id: string }; Returns: undefined }
       update_user_streak_v2: { Args: { p_user_id: string }; Returns: Json }
