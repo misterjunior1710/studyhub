@@ -14,8 +14,8 @@ const MAX_ITEMS = 15;
 
 // Conventional-commit style prefixes we surface as "updates" (optional — fallback classifies by keywords)
 const ALLOWED_PREFIX_RE = /^(feat|feature|fix|bugfix|update|updates|perf|performance|refactor|improve|improvement|add|new|chore|docs|style)(\([^)]+\))?!?:\s*/i;
-// Skip noisy/auto-generated commits
-const SKIP_RE = /^(merge |revert |wip|initial commit|lovable|bot|automated|auto[- ])/i;
+// Skip noisy/auto-generated commits and generic titles
+const SKIP_RE = /^(merge |revert |wip\b|work in progress|changes?$|updates?$|initial commit|lovable|bot|automated|auto[- ]|x-lovable)/i;
 
 interface UpdateItem {
   id: string;
