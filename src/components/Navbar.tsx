@@ -1,4 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen, Trophy } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -91,6 +91,10 @@ const Navbar = ({
               <Button variant={isActive("/friends") ? "default" : "ghost"} size="sm" onClick={() => navigate("/friends")}>
                 <UserPlus className="h-4 w-4 mr-2" />
                 Friends
+              </Button>
+              <Button variant={isActive("/leaderboard") ? "default" : "ghost"} size="sm" onClick={() => navigate("/leaderboard")}>
+                <Trophy className="h-4 w-4 mr-2" />
+                Leaderboard
               </Button>
               <Button variant={isActive("/updates") ? "default" : "ghost"} size="sm" onClick={() => navigate("/updates")}>
                 <Megaphone className="h-4 w-4 mr-2" />
