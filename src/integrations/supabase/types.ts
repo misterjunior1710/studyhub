@@ -199,6 +199,24 @@ export type Database = {
           },
         ]
       }
+      cached_updates: {
+        Row: {
+          fetched_at: string
+          id: string
+          payload: Json
+        }
+        Insert: {
+          fetched_at?: string
+          id: string
+          payload: Json
+        }
+        Update: {
+          fetched_at?: string
+          id?: string
+          payload?: Json
+        }
+        Relationships: []
+      }
       coin_transactions: {
         Row: {
           amount: number
