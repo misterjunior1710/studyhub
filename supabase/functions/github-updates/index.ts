@@ -12,8 +12,10 @@ const CACHE_KEY = `${REPO_OWNER}/${REPO_NAME}/${BRANCH}`;
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 const MAX_ITEMS = 15;
 
-// Conventional-commit style prefixes we surface as "updates"
-const ALLOWED_PREFIX_RE = /^(feat|fix|update|perf|refactor)(\([^)]+\))?!?:\s*/i;
+// Conventional-commit style prefixes we surface as "updates" (optional — fallback classifies by keywords)
+const ALLOWED_PREFIX_RE = /^(feat|feature|fix|bugfix|update|updates|perf|performance|refactor|improve|improvement|add|new|chore|docs|style)(\([^)]+\))?!?:\s*/i;
+// Skip noisy/auto-generated commits and generic titles
+const SKIP_RE = /^(merge |revert |wip\b|work in progress|changes?$|updates?$|initial commit|lovable|bot|automated|auto[- ]|x-lovable)/i;
 
 interface UpdateItem {
   id: string;
@@ -31,27 +33,29 @@ interface CachedPayload {
   cached_at: string;
 }
 
-function classify(prefix: string): UpdateItem["category"] {
-  const p = prefix.toLowerCase();
-  if (p.startsWith("feat")) return "feature";
-  if (p.startsWith("fix")) return "fix";
-  if (p.startsWith("perf")) return "performance";
-  if (p.startsWith("refactor")) return "refactor";
+function classify(text: string): UpdateItem["category"] {
+  const p = text.toLowerCase();
+  if (/^(feat|feature|add|new)\b/.test(p) || /\b(add(ed|s)?|new|introduce|implement)\b/.test(p)) return "feature";
+  if (/^(fix|bugfix)\b/.test(p) || /\b(fix(ed|es)?|bug|resolve|patch)\b/.test(p)) return "fix";
+  if (/^perf/.test(p) || /\b(perf|performance|optimi[sz]e|speed)\b/.test(p)) return "performance";
+  if (/^refactor/.test(p) || /\b(refactor|cleanup|restructure)\b/.test(p)) return "refactor";
   return "update";
 }
 
-function cleanMessage(raw: string): { prefix: string; title: string; body: string } | null {
+function cleanMessage(raw: string): { title: string; body: string } | null {
   const firstLine = raw.split("\n")[0].trim();
+  if (!firstLine || SKIP_RE.test(firstLine)) return null;
+
+  // Strip conventional prefix if present (e.g. "feat: ", "fix(scope): ")
+  let title = firstLine;
   const match = firstLine.match(ALLOWED_PREFIX_RE);
-  if (!match) return null;
-  const prefix = match[1];
-  const title = firstLine.slice(match[0].length).trim();
-  if (!title) return null;
-  // Remove trailing co-author lines + signed-off lines from body
+  if (match) title = firstLine.slice(match[0].length).trim();
+  if (!title || title.length < 3) return null;
+
   const bodyLines = raw.split("\n").slice(1)
     .filter(l => !/^(co-authored-by|signed-off-by):/i.test(l.trim()))
     .join("\n").trim();
-  return { prefix, title: title.charAt(0).toUpperCase() + title.slice(1), body: bodyLines };
+  return { title: title.charAt(0).toUpperCase() + title.slice(1), body: bodyLines };
 }
 
 async function fetchFromGitHub(token: string): Promise<UpdateItem[]> {
@@ -81,7 +85,7 @@ async function fetchFromGitHub(token: string): Promise<UpdateItem[]> {
     if (!cleaned) continue;
     items.push({
       id: c.sha,
-      category: classify(cleaned.prefix),
+      category: classify(cleaned.title),
       title: cleaned.title,
       description: cleaned.body || cleaned.title,
       date: c.commit.author.date,
