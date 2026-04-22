@@ -83,6 +83,24 @@ const Footer = () => {
               </li>
             </ul>
           </div>
+
+          {/* Featured on */}
+          <div className="space-y-3">
+            <h4 className="font-semibold text-foreground">Featured</h4>
+            <a 
+              href="https://startuplibrary.net/startup/44b664fb-2a57-4610-8c3d-96f67a76375a" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              <img 
+                src="https://bsewdwaowjwuztpmnbyk.supabase.co/storage/v1/object/public/email-assets/sl-logo-badge.png" 
+                alt="SL" 
+                className="w-6 h-6 rounded"
+              />
+              <span>StartupLibrary</span>
+            </a>
+          </div>
         </div>
 
         <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-3">
