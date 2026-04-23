@@ -136,7 +136,7 @@ const Leaderboard = () => {
   const [scope, setScope] = useState<LeaderboardScope>("global");
   const [period, setPeriod] = useState<LeaderboardPeriod>("weekly");
   const navigate = useNavigate();
-  const { user, profileData, loading } = useAuth();
+  const { user, profileData, isLoading } = useAuth();
   const { totalXp } = useGamification();
   const { isPublic, setPublic } = useLeaderboardPrivacy();
   const myLeague = LEAGUE_META[((profileData as any)?.current_league as string) || "bronze"] || LEAGUE_META.bronze;
