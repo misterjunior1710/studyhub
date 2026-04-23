@@ -15,6 +15,9 @@ const LeaderboardPreview = () => {
   const { data: rows, isLoading } = useLeaderboard("global", "weekly", 5);
   const { data: rank } = useUserRank("global", "weekly");
 
+  // Auth gate — leaderboard is private to logged-in users only.
+  if (!user) return null;
+
   return (
     <Card className="border-primary/20 overflow-hidden">
       <CardHeader className="pb-3 flex-row items-center justify-between space-y-0">
