@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import { initBuildVersionCheck } from "./lib/buildVersionCheck";
 
 // Force service worker update on every page load so users get the latest version
 if ('serviceWorker' in navigator) {
@@ -28,3 +29,6 @@ root.render(<App />);
 requestAnimationFrame(() => {
   requestAnimationFrame(hideLoadingSkeleton);
 });
+
+// Detect new builds and prompt user to reload (non-blocking, deferred)
+initBuildVersionCheck();
