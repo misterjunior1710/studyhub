@@ -122,6 +122,7 @@ const App = () => (
               <OfflineBanner />
               <Toaster />
               <Sonner />
+              <CacheNoticePopup />
               <BrowserRouter>
                 <SessionExpiredHandler />
                 <OnboardingFlow />
