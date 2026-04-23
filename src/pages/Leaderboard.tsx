@@ -142,7 +142,7 @@ const Leaderboard = () => {
   const myLeague = LEAGUE_META[((profileData as any)?.current_league as string) || "bronze"] || LEAGUE_META.bronze;
 
   // 🔒 Auth gate — block leaderboard for logged-out users
-  if (!loading && !user) {
+  if (!isLoading && !user) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <SEOHead
