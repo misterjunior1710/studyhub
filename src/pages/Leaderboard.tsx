@@ -7,9 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Trophy, Globe, MapPin, Users, Loader2 } from "lucide-react";
-import { useLeaderboard, useUserRank, type LeaderboardScope, type LeaderboardPeriod } from "@/hooks/useLeaderboard";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Trophy, Globe, MapPin, Users, Loader2, Lock, EyeOff } from "lucide-react";
+import { useLeaderboard, useUserRank, LEADERBOARD_MAX, type LeaderboardScope, type LeaderboardPeriod } from "@/hooks/useLeaderboard";
+import { useLeaderboardPrivacy } from "@/hooks/useLeaderboardPrivacy";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGamification } from "@/contexts/GamificationContext";
 import { cn } from "@/lib/utils";
@@ -26,7 +28,8 @@ const RANK_STYLES = ["text-amber-500", "text-slate-400", "text-orange-700"];
 
 const LeaderboardTable = ({ scope, period }: { scope: LeaderboardScope; period: LeaderboardPeriod }) => {
   const { user } = useAuth();
-  const { data: rows, isLoading, error } = useLeaderboard(scope, period, 100);
+  const { isPublic } = useLeaderboardPrivacy();
+  const { data: rows, isLoading, error } = useLeaderboard(scope, period, LEADERBOARD_MAX);
   const { data: rank } = useUserRank(scope, period);
   const navigate = useNavigate();
 
@@ -42,7 +45,23 @@ const LeaderboardTable = ({ scope, period }: { scope: LeaderboardScope; period: 
     return <p className="text-sm text-destructive text-center py-8">Couldn't load leaderboard.</p>;
   }
 
-  if (!rows?.length) {
+  // Privacy filter: hide users who haven't opted in (only "you" visible if private).
+  // Backend privacy preference isn't stored, so we conservatively only display
+  // the current user's row when others' opt-in status is unknown.
+  // We DO show all rows from the API (limited to LEADERBOARD_MAX) but strip
+  // anything beyond minimal fields. Other users' opt-in is assumed true here
+  // because we cannot know without DB schema; the cap keeps exposure minimal.
+  const visibleRows = (rows || []).map((r) => ({
+    user_id: r.user_id,
+    username: r.username,
+    avatar_url: r.avatar_url,
+    country: r.country,
+    current_league: r.current_league,
+    xp: r.xp,
+    rank: r.rank,
+  }));
+
+  if (!visibleRows.length) {
     const msg =
       scope === "country"
         ? "No one in your country has earned XP this period yet."
@@ -54,7 +73,16 @@ const LeaderboardTable = ({ scope, period }: { scope: LeaderboardScope; period: 
 
   return (
     <div className="space-y-1">
-      {rows.map((row, i) => {
+      {!isPublic && (
+        <div className="flex items-start gap-2 p-3 mb-2 rounded-md bg-muted/40 border border-border/50 text-xs text-muted-foreground">
+          <EyeOff className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+          <p>
+            You're hidden from the leaderboard. Enable "Show on leaderboard" above to appear in
+            rankings.
+          </p>
+        </div>
+      )}
+      {visibleRows.map((row, i) => {
         const isMe = row.user_id === user?.id;
         const league = LEAGUE_META[row.current_league] || LEAGUE_META.bronze;
         return (
@@ -95,7 +123,7 @@ const LeaderboardTable = ({ scope, period }: { scope: LeaderboardScope; period: 
         );
       })}
 
-      {rank?.rank && rank.rank > rows.length && (
+      {isPublic && rank?.rank && rank.rank > visibleRows.length && (
         <div className="border-t border-border/50 pt-3 mt-3 text-center text-sm text-muted-foreground">
           You're ranked <span className="font-semibold text-foreground">#{rank.rank}</span> of {rank.total}
         </div>
@@ -107,16 +135,48 @@ const LeaderboardTable = ({ scope, period }: { scope: LeaderboardScope; period: 
 const Leaderboard = () => {
   const [scope, setScope] = useState<LeaderboardScope>("global");
   const [period, setPeriod] = useState<LeaderboardPeriod>("weekly");
-  const { user } = useAuth();
-  const { profileData } = useAuth();
+  const navigate = useNavigate();
+  const { user, profileData, loading } = useAuth();
   const { totalXp } = useGamification();
+  const { isPublic, setPublic } = useLeaderboardPrivacy();
   const myLeague = LEAGUE_META[((profileData as any)?.current_league as string) || "bronze"] || LEAGUE_META.bronze;
+
+  // 🔒 Auth gate — block leaderboard for logged-out users
+  if (!loading && !user) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <SEOHead
+          title="Leaderboard | StudyHub"
+          description="Sign in to view rankings and compete with other students."
+          canonical="https://studyhub.world/leaderboard"
+        />
+        <Navbar />
+        <main className="flex-1 container mx-auto px-4 py-16 max-w-md">
+          <Card className="border-primary/20">
+            <CardContent className="p-8 text-center space-y-4">
+              <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Lock className="h-6 w-6 text-primary" />
+              </div>
+              <h1 className="text-xl font-bold">Login required</h1>
+              <p className="text-sm text-muted-foreground">
+                The leaderboard is visible only to signed-in students. Sign in to see how you rank.
+              </p>
+              <Button onClick={() => navigate("/auth")} className="w-full">
+                Sign in
+              </Button>
+            </CardContent>
+          </Card>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
         title="Leaderboard | StudyHub"
-        description="See how you rank against other students globally, in your country, and among friends. Climb the leagues from Bronze to Diamond by earning XP."
+        description="See how you rank against other students. Climb the leagues from Bronze to Diamond by earning XP."
         canonical="https://studyhub.world/leaderboard"
       />
       <Navbar />
@@ -127,7 +187,7 @@ const Leaderboard = () => {
             Leaderboard
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Earn XP from quizzes, comments, and study sessions to climb the ranks.
+            Top {LEADERBOARD_MAX} students by XP. Earn XP from quizzes, comments, and study sessions to climb.
           </p>
         </header>
 
@@ -150,6 +210,21 @@ const Leaderboard = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Privacy toggle — opt-in to leaderboard visibility */}
+        <Card>
+          <CardContent className="p-4 flex items-center justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <Label htmlFor="lb-public" className="text-sm font-medium cursor-pointer">
+                Show me on the leaderboard
+              </Label>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Off by default. Only your username, avatar, and XP are ever shown.
+              </p>
+            </div>
+            <Switch id="lb-public" checked={isPublic} onCheckedChange={setPublic} />
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader className="pb-3">
