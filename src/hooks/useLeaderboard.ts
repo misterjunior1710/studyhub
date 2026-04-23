@@ -15,20 +15,33 @@ export interface LeaderboardRow {
   rank: number;
 }
 
-export const useLeaderboard = (scope: LeaderboardScope, period: LeaderboardPeriod = "weekly", limit = 50) => {
+// Hard cap on leaderboard size for privacy — never expose more than this.
+export const LEADERBOARD_MAX = 10;
+
+export const useLeaderboard = (scope: LeaderboardScope, period: LeaderboardPeriod = "weekly", limit = LEADERBOARD_MAX) => {
   const { user } = useAuth();
+  const safeLimit = Math.min(Math.max(1, limit), LEADERBOARD_MAX);
   return useQuery({
-    queryKey: ["leaderboard", scope, period, limit, user?.id],
-    enabled: !!user,
+    queryKey: ["leaderboard", scope, period, safeLimit, user?.id],
+    enabled: !!user, // auth-gated: never fetch for logged-out users
     staleTime: 60 * 1000,
     queryFn: async (): Promise<LeaderboardRow[]> => {
       const { data, error } = await supabase.rpc("get_leaderboard", {
         p_scope: scope,
         p_period: period,
-        p_limit: limit,
+        p_limit: safeLimit,
       });
       if (error) throw error;
-      return (data || []) as LeaderboardRow[];
+      // Strip any sensitive fields defensively — only expose minimal info.
+      return ((data || []) as LeaderboardRow[]).map((r) => ({
+        user_id: r.user_id,
+        username: r.username,
+        avatar_url: r.avatar_url,
+        country: r.country,
+        current_league: r.current_league,
+        xp: r.xp,
+        rank: r.rank,
+      }));
     },
   });
 };
