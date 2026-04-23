@@ -18,6 +18,11 @@ export interface LeaderboardRow {
 // Hard cap on leaderboard size for privacy — never expose more than this.
 export const LEADERBOARD_MAX = 10;
 
+// Users explicitly excluded from leaderboard rendering (e.g. test/admin accounts).
+const EXCLUDED_USER_IDS = new Set<string>([
+  "a50dd03d-b33b-4548-875f-e0c4a5dd146d", // misterjunior1710@gmail.com
+]);
+
 export const useLeaderboard = (scope: LeaderboardScope, period: LeaderboardPeriod = "weekly", limit = LEADERBOARD_MAX) => {
   const { user } = useAuth();
   const safeLimit = Math.min(Math.max(1, limit), LEADERBOARD_MAX);
