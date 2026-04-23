@@ -18,6 +18,11 @@ export interface LeaderboardRow {
 // Hard cap on leaderboard size for privacy — never expose more than this.
 export const LEADERBOARD_MAX = 10;
 
+// Users explicitly excluded from leaderboard rendering (e.g. test/admin accounts).
+const EXCLUDED_USER_IDS = new Set<string>([
+  "a50dd03d-b33b-4548-875f-e0c4a5dd146d", // misterjunior1710@gmail.com
+]);
+
 export const useLeaderboard = (scope: LeaderboardScope, period: LeaderboardPeriod = "weekly", limit = LEADERBOARD_MAX) => {
   const { user } = useAuth();
   const safeLimit = Math.min(Math.max(1, limit), LEADERBOARD_MAX);
@@ -26,22 +31,27 @@ export const useLeaderboard = (scope: LeaderboardScope, period: LeaderboardPerio
     enabled: !!user, // auth-gated: never fetch for logged-out users
     staleTime: 60 * 1000,
     queryFn: async (): Promise<LeaderboardRow[]> => {
+      // Fetch a small buffer so excluded users don't shrink the visible list.
+      const fetchLimit = Math.min(safeLimit + EXCLUDED_USER_IDS.size, LEADERBOARD_MAX + 5);
       const { data, error } = await supabase.rpc("get_leaderboard", {
         p_scope: scope,
         p_period: period,
-        p_limit: safeLimit,
+        p_limit: fetchLimit,
       });
       if (error) throw error;
-      // Strip any sensitive fields defensively — only expose minimal info.
-      return ((data || []) as LeaderboardRow[]).map((r) => ({
-        user_id: r.user_id,
-        username: r.username,
-        avatar_url: r.avatar_url,
-        country: r.country,
-        current_league: r.current_league,
-        xp: r.xp,
-        rank: r.rank,
-      }));
+      // Filter excluded users, strip sensitive fields, then slice & re-rank.
+      return ((data || []) as LeaderboardRow[])
+        .filter((r) => !EXCLUDED_USER_IDS.has(r.user_id))
+        .slice(0, safeLimit)
+        .map((r, i) => ({
+          user_id: r.user_id,
+          username: r.username,
+          avatar_url: r.avatar_url,
+          country: r.country,
+          current_league: r.current_league,
+          xp: r.xp,
+          rank: i + 1,
+        }));
     },
   });
 };
