@@ -29,3 +29,6 @@ root.render(<App />);
 requestAnimationFrame(() => {
   requestAnimationFrame(hideLoadingSkeleton);
 });
+
+// Detect new builds and prompt user to reload (non-blocking, deferred)
+initBuildVersionCheck();
