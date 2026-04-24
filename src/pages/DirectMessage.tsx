@@ -484,10 +484,51 @@ const DirectMessage = () => {
   );
 };
 
+// Extract storage path from a stored dm-files URL (handles both public and signed URL shapes)
+const extractDmFilePath = (url: string): string | null => {
+  const marker = "/dm-files/";
+  const idx = url.indexOf(marker);
+  if (idx === -1) return null;
+  const after = url.slice(idx + marker.length);
+  // Strip any query string (signed URLs)
+  return after.split("?")[0];
+};
+
+// Hook: resolve a stored dm-files URL to a fresh short-lived signed URL
+const useSignedDmUrl = (storedUrl: string | null) => {
+  const [signedUrl, setSignedUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!storedUrl) {
+      setSignedUrl(null);
+      return;
+    }
+    const path = extractDmFilePath(storedUrl);
+    if (!path) {
+      setSignedUrl(storedUrl);
+      return;
+    }
+    supabase.storage
+      .from("dm-files")
+      .createSignedUrl(path, 60 * 60) // 1 hour
+      .then(({ data }) => {
+        if (!cancelled) setSignedUrl(data?.signedUrl ?? null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [storedUrl]);
+
+  return signedUrl;
+};
+
 // Message Bubble Component
 const MessageBubble = ({ message, isSent }: { message: Message; isSent: boolean }) => {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const signedAudioUrl = useSignedDmUrl(message.audio_url);
+  const signedFileUrl = useSignedDmUrl(message.file_url);
 
   const toggleAudio = () => {
     if (!audioRef.current) return;
