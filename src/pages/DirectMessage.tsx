@@ -484,10 +484,51 @@ const DirectMessage = () => {
   );
 };
 
+// Extract storage path from a stored dm-files URL (handles both public and signed URL shapes)
+const extractDmFilePath = (url: string): string | null => {
+  const marker = "/dm-files/";
+  const idx = url.indexOf(marker);
+  if (idx === -1) return null;
+  const after = url.slice(idx + marker.length);
+  // Strip any query string (signed URLs)
+  return after.split("?")[0];
+};
+
+// Hook: resolve a stored dm-files URL to a fresh short-lived signed URL
+const useSignedDmUrl = (storedUrl: string | null) => {
+  const [signedUrl, setSignedUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!storedUrl) {
+      setSignedUrl(null);
+      return;
+    }
+    const path = extractDmFilePath(storedUrl);
+    if (!path) {
+      setSignedUrl(storedUrl);
+      return;
+    }
+    supabase.storage
+      .from("dm-files")
+      .createSignedUrl(path, 60 * 60) // 1 hour
+      .then(({ data }) => {
+        if (!cancelled) setSignedUrl(data?.signedUrl ?? null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [storedUrl]);
+
+  return signedUrl;
+};
+
 // Message Bubble Component
 const MessageBubble = ({ message, isSent }: { message: Message; isSent: boolean }) => {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const signedAudioUrl = useSignedDmUrl(message.audio_url);
+  const signedFileUrl = useSignedDmUrl(message.file_url);
 
   const toggleAudio = () => {
     if (!audioRef.current) return;
@@ -521,12 +562,13 @@ const MessageBubble = ({ message, isSent }: { message: Message; isSent: boolean 
         {/* Audio message */}
         {message.audio_url && (
           <div className="flex items-center gap-3 mb-1">
-            <audio ref={audioRef} src={message.audio_url} />
+            <audio ref={audioRef} src={signedAudioUrl ?? undefined} />
             <Button
               variant="ghost"
               size="icon"
               className={cn("h-8 w-8", isSent ? "text-primary-foreground hover:text-primary-foreground/80" : "")}
               onClick={toggleAudio}
+              disabled={!signedAudioUrl}
             >
               {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             </Button>
@@ -545,16 +587,20 @@ const MessageBubble = ({ message, isSent }: { message: Message; isSent: boolean 
         {message.file_url && (
           <div className="mb-2">
             {message.file_type === "image" ? (
-              <a href={message.file_url} target="_blank" rel="noopener noreferrer">
-                <img
-                  src={message.file_url}
-                  alt={message.file_name || "Image"}
-                  className="rounded-lg max-h-60 object-cover"
-                />
+              <a href={signedFileUrl ?? "#"} target="_blank" rel="noopener noreferrer">
+                {signedFileUrl ? (
+                  <img
+                    src={signedFileUrl}
+                    alt={message.file_name || "Image"}
+                    className="rounded-lg max-h-60 object-cover"
+                  />
+                ) : (
+                  <div className="h-40 w-40 rounded-lg bg-background/30 animate-pulse" />
+                )}
               </a>
             ) : (
               <a
-                href={message.file_url}
+                href={signedFileUrl ?? "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(
