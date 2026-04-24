@@ -48,8 +48,8 @@ const CookieConsent = () => {
           <Cookie className="h-4 w-4 text-primary shrink-0" />
           <p className="text-xs text-muted-foreground leading-relaxed">
             We use cookies to make your experience better (not the chocolate chip kind, sadly).{" "}
-            <Link to="/privacy" className="text-primary hover:underline">
-              Learn more
+            <Link to="/privacy" className="text-primary hover:underline" aria-label="Learn more about our cookie and privacy policy">
+              Learn more about our privacy policy
             </Link>
           </p>
         </div>
