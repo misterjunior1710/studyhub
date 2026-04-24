@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.ai-writing-assist]
 verify_jwt = true
+
+[functions.process-email-queue]
+verify_jwt = true
