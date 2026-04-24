@@ -562,12 +562,13 @@ const MessageBubble = ({ message, isSent }: { message: Message; isSent: boolean 
         {/* Audio message */}
         {message.audio_url && (
           <div className="flex items-center gap-3 mb-1">
-            <audio ref={audioRef} src={message.audio_url} />
+            <audio ref={audioRef} src={signedAudioUrl ?? undefined} />
             <Button
               variant="ghost"
               size="icon"
               className={cn("h-8 w-8", isSent ? "text-primary-foreground hover:text-primary-foreground/80" : "")}
               onClick={toggleAudio}
+              disabled={!signedAudioUrl}
             >
               {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             </Button>
@@ -586,16 +587,20 @@ const MessageBubble = ({ message, isSent }: { message: Message; isSent: boolean 
         {message.file_url && (
           <div className="mb-2">
             {message.file_type === "image" ? (
-              <a href={message.file_url} target="_blank" rel="noopener noreferrer">
-                <img
-                  src={message.file_url}
-                  alt={message.file_name || "Image"}
-                  className="rounded-lg max-h-60 object-cover"
-                />
+              <a href={signedFileUrl ?? "#"} target="_blank" rel="noopener noreferrer">
+                {signedFileUrl ? (
+                  <img
+                    src={signedFileUrl}
+                    alt={message.file_name || "Image"}
+                    className="rounded-lg max-h-60 object-cover"
+                  />
+                ) : (
+                  <div className="h-40 w-40 rounded-lg bg-background/30 animate-pulse" />
+                )}
               </a>
             ) : (
               <a
-                href={message.file_url}
+                href={signedFileUrl ?? "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(
