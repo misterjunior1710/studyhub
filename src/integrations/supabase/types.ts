@@ -2334,6 +2334,7 @@ export type Database = {
         }
         Returns: Json
       }
+      can_access_dm_file: { Args: { _object_name: string }; Returns: boolean }
       can_edit_whiteboard: {
         Args: { _user_id: string; _whiteboard_id: string }
         Returns: boolean
