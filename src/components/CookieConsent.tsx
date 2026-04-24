@@ -88,8 +88,10 @@ const CookieConsent = () => {
             size="icon"
             className="h-6 w-6"
             onClick={acceptNecessary}
+            aria-label="Dismiss cookie notice"
+            title="Dismiss"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3" aria-hidden="true" />
           </Button>
         </div>
       </div>
