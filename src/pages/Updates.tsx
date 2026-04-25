@@ -118,10 +118,13 @@ const UpdateCard = memo(({ item, isVisible, index }: UpdateCardProps) => {
 UpdateCard.displayName = "UpdateCard";
 
 const Updates = () => {
+  const [mode, setMode] = useState<UpdateMode>("newest");
   const { data, isLoading, isError, refetch, isFetching } = useQuery<UpdatesResponse>({
-    queryKey: ["github-updates"],
+    queryKey: ["github-updates", mode],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke("github-updates");
+      const { data, error } = await supabase.functions.invoke("github-updates", {
+        body: { mode },
+      });
       if (error) throw error;
       return data as UpdatesResponse;
     },
