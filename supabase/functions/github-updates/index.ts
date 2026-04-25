@@ -8,13 +8,14 @@ const corsHeaders = {
 const REPO_OWNER = "misterjunior1710";
 const REPO_NAME = "studyhub";
 const BRANCH = "main";
-const CACHE_KEY = `${REPO_OWNER}/${REPO_NAME}/${BRANCH}`;
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
-const MAX_ITEMS = 15;
+const NEWEST_ITEMS = 15;
+const ALL_ITEMS_LIMIT = 1000;
+const GITHUB_PAGE_SIZE = 100;
 
 // Conventional-commit style prefixes we surface as "updates" (optional — fallback classifies by keywords)
 const ALLOWED_PREFIX_RE = /^(feat|feature|fix|bugfix|update|updates|perf|performance|refactor|improve|improvement|add|new|chore|docs|style)(\([^)]+\))?!?:\s*/i;
-// Skip noisy/auto-generated commits and generic titles
+// Skip noisy/auto-generated commits and generic titles in the Newest view only
 const SKIP_RE = /^(merge |revert |wip\b|work in progress|changes?$|updates?$|initial commit|lovable|bot|automated|auto[- ]|x-lovable)/i;
 
 interface UpdateItem {
