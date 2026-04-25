@@ -121,15 +121,18 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(supabaseUrl, serviceKey);
 
+  const url = new URL(req.url);
+  const mode: UpdateMode = url.searchParams.get("mode") === "all" ? "all" : "newest";
+  const force = url.searchParams.get("refresh") === "1";
+  const cacheKey = `${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${mode}`;
+
   // Try cache first
   const { data: cached } = await supabase
     .from("cached_updates")
     .select("payload, fetched_at")
-    .eq("id", CACHE_KEY)
+    .eq("id", cacheKey)
     .maybeSingle();
 
-  const url = new URL(req.url);
-  const force = url.searchParams.get("refresh") === "1";
   const cacheAge = cached ? Date.now() - new Date(cached.fetched_at).getTime() : Infinity;
   const cacheValid = cached && cacheAge < CACHE_TTL_MS;
 
@@ -151,11 +154,11 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const items = await fetchFromGitHub(githubToken);
-    const payload: CachedPayload = { items, source: "github", cached_at: new Date().toISOString() };
+    const items = await fetchFromGitHub(githubToken, mode);
+    const payload: CachedPayload = { items, source: "github", cached_at: new Date().toISOString(), mode };
 
     await supabase.from("cached_updates").upsert({
-      id: CACHE_KEY,
+      id: cacheKey,
       payload,
       fetched_at: new Date().toISOString(),
     });
