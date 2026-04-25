@@ -100,10 +100,6 @@ const Navbar = ({
                 <Megaphone className="h-4 w-4 mr-2" />
                 Updates
               </Button>
-              <Button variant={isActive("/support") ? "default" : "ghost"} size="sm" onClick={() => navigate("/support")}>
-                <LifeBuoy className="h-4 w-4 mr-2" />
-                Support
-              </Button>
             </div>
           </div>
 
