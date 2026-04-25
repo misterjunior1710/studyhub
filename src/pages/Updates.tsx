@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import PullToRefresh from "@/components/PullToRefresh";
@@ -11,6 +11,8 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { supabase } from "@/integrations/supabase/client";
 import { format, formatDistanceToNow } from "date-fns";
 import Footer from "@/components/Footer";
+
+type UpdateMode = "newest" | "all";
 
 interface UpdateItem {
   id: string;
@@ -26,6 +28,7 @@ interface UpdatesResponse {
   items: UpdateItem[];
   source: "github";
   cached_at: string;
+  mode?: UpdateMode;
   from_cache?: boolean;
   stale?: boolean;
 }
