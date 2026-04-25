@@ -16,7 +16,7 @@ import CursorHighlighter from "@/components/CursorHighlighter";
 import LevelUpDialog from "@/components/gamification/LevelUpDialog";
 import BadgeUnlockToast from "@/components/gamification/BadgeUnlockToast";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import CacheNoticePopup from "@/components/CacheNoticePopup";
+
 import { lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
 
