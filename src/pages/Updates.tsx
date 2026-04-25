@@ -71,7 +71,7 @@ const UpdateCard = memo(({ item, isVisible, index }: UpdateCardProps) => {
 
   return (
     <Card
-      className={`h-full bg-card/50 backdrop-blur-sm border-border/50 hover:border-border transition-colors ${isVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
+      className={`h-full bg-card/50 backdrop-blur-sm border-border/50 hover:border-border transition-colors ${isVisible ? "opacity-0 animate-reveal-up" : "opacity-100"}`}
       style={{ animationDelay: `${Math.min(index * 100, 400)}ms` }}
     >
       <CardHeader className="pb-3">
