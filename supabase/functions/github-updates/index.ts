@@ -122,8 +122,11 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, serviceKey);
 
   const url = new URL(req.url);
-  const mode: UpdateMode = url.searchParams.get("mode") === "all" ? "all" : "newest";
-  const force = url.searchParams.get("refresh") === "1";
+  const requestBody = req.method === "POST"
+    ? await req.json().catch(() => ({})) as { mode?: string; refresh?: boolean }
+    : {};
+  const mode: UpdateMode = requestBody.mode === "all" || url.searchParams.get("mode") === "all" ? "all" : "newest";
+  const force = requestBody.refresh === true || url.searchParams.get("refresh") === "1";
   const cacheKey = `${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${mode}`;
 
   // Try cache first
