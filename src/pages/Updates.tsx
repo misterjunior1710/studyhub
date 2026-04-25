@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import PullToRefresh from "@/components/PullToRefresh";
@@ -11,6 +11,8 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { supabase } from "@/integrations/supabase/client";
 import { format, formatDistanceToNow } from "date-fns";
 import Footer from "@/components/Footer";
+
+type UpdateMode = "newest" | "all";
 
 interface UpdateItem {
   id: string;
@@ -26,6 +28,7 @@ interface UpdatesResponse {
   items: UpdateItem[];
   source: "github";
   cached_at: string;
+  mode?: UpdateMode;
   from_cache?: boolean;
   stale?: boolean;
 }
@@ -115,10 +118,13 @@ const UpdateCard = memo(({ item, isVisible, index }: UpdateCardProps) => {
 UpdateCard.displayName = "UpdateCard";
 
 const Updates = () => {
+  const [mode, setMode] = useState<UpdateMode>("newest");
   const { data, isLoading, isError, refetch, isFetching } = useQuery<UpdatesResponse>({
-    queryKey: ["github-updates"],
+    queryKey: ["github-updates", mode],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke("github-updates");
+      const { data, error } = await supabase.functions.invoke("github-updates", {
+        body: { mode },
+      });
       if (error) throw error;
       return data as UpdatesResponse;
     },
@@ -179,6 +185,20 @@ const Updates = () => {
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2 mt-6 opacity-0 animate-hero-fade-up" style={{ animationDelay: "250ms" }}>
+                <div className="flex items-center rounded-md border border-border bg-muted/30 p-1">
+                  {(["newest", "all"] as UpdateMode[]).map((filterMode) => (
+                    <Button
+                      key={filterMode}
+                      type="button"
+                      variant={mode === filterMode ? "default" : "ghost"}
+                      size="sm"
+                      className="h-7 px-3 text-xs capitalize"
+                      onClick={() => setMode(filterMode)}
+                    >
+                      {filterMode === "newest" ? "Newest" : "All"}
+                    </Button>
+                  ))}
+                </div>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-medium border border-accent/20">
                   <Sparkles className="h-3 w-3" /> New Features
                 </div>
@@ -190,7 +210,7 @@ const Updates = () => {
                 </div>
                 {data?.cached_at && (
                   <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted text-muted-foreground text-xs ml-auto">
-                    Updated {formatDistanceToNow(new Date(data.cached_at), { addSuffix: true })}
+                    {items.length} shown · Updated {formatDistanceToNow(new Date(data.cached_at), { addSuffix: true })}
                     {data.stale && " (cached)"}
                   </div>
                 )}

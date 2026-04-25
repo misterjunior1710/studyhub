@@ -8,13 +8,16 @@ const corsHeaders = {
 const REPO_OWNER = "misterjunior1710";
 const REPO_NAME = "studyhub";
 const BRANCH = "main";
-const CACHE_KEY = `${REPO_OWNER}/${REPO_NAME}/${BRANCH}`;
+type UpdateMode = "newest" | "all";
+
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
-const MAX_ITEMS = 15;
+const NEWEST_ITEMS = 15;
+const ALL_ITEMS_LIMIT = 1000;
+const GITHUB_PAGE_SIZE = 100;
 
 // Conventional-commit style prefixes we surface as "updates" (optional — fallback classifies by keywords)
 const ALLOWED_PREFIX_RE = /^(feat|feature|fix|bugfix|update|updates|perf|performance|refactor|improve|improvement|add|new|chore|docs|style)(\([^)]+\))?!?:\s*/i;
-// Skip noisy/auto-generated commits and generic titles
+// Skip noisy/auto-generated commits and generic titles in the Newest view only
 const SKIP_RE = /^(merge |revert |wip\b|work in progress|changes?$|updates?$|initial commit|lovable|bot|automated|auto[- ]|x-lovable)/i;
 
 interface UpdateItem {
@@ -31,6 +34,7 @@ interface CachedPayload {
   items: UpdateItem[];
   source: "github";
   cached_at: string;
+  mode: UpdateMode;
 }
 
 function classify(text: string): UpdateItem["category"] {
@@ -42,9 +46,9 @@ function classify(text: string): UpdateItem["category"] {
   return "update";
 }
 
-function cleanMessage(raw: string): { title: string; body: string } | null {
+function cleanMessage(raw: string, skipNoisy: boolean): { title: string; body: string } | null {
   const firstLine = raw.split("\n")[0].trim();
-  if (!firstLine || SKIP_RE.test(firstLine)) return null;
+  if (!firstLine || (skipNoisy && SKIP_RE.test(firstLine))) return null;
 
   // Strip conventional prefix if present (e.g. "feat: ", "fix(scope): ")
   let title = firstLine;
@@ -53,47 +57,58 @@ function cleanMessage(raw: string): { title: string; body: string } | null {
   if (!title || title.length < 3) return null;
 
   const bodyLines = raw.split("\n").slice(1)
-    .filter(l => !/^(co-authored-by|signed-off-by):/i.test(l.trim()))
+    .filter(l => !/^(co-authored-by|signed-off-by|x-lovable-edit-id):/i.test(l.trim()))
     .join("\n").trim();
   return { title: title.charAt(0).toUpperCase() + title.slice(1), body: bodyLines };
 }
 
-async function fetchFromGitHub(token: string): Promise<UpdateItem[]> {
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?sha=${BRANCH}&per_page=50`;
-  const res = await fetch(url, {
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Accept": "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28",
-      "User-Agent": "studyhub-updates-fn",
-    },
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`GitHub API ${res.status}: ${text.slice(0, 200)}`);
-  }
-  const commits = await res.json() as Array<{
-    sha: string;
-    commit: { message: string; author: { name: string; date: string } };
-    author: { login: string } | null;
-    html_url: string;
-  }>;
+interface GitHubCommit {
+  sha: string;
+  commit: { message: string; author: { name: string; date: string } };
+  author: { login: string } | null;
+  html_url: string;
+}
 
+async function fetchFromGitHub(token: string, mode: UpdateMode): Promise<UpdateItem[]> {
+  const itemLimit = mode === "all" ? ALL_ITEMS_LIMIT : NEWEST_ITEMS;
   const items: UpdateItem[] = [];
-  for (const c of commits) {
-    const cleaned = cleanMessage(c.commit.message);
-    if (!cleaned) continue;
-    items.push({
-      id: c.sha,
-      category: classify(cleaned.title),
-      title: cleaned.title,
-      description: cleaned.body || cleaned.title,
-      date: c.commit.author.date,
-      url: c.html_url,
-      author: c.author?.login ?? c.commit.author.name ?? null,
+
+  for (let page = 1; items.length < itemLimit; page += 1) {
+    const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?sha=${BRANCH}&per_page=${GITHUB_PAGE_SIZE}&page=${page}`;
+    const res = await fetch(url, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "studyhub-updates-fn",
+      },
     });
-    if (items.length >= MAX_ITEMS) break;
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`GitHub API ${res.status}: ${text.slice(0, 200)}`);
+    }
+
+    const commits = await res.json() as GitHubCommit[];
+    if (commits.length === 0) break;
+
+    for (const c of commits) {
+      const cleaned = cleanMessage(c.commit.message, mode === "newest");
+      if (!cleaned) continue;
+      items.push({
+        id: c.sha,
+        category: classify(cleaned.title),
+        title: cleaned.title,
+        description: cleaned.body || cleaned.title,
+        date: c.commit.author.date,
+        url: c.html_url,
+        author: c.author?.login ?? c.commit.author.name ?? null,
+      });
+      if (items.length >= itemLimit) break;
+    }
+
+    if (commits.length < GITHUB_PAGE_SIZE || mode === "newest") break;
   }
+
   return items;
 }
 
@@ -106,15 +121,21 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(supabaseUrl, serviceKey);
 
+  const url = new URL(req.url);
+  const requestBody = req.method === "POST"
+    ? await req.json().catch(() => ({})) as { mode?: string; refresh?: boolean }
+    : {};
+  const mode: UpdateMode = requestBody.mode === "all" || url.searchParams.get("mode") === "all" ? "all" : "newest";
+  const force = requestBody.refresh === true || url.searchParams.get("refresh") === "1";
+  const cacheKey = `${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${mode}`;
+
   // Try cache first
   const { data: cached } = await supabase
     .from("cached_updates")
     .select("payload, fetched_at")
-    .eq("id", CACHE_KEY)
+    .eq("id", cacheKey)
     .maybeSingle();
 
-  const url = new URL(req.url);
-  const force = url.searchParams.get("refresh") === "1";
   const cacheAge = cached ? Date.now() - new Date(cached.fetched_at).getTime() : Infinity;
   const cacheValid = cached && cacheAge < CACHE_TTL_MS;
 
@@ -136,11 +157,11 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const items = await fetchFromGitHub(githubToken);
-    const payload: CachedPayload = { items, source: "github", cached_at: new Date().toISOString() };
+    const items = await fetchFromGitHub(githubToken, mode);
+    const payload: CachedPayload = { items, source: "github", cached_at: new Date().toISOString(), mode };
 
     await supabase.from("cached_updates").upsert({
-      id: CACHE_KEY,
+      id: cacheKey,
       payload,
       fetched_at: new Date().toISOString(),
     });
