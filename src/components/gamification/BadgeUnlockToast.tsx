@@ -6,7 +6,7 @@ import { sounds } from "@/lib/sounds";
 
 const BadgeUnlockToast = () => {
   const { newlyUnlockedBadges, clearNewlyUnlockedBadges } = useGamification();
-  const { data: allBadges } = useAllBadges();
+  const { data: allBadges } = useAllBadges(newlyUnlockedBadges.length > 0);
 
   useEffect(() => {
     if (!newlyUnlockedBadges.length || !allBadges?.length) return;
