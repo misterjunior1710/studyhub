@@ -185,6 +185,20 @@ const Updates = () => {
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2 mt-6 opacity-0 animate-hero-fade-up" style={{ animationDelay: "250ms" }}>
+                <div className="flex items-center rounded-md border border-border bg-muted/30 p-1">
+                  {(["newest", "all"] as UpdateMode[]).map((filterMode) => (
+                    <Button
+                      key={filterMode}
+                      type="button"
+                      variant={mode === filterMode ? "default" : "ghost"}
+                      size="sm"
+                      className="h-7 px-3 text-xs capitalize"
+                      onClick={() => setMode(filterMode)}
+                    >
+                      {filterMode === "newest" ? "Newest" : "All"}
+                    </Button>
+                  ))}
+                </div>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-medium border border-accent/20">
                   <Sparkles className="h-3 w-3" /> New Features
                 </div>
@@ -196,7 +210,7 @@ const Updates = () => {
                 </div>
                 {data?.cached_at && (
                   <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted text-muted-foreground text-xs ml-auto">
-                    Updated {formatDistanceToNow(new Date(data.cached_at), { addSuffix: true })}
+                    {items.length} shown · Updated {formatDistanceToNow(new Date(data.cached_at), { addSuffix: true })}
                     {data.stale && " (cached)"}
                   </div>
                 )}
