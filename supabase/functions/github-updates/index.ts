@@ -8,6 +8,8 @@ const corsHeaders = {
 const REPO_OWNER = "misterjunior1710";
 const REPO_NAME = "studyhub";
 const BRANCH = "main";
+type UpdateMode = "newest" | "all";
+
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 const NEWEST_ITEMS = 15;
 const ALL_ITEMS_LIMIT = 1000;
@@ -32,6 +34,7 @@ interface CachedPayload {
   items: UpdateItem[];
   source: "github";
   cached_at: string;
+  mode: UpdateMode;
 }
 
 function classify(text: string): UpdateItem["category"] {
