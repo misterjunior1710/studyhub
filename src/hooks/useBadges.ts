@@ -18,9 +18,10 @@ export interface UserBadge {
   unlocked_at: string;
 }
 
-export const useAllBadges = () =>
+export const useAllBadges = (enabled = true) =>
   useQuery({
     queryKey: ["badges", "all"],
+    enabled,
     staleTime: 10 * 60 * 1000,
     queryFn: async (): Promise<Badge[]> => {
       const { data, error } = await supabase
