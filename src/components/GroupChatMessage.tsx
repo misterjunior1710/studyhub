@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import AudioPlayer from "@/components/AudioPlayer";
 import { FileIcon, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatMessage } from "@/lib/formatMessage";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   id: string;
@@ -27,6 +29,8 @@ interface GroupChatMessageProps {
 
 const GroupChatMessage = ({ message, isOwn, getTimeAgo }: GroupChatMessageProps) => {
   const username = message.profiles?.username || "User";
+  const signedFileUrl = useSignedGroupChatUrl(message.file_url ?? null);
+  const signedAudioUrl = useSignedGroupChatUrl(message.audio_url ?? null);
 
   const renderFileContent = () => {
     if (!message.file_url) return null;
@@ -34,10 +38,10 @@ const GroupChatMessage = ({ message, isOwn, getTimeAgo }: GroupChatMessageProps)
     if (message.file_type === "image") {
       return (
         <img
-          src={message.file_url}
+          src={signedFileUrl ?? message.file_url}
           alt={`Image shared by ${username}`}
           className="mt-2 max-w-full sm:max-w-xs md:max-w-sm rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-          onClick={() => window.open(message.file_url!, "_blank")}
+          onClick={() => window.open(signedFileUrl ?? message.file_url!, "_blank")}
         />
       );
     }
@@ -45,7 +49,7 @@ const GroupChatMessage = ({ message, isOwn, getTimeAgo }: GroupChatMessageProps)
     // PDF or other file
     const handleDownload = async () => {
       try {
-        const response = await fetch(message.file_url!);
+        const response = await fetch(signedFileUrl ?? message.file_url!);
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -61,7 +65,7 @@ const GroupChatMessage = ({ message, isOwn, getTimeAgo }: GroupChatMessageProps)
       } catch (error) {
         console.error('Download failed:', error);
         // Fallback to opening in new tab
-        window.open(message.file_url!, "_blank");
+        window.open(signedFileUrl ?? message.file_url!, "_blank");
       }
     };
 
@@ -93,7 +97,7 @@ const GroupChatMessage = ({ message, isOwn, getTimeAgo }: GroupChatMessageProps)
     return (
       <div className="mt-2 max-w-full sm:max-w-xs">
         <AudioPlayer
-          src={message.audio_url}
+          src={signedAudioUrl ?? message.audio_url}
           duration={message.audio_duration || undefined}
         />
       </div>
@@ -134,6 +138,44 @@ const GroupChatMessage = ({ message, isOwn, getTimeAgo }: GroupChatMessageProps)
       </CardContent>
     </Card>
   );
+};
+
+const extractGroupChatFilePath = (url: string): string | null => {
+  const marker = "/group-chat-files/";
+  const idx = url.indexOf(marker);
+  if (idx === -1) return null;
+  return url.slice(idx + marker.length).split("?")[0];
+};
+
+const useSignedGroupChatUrl = (storedUrl: string | null) => {
+  const [signedUrl, setSignedUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!storedUrl) {
+      setSignedUrl(null);
+      return;
+    }
+
+    const path = extractGroupChatFilePath(storedUrl);
+    if (!path) {
+      setSignedUrl(storedUrl);
+      return;
+    }
+
+    supabase.storage
+      .from("group-chat-files")
+      .createSignedUrl(path, 60 * 60)
+      .then(({ data }) => {
+        if (!cancelled) setSignedUrl(data?.signedUrl ?? null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [storedUrl]);
+
+  return signedUrl;
 };
 
 export default GroupChatMessage;
