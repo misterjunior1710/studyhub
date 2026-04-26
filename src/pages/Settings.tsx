@@ -354,18 +354,22 @@ const Settings = () => {
 
   const handleDeleteAccount = async () => {
     setDeletingAccount(true);
-    // Note: Full account deletion requires server-side implementation
-    // For now, we'll delete user data and sign out
-    if (userId) {
-      await supabase.from("posts").delete().eq("user_id", userId);
-      await supabase.from("comments").delete().eq("user_id", userId);
-      await supabase.from("bookmarks").delete().eq("user_id", userId);
-      await supabase.from("votes").delete().eq("user_id", userId);
-      await supabase.from("notifications").delete().eq("user_id", userId);
+    try {
+      const { error } = await supabase.functions.invoke("delete-account", {
+        body: { confirmation: "DELETE_MY_ACCOUNT" },
+      });
+
+      if (error) throw error;
+
+      await supabase.auth.signOut();
+      toast.success("Account deleted");
+      navigate("/auth");
+    } catch (error) {
+      console.error("Account deletion failed:", error);
+      toast.error("Couldn't delete your account. Please try again.");
+    } finally {
+      setDeletingAccount(false);
     }
-    await supabase.auth.signOut();
-    toast.success("Account data deleted");
-    navigate("/auth");
   };
 
   const toggleBlockedSubject = (subject: string) => {
@@ -886,7 +890,7 @@ const Settings = () => {
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        <AlertDialogAction onClick={handleDeleteAccount} disabled={deletingAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                           {deletingAccount ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                           Delete Account
                         </AlertDialogAction>
