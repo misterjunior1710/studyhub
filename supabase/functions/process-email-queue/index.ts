@@ -8,9 +8,18 @@ const DEFAULT_AUTH_TTL_MINUTES = 15
 const DEFAULT_TRANSACTIONAL_TTL_MINUTES = 60
 
 type EmailPayload = Record<string, unknown> & {
+  run_id?: string
   message_id?: string
   label?: string
   to?: string
+  from?: string
+  sender_domain?: string
+  subject?: string
+  html?: string
+  text?: string
+  purpose?: string
+  idempotency_key?: string
+  unsubscribe_token?: string
   queued_at?: string
 }
 
