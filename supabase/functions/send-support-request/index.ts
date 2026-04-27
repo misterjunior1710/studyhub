@@ -115,7 +115,6 @@ const handler = async (req: Request): Promise<Response> => {
           .join(' ');
         const safeName = escapeHtml(name);
         const safeEmail = escapeHtml(email);
-        const safeSubject = escapeHtml(subject);
         const safeCategory = escapeHtml(formattedCategory);
         const safeMessage = escapeHtml(message);
 
