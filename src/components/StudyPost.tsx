@@ -31,6 +31,7 @@ import {
 import ReportPostDialog from "./ReportPostDialog";
 import EditPostDialog from "./EditPostDialog";
 import EditUpdatePostDialog from "./EditUpdatePostDialog";
+import { createPostFileSignedUrl } from "@/lib/storage";
 
 // Helper to get capitalized category with emoji
 const getCategoryDisplay = (category: string): string => {
@@ -180,6 +181,7 @@ const StudyPost = memo(({
   const [showSignInDialog, setShowSignInDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showUpdateEditDialog, setShowUpdateEditDialog] = useState(false);
+  const [signedFileUrl, setSignedFileUrl] = useState<string | null>(null);
   const mountedRef = useRef(true);
 
   // Use real-time comment count
@@ -237,6 +239,26 @@ const StudyPost = memo(({
       isCancelled = true;
     };
   }, [id, user]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadSignedFileUrl = async () => {
+      if (!user || !fileUrl) {
+        setSignedFileUrl(null);
+        return;
+      }
+
+      const signedUrl = await createPostFileSignedUrl(fileUrl);
+      if (!cancelled) setSignedFileUrl(signedUrl);
+    };
+
+    loadSignedFileUrl();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [fileUrl, user]);
 
   const handleVote = useCallback(async (voteType: "up" | "down") => {
     if (!user) {
@@ -438,11 +460,11 @@ const StudyPost = memo(({
           onReadMore={navigateToPost}
         />
 
-        {user && fileUrl && (
+        {user && fileUrl && signedFileUrl && (
           <figure className="border border-border rounded-lg p-4 bg-muted/50">
             {fileUrl.endsWith('.pdf') ? (
               <a
-                href={fileUrl}
+                href={signedFileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-primary hover:underline"
@@ -451,7 +473,7 @@ const StudyPost = memo(({
               </a>
             ) : (
               <img
-                src={fileUrl}
+                src={signedFileUrl}
                 alt={`Attachment for ${title}`}
                 className="max-w-full rounded-lg"
                 loading="lazy"
