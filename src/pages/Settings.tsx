@@ -231,7 +231,7 @@ const Settings = () => {
     const fileName = `${userId}/avatar.${fileExt}`;
 
     const { error: uploadError } = await supabase.storage
-      .from('post-files')
+      .from('avatars')
       .upload(fileName, file, { upsert: true });
 
     if (uploadError) {
@@ -241,7 +241,7 @@ const Settings = () => {
     }
 
     const { data: { publicUrl } } = supabase.storage
-      .from('post-files')
+      .from('avatars')
       .getPublicUrl(fileName);
 
     setProfile(prev => ({ ...prev, avatar_url: publicUrl }));
