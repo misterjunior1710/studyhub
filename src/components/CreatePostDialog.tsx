@@ -157,11 +157,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
 
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage
-          .from("post-files")
-          .getPublicUrl(fileName);
-
-        fileUrl = publicUrl;
+        fileUrl = fileName;
       }
 
       const { error } = await supabase.from("posts").insert({
