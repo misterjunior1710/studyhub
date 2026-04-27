@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,6 +16,22 @@ interface SupportRequest {
   message: string;
 }
 
+const supportRequestSchema = z.object({
+  name: z.string().trim().min(2).max(100),
+  email: z.string().trim().email().max(255),
+  category: z.enum(["general", "technical", "account", "login", "password", "bug", "feature", "groups", "content", "moderation", "other"]),
+  subject: z.string().trim().min(5).max(200),
+  message: z.string().trim().min(20).max(2000),
+});
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -22,25 +39,15 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email, category, subject, message }: SupportRequest = await req.json();
-
-    // Validate required fields
-    if (!name || !email || !category || !subject || !message) {
+    const parsed = supportRequestSchema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) {
       return new Response(
-        JSON.stringify({ error: "All fields are required" }),
+        JSON.stringify({ error: "Please check the form fields and try again" }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      console.error("Invalid email format:", email);
-      return new Response(
-        JSON.stringify({ error: "Invalid email format" }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
-    }
+    const { name, email, category, subject, message }: SupportRequest = parsed.data;
 
     console.log("Processing support request from:", email, "Category:", category);
 
@@ -106,6 +113,10 @@ const handler = async (req: Request): Promise<Response> => {
         const formattedCategory = category.split(' ')
           .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
           .join(' ');
+        const safeName = escapeHtml(name);
+        const safeEmail = escapeHtml(email);
+        const safeCategory = escapeHtml(formattedCategory);
+        const safeMessage = escapeHtml(message);
 
         const emailResponse = await resend.emails.send({
           from: "StudyHub Support <onboarding@resend.dev>",
@@ -124,9 +135,9 @@ const handler = async (req: Request): Promise<Response> => {
                 <!-- Request Summary Card -->
                 <h2 style="color: #0e7490; font-size: 14px; font-weight: 600; margin: 0 0 16px 0; text-transform: uppercase; letter-spacing: 0.5px;">Request Summary</h2>
                 <div style="background-color: #f1f5f9; padding: 24px; border-radius: 8px; margin-bottom: 24px;">
-                  <p style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px;"><strong>From:</strong> ${name}</p>
-                  <p style="margin: 0 0 16px 0; color: #1e293b; font-size: 15px;"><strong>Email:</strong> <a href="mailto:${email}" style="color: #0891b2; text-decoration: none;">${email}</a></p>
-                  <p style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px;"><strong>Category:</strong> ${formattedCategory}</p>
+                  <p style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px;"><strong>From:</strong> ${safeName}</p>
+                  <p style="margin: 0 0 16px 0; color: #1e293b; font-size: 15px;"><strong>Email:</strong> <a href="mailto:${safeEmail}" style="color: #0891b2; text-decoration: none;">${safeEmail}</a></p>
+                  <p style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px;"><strong>Category:</strong> ${safeCategory}</p>
                   <p style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px;"><strong>Submitted:</strong> ${timestamp}</p>
                   <p style="margin: 0; color: #64748b; font-size: 13px;"><strong>Request ID:</strong> ${data.id}</p>
                 </div>
@@ -134,7 +145,7 @@ const handler = async (req: Request): Promise<Response> => {
                 <!-- Message Section -->
                 <h2 style="color: #0e7490; font-size: 14px; font-weight: 600; margin: 0 0 16px 0; text-transform: uppercase; letter-spacing: 0.5px;">📝 Message</h2>
                 <div style="background-color: #ffffff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                  <p style="margin: 0; color: #1e293b; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+                  <p style="margin: 0; color: #1e293b; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">${safeMessage}</p>
                 </div>
               </div>
               
@@ -144,7 +155,7 @@ const handler = async (req: Request): Promise<Response> => {
                   You're receiving this because a support request was submitted on StudyHub.
                 </p>
                 <p style="margin: 0 0 16px 0; color: #64748b; font-size: 13px; line-height: 1.5;">
-                  Need to reply? Just respond to this email directly by contacting the user at <a href="mailto:${email}" style="color: #0891b2; text-decoration: none;">${email}</a>
+                  Need to reply? Just respond to this email directly by contacting the user at <a href="mailto:${safeEmail}" style="color: #0891b2; text-decoration: none;">${safeEmail}</a>
                 </p>
                 <p style="margin: 0; color: #94a3b8; font-size: 12px;">
                   © 2025 StudyHub • Support Team
