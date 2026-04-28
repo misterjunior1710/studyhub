@@ -295,13 +295,13 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("Content moderation error:", error);
-    return new Response(JSON.stringify({ 
-      error: error instanceof Error ? error.message : "Unknown error",
-      isAppropriate: true,
-      reason: null,
+    return new Response(JSON.stringify({
+      isAppropriate: false,
+      reason: "Content moderation is temporarily unavailable. Please try again.",
+      flaggedWords: [],
       isSpam: false
     }), {
-      status: 200,
+      status: 503,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
