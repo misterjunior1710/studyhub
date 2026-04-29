@@ -384,13 +384,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "comments_user_id_fkey_profiles"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       conversations: {
@@ -896,24 +889,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "friends_friend_id_fkey"
-            columns: ["friend_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "friends_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "friends_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1436,13 +1415,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       powerups: {
@@ -1625,6 +1597,48 @@ export type Database = {
           username?: string | null
           weekly_study_goal?: number | null
           weekly_xp_last_reset?: string | null
+        }
+        Relationships: []
+      }
+      public_profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          country: string | null
+          created_at: string | null
+          grade: string | null
+          id: string
+          is_public: boolean
+          points: number | null
+          streak_days: number | null
+          stream: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          country?: string | null
+          created_at?: string | null
+          grade?: string | null
+          id: string
+          is_public?: boolean
+          points?: number | null
+          streak_days?: number | null
+          stream?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          country?: string | null
+          created_at?: string | null
+          grade?: string | null
+          id?: string
+          is_public?: boolean
+          points?: number | null
+          streak_days?: number | null
+          stream?: string | null
+          username?: string | null
         }
         Relationships: []
       }
@@ -2376,48 +2390,7 @@ export type Database = {
       }
     }
     Views: {
-      public_profiles: {
-        Row: {
-          avatar_url: string | null
-          bio: string | null
-          country: string | null
-          created_at: string | null
-          grade: string | null
-          id: string | null
-          is_public: boolean | null
-          points: number | null
-          streak_days: number | null
-          stream: string | null
-          username: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          bio?: string | null
-          country?: string | null
-          created_at?: string | null
-          grade?: string | null
-          id?: string | null
-          is_public?: boolean | null
-          points?: number | null
-          streak_days?: number | null
-          stream?: string | null
-          username?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          bio?: string | null
-          country?: string | null
-          created_at?: string | null
-          grade?: string | null
-          id?: string | null
-          is_public?: boolean | null
-          points?: number | null
-          streak_days?: number | null
-          stream?: string | null
-          username?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       activate_powerup: { Args: { _slug: string }; Returns: Json }
