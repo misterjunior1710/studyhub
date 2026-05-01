@@ -46,10 +46,9 @@ const fetchPosts = async ({
   userGrade,
   isAdmin,
 }: UsePostsOptions): Promise<Post[]> => {
-  // Use public_profiles view to avoid RLS issues
   let query = supabase
     .from("posts")
-    .select("*, public_profiles!posts_user_id_fkey(username), comments(count)")
+    .select("*, profiles!posts_user_id_fkey(username), comments(count)")
     .eq("post_type", postType);
 
   if (searchQuery) {
@@ -100,11 +99,7 @@ const fetchPosts = async ({
     return (fallbackData as Post[]) || [];
   }
 
-  // Map public_profiles back to profiles for compatibility
-  return (data || []).map((post: any) => ({
-    ...post,
-    profiles: post.public_profiles,
-  })) as Post[];
+  return (data || []) as Post[];
 };
 
 export const usePosts = (options: UsePostsOptions) => {
