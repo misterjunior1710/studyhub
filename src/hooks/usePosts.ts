@@ -99,11 +99,7 @@ const fetchPosts = async ({
     return (fallbackData as Post[]) || [];
   }
 
-  // Map public_profiles back to profiles for compatibility
-  return (data || []).map((post: any) => ({
-    ...post,
-    profiles: post.public_profiles,
-  })) as Post[];
+  return (data || []) as Post[];
 };
 
 export const usePosts = (options: UsePostsOptions) => {
