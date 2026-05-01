@@ -308,7 +308,7 @@ const Index = () => {
       <section className="border-t border-border py-10">
         <div className="container mx-auto px-4 text-center">
           <p className="text-sm text-muted-foreground mb-4">
-            {" "}
+            ​
           </p>
           <div className="flex flex-row items-center justify-center gap-3">
             {SOCIAL_SHARES.map((s) => (
