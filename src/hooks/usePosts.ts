@@ -46,10 +46,9 @@ const fetchPosts = async ({
   userGrade,
   isAdmin,
 }: UsePostsOptions): Promise<Post[]> => {
-  // Join via the foreign key on profiles, then read username from the public_profiles view
   let query = supabase
     .from("posts")
-    .select("*, public_profiles(username), comments(count)")
+    .select("*, profiles!posts_user_id_fkey(username), comments(count)")
     .eq("post_type", postType);
 
   if (searchQuery) {
