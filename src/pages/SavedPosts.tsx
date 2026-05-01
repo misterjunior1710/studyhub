@@ -68,7 +68,7 @@ const SavedPosts = () => {
 
       const { data: postsData, error: postsError } = await supabase
         .from("posts")
-        .select("*, public_profiles!posts_user_id_fkey(username), comments(count)")
+        .select("*, profiles!posts_user_id_fkey(username), comments(count)")
         .in("id", postIds);
 
       if (postsError) {
