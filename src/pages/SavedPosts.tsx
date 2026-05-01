@@ -80,11 +80,8 @@ const SavedPosts = () => {
         
         setPosts((fallbackData || []) as SavedPost[]);
       } else {
-        // Map to expected format and maintain bookmark order
-        const postsMap = new Map((postsData || []).map((post: any) => [
-          post.id,
-          { ...post, profiles: post.public_profiles }
-        ]));
+        // Maintain bookmark order
+        const postsMap = new Map((postsData || []).map((post: any) => [post.id, post]));
         
         const orderedPosts = postIds
           .map(id => postsMap.get(id))
