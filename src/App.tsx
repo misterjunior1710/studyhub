@@ -166,6 +166,7 @@ const App = () => (
                     </PageTransition>
                   </ProfileOnboardingGuard>
                 </Suspense>
+                <BottomNav />
               </BrowserRouter>
             </TooltipProvider>
           </ThemeInitializer>
