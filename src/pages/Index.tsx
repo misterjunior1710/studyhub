@@ -40,11 +40,12 @@ const Index = () => {
 
   // Quick action cards - different for logged in vs logged out users
   const quickActions = user ? [
-    { icon: MessageSquare, label: "Ask a Doubt", href: "/questions", color: "from-primary to-accent" },
-    { icon: Users, label: "Your Groups", href: "/groups", color: "from-accent to-primary" },
-    { icon: Bookmark, label: "Saved Posts", href: "/saved", color: "from-info to-primary" },
-    { icon: Brain, label: "Study Mode", href: "/study", color: "from-success to-info" },
-    { icon: Calendar, label: "Calendar", href: "/calendar", color: "from-warning to-destructive" },
+    { icon: TrendingUp, label: "My Feed", href: "/feed", color: "from-primary to-accent" },
+    { icon: MessageSquare, label: "Ask a Doubt", href: "/questions", color: "from-accent to-primary" },
+    { icon: Users, label: "Your Groups", href: "/groups", color: "from-info to-primary" },
+    { icon: Brain, label: "Study Tools", href: "/study", color: "from-success to-info" },
+    { icon: Sparkles, label: "AI Tools", href: "/content-generator", color: "from-warning to-accent" },
+    { icon: Calendar, label: "Calendar", href: "/calendar", color: "from-primary to-success" },
   ] : [
     { icon: MessageSquare, label: "Browse Questions", href: "/questions", color: "from-primary to-accent" },
     { icon: Users, label: "Study Groups", href: "/groups", color: "from-accent to-primary" },
