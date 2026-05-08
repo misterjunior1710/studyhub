@@ -2,8 +2,7 @@ import { Home, Rss, HelpCircle, Timer, PlusCircle } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
-import CreatePostDialog from "./CreatePostDialog";
+import { useCallback } from "react";
 
 const BottomNav = () => {
   const navigate = useNavigate();
