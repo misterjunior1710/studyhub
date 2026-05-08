@@ -3,7 +3,7 @@ import { Heart } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="border-t border-border bg-card/50">
+    <footer className="border-t border-border bg-card/50 pb-16 md:pb-0">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* Brand */}
@@ -35,12 +35,10 @@ const Footer = () => {
                   Study Groups
                 </Link>
               </li>
-
-
             </ul>
           </div>
 
-          {/* Community */}
+          {/* Your Stuff */}
           <div className="space-y-3">
             <h4 className="font-semibold text-foreground">Your Stuff</h4>
             <ul className="space-y-2 text-sm">
@@ -51,7 +49,12 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/study" className="text-muted-foreground active:text-primary py-1 inline-block">
-                  Study Mode
+                  Study Tools
+                </Link>
+              </li>
+              <li>
+                <Link to="/content-generator" className="text-muted-foreground active:text-primary py-1 inline-block">
+                  AI Study Tools
                 </Link>
               </li>
               <li>
@@ -97,6 +100,7 @@ const Footer = () => {
                 src="https://bsewdwaowjwuztpmnbyk.supabase.co/storage/v1/object/public/email-assets/sl-logo-badge.png" 
                 alt="SL" 
                 className="w-6 h-6 rounded"
+                loading="lazy"
               />
               <span>StartupLibrary</span>
             </a>

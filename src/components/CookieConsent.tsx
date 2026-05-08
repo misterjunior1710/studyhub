@@ -41,7 +41,7 @@ const CookieConsent = () => {
 
   return createPortal(
     <div
-      className="fixed bottom-0 left-0 right-0 z-[9999] p-3 sm:p-4 bg-card/95 backdrop-blur-md border-t border-border/50 shadow-lg animate-slide-up"
+      className="fixed bottom-16 md:bottom-0 left-0 right-0 z-[9999] p-3 sm:p-4 bg-card/95 backdrop-blur-md border-t border-border/50 shadow-lg animate-slide-up"
     >
       <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-3">
         <div className="flex items-center gap-2 flex-1">

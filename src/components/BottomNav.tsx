@@ -1,44 +1,43 @@
-import { Home, Rss, HelpCircle, Timer, PlusCircle } from "lucide-react";
+import { Home, Rss, HelpCircle, Timer } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+
+// Routes where bottom nav should be hidden
+const HIDDEN_ROUTES = ["/auth", "/profile-onboarding"];
 
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+
+  // Hide on auth-related pages
+  if (HIDDEN_ROUTES.some(r => location.pathname.startsWith(r))) {
+    return null;
+  }
 
   const isActive = (path: string) => location.pathname === path;
 
-  const items = user
-    ? [
-        { path: "/", label: "Home", icon: Home },
-        { path: "/feed", label: "Feed", icon: Rss },
-        { path: "/questions", label: "Questions", icon: HelpCircle },
-        { path: "/study", label: "Study", icon: Timer },
-      ]
-    : [
-        { path: "/", label: "Home", icon: Home },
-        { path: "/feed", label: "Feed", icon: Rss },
-        { path: "/questions", label: "Questions", icon: HelpCircle },
-        { path: "/study", label: "Study", icon: Timer },
-      ];
+  const items = [
+    { path: "/", label: "Home", icon: Home },
+    { path: "/feed", label: "Feed", icon: Rss },
+    { path: "/questions", label: "Questions", icon: HelpCircle },
+    { path: "/study", label: "Study", icon: Timer },
+  ];
 
   return (
     <>
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 backdrop-blur-md"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-[60] border-t border-border bg-card/95 backdrop-blur-md"
         role="navigation"
         aria-label="Main navigation"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
-        <div className="flex items-center justify-around h-14">
+        <div className="flex items-center justify-around h-16">
           {items.map((item) => (
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors relative",
+                "flex flex-col items-center justify-center gap-0.5 flex-1 h-full min-w-[48px] min-h-[48px] transition-colors relative touch-manipulation active:scale-95",
                 isActive(item.path)
                   ? "text-primary"
                   : "text-muted-foreground"
@@ -49,7 +48,7 @@ const BottomNav = () => {
               <item.icon className="h-5 w-5" />
               <span className="text-[10px] font-medium">{item.label}</span>
               {isActive(item.path) && (
-                <span className="absolute bottom-1 w-1 h-1 rounded-full bg-primary" />
+                <span className="absolute bottom-2 w-1 h-1 rounded-full bg-primary" />
               )}
             </button>
           ))}
@@ -57,7 +56,7 @@ const BottomNav = () => {
       </nav>
 
       {/* Bottom nav spacer to prevent content from being hidden behind the nav */}
-      <div className="md:hidden h-14" />
+      <div className="md:hidden h-16" />
     </>
   );
 };
