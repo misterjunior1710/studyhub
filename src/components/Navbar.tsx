@@ -1,4 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen, MoreHorizontal, ChevronDown } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen, MoreHorizontal, ChevronDown, Trophy } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -53,11 +53,14 @@ const Navbar = ({
 
   // Secondary nav items for "More" dropdown
   const moreItems = [
+    { path: "/leaderboard", label: "Leaderboard", icon: Trophy },
     { path: "/friends", label: "Friends", icon: UserPlus },
     { path: "/calendar", label: "Calendar", icon: Calendar },
     { path: "/whiteboards", label: "Whiteboards", icon: Palette },
     { path: "/notes", label: "Notes", icon: NotebookPen },
+    { path: "/saved", label: "Saved Posts", icon: Bookmark },
     { path: "/updates", label: "Updates", icon: Megaphone },
+    { path: "/install", label: "Install App", icon: Download },
     { path: "/support", label: "Support", icon: LifeBuoy },
   ];
 
@@ -219,49 +222,7 @@ const Navbar = ({
 
                     <DropdownMenuSeparator />
 
-                    {/* Study actions */}
-                    <div className="py-1">
-                      <DropdownMenuItem onClick={() => navigate("/calendar")}
-                      >
-                        <Calendar className="mr-2 h-4 w-4" />
-                        <span>Calendar</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/whiteboards")}
-                      >
-                        <Palette className="mr-2 h-4 w-4" />
-                        <span>Whiteboards</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/notes")}
-                      >
-                        <NotebookPen className="mr-2 h-4 w-4" />
-                        <span>Notes</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/saved")}
-                      >
-                        <Bookmark className="mr-2 h-4 w-4" />
-                        <span>Saved Posts</span>
-                      </DropdownMenuItem>
-                    </div>
-
-                    <DropdownMenuSeparator />
-
-                    {/* Utilities */}
-                    <div className="py-1">
-                      <DropdownMenuItem onClick={() => navigate("/install")}
-                      >
-                        <Download className="mr-2 h-4 w-4" />
-                        <span>Install App</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/support")}
-                      >
-                        <LifeBuoy className="mr-2 h-4 w-4" />
-                        <span>Support</span>
-                      </DropdownMenuItem>
-                    </div>
-
-                    <DropdownMenuSeparator />
-
-                    {/* Preferences */}
+                    {/* Account preferences */}
                     <div className="py-1">
                       {/* Desktop only: Theme toggle in dropdown */}
                       <DropdownMenuItem onClick={toggleTheme} className="hidden md:flex">
@@ -278,8 +239,7 @@ const Navbar = ({
                         )}
                       </DropdownMenuItem>
 
-                      <DropdownMenuItem onClick={() => navigate("/settings")}
-                      >
+                      <DropdownMenuItem onClick={() => navigate("/settings")}>
                         <Settings className="mr-2 h-4 w-4" />
                         <span>Settings</span>
                       </DropdownMenuItem>
