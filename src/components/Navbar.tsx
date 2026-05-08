@@ -53,11 +53,14 @@ const Navbar = ({
 
   // Secondary nav items for "More" dropdown
   const moreItems = [
+    { path: "/leaderboard", label: "Leaderboard", icon: Trophy },
     { path: "/friends", label: "Friends", icon: UserPlus },
     { path: "/calendar", label: "Calendar", icon: Calendar },
     { path: "/whiteboards", label: "Whiteboards", icon: Palette },
     { path: "/notes", label: "Notes", icon: NotebookPen },
+    { path: "/saved", label: "Saved Posts", icon: Bookmark },
     { path: "/updates", label: "Updates", icon: Megaphone },
+    { path: "/install", label: "Install App", icon: Download },
     { path: "/support", label: "Support", icon: LifeBuoy },
   ];
 
