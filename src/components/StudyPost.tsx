@@ -389,7 +389,7 @@ const StudyPost = memo(({
               <Button
                 variant="ghost"
                 size="icon"
-                className={`h-8 w-8 ${userVote === "up" ? "text-success" : "hover:text-success"}`}
+                className={`h-10 w-10 min-h-[44px] min-w-[44px] touch-manipulation ${userVote === "up" ? "text-success" : "hover:text-success"}`}
                 onClick={() => handleVote("up")}
                 aria-label="Upvote"
               >
