@@ -377,3 +377,15 @@ All colors MUST be HSL.
     scroll-behavior: auto !important;
   }
 }
+
+/* Eliminate 300ms tap delay on mobile for all interactive elements */
+@media (pointer: coarse) {
+  button,
+  a,
+  [role="button"],
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
+  }
+}
