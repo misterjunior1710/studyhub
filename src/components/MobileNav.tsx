@@ -1,4 +1,4 @@
-import { Home, HelpCircle, Users, UserPlus, Menu, Timer, Sparkles, Megaphone, Calendar, Palette, LifeBuoy, Rss, Trophy } from "lucide-react";
+import { Home, HelpCircle, Users, UserPlus, Menu, Timer, Sparkles, Megaphone, Calendar, Palette, LifeBuoy, Rss, NotebookPen, Bookmark, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -17,19 +17,41 @@ const MobileNav = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const navItems = [
-    { path: "/study", label: "Study Mode", icon: Timer },
-    { path: "/content-generator", label: "AI Generator", icon: Sparkles },
-    { path: "/", label: "Home", icon: Home },
-    { path: "/feed", label: "Feed", icon: Rss },
-    { path: "/questions", label: "Questions", icon: HelpCircle },
-    { path: "/groups", label: "Groups", icon: Users },
-    { path: "/friends", label: "Friends", icon: UserPlus },
-    { path: "/leaderboard", label: "Leaderboard", icon: Trophy },
-    { path: "/calendar", label: "Calendar", icon: Calendar },
-    { path: "/whiteboards", label: "Whiteboards", icon: Palette },
-    { path: "/updates", label: "Updates", icon: Megaphone },
-    { path: "/support", label: "Support", icon: LifeBuoy },
+  const sections = [
+    {
+      label: "Main",
+      items: [
+        { path: "/", label: "Home", icon: Home },
+        { path: "/feed", label: "Feed", icon: Rss },
+        { path: "/questions", label: "Questions", icon: HelpCircle },
+        { path: "/groups", label: "Groups", icon: Users },
+      ],
+    },
+    {
+      label: "Study",
+      items: [
+        { path: "/study", label: "Study Tools", icon: Timer },
+        { path: "/content-generator", label: "AI Study Tools", icon: Sparkles },
+        { path: "/notes", label: "Notes", icon: NotebookPen },
+        { path: "/whiteboards", label: "Whiteboards", icon: Palette },
+      ],
+    },
+    {
+      label: "Community",
+      items: [
+        { path: "/friends", label: "Friends", icon: UserPlus },
+        { path: "/calendar", label: "Calendar", icon: Calendar },
+        { path: "/updates", label: "Updates", icon: Megaphone },
+      ],
+    },
+    {
+      label: "More",
+      items: [
+        { path: "/saved", label: "Saved Posts", icon: Bookmark },
+        { path: "/install", label: "Install App", icon: Download },
+        { path: "/support", label: "Support", icon: LifeBuoy },
+      ],
+    },
   ];
 
   const handleNavigate = (path: string) => {
@@ -40,28 +62,36 @@ const MobileNav = () => {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open menu">
           <Menu className="h-5 w-5" />
-          <span className="sr-only">Open menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-72">
+      <SheetContent side="left" className="w-72 overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="text-left bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             StudyHub
           </SheetTitle>
         </SheetHeader>
-        <nav className="flex flex-col gap-1 mt-6">
-          {navItems.map((item) => (
-            <Button
-              key={item.path}
-              variant={isActive(item.path) ? "default" : "ghost"}
-              className="w-full justify-start h-12 text-base"
-              onClick={() => handleNavigate(item.path)}
-            >
-              <item.icon className="h-5 w-5 mr-3" />
-              {item.label}
-            </Button>
+        <nav className="flex flex-col gap-4 mt-6">
+          {sections.map((section) => (
+            <div key={section.label}>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-1">
+                {section.label}
+              </p>
+              <div className="flex flex-col gap-0.5">
+                {section.items.map((item) => (
+                  <Button
+                    key={item.path}
+                    variant={isActive(item.path) ? "default" : "ghost"}
+                    className="w-full justify-start h-11 text-sm"
+                    onClick={() => handleNavigate(item.path)}
+                  >
+                    <item.icon className="h-4 w-4 mr-3" />
+                    {item.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
       </SheetContent>
