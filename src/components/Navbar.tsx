@@ -1,4 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen, Trophy } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen, MoreHorizontal, ChevronDown } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -51,6 +51,18 @@ const Navbar = ({
     navigate("/");
   };
 
+  // Secondary nav items for "More" dropdown
+  const moreItems = [
+    { path: "/friends", label: "Friends", icon: UserPlus },
+    { path: "/calendar", label: "Calendar", icon: Calendar },
+    { path: "/whiteboards", label: "Whiteboards", icon: Palette },
+    { path: "/notes", label: "Notes", icon: NotebookPen },
+    { path: "/updates", label: "Updates", icon: Megaphone },
+    { path: "/support", label: "Support", icon: LifeBuoy },
+  ];
+
+  const isMoreActive = moreItems.some(item => isActive(item.path));
+
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-card/95">
       <div className="container mx-auto px-4">
@@ -64,14 +76,7 @@ const Navbar = ({
               StudyHub
             </h1>
             <div className="hidden md:flex items-center gap-1">
-              <Button variant={isActive("/study") ? "default" : "ghost"} size="sm" onClick={() => navigate("/study")}>
-                <Timer className="h-4 w-4 mr-2" />
-                Study
-              </Button>
-              <Button variant={isActive("/content-generator") ? "default" : "ghost"} size="sm" onClick={() => navigate("/content-generator")}>
-                <Sparkles className="h-4 w-4 mr-2" />
-                AI
-              </Button>
+              {/* Primary nav items */}
               <Button variant={isActive("/") ? "default" : "ghost"} size="sm" onClick={() => navigate("/")}>
                 <Home className="h-4 w-4 mr-2" />
                 Home
@@ -88,18 +93,54 @@ const Navbar = ({
                 <Users className="h-4 w-4 mr-2" />
                 Groups
               </Button>
-              <Button variant={isActive("/friends") ? "default" : "ghost"} size="sm" onClick={() => navigate("/friends")}>
-                <UserPlus className="h-4 w-4 mr-2" />
-                Friends
-              </Button>
-              <Button variant={isActive("/leaderboard") ? "default" : "ghost"} size="sm" onClick={() => navigate("/leaderboard")}>
-                <Trophy className="h-4 w-4 mr-2" />
-                Leaderboard
-              </Button>
-              <Button variant={isActive("/updates") ? "default" : "ghost"} size="sm" onClick={() => navigate("/updates")}>
-                <Megaphone className="h-4 w-4 mr-2" />
-                Updates
-              </Button>
+
+              {/* Study & AI dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant={(isActive("/study") || isActive("/content-generator")) ? "default" : "ghost"} 
+                    size="sm"
+                    className="gap-1"
+                  >
+                    <Timer className="h-4 w-4 mr-1" />
+                    Study & AI
+                    <ChevronDown className="h-3 w-3 opacity-60" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  <DropdownMenuItem onClick={() => navigate("/study")}>
+                    <Timer className="mr-2 h-4 w-4" />
+                    <span>Study Tools</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/content-generator")}>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    <span>AI Study Tools</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* More dropdown for secondary items */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant={isMoreActive ? "default" : "ghost"} 
+                    size="sm"
+                    className="gap-1"
+                  >
+                    <MoreHorizontal className="h-4 w-4 mr-1" />
+                    More
+                    <ChevronDown className="h-3 w-3 opacity-60" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  {moreItems.map((item) => (
+                    <DropdownMenuItem key={item.path} onClick={() => navigate(item.path)}>
+                      <item.icon className="mr-2 h-4 w-4" />
+                      <span>{item.label}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 

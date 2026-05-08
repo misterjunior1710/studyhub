@@ -18,6 +18,7 @@ import BadgeUnlockToast from "@/components/gamification/BadgeUnlockToast";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 import { lazy, Suspense } from "react";
+import BottomNav from "@/components/BottomNav";
 import { Loader2 } from "lucide-react";
 
 // Eager load critical pages
@@ -165,6 +166,7 @@ const App = () => (
                     </PageTransition>
                   </ProfileOnboardingGuard>
                 </Suspense>
+                <BottomNav />
               </BrowserRouter>
             </TooltipProvider>
           </ThemeInitializer>
