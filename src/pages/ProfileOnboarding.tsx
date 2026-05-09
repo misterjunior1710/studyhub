@@ -378,33 +378,24 @@ const ProfileOnboarding = () => {
         </CardContent>
       </Card>
 
-      {/* Sticky action bar (mobile-first; inline-feeling on desktop) */}
-      <div className="fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-auto sm:left-auto sm:right-auto sm:relative sm:mt-4 z-30 bg-background/95 backdrop-blur border-t sm:border-t-0 sm:bg-transparent sm:backdrop-blur-0 p-4 sm:p-0 sm:max-w-md sm:w-full">
+      {/* Sticky action bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-background/95 backdrop-blur border-t p-3 sm:p-4">
         <div className="max-w-md mx-auto flex gap-3">
           <Button
             type="button"
             variant="outline"
             onClick={handleBack}
             disabled={step === 1 || isSubmitting}
-            className="h-12 flex-1 sm:flex-none sm:w-28"
+            className="h-12 w-28"
           >
             <ArrowLeft className="w-4 h-4 mr-1" /> Back
           </Button>
           {step < TOTAL_STEPS ? (
-            <Button
-              type="button"
-              onClick={handleNext}
-              className="h-12 flex-1 font-medium"
-            >
+            <Button type="button" onClick={handleNext} className="h-12 flex-1 font-medium">
               Continue <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           ) : (
-            <Button
-              type="button"
-              onClick={() => handleSubmit()}
-              disabled={isSubmitting}
-              className="h-12 flex-1 font-medium"
-            >
+            <Button type="button" onClick={() => handleSubmit()} disabled={isSubmitting} className="h-12 flex-1 font-medium">
               {isSubmitting ? (
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</>
               ) : (
