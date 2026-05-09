@@ -306,12 +306,15 @@ const Auth = () => {
               <form onSubmit={handleEmailSignIn} className="space-y-4">
                 <div className="space-y-2">
                    <Label htmlFor="login-email">Email</Label>
-                  <Input id="login-email" type="email" placeholder="you@school.edu" value={email} onChange={e => setEmail(e.target.value)} required />
+                  <Input id="login-email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="next" placeholder="you@school.edu" value={email} onChange={e => setEmail(e.target.value)} required className="h-11" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="login-password">Password</Label>
-                  <Input id="login-password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+                  <Input id="login-password" type="password" autoComplete="current-password" enterKeyHint="go" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required className="h-11" />
                 </div>
+                <p className="text-xs text-muted-foreground flex items-center gap-1.5" aria-live="polite">
+                  <span aria-hidden="true">🔒</span> Your data is private and never shared.
+                </p>
                 <Button type="submit" className="w-full btn-bounce" disabled={loading}>
                    {loading ? <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
