@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,139 +14,171 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import { COUNTRIES, ALL_GRADES, getStreamsForGrade, isAdultGrade, getSubjectsForGrade } from "@/lib/constants";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCountryDetect } from "@/hooks/useCountryDetect";
 import { getStreamsForCountry } from "@/lib/countryEducation";
-import { Loader2, Sparkles, GraduationCap } from "lucide-react";
+import { Loader2, Sparkles, GraduationCap, ArrowLeft, ArrowRight, Check } from "lucide-react";
+
+const STEP_LABELS = ["About you", "Your studies", "Subjects"];
+const TOTAL_STEPS = 3;
 
 const ProfileOnboarding = () => {
   const navigate = useNavigate();
   const { user, session, isLoading: authLoading } = useAuth();
-  
+
+  const [step, setStep] = useState(1);
   const [fullName, setFullName] = useState("");
   const [country, setCountry] = useState("");
   const [grade, setGrade] = useState("");
   const [stream, setStream] = useState("");
   const [subjects, setSubjects] = useState<string[]>([]);
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkingProfile, setCheckingProfile] = useState(true);
   const { detectedCountry } = useCountryDetect();
 
-  // Get streams based on selected grade AND country
-  const availableStreams = grade 
-    ? isAdultGrade(grade) 
-      ? getStreamsForGrade(grade) 
-      : country 
-        ? getStreamsForCountry(country) 
+  const draftKey = user ? `studyhub_onboarding_draft_${user.id}` : "";
+
+  const availableStreams = grade
+    ? isAdultGrade(grade)
+      ? getStreamsForGrade(grade)
+      : country
+        ? getStreamsForCountry(country)
         : getStreamsForGrade(grade)
     : [];
 
-  // Pre-fill name from Google profile if available
+  // Pre-fill name from Google
   useEffect(() => {
     if (user?.user_metadata) {
       const googleName = user.user_metadata.full_name || user.user_metadata.name || "";
-      if (googleName) {
-        setFullName(googleName);
-      }
+      if (googleName && !fullName) setFullName(googleName);
     }
   }, [user]);
 
   // Auto-detect country
   useEffect(() => {
-    if (detectedCountry && !country) {
-      setCountry(detectedCountry);
-    }
+    if (detectedCountry && !country) setCountry(detectedCountry);
   }, [detectedCountry]);
 
-  // Check if profile is already complete
+  // Restore draft from localStorage
+  useEffect(() => {
+    if (!draftKey) return;
+    try {
+      const raw = localStorage.getItem(draftKey);
+      if (raw) {
+        const d = JSON.parse(raw);
+        if (d.fullName) setFullName(d.fullName);
+        if (d.country) setCountry(d.country);
+        if (d.grade) setGrade(d.grade);
+        if (d.stream) setStream(d.stream);
+        if (Array.isArray(d.subjects)) setSubjects(d.subjects);
+        if (d.step) setStep(d.step);
+      }
+    } catch {}
+  }, [draftKey]);
+
+  // Auto-save draft
+  useEffect(() => {
+    if (!draftKey || checkingProfile) return;
+    try {
+      localStorage.setItem(
+        draftKey,
+        JSON.stringify({ fullName, country, grade, stream, subjects, step })
+      );
+    } catch {}
+  }, [draftKey, fullName, country, grade, stream, subjects, step, checkingProfile]);
+
+  // Profile completeness check
   useEffect(() => {
     const checkProfile = async () => {
       if (!user) {
         setCheckingProfile(false);
         return;
       }
-
       try {
-        const { data: profile, error } = await supabase
+        const { data: profile } = await supabase
           .from("profiles")
           .select("username, country, grade, stream, subjects")
           .eq("id", user.id)
           .maybeSingle();
 
-        if (error) {
-          console.error("Error checking profile:", error);
-          setCheckingProfile(false);
-          return;
-        }
-
-        // If profile is complete, redirect to home
         if (profile?.username && profile?.country && profile?.grade && profile?.stream) {
           navigate("/", { replace: true });
           return;
         }
 
-        // Pre-fill existing data if any
-        if (profile?.username) setFullName(profile.username);
-        if (profile?.country) setCountry(profile.country);
-        if (profile?.grade) setGrade(profile.grade);
-        if (profile?.stream) setStream(profile.stream);
-        if (profile?.subjects) setSubjects(profile.subjects as string[]);
-
-        setCheckingProfile(false);
-      } catch (error) {
-        console.error("Error checking profile:", error);
+        if (profile?.username) setFullName((p) => p || profile.username!);
+        if (profile?.country) setCountry((p) => p || profile.country!);
+        if (profile?.grade) setGrade((p) => p || profile.grade!);
+        if (profile?.stream) setStream((p) => p || profile.stream!);
+        if (profile?.subjects) setSubjects((p) => (p.length ? p : (profile.subjects as string[])));
+      } catch (e) {
+        console.error("Profile check error:", e);
+      } finally {
         setCheckingProfile(false);
       }
     };
-
-    if (!authLoading) {
-      checkProfile();
-    }
+    if (!authLoading) checkProfile();
   }, [user, authLoading, navigate]);
 
-  // Redirect to auth if not logged in
   useEffect(() => {
-    if (!authLoading && !session) {
-      navigate("/auth", { replace: true });
-    }
+    if (!authLoading && !session) navigate("/auth", { replace: true });
   }, [authLoading, session, navigate]);
 
-  // Reset stream when grade or country changes
+  // Reset stream when invalid for new grade/country
   useEffect(() => {
-    if (grade && stream && !availableStreams.includes(stream)) {
-      setStream("");
-    }
+    if (grade && stream && !availableStreams.includes(stream)) setStream("");
   }, [grade, country, availableStreams]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Validation
+  const errors = useMemo(() => {
+    const e: Record<string, string> = {};
+    if (!fullName.trim()) e.fullName = "Please enter your full name.";
+    else if (fullName.trim().length < 2) e.fullName = "Name is too short.";
+    if (!country) e.country = "Please select your country.";
+    if (!grade) e.grade = "Please select your grade.";
+    if (!stream) e.stream = "Please select your curriculum.";
+    return e;
+  }, [fullName, country, grade, stream]);
 
-    // Validation
-    if (!fullName.trim()) {
-      toast.error("Please enter your full name");
-      return;
-    }
-    if (!country) {
-      toast.error("Please select your country");
-      return;
-    }
-    if (!grade) {
-      toast.error("Please select your grade");
-      return;
-    }
-    if (!stream) {
-      toast.error("Please select your stream/curriculum");
-      return;
-    }
+  const stepValid = (s: number): boolean => {
+    if (s === 1) return !errors.fullName && !errors.country;
+    if (s === 2) return !errors.grade && !errors.stream;
+    return true;
+  };
 
+  const handleNext = () => {
+    if (step === 1) {
+      setTouched((t) => ({ ...t, fullName: true, country: true }));
+      if (!stepValid(1)) return;
+    }
+    if (step === 2) {
+      setTouched((t) => ({ ...t, grade: true, stream: true }));
+      if (!stepValid(2)) return;
+    }
+    setStep((s) => Math.min(TOTAL_STEPS, s + 1));
+  };
+
+  const handleBack = () => setStep((s) => Math.max(1, s - 1));
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    setTouched({ fullName: true, country: true, grade: true, stream: true });
+    if (Object.keys(errors).length > 0) {
+      toast.error("Please complete all required fields.");
+      if (errors.fullName || errors.country) setStep(1);
+      else if (errors.grade || errors.stream) setStep(2);
+      return;
+    }
     if (!user) {
-      toast.error("You must be logged in");
+      toast.error("You must be logged in.");
       return;
     }
 
     setIsSubmitting(true);
-
     try {
       const { error } = await supabase
         .from("profiles")
@@ -159,178 +191,220 @@ const ProfileOnboarding = () => {
         })
         .eq("id", user.id);
 
-      if (error) {
-        console.error("Error updating profile:", error);
-        toast.error("Failed to save profile. Please try again.");
-        return;
-      }
+      if (error) throw error;
 
+      try { localStorage.removeItem(draftKey); } catch {}
       toast.success("Profile completed! Welcome to StudyHub");
-      
-      // Force a page reload to refresh auth context with new profile data
       window.location.href = "/";
-    } catch (error) {
-      console.error("Error saving profile:", error);
-      toast.error("An unexpected error occurred");
+    } catch (err: any) {
+      console.error("Save profile error:", err);
+      toast.error(err?.message || "Failed to save profile. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Show loading while checking auth or profile
   if (authLoading || checkingProfile) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-3">
+            <Skeleton className="h-12 w-12 rounded-full mx-auto" />
+            <Skeleton className="h-6 w-3/4 mx-auto" />
+            <Skeleton className="h-4 w-1/2 mx-auto" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Skeleton className="h-2 w-full" />
+            <Skeleton className="h-11 w-full" />
+            <Skeleton className="h-11 w-full" />
+            <Skeleton className="h-11 w-full" />
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
+  const progressValue = (step / TOTAL_STEPS) * 100;
+  const showError = (key: string) => touched[key] && errors[key];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-start sm:items-center justify-center p-4 pb-28 sm:pb-4">
       <Card className="w-full max-w-md animate-fade-in shadow-xl border-primary/10">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-            <GraduationCap className="w-8 h-8 text-primary" />
+            <GraduationCap className="w-8 h-8 text-primary" aria-hidden="true" />
           </div>
           <div className="space-y-2">
             <CardTitle className="text-2xl font-bold flex items-center justify-center gap-2">
               Welcome to StudyHub
-              <Sparkles className="w-5 h-5 text-primary animate-pulse" />
+              <Sparkles className="w-5 h-5 text-primary animate-pulse" aria-hidden="true" />
             </CardTitle>
             <CardDescription className="text-base">
-              Help us personalize your StudyHub experience
+              Step {step} of {TOTAL_STEPS} — {STEP_LABELS[step - 1]}
             </CardDescription>
           </div>
+          <div className="space-y-1.5">
+            <Progress value={progressValue} aria-label={`Onboarding progress: step ${step} of ${TOTAL_STEPS}`} />
+            <p className="text-xs text-muted-foreground">Your progress is saved automatically.</p>
+          </div>
         </CardHeader>
-        
+
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Full Name */}
-            <div className="space-y-2">
-              <Label htmlFor="fullName" className="text-sm font-medium">
-                Full Name <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="fullName"
-                type="text"
-                placeholder="Enter your full name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="h-11"
-                required
-              />
-            </div>
+          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+            {/* STEP 1: About you */}
+            {step === 1 && (
+              <div className="space-y-5 animate-fade-in">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName" className="text-sm font-medium">
+                    Full Name <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="fullName"
+                    type="text"
+                    autoComplete="name"
+                    enterKeyHint="next"
+                    placeholder="Enter your full name"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    onBlur={() => setTouched((t) => ({ ...t, fullName: true }))}
+                    className="h-12"
+                    aria-invalid={!!showError("fullName")}
+                    aria-describedby={showError("fullName") ? "err-fullName" : undefined}
+                    required
+                  />
+                  {showError("fullName") && (
+                    <p id="err-fullName" className="text-xs text-destructive" role="alert">{errors.fullName}</p>
+                  )}
+                </div>
 
-            {/* Country */}
-            <div className="space-y-2">
-              <Label htmlFor="country" className="text-sm font-medium">
-                Country <span className="text-destructive">*</span>
-              </Label>
-              <Select value={country} onValueChange={setCountry} required>
-                <SelectTrigger id="country" className="h-11">
-                  <SelectValue placeholder="Select your country" />
-                </SelectTrigger>
-                <SelectContent>
-                  {COUNTRIES.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="country" className="text-sm font-medium">
+                    Country <span className="text-destructive">*</span>
+                  </Label>
+                  <Select value={country} onValueChange={(v) => { setCountry(v); setTouched((t) => ({ ...t, country: true })); }}>
+                    <SelectTrigger id="country" className="h-12" aria-invalid={!!showError("country")} aria-describedby={showError("country") ? "err-country" : undefined}>
+                      <SelectValue placeholder="Select your country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {COUNTRIES.map((c) => (
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {showError("country") && (
+                    <p id="err-country" className="text-xs text-destructive" role="alert">{errors.country}</p>
+                  )}
+                </div>
+              </div>
+            )}
 
-            {/* Grade */}
-            <div className="space-y-2">
-              <Label htmlFor="grade" className="text-sm font-medium">
-                Grade/Level <span className="text-destructive">*</span>
-              </Label>
-              <Select value={grade} onValueChange={setGrade} required>
-                <SelectTrigger id="grade" className="h-11">
-                  <SelectValue placeholder="Select your grade" />
-                </SelectTrigger>
-                <SelectContent>
-                  {ALL_GRADES.map((g) => (
-                    <SelectItem key={g} value={g}>
-                      {g}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* STEP 2: Studies */}
+            {step === 2 && (
+              <div className="space-y-5 animate-fade-in">
+                <div className="space-y-2">
+                  <Label htmlFor="grade" className="text-sm font-medium">
+                    Grade/Level <span className="text-destructive">*</span>
+                  </Label>
+                  <Select value={grade} onValueChange={(v) => { setGrade(v); setTouched((t) => ({ ...t, grade: true })); }}>
+                    <SelectTrigger id="grade" className="h-12" aria-invalid={!!showError("grade")} aria-describedby={showError("grade") ? "err-grade" : undefined}>
+                      <SelectValue placeholder="Select your grade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ALL_GRADES.map((g) => (
+                        <SelectItem key={g} value={g}>{g}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {showError("grade") && (
+                    <p id="err-grade" className="text-xs text-destructive" role="alert">{errors.grade}</p>
+                  )}
+                </div>
 
-            {/* Stream - only show when grade is selected */}
-            <div className="space-y-2">
-              <Label htmlFor="stream" className="text-sm font-medium">
-                Stream/Curriculum <span className="text-destructive">*</span>
-              </Label>
-              <Select 
-                value={stream} 
-                onValueChange={setStream} 
-                required
-                disabled={!grade}
-              >
-                <SelectTrigger id="stream" className="h-11">
-                  <SelectValue placeholder={grade ? "Select your curriculum" : "Select grade first"} />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableStreams.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {s}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stream" className="text-sm font-medium">
+                    Stream/Curriculum <span className="text-destructive">*</span>
+                  </Label>
+                  <Select
+                    value={stream}
+                    onValueChange={(v) => { setStream(v); setTouched((t) => ({ ...t, stream: true })); }}
+                    disabled={!grade}
+                  >
+                    <SelectTrigger id="stream" className="h-12" aria-invalid={!!showError("stream")} aria-describedby={showError("stream") ? "err-stream" : undefined}>
+                      <SelectValue placeholder={grade ? "Select your curriculum" : "Select grade first"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableStreams.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {showError("stream") && (
+                    <p id="err-stream" className="text-xs text-destructive" role="alert">{errors.stream}</p>
+                  )}
+                </div>
+              </div>
+            )}
 
-            {/* Subjects multi-select */}
-            {grade && (
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">
-                  Subjects of Interest <span className="text-muted-foreground text-xs">(optional)</span>
-                </Label>
-                <p className="text-xs text-muted-foreground">
-                  Pick subjects to auto-join global communities.
-                </p>
-                <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto rounded-md border p-3">
+            {/* STEP 3: Subjects (optional) */}
+            {step === 3 && (
+              <div className="space-y-3 animate-fade-in">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium">
+                    Subjects of Interest <span className="text-muted-foreground text-xs">(optional)</span>
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Pick subjects to auto-join global communities. You can change these later.
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto rounded-md border p-3">
                   {getSubjectsForGrade(grade).map((s) => (
-                    <label
-                      key={s}
-                      className="flex items-center gap-2 text-sm cursor-pointer"
-                    >
+                    <label key={s} className="flex items-center gap-2 text-sm cursor-pointer min-h-[40px]">
                       <Checkbox
                         checked={subjects.includes(s)}
                         onCheckedChange={(checked) => {
-                          setSubjects((prev) =>
-                            checked ? [...prev, s] : prev.filter((x) => x !== s)
-                          );
+                          setSubjects((prev) => (checked ? [...prev, s] : prev.filter((x) => x !== s)));
                         }}
                       />
                       <span>{s}</span>
                     </label>
                   ))}
                 </div>
+                {subjects.length > 0 && (
+                  <p className="text-xs text-muted-foreground">{subjects.length} selected</p>
+                )}
               </div>
             )}
-
-            <Button 
-              type="submit" 
-              className="w-full h-11 text-base font-medium mt-6"
-              disabled={isSubmitting || !fullName.trim() || !country || !grade || !stream}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                "Complete Setup"
-              )}
-            </Button>
           </form>
         </CardContent>
       </Card>
+
+      {/* Sticky action bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-background/95 backdrop-blur border-t p-3 sm:p-4">
+        <div className="max-w-md mx-auto flex gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleBack}
+            disabled={step === 1 || isSubmitting}
+            className="h-12 w-28"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" /> Back
+          </Button>
+          {step < TOTAL_STEPS ? (
+            <Button type="button" onClick={handleNext} className="h-12 flex-1 font-medium">
+              Continue <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
+          ) : (
+            <Button type="button" onClick={() => handleSubmit()} disabled={isSubmitting} className="h-12 flex-1 font-medium">
+              {isSubmitting ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</>
+              ) : (
+                <><Check className="w-4 h-4 mr-1" /> Complete Setup</>
+              )}
+            </Button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

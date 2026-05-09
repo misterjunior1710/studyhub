@@ -1,74 +1,69 @@
+## Enrollment & Onboarding UX Optimization Plan
 
-# Mobile Responsiveness Audit & Optimization Plan
+StudyHub doesn't have a paid course enrollment/payment system — it's a free student community platform. The "enrollment" flow here is **signup → email verification → profile onboarding → first feed interaction**. This plan optimizes that journey without changing business logic, auth, or DB.
 
-## Audit Findings
+### Audit Findings (current flow)
 
-### What's Working Well
-- Bottom nav bar (recently added) provides thumb-friendly navigation on mobile
-- Feed and Questions pages render cleanly on 375px
-- Study Mode timer scales well on mobile
-- Typography is generally readable — no tiny text issues
-- Cards stack properly in single-column on mobile
-- CLS is excellent (0.0008)
+Reviewed: `src/pages/Auth.tsx`, `src/pages/ProfileOnboarding.tsx`, `src/contexts/OnboardingContext.tsx`, onboarding components.
 
-### Issues Found
+**Friction points identified:**
+1. **ProfileOnboarding is one long form** — 5 fields (name, country, grade, stream, subjects) shown at once; no progress indicator; subjects checklist adds cognitive load before completion.
+2. **No auto-save** — if user closes tab mid-onboarding, all input is lost.
+3. **Mobile keyboard issues** — inputs not optimized (`inputMode`, `autoComplete`, `enterKeyHint` missing); no sticky CTA when keyboard opens.
+4. **Weak validation UX** — errors only shown via toast on submit, not inline as user types/blurs.
+5. **CTA hierarchy** — submit button competes visually with optional subjects section.
+6. **No "skip & continue later"** for optional subjects step.
+7. **Auth page** — single-screen tabs work but lacks `autoComplete` hints (email, current-password, new-password) hurting mobile autofill/password manager UX.
+8. **Onboarding checklist** post-signup exists but isn't surfaced as "Continue Setup" in nav.
+9. **Accessibility** — form labels OK, but selects lack `aria-describedby` for help text; no live region for validation.
+10. **Loading states** — full-page spinner on profile check; could use skeleton for perceived speed.
 
-| Issue | Severity | Location |
-|-------|----------|----------|
-| **BottomNav shows on auth/onboarding pages** — confusing when not logged in on those flows | Medium | BottomNav.tsx |
-| **Cookie consent overlaps bottom nav** — both are fixed bottom z-50 | High | CookieConsent.tsx |
-| **FCP is 10.7s** (dev server) — 154 script resources loaded eagerly | Medium | Performance |
-| **Bottom nav spacer adds 56px to ALL pages** including desktop (hidden but still in DOM flow outside md:hidden wrapper properly) | Low | BottomNav.tsx |
-| **Touch targets on vote arrows** — up/down vote buttons may be under 44px | Medium | StudyPost.tsx |
-| **No active state feedback on bottom nav tap** — missing haptic/visual press state | Low | BottomNav.tsx |
-| **Footer "Study Mode" not updated** to match new "Study Tools" terminology | Low | Footer.tsx |
-| **Duplicate nav items** — logged-in/logged-out bottom nav arrays are identical | Low | BottomNav.tsx |
-| **No tablet-specific breakpoint** — jumps from mobile (hamburger) to full desktop at md (768px) | Medium | Navbar.tsx |
+### Changes (incremental, presentation-only)
 
----
+**1. ProfileOnboarding → guided multi-step**
+- Split into 3 steps: (1) Name + Country, (2) Grade + Stream, (3) Subjects (skippable).
+- Add top progress bar (`Progress` component) showing step N of 3.
+- "Back" / "Continue" buttons; final step shows "Complete".
+- Auto-save partial progress to `localStorage` keyed by user id; restore on mount.
+- Inline validation on blur (red border + helper text), not just toast.
+- Mobile: sticky bottom CTA bar, larger touch targets (h-12), `inputMode`/`autoComplete`/`enterKeyHint` on inputs.
 
-## Optimization Plan (4 focused changes)
+**2. Auth page polish**
+- Add `autoComplete="email"`, `autoComplete="current-password"` / `"new-password"`, `inputMode="email"` to inputs.
+- Add `enterKeyHint="go"` and `aria-live="polite"` region for errors.
+- Larger touch targets on mobile; sticky submit button on mobile viewport.
+- Trust signals: small "🔒 Your data is private" line under form.
 
-### 1. Fix BottomNav Route Exclusions & Cookie Overlap
-- Hide BottomNav on `/auth`, `/profile-onboarding` routes
-- Raise BottomNav z-index above cookie consent, or bump cookie consent to sit above bottom nav with margin-bottom
-- Deduplicate the identical logged-in/logged-out item arrays
-- Add `active:scale-95` press feedback on bottom nav buttons
+**3. Onboarding checklist surfacing**
+- When `!isOnboardingComplete`, show subtle "Continue Setup (X/5)" pill in Navbar (desktop) and BottomNav badge (mobile) linking to checklist.
 
-### 2. Improve Touch Targets & Mobile Interactions
-- Ensure vote buttons on StudyPost are minimum 44x44px touch targets
-- Add `touch-action: manipulation` to interactive elements to eliminate 300ms tap delay
-- Improve bottom nav button touch area to full 48px minimum
+**4. Accessibility & performance**
+- All form errors wired to `aria-describedby`.
+- Replace full-page spinner in ProfileOnboarding with card skeleton.
+- Lazy-load subject list (only mount when step 3 reached).
 
-### 3. Footer & Terminology Consistency
-- Update Footer "Study Mode" to "Study Tools"
-- Update Footer to include AI Study Tools link
-- Ensure footer has adequate bottom padding on mobile (above bottom nav)
+### Files to edit
+- `src/pages/ProfileOnboarding.tsx` — multi-step refactor, auto-save, inline validation, mobile-first inputs
+- `src/pages/Auth.tsx` — autocomplete/inputMode/aria, sticky mobile CTA, trust signal
+- `src/components/Navbar.tsx` — "Continue Setup" pill when onboarding incomplete
+- `src/components/BottomNav.tsx` — dot badge on profile/home when onboarding incomplete
+- `.lovable/plan.md` — record this phase
 
-### 4. Tablet Breakpoint & Responsive Polish
-- Add an intermediate `lg` breakpoint behavior for tablets (768-1024px) showing a condensed desktop nav instead of hamburger
-- This means showing primary nav items at `md:` but collapsing "More" into dropdown earlier
+### Out of scope (not applicable to this app)
+- Payment/checkout (no paid courses exist)
+- Document upload optimization (no enrollment documents)
+- Course discovery cards / pricing (no course catalog — feed-based community)
+- Welcome/confirmation emails beyond existing auth verification
 
----
+### Risks & mitigation
+- **Risk**: Multi-step flow could frustrate users who liked single page → mitigated by short steps (2 fields each) and visible progress.
+- **Risk**: localStorage auto-save could restore stale data → key by user id + clear on successful submit.
+- **Risk**: Sticky mobile CTA overlapping content → add bottom padding equal to CTA height.
 
-## What Will NOT Change
-- No routes modified
-- No backend/auth changes
-- No page rebuilds
-- No removal of existing features
-- No design language changes
-- All existing responsive breakpoints preserved
+### Expected impact
+- Lower onboarding abandonment (auto-save + shorter steps).
+- Better mobile completion rate (autofill, sticky CTA, larger targets).
+- Improved a11y score and password-manager compatibility.
+- Faster perceived load (skeleton vs spinner).
 
-## Risk Assessment
-
-| Risk | Likelihood | Mitigation |
-|------|-----------|-----------|
-| Bottom nav z-index conflicts | Low | Test with cookie consent visible |
-| Touch target changes affect layout | Low | Use min-h/min-w, not fixed sizes |
-| Tablet nav looks cramped | Low | Test at 768px and 1024px viewports |
-
-## Expected Impact
-- Cookie/nav overlap fixed immediately improves mobile first impression
-- Touch targets meeting 44px minimum improves accessibility compliance
-- Terminology consistency reduces user confusion
-- Auth page cleanup makes onboarding flow feel polished
+Awaiting approval before implementing.
