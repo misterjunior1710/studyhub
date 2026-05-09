@@ -20,6 +20,10 @@ import LeaderboardPreview from "@/components/gamification/LeaderboardPreview";
 const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isOnboardingComplete, tasks } = useOnboarding();
+  const completedCount = tasks.filter((t) => t.completed).length;
+  const totalCount = tasks.length;
+  const showContinueSetup = !!user && !isOnboardingComplete && totalCount > 0;
 
   const structuredData = useMemo(() => ({
     "@context": "https://schema.org",
