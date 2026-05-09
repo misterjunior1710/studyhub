@@ -472,15 +472,15 @@ const Auth = () => {
               <form onSubmit={handleEmailSignUp} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signup-username">Pick a Username</Label>
-                  <Input id="signup-username" type="text" placeholder="studyking99" value={username} onChange={e => setUsername(e.target.value)} required />
+                  <Input id="signup-username" type="text" autoComplete="username" enterKeyHint="next" placeholder="studyking99" value={username} onChange={e => setUsername(e.target.value)} required className="h-11" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
-                  <Input id="signup-email" type="email" placeholder="you@school.edu" value={email} onChange={e => setEmail(e.target.value)} required />
+                  <Input id="signup-email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="next" placeholder="you@school.edu" value={email} onChange={e => setEmail(e.target.value)} required className="h-11" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Create a Password</Label>
-                  <Input id="signup-password" type="password" placeholder="min 6 characters" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
+                  <Input id="signup-password" type="password" autoComplete="new-password" enterKeyHint="next" placeholder="min 6 characters" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} className="h-11" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
