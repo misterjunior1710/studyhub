@@ -95,6 +95,19 @@ const NotificationsPopover = () => {
     loadNotifications();
   };
 
+  const formatRelative = (iso: string) => {
+    const diffMs = Date.now() - new Date(iso).getTime();
+    const sec = Math.floor(diffMs / 1000);
+    if (sec < 60) return "just now";
+    const min = Math.floor(sec / 60);
+    if (min < 60) return `${min}m ago`;
+    const hr = Math.floor(min / 60);
+    if (hr < 24) return `${hr}h ago`;
+    const day = Math.floor(hr / 24);
+    if (day < 7) return `${day}d ago`;
+    return new Date(iso).toLocaleDateString();
+  };
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -121,24 +134,38 @@ const NotificationsPopover = () => {
         </div>
         <ScrollArea className="h-[300px]">
           {notifications.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">
-              No notifications yet — you're all caught up! ✨
-            </p>
+            <div className="text-center py-8 px-4">
+              <Bell className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" aria-hidden="true" />
+              <p className="text-sm font-medium">You're all caught up</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                New activity will show up here.
+              </p>
+            </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1">
               {notifications.map((notification) => (
-                <div
+                <button
+                  type="button"
                   key={notification.id}
-                  className={`p-3 rounded-lg cursor-pointer hover:bg-muted transition-colors ${
+                  className={`w-full text-left p-3 rounded-lg hover:bg-muted focus-visible:bg-muted focus-visible:outline-none transition-colors flex gap-2 items-start ${
                     !notification.is_read ? "bg-primary/5" : ""
                   }`}
                   onClick={() => markAsRead(notification)}
+                  aria-label={`${notification.is_read ? '' : 'Unread: '}${notification.content}`}
                 >
-                  <p className="text-sm">{notification.content}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {new Date(notification.created_at).toLocaleDateString()}
-                  </p>
-                </div>
+                  <span
+                    className={`mt-1.5 h-2 w-2 rounded-full shrink-0 ${
+                      notification.is_read ? "bg-transparent" : "bg-primary"
+                    }`}
+                    aria-hidden="true"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm">{notification.content}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {formatRelative(notification.created_at)}
+                    </p>
+                  </div>
+                </button>
               ))}
             </div>
           )}

@@ -477,6 +477,7 @@ const StudyPost = memo(({
                 alt={`Attachment for ${title}`}
                 className="max-w-full rounded-lg"
                 loading="lazy"
+                decoding="async"
               />
             )}
           </figure>
