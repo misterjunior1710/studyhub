@@ -411,6 +411,10 @@ const AdminModerationPanel = () => {
               <Scale className="h-4 w-4" />
               Appeals ({appeals.length})
             </TabsTrigger>
+            <TabsTrigger value="broadcast" className="flex items-center gap-2">
+              <Megaphone className="h-4 w-4" />
+              Broadcast
+            </TabsTrigger>
           </TabsList>
 
           {/* Reports Tab */}
