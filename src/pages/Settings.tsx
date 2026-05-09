@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
 import SoundEffectsToggle from "@/components/gamification/SoundEffectsToggle";
+import PushNotificationCard from "@/components/PushNotificationCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -631,6 +632,7 @@ const Settings = () => {
 
             {/* Notifications Tab */}
             <TabsContent value="notifications" className="space-y-6">
+              <PushNotificationCard />
               <Card variant="gradient">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2"><Bell className="h-5 w-5 text-primary" />Notification Preferences</CardTitle>

@@ -6,10 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
-  AlertTriangle, Eye, EyeOff, Flag, Check, X, Loader2, 
-  FileWarning, UserX, AlertCircle, Ban, Scale 
+import {
+  AlertTriangle, Eye, EyeOff, Flag, Check, X, Loader2,
+  FileWarning, UserX, AlertCircle, Ban, Scale, Megaphone
 } from "lucide-react";
+import PushBroadcastPanel from "@/components/PushBroadcastPanel";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -410,6 +411,10 @@ const AdminModerationPanel = () => {
               <Scale className="h-4 w-4" />
               Appeals ({appeals.length})
             </TabsTrigger>
+            <TabsTrigger value="broadcast" className="flex items-center gap-2">
+              <Megaphone className="h-4 w-4" />
+              Broadcast
+            </TabsTrigger>
           </TabsList>
 
           {/* Reports Tab */}
@@ -497,6 +502,11 @@ const AdminModerationPanel = () => {
                 />
               ))
             )}
+          </TabsContent>
+
+          {/* Broadcast Tab */}
+          <TabsContent value="broadcast" className="space-y-4">
+            <PushBroadcastPanel />
           </TabsContent>
         </Tabs>
       </CardContent>
