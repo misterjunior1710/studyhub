@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
 import SoundEffectsToggle from "@/components/gamification/SoundEffectsToggle";
+import PushNotificationCard from "@/components/PushNotificationCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
