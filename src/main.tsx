@@ -10,6 +10,12 @@ if ('serviceWorker' in navigator) {
       registration.update();
     });
   });
+  // Handle navigation requests from push notification clicks
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data?.type === 'PUSH_NAVIGATE' && event.data.url) {
+      window.location.assign(event.data.url);
+    }
+  });
 }
 
 // Hide loading skeleton after React mounts
