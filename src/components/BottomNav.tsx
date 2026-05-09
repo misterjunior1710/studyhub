@@ -1,6 +1,7 @@
 import { Home, Rss, HelpCircle, Timer } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 // Routes where bottom nav should be hidden
 const HIDDEN_ROUTES = ["/auth", "/profile-onboarding"];
@@ -8,6 +9,7 @@ const HIDDEN_ROUTES = ["/auth", "/profile-onboarding"];
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isOnboardingComplete } = useOnboarding();
 
   // Hide on auth-related pages
   if (HIDDEN_ROUTES.some(r => location.pathname.startsWith(r))) {
@@ -17,10 +19,10 @@ const BottomNav = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const items = [
-    { path: "/", label: "Home", icon: Home },
-    { path: "/feed", label: "Feed", icon: Rss },
-    { path: "/questions", label: "Questions", icon: HelpCircle },
-    { path: "/study", label: "Study", icon: Timer },
+    { path: "/", label: "Home", icon: Home, badge: !isOnboardingComplete },
+    { path: "/feed", label: "Feed", icon: Rss, badge: false },
+    { path: "/questions", label: "Questions", icon: HelpCircle, badge: false },
+    { path: "/study", label: "Study", icon: Timer, badge: false },
   ];
 
   return (
