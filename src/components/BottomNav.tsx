@@ -44,10 +44,18 @@ const BottomNav = () => {
                   ? "text-primary"
                   : "text-muted-foreground"
               )}
-              aria-label={item.label}
+              aria-label={item.badge ? `${item.label} (setup incomplete)` : item.label}
               aria-current={isActive(item.path) ? "page" : undefined}
             >
-              <item.icon className="h-5 w-5" />
+              <span className="relative">
+                <item.icon className="h-5 w-5" />
+                {item.badge && (
+                  <span
+                    className="absolute -top-1 -right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-card"
+                    aria-hidden="true"
+                  />
+                )}
+              </span>
               <span className="text-[10px] font-medium">{item.label}</span>
               {isActive(item.path) && (
                 <span className="absolute bottom-2 w-1 h-1 rounded-full bg-primary" />
