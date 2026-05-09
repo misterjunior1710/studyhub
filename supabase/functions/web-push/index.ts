@@ -165,10 +165,14 @@ Deno.serve(async (req) => {
     return json(200, { ok: true, total: subs?.length ?? 0, ...result });
   }
 
-  // === NOTIFY-USER: server-to-server (service role bearer) ===
+  // === NOTIFY-USER: server-to-server (service role OR internal shared secret) ===
   if (action === "notify-user") {
     const auth = req.headers.get("Authorization");
-    if (auth !== `Bearer ${SERVICE_ROLE_KEY}`) return json(401, { error: "Unauthorized" });
+    const INTERNAL_SECRET = Deno.env.get("INTERNAL_PUSH_SECRET");
+    const ok =
+      auth === `Bearer ${SERVICE_ROLE_KEY}` ||
+      (INTERNAL_SECRET && auth === `Bearer ${INTERNAL_SECRET}`);
+    if (!ok) return json(401, { error: "Unauthorized" });
 
     const targetUserId = body.userId as string | undefined;
     const title = (body.title as string | undefined)?.slice(0, 100);
