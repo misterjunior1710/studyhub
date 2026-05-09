@@ -6,10 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
-  AlertTriangle, Eye, EyeOff, Flag, Check, X, Loader2, 
-  FileWarning, UserX, AlertCircle, Ban, Scale 
+import {
+  AlertTriangle, Eye, EyeOff, Flag, Check, X, Loader2,
+  FileWarning, UserX, AlertCircle, Ban, Scale, Megaphone
 } from "lucide-react";
+import PushBroadcastPanel from "@/components/PushBroadcastPanel";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
