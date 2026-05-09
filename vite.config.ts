@@ -21,9 +21,10 @@ export default defineConfig(({ mode }) => ({
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         navigateFallback: "index.html",
-        navigateFallbackDenylist: [/^\/api/],
+        navigateFallbackDenylist: [/^\/api/, /^\/~oauth/],
         skipWaiting: true,
         clientsClaim: true,
+        importScripts: ["/sw-push.js"],
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.mode === 'navigate',
