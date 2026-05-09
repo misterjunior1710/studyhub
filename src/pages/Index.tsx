@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import GamificationDashboard from "@/components/gamification/GamificationDashboard";
 import LeaderboardPreview from "@/components/gamification/LeaderboardPreview";
@@ -19,6 +20,10 @@ import LeaderboardPreview from "@/components/gamification/LeaderboardPreview";
 const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isOnboardingComplete, tasks } = useOnboarding();
+  const completedCount = tasks.filter((t) => t.completed).length;
+  const totalCount = tasks.length;
+  const showContinueSetup = !!user && !isOnboardingComplete && totalCount > 0;
 
   const structuredData = useMemo(() => ({
     "@context": "https://schema.org",
@@ -107,6 +112,29 @@ const Index = () => {
           </div>
         </div>
       </header>
+
+      {/* Continue Setup banner — logged-in users with incomplete onboarding */}
+      {showContinueSetup && (
+        <section className="container mx-auto px-4 max-w-5xl pt-6 -mt-4 relative z-10">
+          <button
+            type="button"
+            onClick={() => navigate("/profile-onboarding")}
+            className="w-full text-left rounded-xl border border-primary/30 bg-gradient-to-r from-primary/10 to-accent/10 p-4 flex items-center gap-3 hover:border-primary/50 transition-colors"
+            aria-label={`Continue setup, ${completedCount} of ${totalCount} steps complete`}
+          >
+            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+              <Sparkles className="h-5 w-5 text-primary" aria-hidden="true" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-sm sm:text-base">Finish setting up your account</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                {completedCount} of {totalCount} steps complete — keep going to unlock everything.
+              </p>
+            </div>
+            <ArrowRight className="h-4 w-4 text-primary flex-shrink-0" aria-hidden="true" />
+          </button>
+        </section>
+      )}
 
       {/* Gamification Dashboard - logged-in users only */}
       {user && (
