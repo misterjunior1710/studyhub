@@ -113,6 +113,29 @@ const Index = () => {
         </div>
       </header>
 
+      {/* Continue Setup banner — logged-in users with incomplete onboarding */}
+      {showContinueSetup && (
+        <section className="container mx-auto px-4 max-w-5xl pt-6 -mt-4 relative z-10">
+          <button
+            type="button"
+            onClick={() => navigate("/profile-onboarding")}
+            className="w-full text-left rounded-xl border border-primary/30 bg-gradient-to-r from-primary/10 to-accent/10 p-4 flex items-center gap-3 hover:border-primary/50 transition-colors"
+            aria-label={`Continue setup, ${completedCount} of ${totalCount} steps complete`}
+          >
+            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+              <Sparkles className="h-5 w-5 text-primary" aria-hidden="true" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-sm sm:text-base">Finish setting up your account</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                {completedCount} of {totalCount} steps complete — keep going to unlock everything.
+              </p>
+            </div>
+            <ArrowRight className="h-4 w-4 text-primary flex-shrink-0" aria-hidden="true" />
+          </button>
+        </section>
+      )}
+
       {/* Gamification Dashboard - logged-in users only */}
       {user && (
         <section className="container mx-auto px-4 max-w-5xl pt-6 -mt-4 relative z-10 space-y-4">
