@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import GamificationDashboard from "@/components/gamification/GamificationDashboard";
 import LeaderboardPreview from "@/components/gamification/LeaderboardPreview";
