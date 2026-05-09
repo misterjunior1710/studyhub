@@ -503,6 +503,11 @@ const AdminModerationPanel = () => {
               ))
             )}
           </TabsContent>
+
+          {/* Broadcast Tab */}
+          <TabsContent value="broadcast" className="space-y-4">
+            <PushBroadcastPanel />
+          </TabsContent>
         </Tabs>
       </CardContent>
     </Card>
