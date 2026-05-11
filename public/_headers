@@ -1,4 +1,6 @@
+# ============================================================
 # Security headers — applied site-wide
+# ============================================================
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
@@ -7,17 +9,98 @@
   Permissions-Policy: camera=(), microphone=(self), geolocation=(), interest-cohort=()
   X-XSS-Protection: 1; mode=block
 
-# Never cache the HTML shell — always fetch fresh so users get the latest
-# asset references. Hashed assets in /assets/ are long-cached below.
+# ============================================================
+# Cache policy
+# ------------------------------------------------------------
+# Goal: HTML, service worker, and manifest must NEVER be served
+# stale (browser OR Cloudflare edge). Hashed build assets are
+# immutable and may be cached for a year.
+#
+# Headers explained:
+#   Cache-Control: private, no-cache, no-store, must-revalidate, max-age=0
+#       -> browsers + intermediaries must revalidate every time
+#   CDN-Cache-Control: no-store
+#       -> standard header respected by Cloudflare/Fastly/Akamai
+#   Cloudflare-CDN-Cache-Control: no-store
+#       -> Cloudflare-specific override that wins over Page Rules
+#   Pragma: no-cache  (legacy HTTP/1.0 proxies)
+#   Expires: 0        (legacy)
+#   Vary: *           (defeats any shared-cache key collisions)
+# ============================================================
+
+# --- Root HTML shell ---
 /
-  Cache-Control: no-cache, no-store, must-revalidate
+  Cache-Control: private, no-cache, no-store, must-revalidate, max-age=0
+  CDN-Cache-Control: no-store
+  Cloudflare-CDN-Cache-Control: no-store
+  Pragma: no-cache
+  Expires: 0
+  Vary: *
 
 /index.html
-  Cache-Control: no-cache, no-store, must-revalidate
+  Cache-Control: private, no-cache, no-store, must-revalidate, max-age=0
+  CDN-Cache-Control: no-store
+  Cloudflare-CDN-Cache-Control: no-store
+  Pragma: no-cache
+  Expires: 0
+  Vary: *
 
+# --- Service workers (Workbox emits sw.js; we also ship sw-push.js) ---
+/sw.js
+  Content-Type: application/javascript; charset=utf-8
+  Service-Worker-Allowed: /
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  CDN-Cache-Control: no-store
+  Cloudflare-CDN-Cache-Control: no-store
+  Pragma: no-cache
+  Expires: 0
+
+/sw-push.js
+  Content-Type: application/javascript; charset=utf-8
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  CDN-Cache-Control: no-store
+  Cloudflare-CDN-Cache-Control: no-store
+  Pragma: no-cache
+  Expires: 0
+
+/registerSW.js
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  CDN-Cache-Control: no-store
+  Cloudflare-CDN-Cache-Control: no-store
+
+/workbox-*.js
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  CDN-Cache-Control: no-store
+  Cloudflare-CDN-Cache-Control: no-store
+
+# --- Web App Manifests ---
 /manifest.json
-  Cache-Control: no-cache, must-revalidate
+  Content-Type: application/manifest+json
+  Cache-Control: no-cache, must-revalidate, max-age=0
+  CDN-Cache-Control: no-store
+  Cloudflare-CDN-Cache-Control: no-store
+  Pragma: no-cache
 
-# Hashed build assets are immutable — safe to cache for a year
+/manifest.webmanifest
+  Content-Type: application/manifest+json
+  Cache-Control: no-cache, must-revalidate, max-age=0
+  CDN-Cache-Control: no-store
+  Cloudflare-CDN-Cache-Control: no-store
+
+# --- SEO-critical files (small, must reflect latest deploy) ---
+/robots.txt
+  Cache-Control: public, max-age=300, must-revalidate
+
+/sitemap.xml
+  Cache-Control: public, max-age=300, must-revalidate
+
+# ============================================================
+# Long-lived immutable assets
+# ------------------------------------------------------------
+# Vite emits content-hashed filenames (assets/[name]-[hash].ext)
+# so these can safely be cached forever by browsers AND the edge.
+# ============================================================
+
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+  CDN-Cache-Control: public, max-age=31536000, immutable
