@@ -141,6 +141,7 @@ const Index = () => {
       {user && (
         <section className="container mx-auto px-4 max-w-5xl pt-6 -mt-4 relative z-10 space-y-4">
           <GamificationDashboard />
+          <TasksWidget />
           <LeaderboardPreview />
         </section>
       )}
