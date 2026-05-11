@@ -41,6 +41,7 @@ const MobileNav = () => {
       items: [
         { path: "/tasks", label: "Tasks", icon: ListChecks },
         { path: "/calendar", label: "Calendar", icon: Calendar },
+        { path: "/transitions", label: "Life Skills", icon: Compass },
       ],
     },
     {
