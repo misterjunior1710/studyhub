@@ -76,7 +76,9 @@ const checkForNewBuild = async () => {
         duration: Infinity,
         action: {
           label: "Reload",
-          onClick: () => window.location.reload(),
+          onClick: () => {
+            void hardReload();
+          },
         },
       });
     }
