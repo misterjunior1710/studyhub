@@ -2070,6 +2070,63 @@ export type Database = {
         }
         Relationships: []
       }
+      tasks: {
+        Row: {
+          category: Database["public"]["Enums"]["task_category"]
+          completed_at: string | null
+          created_at: string
+          due_at: string | null
+          id: string
+          last_reminded_at: string | null
+          notes: string | null
+          order_index: number
+          priority: Database["public"]["Enums"]["task_priority"]
+          reminder_at: string | null
+          rrule: string | null
+          status: Database["public"]["Enums"]["task_status"]
+          tags: string[]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["task_category"]
+          completed_at?: string | null
+          created_at?: string
+          due_at?: string | null
+          id?: string
+          last_reminded_at?: string | null
+          notes?: string | null
+          order_index?: number
+          priority?: Database["public"]["Enums"]["task_priority"]
+          reminder_at?: string | null
+          rrule?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          tags?: string[]
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["task_category"]
+          completed_at?: string | null
+          created_at?: string
+          due_at?: string | null
+          id?: string
+          last_reminded_at?: string | null
+          notes?: string | null
+          order_index?: number
+          priority?: Database["public"]["Enums"]["task_priority"]
+          reminder_at?: string | null
+          rrule?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_badges: {
         Row: {
           badge_slug: string
@@ -2606,6 +2663,16 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user" | "verifier"
+      task_category:
+        | "assignment"
+        | "exam"
+        | "study"
+        | "personal"
+        | "transition"
+        | "habit"
+        | "other"
+      task_priority: "low" | "medium" | "high" | "urgent"
+      task_status: "pending" | "completed" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2734,6 +2801,17 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user", "verifier"],
+      task_category: [
+        "assignment",
+        "exam",
+        "study",
+        "personal",
+        "transition",
+        "habit",
+        "other",
+      ],
+      task_priority: ["low", "medium", "high", "urgent"],
+      task_status: ["pending", "completed", "archived"],
     },
   },
 } as const
