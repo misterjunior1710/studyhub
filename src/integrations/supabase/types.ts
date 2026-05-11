@@ -300,6 +300,87 @@ export type Database = {
         }
         Relationships: []
       }
+      calendar_connections: {
+        Row: {
+          access_token: string
+          account_email: string | null
+          created_at: string
+          id: string
+          last_synced_at: string | null
+          provider: string
+          refresh_token: string | null
+          scope: string | null
+          token_expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          account_email?: string | null
+          created_at?: string
+          id?: string
+          last_synced_at?: string | null
+          provider: string
+          refresh_token?: string | null
+          scope?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          account_email?: string | null
+          created_at?: string
+          id?: string
+          last_synced_at?: string | null
+          provider?: string
+          refresh_token?: string | null
+          scope?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      calendar_sync_settings: {
+        Row: {
+          created_at: string
+          default_write_calendar_id: string | null
+          id: string
+          provider: string
+          selected_calendar_ids: string[]
+          sync_days_future: number
+          sync_days_past: number
+          two_way_sync: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          default_write_calendar_id?: string | null
+          id?: string
+          provider: string
+          selected_calendar_ids?: string[]
+          sync_days_future?: number
+          sync_days_past?: number
+          two_way_sync?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          default_write_calendar_id?: string | null
+          id?: string
+          provider?: string
+          selected_calendar_ids?: string[]
+          sync_days_future?: number
+          sync_days_past?: number
+          two_way_sync?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       coin_transactions: {
         Row: {
           amount: number
@@ -774,6 +855,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      external_calendar_events: {
+        Row: {
+          all_day: boolean
+          calendar_id: string
+          calendar_name: string | null
+          created_at: string
+          description: string | null
+          end_time: string
+          etag: string | null
+          external_id: string
+          html_link: string | null
+          id: string
+          location: string | null
+          meeting_link: string | null
+          provider: string
+          raw: Json | null
+          start_time: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          all_day?: boolean
+          calendar_id: string
+          calendar_name?: string | null
+          created_at?: string
+          description?: string | null
+          end_time: string
+          etag?: string | null
+          external_id: string
+          html_link?: string | null
+          id?: string
+          location?: string | null
+          meeting_link?: string | null
+          provider: string
+          raw?: Json | null
+          start_time: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          all_day?: boolean
+          calendar_id?: string
+          calendar_name?: string | null
+          created_at?: string
+          description?: string | null
+          end_time?: string
+          etag?: string | null
+          external_id?: string
+          html_link?: string | null
+          id?: string
+          location?: string | null
+          meeting_link?: string | null
+          provider?: string
+          raw?: Json | null
+          start_time?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       feynman_notes: {
         Row: {
@@ -1968,6 +2112,10 @@ export type Database = {
           created_by: string
           description: string | null
           end_time: string
+          external_calendar_id: string | null
+          external_etag: string | null
+          external_id: string | null
+          external_provider: string | null
           group_id: string | null
           id: string
           is_public: boolean | null
@@ -1985,6 +2133,10 @@ export type Database = {
           created_by: string
           description?: string | null
           end_time: string
+          external_calendar_id?: string | null
+          external_etag?: string | null
+          external_id?: string | null
+          external_provider?: string | null
           group_id?: string | null
           id?: string
           is_public?: boolean | null
@@ -2002,6 +2154,10 @@ export type Database = {
           created_by?: string
           description?: string | null
           end_time?: string
+          external_calendar_id?: string | null
+          external_etag?: string | null
+          external_id?: string | null
+          external_provider?: string | null
           group_id?: string | null
           id?: string
           is_public?: boolean | null

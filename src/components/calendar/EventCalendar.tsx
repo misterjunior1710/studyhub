@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   Calendar as CalendarIcon, Plus, Loader2, MapPin, 
-  Video, Users, Clock, Bell, Check, X, Share2 
+  Video, Users, Clock, Bell, Check, X, Share2, ExternalLink 
 } from "lucide-react";
 import { toast } from "sonner";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, addMonths, subMonths } from "date-fns";
@@ -34,8 +34,24 @@ interface EventCalendarProps {
   groupId?: string;
 }
 
-const EventCalendar = ({ userId, groupId }: EventCalendarProps) => {
+interface ExternalEvent {
+  id: string;
+  external_id: string;
+  provider: string;
+  title: string;
+  description: string | null;
+  start_time: string;
+  end_time: string;
+  location: string | null;
+  meeting_link: string | null;
+  html_link: string | null;
+  calendar_name: string | null;
+  all_day: boolean;
+}
+
+const EventCalendar = forwardRef(({ userId, groupId }: EventCalendarProps, ref) => {
   const [events, setEvents] = useState<StudyEvent[]>([]);
+  const [externalEvents, setExternalEvents] = useState<ExternalEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -43,7 +59,10 @@ const EventCalendar = ({ userId, groupId }: EventCalendarProps) => {
 
   useEffect(() => {
     loadEvents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, groupId, currentMonth]);
+
+  useImperativeHandle(ref, () => ({ refresh: () => loadEvents() }));
 
   const loadEvents = async () => {
     setLoading(true);
@@ -91,6 +110,20 @@ const EventCalendar = ({ userId, groupId }: EventCalendarProps) => {
       );
 
       setEvents(eventsWithRsvps);
+
+      // Load external calendar events (Google/Microsoft)
+      if (!groupId) {
+        const { data: ext } = await supabase
+          .from("external_calendar_events")
+          .select("id, external_id, provider, title, description, start_time, end_time, location, meeting_link, html_link, calendar_name, all_day")
+          .eq("user_id", userId)
+          .gte("start_time", monthStart.toISOString())
+          .lte("start_time", monthEnd.toISOString())
+          .order("start_time", { ascending: true });
+        setExternalEvents(ext || []);
+      } else {
+        setExternalEvents([]);
+      }
     } catch (error) {
       console.error("Error loading events:", error);
       toast.error("Failed to load events");
@@ -144,8 +177,12 @@ const EventCalendar = ({ userId, groupId }: EventCalendarProps) => {
   const getEventsForDay = (date: Date) => {
     return events.filter((event) => isSameDay(new Date(event.start_time), date));
   };
+  const getExternalForDay = (date: Date) => {
+    return externalEvents.filter((ev) => isSameDay(new Date(ev.start_time), date));
+  };
 
   const selectedDateEvents = selectedDate ? getEventsForDay(selectedDate) : [];
+  const selectedDateExternal = selectedDate ? getExternalForDay(selectedDate) : [];
 
   if (loading) {
     return (
@@ -205,6 +242,7 @@ const EventCalendar = ({ userId, groupId }: EventCalendarProps) => {
               ))}
               {days.map((day) => {
                 const dayEvents = getEventsForDay(day);
+                const dayExternal = getExternalForDay(day);
                 const isSelected = selectedDate && isSameDay(day, selectedDate);
                 return (
                   <button
@@ -217,8 +255,11 @@ const EventCalendar = ({ userId, groupId }: EventCalendarProps) => {
                     `}
                   >
                     {format(day, "d")}
-                    {dayEvents.length > 0 && (
-                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary" />
+                    {(dayEvents.length > 0 || dayExternal.length > 0) && (
+                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
+                        {dayEvents.length > 0 && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                        {dayExternal.length > 0 && <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />}
+                      </span>
                     )}
                   </button>
                 );
@@ -315,21 +356,61 @@ const EventCalendar = ({ userId, groupId }: EventCalendarProps) => {
                     </div>
                   </div>
                 ))
-              ) : (
+              ) : selectedDateExternal.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">
                   No events on this day
                 </p>
-              )
+              ) : null
             ) : (
               <p className="text-sm text-muted-foreground text-center py-4">
                 Click a date to see events
               </p>
             )}
+
+            {/* External calendar events (read-only display) */}
+            {selectedDate && selectedDateExternal.map((ev) => (
+              <div key={ev.id} className="p-3 rounded-lg border border-blue-500/30 bg-blue-500/5 space-y-1.5">
+                <div className="flex items-start justify-between gap-2">
+                  <h4 className="font-medium text-sm">{ev.title}</h4>
+                  <Badge variant="outline" className="text-[10px] capitalize">{ev.provider}</Badge>
+                </div>
+                {ev.description && (
+                  <p className="text-xs text-muted-foreground line-clamp-2">{ev.description}</p>
+                )}
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3" />
+                  {ev.all_day
+                    ? "All day"
+                    : `${format(new Date(ev.start_time), "h:mm a")} - ${format(new Date(ev.end_time), "h:mm a")}`}
+                </div>
+                {ev.location && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <MapPin className="h-3 w-3" />
+                    <span className="truncate">{ev.location}</span>
+                  </div>
+                )}
+                {ev.meeting_link && (
+                  <a href={ev.meeting_link} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
+                    Join meeting
+                  </a>
+                )}
+                {ev.html_link && (
+                  <a href={ev.html_link} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1">
+                    Open in {ev.provider} <ExternalLink className="h-3 w-3" />
+                  </a>
+                )}
+                {ev.calendar_name && (
+                  <p className="text-[10px] text-muted-foreground">{ev.calendar_name}</p>
+                )}
+              </div>
+            ))}
           </CardContent>
         </Card>
       </div>
     </div>
   );
-};
+});
+
+EventCalendar.displayName = "EventCalendar";
 
 export default EventCalendar;
