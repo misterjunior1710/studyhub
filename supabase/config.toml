@@ -21,3 +21,7 @@ project_id = "qrquegcexsqrbtwtcicq"
     verify_jwt = false
   [functions.send-support-request]
     verify_jwt = true
+  [functions.task-reminders]
+    verify_jwt = false
+  [functions.ai-task-assist]
+    verify_jwt = true
