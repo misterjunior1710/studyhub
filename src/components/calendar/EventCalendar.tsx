@@ -356,21 +356,61 @@ const EventCalendar = forwardRef(({ userId, groupId }: EventCalendarProps, ref) 
                     </div>
                   </div>
                 ))
-              ) : (
+              ) : selectedDateExternal.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">
                   No events on this day
                 </p>
-              )
+              ) : null
             ) : (
               <p className="text-sm text-muted-foreground text-center py-4">
                 Click a date to see events
               </p>
             )}
+
+            {/* External calendar events (read-only display) */}
+            {selectedDate && selectedDateExternal.map((ev) => (
+              <div key={ev.id} className="p-3 rounded-lg border border-blue-500/30 bg-blue-500/5 space-y-1.5">
+                <div className="flex items-start justify-between gap-2">
+                  <h4 className="font-medium text-sm">{ev.title}</h4>
+                  <Badge variant="outline" className="text-[10px] capitalize">{ev.provider}</Badge>
+                </div>
+                {ev.description && (
+                  <p className="text-xs text-muted-foreground line-clamp-2">{ev.description}</p>
+                )}
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3" />
+                  {ev.all_day
+                    ? "All day"
+                    : `${format(new Date(ev.start_time), "h:mm a")} - ${format(new Date(ev.end_time), "h:mm a")}`}
+                </div>
+                {ev.location && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <MapPin className="h-3 w-3" />
+                    <span className="truncate">{ev.location}</span>
+                  </div>
+                )}
+                {ev.meeting_link && (
+                  <a href={ev.meeting_link} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
+                    Join meeting
+                  </a>
+                )}
+                {ev.html_link && (
+                  <a href={ev.html_link} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1">
+                    Open in {ev.provider} <ExternalLink className="h-3 w-3" />
+                  </a>
+                )}
+                {ev.calendar_name && (
+                  <p className="text-[10px] text-muted-foreground">{ev.calendar_name}</p>
+                )}
+              </div>
+            ))}
           </CardContent>
         </Card>
       </div>
     </div>
   );
-};
+});
+
+EventCalendar.displayName = "EventCalendar";
 
 export default EventCalendar;
