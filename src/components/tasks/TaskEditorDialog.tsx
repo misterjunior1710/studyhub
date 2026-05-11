@@ -45,6 +45,44 @@ export const TaskEditorDialog = ({ open, onOpenChange, initial, onSave }: Props)
   const [tagsInput, setTagsInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [breakingDown, setBreakingDown] = useState(false);
+
+  const handleAiBreakdown = async () => {
+    if (!title.trim()) {
+      toast.info("Add a title first so the AI knows what to break down.");
+      return;
+    }
+    setBreakingDown(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-task-assist", {
+        body: {
+          action: "breakdown",
+          title: title.trim(),
+          notes: notes.trim(),
+          due_at: dueDate ? dueDate.toISOString() : null,
+        },
+      });
+      if (error) throw error;
+      const subs = (data?.subtasks ?? []) as { title: string; estimated_minutes: number }[];
+      if (subs.length === 0) {
+        toast.info("No subtasks suggested. Try refining the title.");
+        return;
+      }
+      const block = [
+        notes.trim(),
+        notes.trim() ? "" : null,
+        "── AI breakdown ──",
+        ...subs.map((s) => `• ${s.title}  (${s.estimated_minutes} min)`),
+        data?.tip ? `\n💡 ${data.tip}` : null,
+      ].filter((x) => x !== null).join("\n");
+      setNotes(block);
+      toast.success(`Added ${subs.length} subtasks to notes`);
+    } catch (e: any) {
+      toast.error(e?.message ?? "AI breakdown failed");
+    } finally {
+      setBreakingDown(false);
+    }
+  };
 
   useEffect(() => {
     if (open) {
