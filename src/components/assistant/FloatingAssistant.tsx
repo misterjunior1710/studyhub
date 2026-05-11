@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Sparkles, X, Maximize2 } from "lucide-react";
+import { X, Maximize2 } from "lucide-react";
+import { NovaIcon } from "./NovaIcon";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
