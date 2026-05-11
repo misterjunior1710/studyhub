@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, X } from "lucide-react";
+import { CalendarIcon, X, Sparkles, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   CATEGORY_META, PRIORITY_META,
   type Task, type TaskCategory, type TaskPriority,
@@ -43,6 +45,44 @@ export const TaskEditorDialog = ({ open, onOpenChange, initial, onSave }: Props)
   const [tagsInput, setTagsInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [breakingDown, setBreakingDown] = useState(false);
+
+  const handleAiBreakdown = async () => {
+    if (!title.trim()) {
+      toast.info("Add a title first so the AI knows what to break down.");
+      return;
+    }
+    setBreakingDown(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-task-assist", {
+        body: {
+          action: "breakdown",
+          title: title.trim(),
+          notes: notes.trim(),
+          due_at: dueDate ? dueDate.toISOString() : null,
+        },
+      });
+      if (error) throw error;
+      const subs = (data?.subtasks ?? []) as { title: string; estimated_minutes: number }[];
+      if (subs.length === 0) {
+        toast.info("No subtasks suggested. Try refining the title.");
+        return;
+      }
+      const block = [
+        notes.trim(),
+        notes.trim() ? "" : null,
+        "── AI breakdown ──",
+        ...subs.map((s) => `• ${s.title}  (${s.estimated_minutes} min)`),
+        data?.tip ? `\n💡 ${data.tip}` : null,
+      ].filter((x) => x !== null).join("\n");
+      setNotes(block);
+      toast.success(`Added ${subs.length} subtasks to notes`);
+    } catch (e: any) {
+      toast.error(e?.message ?? "AI breakdown failed");
+    } finally {
+      setBreakingDown(false);
+    }
+  };
 
   useEffect(() => {
     if (open) {
@@ -247,8 +287,14 @@ export const TaskEditorDialog = ({ open, onOpenChange, initial, onSave }: Props)
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="task-notes">Notes</Label>
-            <Textarea id="task-notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="Optional details, links, resources…" />
+            <div className="flex items-center justify-between gap-2">
+              <Label htmlFor="task-notes">Notes</Label>
+              <Button type="button" variant="ghost" size="sm" onClick={handleAiBreakdown} disabled={breakingDown || !title.trim()} className="gap-1.5 h-7 text-xs">
+                {breakingDown ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3 text-primary" />}
+                AI breakdown
+              </Button>
+            </div>
+            <Textarea id="task-notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} placeholder="Optional details, links, resources…" />
           </div>
         </div>
 

@@ -15,7 +15,10 @@ import { useTasks } from "@/hooks/useTasks";
 import { useAuth } from "@/contexts/AuthContext";
 import { TaskRow } from "@/components/tasks/TaskRow";
 import { TaskEditorDialog } from "@/components/tasks/TaskEditorDialog";
-import { CATEGORY_META, type Task, type TaskCategory } from "@/lib/tasks";
+import { TasksKanban } from "@/components/tasks/TasksKanban";
+import { TasksCalendar } from "@/components/tasks/TasksCalendar";
+import { AiAssistantSheet } from "@/components/tasks/AiAssistantSheet";
+import { CATEGORY_META, type Task, type TaskCategory, type TaskStatus } from "@/lib/tasks";
 import { Link } from "react-router-dom";
 
 const Tasks = () => {
@@ -26,7 +29,7 @@ const Tasks = () => {
   const [editing, setEditing] = useState<Task | null>(null);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<TaskCategory | "all">("all");
-  const [tab, setTab] = useState<"today" | "upcoming" | "all" | "completed">("today");
+  const [tab, setTab] = useState<"today" | "upcoming" | "all" | "completed" | "kanban" | "calendar">("today");
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -89,9 +92,12 @@ const Tasks = () => {
             <h1 className="text-2xl sm:text-3xl font-bold">Productivity</h1>
             <p className="text-sm text-muted-foreground mt-1">Plan it, schedule it, ship it.</p>
           </div>
-          <Button onClick={openCreate} className="shrink-0">
-            <Plus className="h-4 w-4 mr-1" /> New task
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            <AiAssistantSheet tasks={tasks} />
+            <Button onClick={openCreate}>
+              <Plus className="h-4 w-4 mr-1" /> New task
+            </Button>
+          </div>
         </div>
 
         {/* Dashboard cards */}
@@ -129,10 +135,12 @@ const Tasks = () => {
 
         {/* Tabs */}
         <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
-          <TabsList className="grid grid-cols-4 w-full sm:w-auto">
+          <TabsList className="grid grid-cols-3 sm:grid-cols-6 w-full sm:w-auto">
             <TabsTrigger value="today">Today</TabsTrigger>
             <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
             <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="kanban">Kanban</TabsTrigger>
+            <TabsTrigger value="calendar">Calendar</TabsTrigger>
             <TabsTrigger value="completed">Done</TabsTrigger>
           </TabsList>
 
@@ -166,6 +174,27 @@ const Tasks = () => {
               : filtered.map((t) => (
                   <TaskRow key={t.id} task={t} onComplete={completeTask} onReopen={reopenTask} onEdit={openEdit} onArchive={archiveTask} onDelete={deleteTask} />
                 ))}
+          </TabsContent>
+
+          <TabsContent value="kanban" className="mt-4">
+            {loading ? <ListSkeleton /> : (
+              <TasksKanban
+                tasks={filtered}
+                onEdit={openEdit}
+                onUpdateStatus={(id, status: TaskStatus) => {
+                  if (status === "completed") {
+                    const t = tasks.find((x) => x.id === id);
+                    if (t) completeTask(t);
+                  } else {
+                    reopenTask(id);
+                  }
+                }}
+              />
+            )}
+          </TabsContent>
+
+          <TabsContent value="calendar" className="mt-4">
+            {loading ? <ListSkeleton /> : <TasksCalendar tasks={filtered} onEdit={openEdit} />}
           </TabsContent>
 
           <TabsContent value="completed" className="mt-4 space-y-2">
