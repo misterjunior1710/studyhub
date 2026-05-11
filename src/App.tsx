@@ -167,6 +167,9 @@ const App = () => (
                         <Route path="/missions" element={<Missions />} />
                         <Route path="/tasks" element={<Tasks />} />
                         <Route path="/assistant" element={<Assistant />} />
+                        <Route path="/transitions" element={<Transitions />} />
+                        <Route path="/transitions/resources" element={<TransitionResources />} />
+                        <Route path="/transitions/:moduleSlug" element={<TransitionModule />} />
                         <Route path="/privacy" element={<Privacy />} />
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/support" element={<Support />} />
