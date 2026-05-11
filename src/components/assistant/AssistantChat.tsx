@@ -124,7 +124,7 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
                   <button
                     key={s}
                     onClick={() => void send(s)}
-                    className="text-left text-sm rounded-md border border-border bg-card hover:bg-accent transition-colors p-3"
+                    className="text-left text-sm rounded-lg glass-card hover-lift tap-press p-3"
                   >
                     {s}
                   </button>
@@ -136,7 +136,7 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
           {messages.map((m) => (
             <div key={m.id} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
               {m.role === "user" ? (
-                <div className="max-w-[85%] rounded-2xl bg-primary text-primary-foreground px-4 py-2 text-sm whitespace-pre-wrap">
+                <div className="max-w-[85%] rounded-2xl bg-primary text-primary-foreground px-4 py-2 text-sm whitespace-pre-wrap shadow-sm animate-fade-in">
                   {m.content}
                 </div>
               ) : (
@@ -149,9 +149,11 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
           ))}
 
           {sending && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-              Thinking…
+            <div className="flex items-center gap-2 text-sm text-muted-foreground animate-fade-in" aria-live="polite">
+              <span className="nova-dot" />
+              <span className="nova-dot" />
+              <span className="nova-dot" />
+              <span className="ml-1">Nova is thinking</span>
             </div>
           )}
         </div>

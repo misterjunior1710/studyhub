@@ -32,7 +32,7 @@ export const FloatingAssistant = () => {
         aria-label="Open Nova"
         className={cn(
           "fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40",
-          "h-12 w-12 rounded-full shadow-lg",
+          "h-12 w-12 rounded-full nova-glow tap-press",
           "bg-primary text-primary-foreground hover:scale-105 transition-transform"
         )}
       >
@@ -42,7 +42,7 @@ export const FloatingAssistant = () => {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
           side="right"
-          className="p-0 w-full sm:max-w-md md:max-w-lg flex flex-col gap-0"
+          className="p-0 w-full sm:max-w-md md:max-w-lg flex flex-col gap-0 glass-panel"
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-2">

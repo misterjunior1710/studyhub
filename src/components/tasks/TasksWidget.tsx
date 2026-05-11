@@ -17,7 +17,7 @@ export const TasksWidget = () => {
   if (loading) return null;
   if (tasks.length === 0) {
     return (
-      <Card className="p-5">
+      <Card className="p-5 glass-card hover-lift">
         <div className="flex items-start gap-3">
           <div className="rounded-lg bg-primary/10 p-2.5">
             <ListChecks className="h-5 w-5 text-primary" aria-hidden="true" />
@@ -46,7 +46,7 @@ export const TasksWidget = () => {
   const completionPct = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
 
   return (
-    <Card className="p-5 space-y-4">
+    <Card className="p-5 space-y-4 glass-card hover-lift">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ListChecks className="h-5 w-5 text-primary" aria-hidden="true" />
