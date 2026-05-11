@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Loader2, RefreshCw, Link2, Unlink, Calendar as CalendarIcon } from "lucide-react";
 
-type GCal = { id: string; summary: string; primary?: boolean; backgroundColor?: string };
+type GCal = { id: string; summary: string; primary?: boolean; backgroundColor?: string; accessRole?: string };
 
 interface Props {
   userId: string;
