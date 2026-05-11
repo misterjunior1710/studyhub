@@ -1,16 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import EventCalendar from "@/components/calendar/EventCalendar";
+import GoogleCalendarSettings from "@/components/calendar/GoogleCalendarSettings";
 import { Loader2 } from "lucide-react";
 
 const Calendar = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const calendarRef = useRef<{ refresh: () => void } | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -51,8 +53,13 @@ const Calendar = () => {
             View and join study sessions, workshops, and office hours
           </p>
         </header>
-        <div className="opacity-0 animate-reveal-up" style={{ animationDelay: "200ms" }}>
-          {userId && <EventCalendar userId={userId} />}
+        <div className="space-y-6 opacity-0 animate-reveal-up" style={{ animationDelay: "200ms" }}>
+          {userId && (
+            <>
+              <EventCalendar ref={calendarRef} userId={userId} />
+              <GoogleCalendarSettings userId={userId} onSyncComplete={() => calendarRef.current?.refresh()} />
+            </>
+          )}
         </div>
       </main>
       <Footer />
