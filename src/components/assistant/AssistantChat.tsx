@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback, KeyboardEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Send, Loader2, Sparkles } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
+import { NovaIcon } from "./NovaIcon";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -110,10 +111,10 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
           {empty && (
             <div className="text-center py-8 space-y-4">
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
-                <Sparkles className="h-6 w-6 text-primary" aria-hidden />
+                <NovaIcon className="h-7 w-7 text-primary" pulse />
               </div>
               <div>
-                <h2 className="text-lg font-semibold">StudyHub Assistant</h2>
+                <h2 className="text-lg font-semibold">Nova</h2>
                 <p className="text-sm text-muted-foreground">
                   Your academic companion. Ask anything about studying, the platform, or your tasks.
                 </p>
@@ -166,7 +167,7 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
             placeholder="Ask anything… (Enter to send, Shift+Enter for new line)"
             rows={1}
             className="min-h-[44px] max-h-40 resize-none"
-            aria-label="Message the assistant"
+            aria-label="Message Nova"
             disabled={sending}
           />
           <Button

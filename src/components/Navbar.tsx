@@ -122,7 +122,7 @@ const Navbar = ({
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/assistant")}>
                     <Sparkles className="mr-2 h-4 w-4" />
-                    <span>AI Assistant</span>
+                    <span>Nova (AI Assistant)</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
