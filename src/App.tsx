@@ -55,6 +55,9 @@ const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const Missions = lazy(() => import("./pages/Missions"));
 const Tasks = lazy(() => import("./pages/Tasks"));
 const Assistant = lazy(() => import("./pages/Assistant"));
+const Transitions = lazy(() => import("./pages/Transitions"));
+const TransitionModule = lazy(() => import("./pages/TransitionModule"));
+const TransitionResources = lazy(() => import("./pages/TransitionResources"));
 import FloatingAssistant from "@/components/assistant/FloatingAssistant";
 
 // Optimized QueryClient with proper caching and garbage collection
