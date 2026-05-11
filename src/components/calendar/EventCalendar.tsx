@@ -177,8 +177,12 @@ const EventCalendar = forwardRef(({ userId, groupId }: EventCalendarProps, ref) 
   const getEventsForDay = (date: Date) => {
     return events.filter((event) => isSameDay(new Date(event.start_time), date));
   };
+  const getExternalForDay = (date: Date) => {
+    return externalEvents.filter((ev) => isSameDay(new Date(ev.start_time), date));
+  };
 
   const selectedDateEvents = selectedDate ? getEventsForDay(selectedDate) : [];
+  const selectedDateExternal = selectedDate ? getExternalForDay(selectedDate) : [];
 
   if (loading) {
     return (
@@ -238,6 +242,7 @@ const EventCalendar = forwardRef(({ userId, groupId }: EventCalendarProps, ref) 
               ))}
               {days.map((day) => {
                 const dayEvents = getEventsForDay(day);
+                const dayExternal = getExternalForDay(day);
                 const isSelected = selectedDate && isSameDay(day, selectedDate);
                 return (
                   <button
@@ -250,8 +255,11 @@ const EventCalendar = forwardRef(({ userId, groupId }: EventCalendarProps, ref) 
                     `}
                   >
                     {format(day, "d")}
-                    {dayEvents.length > 0 && (
-                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary" />
+                    {(dayEvents.length > 0 || dayExternal.length > 0) && (
+                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
+                        {dayEvents.length > 0 && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                        {dayExternal.length > 0 && <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />}
+                      </span>
                     )}
                   </button>
                 );
