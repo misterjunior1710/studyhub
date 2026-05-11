@@ -135,10 +135,12 @@ const Tasks = () => {
 
         {/* Tabs */}
         <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
-          <TabsList className="grid grid-cols-4 w-full sm:w-auto">
+          <TabsList className="grid grid-cols-3 sm:grid-cols-6 w-full sm:w-auto">
             <TabsTrigger value="today">Today</TabsTrigger>
             <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
             <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="kanban">Kanban</TabsTrigger>
+            <TabsTrigger value="calendar">Calendar</TabsTrigger>
             <TabsTrigger value="completed">Done</TabsTrigger>
           </TabsList>
 
@@ -172,6 +174,27 @@ const Tasks = () => {
               : filtered.map((t) => (
                   <TaskRow key={t.id} task={t} onComplete={completeTask} onReopen={reopenTask} onEdit={openEdit} onArchive={archiveTask} onDelete={deleteTask} />
                 ))}
+          </TabsContent>
+
+          <TabsContent value="kanban" className="mt-4">
+            {loading ? <ListSkeleton /> : (
+              <TasksKanban
+                tasks={filtered}
+                onEdit={openEdit}
+                onUpdateStatus={(id, status: TaskStatus) => {
+                  if (status === "completed") {
+                    const t = tasks.find((x) => x.id === id);
+                    if (t) completeTask(t);
+                  } else {
+                    reopenTask(id);
+                  }
+                }}
+              />
+            )}
+          </TabsContent>
+
+          <TabsContent value="calendar" className="mt-4">
+            {loading ? <ListSkeleton /> : <TasksCalendar tasks={filtered} onEdit={openEdit} />}
           </TabsContent>
 
           <TabsContent value="completed" className="mt-4 space-y-2">
