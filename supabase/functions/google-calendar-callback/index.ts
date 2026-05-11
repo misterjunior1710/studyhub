@@ -4,13 +4,7 @@ import { corsHeaders, verifyState, exchangeCode, adminClient } from "../_shared/
 const APP_RETURN_PATH = "/calendar?google=connected";
 const APP_ERROR_PATH = "/calendar?google=error";
 
-const getOrigin = (req: Request) => {
-  const ref = req.headers.get("referer");
-  try {
-    if (ref) return new URL(ref).origin;
-  } catch {}
-  return "https://studyhub.world";
-};
+const APP_ORIGIN = "https://studyhub.world";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -18,8 +12,7 @@ Deno.serve(async (req) => {
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
   const error = url.searchParams.get("error");
-  const origin = url.searchParams.get("origin") || getOrigin(req);
-  const back = (path: string) => Response.redirect(`${origin}${path}`, 302);
+  const back = (path: string) => Response.redirect(`${APP_ORIGIN}${path}`, 302);
 
   try {
     if (error) return back(`${APP_ERROR_PATH}&reason=${encodeURIComponent(error)}`);
