@@ -366,7 +366,7 @@ All colors MUST be HSL.
   }
 }
 
-/* Respect reduced motion preference */
+/* Respect reduced motion preference (WCAG 2.3.3) */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -375,6 +375,39 @@ All colors MUST be HSL.
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Skip link — visible only on keyboard focus (WCAG 2.4.1) */
+.skip-to-main {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-radius: 0 0 0.5rem 0;
+  font-weight: 600;
+  text-decoration: none;
+}
+.skip-to-main:focus {
+  left: 0;
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Strong, consistent focus ring for keyboard users (WCAG 2.4.7) */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Forced-colors / Windows High Contrast support */
+@media (forced-colors: active) {
+  *:focus-visible {
+    outline: 2px solid CanvasText;
   }
 }
 

@@ -125,6 +125,7 @@ const App = () => (
               <Sonner />
               
               <BrowserRouter>
+                <a href="#main-content" className="skip-to-main">Skip to main content</a>
                 <SessionExpiredHandler />
                 <OnboardingFlow />
                 <LevelUpDialog />
@@ -132,37 +133,39 @@ const App = () => (
                 <Suspense fallback={<PageLoader />}>
                   <ProfileOnboardingGuard>
                     <PageTransition>
-                      <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/feed" element={<Feed />} />
-                        <Route path="/auth" element={<Auth />} />
-                        <Route path="/profile-onboarding" element={<ProfileOnboarding />} />
-                        <Route path="/post/:id" element={<Post />} />
-                      <Route path="/questions" element={<Questions />} />
-                      <Route path="/groups" element={<Groups />} />
-                      <Route path="/groups/:id" element={<GroupChat />} />
-                      <Route path="/groups/:id/tools" element={<GroupTools />} />
-                      <Route path="/settings" element={<Settings />} />
-                      
-                      <Route path="/friends" element={<Friends />} />
-                      <Route path="/dm/:friendId" element={<DirectMessage />} />
-                      <Route path="/user/:userId" element={<UserProfile />} />
-                      <Route path="/study" element={<StudyMode />} />
-                      <Route path="/content-generator" element={<ContentGenerator />} />
-                      <Route path="/updates" element={<Updates />} />
-                      <Route path="/saved" element={<SavedPosts />} />
-                      <Route path="/install" element={<Install />} />
-                      <Route path="/calendar" element={<Calendar />} />
-                      <Route path="/whiteboards" element={<Whiteboards />} />
-                      <Route path="/notes" element={<Notes />} />
-                      <Route path="/leaderboard" element={<Leaderboard />} />
-                      <Route path="/missions" element={<Missions />} />
-                      <Route path="/privacy" element={<Privacy />} />
-                      <Route path="/terms" element={<Terms />} />
-                      <Route path="/support" element={<Support />} />
-                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
+                      <main id="main-content" tabIndex={-1}>
+                        <Routes>
+                          <Route path="/" element={<Index />} />
+                          <Route path="/feed" element={<Feed />} />
+                          <Route path="/auth" element={<Auth />} />
+                          <Route path="/profile-onboarding" element={<ProfileOnboarding />} />
+                          <Route path="/post/:id" element={<Post />} />
+                        <Route path="/questions" element={<Questions />} />
+                        <Route path="/groups" element={<Groups />} />
+                        <Route path="/groups/:id" element={<GroupChat />} />
+                        <Route path="/groups/:id/tools" element={<GroupTools />} />
+                        <Route path="/settings" element={<Settings />} />
+                        
+                        <Route path="/friends" element={<Friends />} />
+                        <Route path="/dm/:friendId" element={<DirectMessage />} />
+                        <Route path="/user/:userId" element={<UserProfile />} />
+                        <Route path="/study" element={<StudyMode />} />
+                        <Route path="/content-generator" element={<ContentGenerator />} />
+                        <Route path="/updates" element={<Updates />} />
+                        <Route path="/saved" element={<SavedPosts />} />
+                        <Route path="/install" element={<Install />} />
+                        <Route path="/calendar" element={<Calendar />} />
+                        <Route path="/whiteboards" element={<Whiteboards />} />
+                        <Route path="/notes" element={<Notes />} />
+                        <Route path="/leaderboard" element={<Leaderboard />} />
+                        <Route path="/missions" element={<Missions />} />
+                        <Route path="/privacy" element={<Privacy />} />
+                        <Route path="/terms" element={<Terms />} />
+                        <Route path="/support" element={<Support />} />
+                          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </main>
                     </PageTransition>
                   </ProfileOnboardingGuard>
                 </Suspense>
