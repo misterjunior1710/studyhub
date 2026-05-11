@@ -55,6 +55,9 @@ const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const Missions = lazy(() => import("./pages/Missions"));
 const Tasks = lazy(() => import("./pages/Tasks"));
 const Assistant = lazy(() => import("./pages/Assistant"));
+const Transitions = lazy(() => import("./pages/Transitions"));
+const TransitionModule = lazy(() => import("./pages/TransitionModule"));
+const TransitionResources = lazy(() => import("./pages/TransitionResources"));
 import FloatingAssistant from "@/components/assistant/FloatingAssistant";
 
 // Optimized QueryClient with proper caching and garbage collection
@@ -164,6 +167,9 @@ const App = () => (
                         <Route path="/missions" element={<Missions />} />
                         <Route path="/tasks" element={<Tasks />} />
                         <Route path="/assistant" element={<Assistant />} />
+                        <Route path="/transitions" element={<Transitions />} />
+                        <Route path="/transitions/resources" element={<TransitionResources />} />
+                        <Route path="/transitions/:moduleSlug" element={<TransitionModule />} />
                         <Route path="/privacy" element={<Privacy />} />
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/support" element={<Support />} />

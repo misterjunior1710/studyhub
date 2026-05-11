@@ -2192,6 +2192,163 @@ export type Database = {
         }
         Relationships: []
       }
+      transition_lessons: {
+        Row: {
+          content: string
+          created_at: string
+          estimated_minutes: number
+          id: string
+          lesson_type: string
+          order_index: number
+          title: string
+          topic_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          estimated_minutes?: number
+          id?: string
+          lesson_type?: string
+          order_index?: number
+          title: string
+          topic_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          estimated_minutes?: number
+          id?: string
+          lesson_type?: string
+          order_index?: number
+          title?: string
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transition_lessons_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "transition_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transition_modules: {
+        Row: {
+          accent: string
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          order_index: number
+          phase: string
+          slug: string
+          title: string
+        }
+        Insert: {
+          accent?: string
+          created_at?: string
+          description: string
+          icon?: string
+          id?: string
+          order_index?: number
+          phase: string
+          slug: string
+          title: string
+        }
+        Update: {
+          accent?: string
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          order_index?: number
+          phase?: string
+          slug?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      transition_resources: {
+        Row: {
+          category: string
+          content: string | null
+          created_at: string
+          description: string
+          id: string
+          order_index: number
+          resource_type: string
+          tags: string[]
+          title: string
+          url: string | null
+        }
+        Insert: {
+          category: string
+          content?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          order_index?: number
+          resource_type: string
+          tags?: string[]
+          title: string
+          url?: string | null
+        }
+        Update: {
+          category?: string
+          content?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          order_index?: number
+          resource_type?: string
+          tags?: string[]
+          title?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
+      transition_topics: {
+        Row: {
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          module_id: string
+          order_index: number
+          slug: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          icon?: string
+          id?: string
+          module_id: string
+          order_index?: number
+          slug: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          module_id?: string
+          order_index?: number
+          slug?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transition_topics_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "transition_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_badges: {
         Row: {
           badge_slug: string
@@ -2221,6 +2378,77 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "badges"
             referencedColumns: ["slug"]
+          },
+        ]
+      }
+      user_budgets: {
+        Row: {
+          categories: Json
+          created_at: string
+          id: string
+          income: number
+          name: string
+          period: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          categories?: Json
+          created_at?: string
+          id?: string
+          income?: number
+          name?: string
+          period?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          categories?: Json
+          created_at?: string
+          id?: string
+          income?: number
+          name?: string
+          period?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_lesson_progress: {
+        Row: {
+          completed: boolean
+          completed_at: string
+          created_at: string
+          id: string
+          lesson_id: string
+          notes: string | null
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string
+          created_at?: string
+          id?: string
+          lesson_id: string
+          notes?: string | null
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string
+          created_at?: string
+          id?: string
+          lesson_id?: string
+          notes?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "transition_lessons"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -2329,6 +2557,42 @@ export type Database = {
           created_at?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_savings_goals: {
+        Row: {
+          contributions: Json
+          created_at: string
+          current_amount: number
+          deadline: string | null
+          id: string
+          target_amount: number
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contributions?: Json
+          created_at?: string
+          current_amount?: number
+          deadline?: string | null
+          id?: string
+          target_amount: number
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contributions?: Json
+          created_at?: string
+          current_amount?: number
+          deadline?: string | null
+          id?: string
+          target_amount?: number
+          title?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
