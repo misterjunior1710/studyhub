@@ -175,6 +175,7 @@ const App = () => (
                   </ProfileOnboardingGuard>
                 </Suspense>
                 <BottomNav />
+                <FloatingAssistant />
               </BrowserRouter>
             </TooltipProvider>
           </ThemeInitializer>
