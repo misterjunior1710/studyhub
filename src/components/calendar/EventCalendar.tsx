@@ -34,8 +34,24 @@ interface EventCalendarProps {
   groupId?: string;
 }
 
-const EventCalendar = ({ userId, groupId }: EventCalendarProps) => {
+interface ExternalEvent {
+  id: string;
+  external_id: string;
+  provider: string;
+  title: string;
+  description: string | null;
+  start_time: string;
+  end_time: string;
+  location: string | null;
+  meeting_link: string | null;
+  html_link: string | null;
+  calendar_name: string | null;
+  all_day: boolean;
+}
+
+const EventCalendar = forwardRef(({ userId, groupId }: EventCalendarProps, ref) => {
   const [events, setEvents] = useState<StudyEvent[]>([]);
+  const [externalEvents, setExternalEvents] = useState<ExternalEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -43,7 +59,10 @@ const EventCalendar = ({ userId, groupId }: EventCalendarProps) => {
 
   useEffect(() => {
     loadEvents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, groupId, currentMonth]);
+
+  useImperativeHandle(ref, () => ({ refresh: () => loadEvents() }));
 
   const loadEvents = async () => {
     setLoading(true);
@@ -91,6 +110,20 @@ const EventCalendar = ({ userId, groupId }: EventCalendarProps) => {
       );
 
       setEvents(eventsWithRsvps);
+
+      // Load external calendar events (Google/Microsoft)
+      if (!groupId) {
+        const { data: ext } = await supabase
+          .from("external_calendar_events")
+          .select("id, external_id, provider, title, description, start_time, end_time, location, meeting_link, html_link, calendar_name, all_day")
+          .eq("user_id", userId)
+          .gte("start_time", monthStart.toISOString())
+          .lte("start_time", monthEnd.toISOString())
+          .order("start_time", { ascending: true });
+        setExternalEvents(ext || []);
+      } else {
+        setExternalEvents([]);
+      }
     } catch (error) {
       console.error("Error loading events:", error);
       toast.error("Failed to load events");
