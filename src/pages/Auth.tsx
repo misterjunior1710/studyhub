@@ -592,6 +592,18 @@ const Auth = () => {
                   </svg>
                   Continue with Google
                 </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full gap-2 btn-bounce"
+                  onClick={handleAppleSignIn}
+                >
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M16.365 1.43c0 1.14-.46 2.23-1.21 3.04-.81.87-2.13 1.55-3.21 1.46-.13-1.11.42-2.27 1.16-3.06.83-.87 2.24-1.52 3.26-1.44zM20.5 17.32c-.55 1.27-1.21 2.53-2.26 3.62-.94.97-2.06 2.06-3.51 2.06-1.41 0-1.86-.86-3.74-.86-1.88 0-2.39.84-3.74.89-1.4.05-2.46-1.05-3.42-2.02C1.91 18.99.16 14.65 2.06 11.7c.94-1.46 2.62-2.39 4.43-2.42 1.36-.03 2.65.92 3.49.92.83 0 2.4-1.13 4.04-.96.69.03 2.62.28 3.86 2.09-.1.07-2.31 1.36-2.29 4.04.03 3.21 2.81 4.27 2.91 4.31-.02.07-.45 1.55-1.49 3.13z"/>
+                  </svg>
+                  Continue with Apple
+                </Button>
               </form>
 
               <p className="text-center text-xs text-muted-foreground mt-4">
