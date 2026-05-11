@@ -25,3 +25,5 @@ project_id = "qrquegcexsqrbtwtcicq"
     verify_jwt = false
   [functions.ai-task-assist]
     verify_jwt = true
+  [functions.ai-assistant]
+    verify_jwt = true
