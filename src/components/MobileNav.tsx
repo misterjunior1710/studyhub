@@ -1,4 +1,4 @@
-import { Home, HelpCircle, Users, UserPlus, Menu, Timer, Sparkles, Megaphone, Calendar, Palette, LifeBuoy, Rss, NotebookPen, Bookmark, Download } from "lucide-react";
+import { Home, HelpCircle, Users, UserPlus, Menu, Timer, Sparkles, Megaphone, Calendar, Palette, LifeBuoy, Rss, NotebookPen, Bookmark, Download, ListChecks } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
