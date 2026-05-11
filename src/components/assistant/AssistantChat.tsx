@@ -124,7 +124,7 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
                   <button
                     key={s}
                     onClick={() => void send(s)}
-                    className="text-left text-sm rounded-md border border-border bg-card hover:bg-accent transition-colors p-3"
+                    className="text-left text-sm rounded-lg glass-card hover-lift tap-press p-3"
                   >
                     {s}
                   </button>
