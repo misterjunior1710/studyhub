@@ -54,6 +54,8 @@ const Notes = lazy(() => import("./pages/Notes"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const Missions = lazy(() => import("./pages/Missions"));
 const Tasks = lazy(() => import("./pages/Tasks"));
+const Assistant = lazy(() => import("./pages/Assistant"));
+import FloatingAssistant from "@/components/assistant/FloatingAssistant";
 
 // Optimized QueryClient with proper caching and garbage collection
 const queryClient = new QueryClient({
@@ -161,6 +163,7 @@ const App = () => (
                         <Route path="/leaderboard" element={<Leaderboard />} />
                         <Route path="/missions" element={<Missions />} />
                         <Route path="/tasks" element={<Tasks />} />
+                        <Route path="/assistant" element={<Assistant />} />
                         <Route path="/privacy" element={<Privacy />} />
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/support" element={<Support />} />
@@ -172,6 +175,7 @@ const App = () => (
                   </ProfileOnboardingGuard>
                 </Suspense>
                 <BottomNav />
+                <FloatingAssistant />
               </BrowserRouter>
             </TooltipProvider>
           </ThemeInitializer>

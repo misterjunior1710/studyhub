@@ -120,6 +120,10 @@ const Navbar = ({
                     <Sparkles className="mr-2 h-4 w-4" />
                     <span>AI Study Tools</span>
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/assistant")}>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    <span>AI Assistant</span>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
 
