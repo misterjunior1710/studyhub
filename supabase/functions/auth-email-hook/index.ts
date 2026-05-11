@@ -36,7 +36,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "studyhubstudentportal"
+const SITE_NAME = "StudyHub"
 const SENDER_DOMAIN = "notify.studyhub.world"
 const ROOT_DOMAIN = "studyhub.world"
 const FROM_DOMAIN = "studyhub.world" // Domain shown in From address (may be root or sender subdomain)
