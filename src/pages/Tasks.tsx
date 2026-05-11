@@ -15,7 +15,10 @@ import { useTasks } from "@/hooks/useTasks";
 import { useAuth } from "@/contexts/AuthContext";
 import { TaskRow } from "@/components/tasks/TaskRow";
 import { TaskEditorDialog } from "@/components/tasks/TaskEditorDialog";
-import { CATEGORY_META, type Task, type TaskCategory } from "@/lib/tasks";
+import { TasksKanban } from "@/components/tasks/TasksKanban";
+import { TasksCalendar } from "@/components/tasks/TasksCalendar";
+import { AiAssistantSheet } from "@/components/tasks/AiAssistantSheet";
+import { CATEGORY_META, type Task, type TaskCategory, type TaskStatus } from "@/lib/tasks";
 import { Link } from "react-router-dom";
 
 const Tasks = () => {
