@@ -136,7 +136,7 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
           {messages.map((m) => (
             <div key={m.id} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
               {m.role === "user" ? (
-                <div className="max-w-[85%] rounded-2xl bg-primary text-primary-foreground px-4 py-2 text-sm whitespace-pre-wrap">
+                <div className="max-w-[85%] rounded-2xl bg-primary text-primary-foreground px-4 py-2 text-sm whitespace-pre-wrap shadow-sm animate-fade-in">
                   {m.content}
                 </div>
               ) : (
