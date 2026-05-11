@@ -135,7 +135,7 @@ Deno.serve(async (req) => {
   const ctxLines: string[] = [`Now: ${now}`, `Current page: ${route}`];
   if (profile) {
     const p = profile as any;
-    ctxLines.push(`User: ${p.display_name ?? "Student"} | Country: ${p.country ?? "?"} | Grade: ${p.grade ?? "?"} | Stream: ${p.stream ?? "?"}`);
+    ctxLines.push(`User: ${p.username ?? "Student"} | Country: ${p.country ?? "?"} | Grade: ${p.grade ?? "?"} | Stream: ${p.stream ?? "?"}`);
   }
   if (tasks && tasks.length) {
     ctxLines.push("Active tasks:");
