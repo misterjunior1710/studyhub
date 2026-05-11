@@ -53,6 +53,7 @@ const Navbar = ({
 
   // Secondary nav items for "More" dropdown
   const moreItems = [
+    { path: "/tasks", label: "Tasks", icon: ListChecks },
     { path: "/leaderboard", label: "Leaderboard", icon: Trophy },
     { path: "/friends", label: "Friends", icon: UserPlus },
     { path: "/calendar", label: "Calendar", icon: Calendar },
