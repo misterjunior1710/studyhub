@@ -125,7 +125,7 @@ Deno.serve(async (req) => {
 
   // Pull lightweight user context: profile + upcoming/overdue tasks.
   const [{ data: profile }, { data: tasks }] = await Promise.all([
-    admin.from("profiles").select("display_name,country,grade,stream").eq("user_id", userId).maybeSingle(),
+    admin.from("profiles").select("username,country,grade,stream").eq("id", userId).maybeSingle(),
     admin.from("tasks").select("title,priority,category,due_at,status")
       .eq("user_id", userId).neq("status", "archived").neq("status", "completed")
       .order("due_at", { ascending: true, nullsFirst: false }).limit(10),
