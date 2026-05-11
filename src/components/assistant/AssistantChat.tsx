@@ -149,9 +149,11 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
           ))}
 
           {sending && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-              Thinking…
+            <div className="flex items-center gap-2 text-sm text-muted-foreground animate-fade-in" aria-live="polite">
+              <span className="nova-dot" />
+              <span className="nova-dot" />
+              <span className="nova-dot" />
+              <span className="ml-1">Nova is thinking</span>
             </div>
           )}
         </div>
