@@ -37,10 +37,16 @@ const MobileNav = () => {
       ],
     },
     {
+      label: "Plan",
+      items: [
+        { path: "/tasks", label: "Tasks", icon: ListChecks },
+        { path: "/calendar", label: "Calendar", icon: Calendar },
+      ],
+    },
+    {
       label: "Community",
       items: [
         { path: "/friends", label: "Friends", icon: UserPlus },
-        { path: "/calendar", label: "Calendar", icon: Calendar },
         { path: "/updates", label: "Updates", icon: Megaphone },
       ],
     },
