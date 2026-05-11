@@ -1,4 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen, MoreHorizontal, ChevronDown, Trophy } from "lucide-react";
+import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen, MoreHorizontal, ChevronDown, Trophy, ListChecks } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -53,6 +53,7 @@ const Navbar = ({
 
   // Secondary nav items for "More" dropdown
   const moreItems = [
+    { path: "/tasks", label: "Tasks", icon: ListChecks },
     { path: "/leaderboard", label: "Leaderboard", icon: Trophy },
     { path: "/friends", label: "Friends", icon: UserPlus },
     { path: "/calendar", label: "Calendar", icon: Calendar },

@@ -1,4 +1,4 @@
-import { Home, HelpCircle, Users, UserPlus, Menu, Timer, Sparkles, Megaphone, Calendar, Palette, LifeBuoy, Rss, NotebookPen, Bookmark, Download } from "lucide-react";
+import { Home, HelpCircle, Users, UserPlus, Menu, Timer, Sparkles, Megaphone, Calendar, Palette, LifeBuoy, Rss, NotebookPen, Bookmark, Download, ListChecks } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -37,10 +37,16 @@ const MobileNav = () => {
       ],
     },
     {
+      label: "Plan",
+      items: [
+        { path: "/tasks", label: "Tasks", icon: ListChecks },
+        { path: "/calendar", label: "Calendar", icon: Calendar },
+      ],
+    },
+    {
       label: "Community",
       items: [
         { path: "/friends", label: "Friends", icon: UserPlus },
-        { path: "/calendar", label: "Calendar", icon: Calendar },
         { path: "/updates", label: "Updates", icon: Megaphone },
       ],
     },

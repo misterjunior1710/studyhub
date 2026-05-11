@@ -16,6 +16,7 @@ import { useOnboarding } from "@/contexts/OnboardingContext";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import GamificationDashboard from "@/components/gamification/GamificationDashboard";
 import LeaderboardPreview from "@/components/gamification/LeaderboardPreview";
+import { TasksWidget } from "@/components/tasks/TasksWidget";
 
 const Index = () => {
   const navigate = useNavigate();

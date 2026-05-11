@@ -53,6 +53,7 @@ const Whiteboards = lazy(() => import("./pages/Whiteboards"));
 const Notes = lazy(() => import("./pages/Notes"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const Missions = lazy(() => import("./pages/Missions"));
+const Tasks = lazy(() => import("./pages/Tasks"));
 
 // Optimized QueryClient with proper caching and garbage collection
 const queryClient = new QueryClient({
@@ -159,6 +160,7 @@ const App = () => (
                         <Route path="/notes" element={<Notes />} />
                         <Route path="/leaderboard" element={<Leaderboard />} />
                         <Route path="/missions" element={<Missions />} />
+                        <Route path="/tasks" element={<Tasks />} />
                         <Route path="/privacy" element={<Privacy />} />
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/support" element={<Support />} />
