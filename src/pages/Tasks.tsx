@@ -29,7 +29,7 @@ const Tasks = () => {
   const [editing, setEditing] = useState<Task | null>(null);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<TaskCategory | "all">("all");
-  const [tab, setTab] = useState<"today" | "upcoming" | "all" | "completed">("today");
+  const [tab, setTab] = useState<"today" | "upcoming" | "all" | "completed" | "kanban" | "calendar">("today");
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
