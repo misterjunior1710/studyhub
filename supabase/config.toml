@@ -19,7 +19,5 @@ project_id = "qrquegcexsqrbtwtcicq"
     verify_jwt = true
   [functions.seed-test-data]
     verify_jwt = false
-  [functions.send-email]
-    verify_jwt = true
   [functions.send-support-request]
     verify_jwt = true
