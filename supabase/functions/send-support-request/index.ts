@@ -18,7 +18,8 @@ interface SupportRequest {
 
 const supportRequestSchema = z.object({
   name: z.string().trim().min(2).max(100),
-  email: z.string().trim().email().max(255),
+  // email is accepted but ignored — the verified JWT email is always used
+  email: z.string().trim().email().max(255).optional(),
   category: z.enum(["general", "technical", "account", "login", "password", "bug", "feature", "groups", "content", "moderation", "other"]),
   subject: z.string().trim().min(5).max(200),
   message: z.string().trim().min(20).max(2000),
@@ -47,9 +48,7 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    const { name, email, category, subject, message }: SupportRequest = parsed.data;
-
-    console.log("Processing support request from:", email, "Category:", category);
+    const { name, category, subject, message } = parsed.data;
 
     // Create Supabase client with service role key
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
@@ -75,12 +74,15 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user) {
+    if (authError || !user || !user.email) {
       return new Response(
         JSON.stringify({ error: "Please sign in again to contact support" }),
         { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
+
+    // SECURITY: Always use the verified email from the JWT, never trust the client
+    const email = user.email;
 
     // Insert support request into database
     const { data, error: dbError } = await supabase

@@ -1,3 +1,12 @@
+# Security headers — applied site-wide
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(self), geolocation=(), interest-cohort=()
+  X-XSS-Protection: 1; mode=block
+
 # Never cache the HTML shell — always fetch fresh so users get the latest
 # asset references. Hashed assets in /assets/ are long-cached below.
 /
