@@ -287,8 +287,14 @@ export const TaskEditorDialog = ({ open, onOpenChange, initial, onSave }: Props)
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="task-notes">Notes</Label>
-            <Textarea id="task-notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="Optional details, links, resources…" />
+            <div className="flex items-center justify-between gap-2">
+              <Label htmlFor="task-notes">Notes</Label>
+              <Button type="button" variant="ghost" size="sm" onClick={handleAiBreakdown} disabled={breakingDown || !title.trim()} className="gap-1.5 h-7 text-xs">
+                {breakingDown ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3 text-primary" />}
+                AI breakdown
+              </Button>
+            </div>
+            <Textarea id="task-notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} placeholder="Optional details, links, resources…" />
           </div>
         </div>
 
