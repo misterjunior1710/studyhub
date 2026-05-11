@@ -29,14 +29,14 @@ export const FloatingAssistant = () => {
       <Button
         onClick={() => setOpen(true)}
         size="icon"
-        aria-label="Open AI Assistant"
+        aria-label="Open Nova"
         className={cn(
           "fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40",
           "h-12 w-12 rounded-full shadow-lg",
           "bg-primary text-primary-foreground hover:scale-105 transition-transform"
         )}
       >
-        <Sparkles className="h-5 w-5" aria-hidden />
+        <NovaIcon className="h-6 w-6" pulse />
       </Button>
 
       <Sheet open={open} onOpenChange={setOpen}>
@@ -46,8 +46,8 @@ export const FloatingAssistant = () => {
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" aria-hidden />
-              <h2 className="text-sm font-semibold">StudyHub Assistant</h2>
+              <NovaIcon className="h-5 w-5 text-primary" />
+              <h2 className="text-sm font-semibold">Nova</h2>
             </div>
             <div className="flex items-center gap-1">
               <Button
