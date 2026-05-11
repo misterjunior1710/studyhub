@@ -86,8 +86,8 @@ Deno.serve(async (req) => {
   const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     global: { headers: { Authorization: auth } },
   });
-  const { data: claims, error: authErr } = await userClient.auth.getClaims(auth.slice(7));
-  const userId = claims?.claims?.sub;
+  const { data: userData, error: authErr } = await userClient.auth.getUser(auth.slice(7));
+  const userId = userData?.user?.id;
   if (authErr || !userId) return json(401, { error: "Unauthorized" });
   if (!LOVABLE_API_KEY) return json(500, { error: "AI not configured" });
 
