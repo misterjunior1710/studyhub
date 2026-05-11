@@ -31,8 +31,8 @@ const Assistant = () => {
   return (
     <>
       <SEOHead
-        title="AI Assistant — StudyHub"
-        description="Your AI-powered academic companion. Get instant help with studying, navigation, and productivity."
+        title="Nova — StudyHub AI Assistant"
+        description="Chat with Nova, your AI-powered academic companion. Get instant help with studying, navigation, and productivity."
       />
       <Navbar />
       <div className="h-[calc(100vh-4rem)] flex bg-background">
