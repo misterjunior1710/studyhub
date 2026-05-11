@@ -92,9 +92,12 @@ const Tasks = () => {
             <h1 className="text-2xl sm:text-3xl font-bold">Productivity</h1>
             <p className="text-sm text-muted-foreground mt-1">Plan it, schedule it, ship it.</p>
           </div>
-          <Button onClick={openCreate} className="shrink-0">
-            <Plus className="h-4 w-4 mr-1" /> New task
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            <AiAssistantSheet tasks={tasks} />
+            <Button onClick={openCreate}>
+              <Plus className="h-4 w-4 mr-1" /> New task
+            </Button>
+          </div>
         </div>
 
         {/* Dashboard cards */}
