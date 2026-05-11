@@ -33,7 +33,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: "html-cache",
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60,
+                maxAgeSeconds: 60 * 5,
               },
               networkTimeoutSeconds: 3,
             },

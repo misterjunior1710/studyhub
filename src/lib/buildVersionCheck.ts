@@ -16,6 +16,29 @@ import { toast } from "sonner";
 const CHECK_INTERVAL_MS = 5 * 60 * 1000; // every 5 minutes
 const STORAGE_KEY = "app-build-hash";
 
+/**
+ * Hard reload: purge all SW caches and unregister service workers, then
+ * reload from the network. Guarantees the user escapes any stale shell.
+ */
+export const hardReload = async () => {
+  try {
+    if ("caches" in window) {
+      const names = await caches.keys();
+      await Promise.all(names.map((n) => caches.delete(n)));
+    }
+    if ("serviceWorker" in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister()));
+    }
+  } catch {
+    /* ignore — we're reloading anyway */
+  }
+  // Cache-bust the navigation itself
+  const url = new URL(window.location.href);
+  url.searchParams.set("_v", Date.now().toString());
+  window.location.replace(url.toString());
+};
+
 let initialHash: string | null = null;
 let notified = false;
 
@@ -53,7 +76,9 @@ const checkForNewBuild = async () => {
         duration: Infinity,
         action: {
           label: "Reload",
-          onClick: () => window.location.reload(),
+          onClick: () => {
+            void hardReload();
+          },
         },
       });
     }
