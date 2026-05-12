@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
+import studyhubLogo from "@/assets/studyhub-logo.png";
 
 const Footer = () => {
   return (
