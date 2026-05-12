@@ -84,9 +84,11 @@ const Index = () => {
               </span>
             </h1>
             
-            <p className="text-muted-foreground text-base sm:text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
-              The place where students help students. Ask doubts, share notes, prep for exams, 
-              and actually enjoy studying (yes, really). Join a global crew of learners.
+            <p className="text-muted-foreground text-base sm:text-lg md:text-xl mb-4 max-w-2xl mx-auto opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
+              <strong>StudyHub</strong> is a student productivity and learning platform designed to help users manage assignments, study plans, and life-transition skills from school to adulthood.
+            </p>
+            <p className="text-xs sm:text-sm text-muted-foreground/80 mb-8 opacity-0 animate-hero-fade-up" style={{ animationDelay: "150ms" }}>
+              Official website of StudyHub — <a href="https://studyhub.world" className="underline hover:text-primary">https://studyhub.world</a>
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 justify-center opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
