@@ -14,6 +14,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "next-themes";
 import { useEasterEggs } from "./EasterEggs";
+import studyhubLogo from "@/assets/studyhub-logo.png";
 
 interface NavbarProps {
   onPostCreated?: () => void;
