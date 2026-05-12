@@ -56,6 +56,11 @@ const Index = () => {
     { icon: MessageSquare, label: "Browse Questions", href: "/questions", color: "from-primary to-accent" },
     { icon: Users, label: "Study Groups", href: "/groups", color: "from-accent to-primary" },
     { icon: Brain, label: "AI Study Tools", href: "/content-generator", color: "from-success to-info" },
+    { icon: BookOpen, label: "Study Mode", href: "/study", color: "from-info to-primary" },
+    { icon: Calendar, label: "Calendar", href: "/calendar", color: "from-primary to-success" },
+    { icon: Sparkles, label: "Nova AI", href: "/assistant", color: "from-warning to-accent" },
+    { icon: Bookmark, label: "Saved Posts", href: "/saved", color: "from-accent to-info" },
+    { icon: Trophy, label: "Leaderboard", href: "/leaderboard", color: "from-warning to-primary" },
   ];
 
   return (
@@ -151,11 +156,11 @@ const Index = () => {
       {/* Quick Actions Section */}
       <section ref={quickActionsRef} className="py-8 sm:py-12 -mt-8 relative z-10">
         <div className="container mx-auto px-4 max-w-5xl">
-          <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-${user ? '6' : '4'} gap-3 sm:gap-4`}>
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
             {quickActions.map((action, index) => (
               <Card
                 key={action.label}
-                className={`card-interactive border-border/50 overflow-hidden group ${quickActionsVisible ? "opacity-0 animate-stagger-in" : "opacity-0"}`}
+                className={`card-interactive border-border/50 overflow-hidden group w-[calc(50%-0.375rem)] sm:w-[calc(33.333%-0.667rem)] lg:w-[calc(16.666%-0.834rem)] ${quickActionsVisible ? "opacity-0 animate-stagger-in" : "opacity-0"}`}
                 style={{ animationDelay: `${index * 60}ms` }}
                 onClick={() => navigate(action.href)}
               >
