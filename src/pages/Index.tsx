@@ -90,10 +90,10 @@ const Index = () => {
             </h1>
             
             <p className="text-muted-foreground text-base sm:text-lg md:text-xl mb-4 max-w-2xl mx-auto opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
-              <strong>StudyHub</strong> is a student productivity and learning platform designed to help users manage assignments, study plans, and life-transition skills from school to adulthood.
+              <strong>StudyHub™</strong> is a student productivity and learning platform designed to help users manage assignments, study plans, and life-transition skills from school to adulthood.
             </p>
             <p className="text-xs sm:text-sm text-muted-foreground/80 mb-8 opacity-0 animate-hero-fade-up" style={{ animationDelay: "150ms" }}>
-              StudyHub — Build Your Academic Life
+              StudyHub™ — Study Smarter, Ace Everything
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 justify-center opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
