@@ -61,8 +61,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Free Homework Help | Study Groups | Ask Questions Online"
-        description="Get free homework help from students worldwide. Join study groups, ask questions, get answers fast. Math help, science help, essay help. Free online tutoring and study tools for students."
+        title="StudyHub — Official Student Productivity & Learning Platform"
+        description="Official website of StudyHub (https://studyhub.world). StudyHub is a student productivity and learning platform designed to help users manage assignments, study plans, and life-transition skills from school to adulthood."
         canonical="https://studyhub.world/"
       />
       <StructuredData data={structuredData} />
