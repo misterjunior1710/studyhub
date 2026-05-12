@@ -1,6 +1,6 @@
 // Brand constants
-export const BRAND_NAME = "StudyHub";
-export const BRAND_TAGLINE = "Study Smarter, Win Harder";
+export const BRAND_NAME = "StudyHub™";
+export const BRAND_TAGLINE = "Study Smarter, Ace Everything";
 export const BRAND_URL = "https://studyhub-studentportal.lovable.app";
 export const BRAND_DESCRIPTION = "Connect with students worldwide on StudyHub. Share knowledge, ask questions, and collaborate across different countries, subjects, grades, and streams.";
 

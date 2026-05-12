@@ -276,7 +276,7 @@ const Auth = () => {
   };
   return <main className="min-h-screen flex flex-col">
       <SEOHead
-        title="Sign Up Free | Student Login | StudyHub"
+        title="StudyHub™ — Study Smarter, Ace Everything"
         description="Join thousands of students. Sign up free, ask questions, join study groups, and ace your exams. No credit card needed — ever."
         canonical="https://studyhub.world/auth"
       />
@@ -302,7 +302,7 @@ const Auth = () => {
                 </div>
               </div>
               <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                StudyHub
+                StudyHub™
               </CardTitle>
               <CardDescription>Your study crew is waiting — let's go 📚</CardDescription>
             </CardHeader>

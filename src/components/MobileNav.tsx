@@ -76,7 +76,7 @@ const MobileNav = () => {
       <SheetContent side="left" className="w-72 overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="text-left bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            StudyHub
+            StudyHub™
           </SheetTitle>
         </SheetHeader>
         <nav className="flex flex-col gap-4 mt-6">

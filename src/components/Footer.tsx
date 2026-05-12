@@ -9,7 +9,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1 space-y-3">
             <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              StudyHub
+              StudyHub™
             </h3>
             <p className="text-sm text-muted-foreground">
               Study Smarter, Ace Everything 🎯
@@ -109,7 +109,7 @@ const Footer = () => {
 
         <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="text-sm text-muted-foreground text-center sm:text-left space-y-1">
-            <p>© {new Date().getFullYear()} StudyHub — Build Your Academic Life. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} StudyHub™ — Study Smarter, Ace Everything. All rights reserved.</p>
             <p>
               Built and maintained by the StudyHub Team ·{" "}
               <a href="mailto:support@studyhub.world" className="underline hover:text-primary">
