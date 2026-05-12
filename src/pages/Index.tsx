@@ -88,7 +88,7 @@ const Index = () => {
               <strong>StudyHub</strong> is a student productivity and learning platform designed to help users manage assignments, study plans, and life-transition skills from school to adulthood.
             </p>
             <p className="text-xs sm:text-sm text-muted-foreground/80 mb-8 opacity-0 animate-hero-fade-up" style={{ animationDelay: "150ms" }}>
-              Official website of StudyHub — <a href="https://studyhub.world" className="underline hover:text-primary">https://studyhub.world</a>
+              The Official StudyHub
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 justify-center opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
