@@ -9,7 +9,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1 space-y-3">
             <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              StudyHub
+              StudyHub™
             </h3>
             <p className="text-sm text-muted-foreground">
               Study Smarter, Ace Everything 🎯
