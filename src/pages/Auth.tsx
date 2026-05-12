@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useCountryDetect } from "@/hooks/useCountryDetect";
+import studyhubLogo from "@/assets/studyhub-logo.png";
 import { getStreamsForCountry } from "@/lib/countryEducation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
