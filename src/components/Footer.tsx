@@ -109,7 +109,7 @@ const Footer = () => {
 
         <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="text-sm text-muted-foreground text-center sm:text-left space-y-1">
-            <p>© {new Date().getFullYear()} StudyHub. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} StudyHub — Build Your Academic Life. All rights reserved.</p>
             <p>
               Built and maintained by the StudyHub Team ·{" "}
               <a href="mailto:support@studyhub.world" className="underline hover:text-primary">
