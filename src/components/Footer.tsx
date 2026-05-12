@@ -108,9 +108,15 @@ const Footer = () => {
         </div>
 
         <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-3">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} StudyHub. All rights reserved.
-          </p>
+          <div className="text-sm text-muted-foreground text-center sm:text-left space-y-1">
+            <p>© {new Date().getFullYear()} StudyHub. All rights reserved.</p>
+            <p>
+              Built and maintained by the StudyHub Team ·{" "}
+              <a href="mailto:support@studyhub.world" className="underline hover:text-primary">
+                support@studyhub.world
+              </a>
+            </p>
+          </div>
           <p className="text-sm text-muted-foreground flex items-center gap-1">
             Built with <Heart className="h-4 w-4 text-destructive" /> by students, for students
           </p>

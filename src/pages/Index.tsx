@@ -61,8 +61,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Free Homework Help | Study Groups | Ask Questions Online"
-        description="Get free homework help from students worldwide. Join study groups, ask questions, get answers fast. Math help, science help, essay help. Free online tutoring and study tools for students."
+        title="StudyHub — Official Student Productivity & Learning Platform"
+        description="Official website of StudyHub (https://studyhub.world). StudyHub is a student productivity and learning platform designed to help users manage assignments, study plans, and life-transition skills from school to adulthood."
         canonical="https://studyhub.world/"
       />
       <StructuredData data={structuredData} />
@@ -84,9 +84,11 @@ const Index = () => {
               </span>
             </h1>
             
-            <p className="text-muted-foreground text-base sm:text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
-              The place where students help students. Ask doubts, share notes, prep for exams, 
-              and actually enjoy studying (yes, really). Join a global crew of learners.
+            <p className="text-muted-foreground text-base sm:text-lg md:text-xl mb-4 max-w-2xl mx-auto opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
+              <strong>StudyHub</strong> is a student productivity and learning platform designed to help users manage assignments, study plans, and life-transition skills from school to adulthood.
+            </p>
+            <p className="text-xs sm:text-sm text-muted-foreground/80 mb-8 opacity-0 animate-hero-fade-up" style={{ animationDelay: "150ms" }}>
+              Official website of StudyHub — <a href="https://studyhub.world" className="underline hover:text-primary">https://studyhub.world</a>
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 justify-center opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
@@ -261,6 +263,26 @@ const Index = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Transparency / About Section — required for OAuth verification */}
+      <section className="py-12 sm:py-16 bg-muted/20 border-y border-border">
+        <div className="container mx-auto px-4 max-w-3xl text-center space-y-4">
+          <h2 className="text-2xl sm:text-3xl font-bold">About StudyHub</h2>
+          <p className="text-muted-foreground">
+            This is the <strong>official website of StudyHub</strong> (
+            <a href="https://studyhub.world" className="underline hover:text-primary">https://studyhub.world</a>
+            ). StudyHub is a student productivity and learning platform designed to help users
+            manage assignments, study plans, and life-transition skills from school to adulthood.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Built and maintained by the StudyHub Team. Read our{" "}
+            <a href="/privacy" className="underline hover:text-primary">Privacy Policy</a> and{" "}
+            <a href="/terms" className="underline hover:text-primary">Terms &amp; Conditions</a>.
+            Contact us at{" "}
+            <a href="mailto:support@studyhub.world" className="underline hover:text-primary">support@studyhub.world</a>.
+          </p>
         </div>
       </section>
 
