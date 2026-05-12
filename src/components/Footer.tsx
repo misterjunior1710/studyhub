@@ -9,9 +9,12 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1 space-y-3">
-            <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              StudyHub™
-            </h3>
+            <div className="flex items-center gap-2">
+              <img src={studyhubLogo} alt="StudyHub logo" className="h-8 w-8 object-contain" />
+              <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                StudyHub™
+              </h3>
+            </div>
             <p className="text-sm text-muted-foreground">
               Study Smarter, Ace Everything 🎯
             </p>
