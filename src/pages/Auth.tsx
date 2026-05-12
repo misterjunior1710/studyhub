@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useCountryDetect } from "@/hooks/useCountryDetect";
+import studyhubLogo from "@/assets/studyhub-logo.png";
 import { getStreamsForCountry } from "@/lib/countryEducation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -297,9 +298,7 @@ const Auth = () => {
           <Card className="animate-fade-in shadow-xl border-primary/10">
             <CardHeader className="text-center">
               <div className="flex justify-center mb-2">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center animate-bounce-soft">
-                  <Sparkles className="h-6 w-6 text-white" aria-hidden="true" />
-                </div>
+                <img src={studyhubLogo} alt="StudyHub logo" className="h-14 w-14 object-contain animate-bounce-soft" />
               </div>
               <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 StudyHub™

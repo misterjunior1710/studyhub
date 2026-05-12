@@ -14,6 +14,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "next-themes";
 import { useEasterEggs } from "./EasterEggs";
+import studyhubLogo from "@/assets/studyhub-logo.png";
 
 interface NavbarProps {
   onPostCreated?: () => void;
@@ -74,12 +75,17 @@ const Navbar = ({
         <div className="flex h-14 sm:h-16 items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-2 sm:gap-6">
             <MobileNav />
-            <h1 
-              className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent cursor-pointer px-2 py-1 rounded-lg transition-all hover:bg-accent/10 hover:scale-[1.02] active:scale-95" 
+            <button
+              type="button"
               onClick={handleLogoClickWithNav}
+              className="flex items-center gap-2 px-2 py-1 rounded-lg transition-all hover:bg-accent/10 hover:scale-[1.02] active:scale-95"
+              aria-label="StudyHub home"
             >
-              StudyHub™
-            </h1>
+              <img src={studyhubLogo} alt="StudyHub logo" className="h-8 w-8 object-contain" />
+              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                StudyHub™
+              </h1>
+            </button>
             <div className="hidden md:flex items-center gap-1">
               {/* Primary nav items */}
               <Button variant={isActive("/") ? "default" : "ghost"} size="sm" onClick={() => navigate("/")}>
