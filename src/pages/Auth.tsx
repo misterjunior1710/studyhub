@@ -302,7 +302,7 @@ const Auth = () => {
                 </div>
               </div>
               <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                StudyHub
+                StudyHub™
               </CardTitle>
               <CardDescription>Your study crew is waiting — let's go 📚</CardDescription>
             </CardHeader>
