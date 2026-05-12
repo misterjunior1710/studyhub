@@ -266,6 +266,26 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Transparency / About Section — required for OAuth verification */}
+      <section className="py-12 sm:py-16 bg-muted/20 border-y border-border">
+        <div className="container mx-auto px-4 max-w-3xl text-center space-y-4">
+          <h2 className="text-2xl sm:text-3xl font-bold">About StudyHub</h2>
+          <p className="text-muted-foreground">
+            This is the <strong>official website of StudyHub</strong> (
+            <a href="https://studyhub.world" className="underline hover:text-primary">https://studyhub.world</a>
+            ). StudyHub is a student productivity and learning platform designed to help users
+            manage assignments, study plans, and life-transition skills from school to adulthood.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Built and maintained by the StudyHub Team. Read our{" "}
+            <a href="/privacy" className="underline hover:text-primary">Privacy Policy</a> and{" "}
+            <a href="/terms" className="underline hover:text-primary">Terms &amp; Conditions</a>.
+            Contact us at{" "}
+            <a href="mailto:support@studyhub.world" className="underline hover:text-primary">support@studyhub.world</a>.
+          </p>
+        </div>
+      </section>
+
       {/* Final CTA Section */}
       <section ref={ctaRef} className="py-16 sm:py-24">
         <div className="container mx-auto px-4 text-center">
