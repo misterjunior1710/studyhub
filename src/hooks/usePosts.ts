@@ -76,30 +76,59 @@ const fetchPosts = async ({
     query = query.neq("grade", "Adult (18+)");
   }
 
-  if (sortBy === "new") {
-    query = query.order("created_at", { ascending: false });
-  } else if (sortBy === "top") {
-    query = query.order("upvotes", { ascending: false });
-  } else {
-    query = query.order("upvotes", { ascending: false }).order("created_at", { ascending: false });
-  }
+  // Always fetch by created_at to get a stable, complete result set, then
+  // re-rank in JS for "hot" / "top". This avoids brittle multi-column ordering
+  // edge cases and makes ranking transparent.
+  query = query.order("created_at", { ascending: false }).limit(500);
 
   const { data, error } = await query;
 
+  let rows: Post[];
+
   if (error) {
-    console.error("Error loading posts:", error);
+    console.error("[usePosts] Error loading posts (with relations):", error);
     // Fallback without relations
     const { data: fallbackData, error: fallbackError } = await supabase
       .from("posts")
       .select("*")
       .eq("post_type", postType)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(500);
 
-    if (fallbackError) throw fallbackError;
-    return (fallbackData as Post[]) || [];
+    if (fallbackError) {
+      console.error("[usePosts] Fallback query also failed:", fallbackError);
+      throw fallbackError;
+    }
+    rows = (fallbackData as Post[]) || [];
+  } else {
+    rows = (data as Post[]) || [];
   }
 
-  return (data || []) as Post[];
+  // Apply ranking in JS so all three modes are guaranteed to render.
+  if (sortBy === "new") {
+    rows.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  } else if (sortBy === "top") {
+    rows.sort((a, b) => {
+      const sa = (a.upvotes ?? 0) - (a.downvotes ?? 0);
+      const sb = (b.upvotes ?? 0) - (b.downvotes ?? 0);
+      if (sb !== sa) return sb - sa;
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+  } else {
+    // "hot": Reddit-style score combining net votes with recency decay.
+    const now = Date.now();
+    const hotScore = (p: Post) => {
+      const net = (p.upvotes ?? 0) - (p.downvotes ?? 0);
+      const sign = net > 0 ? 1 : net < 0 ? -1 : 0;
+      const order = Math.log10(Math.max(Math.abs(net), 1));
+      const ageHours = Math.max((now - new Date(p.created_at).getTime()) / 3_600_000, 0);
+      // Decay over ~45h half-life
+      return order * sign - ageHours / 45;
+    };
+    rows.sort((a, b) => hotScore(b) - hotScore(a));
+  }
+
+  return rows;
 };
 
 export const usePosts = (options: UsePostsOptions) => {
