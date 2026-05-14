@@ -130,7 +130,7 @@ const Settings = () => {
     weekly_study_goal: 10,
     daily_hours_target: 2,
     auto_start_focus_timer: false,
-    theme_color: "purple",
+    theme_color: "ocean-blue",
   });
 
   const [newPassword, setNewPassword] = useState("");
@@ -216,7 +216,7 @@ const Settings = () => {
         weekly_study_goal: profileData.weekly_study_goal || 10,
         daily_hours_target: profileData.daily_hours_target || 2,
         auto_start_focus_timer: profileData.auto_start_focus_timer ?? false,
-        theme_color: profileData.theme_color || "purple",
+        theme_color: profileData.theme_color || "ocean-blue",
       });
     }
 
