@@ -2,16 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover"
+    />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <title>StudyHub™ — Study Smarter, Ace Everything</title>
-    <meta name="description" content="Get free homework help from students worldwide. Join study groups, ask questions, get answers fast. Math help, science help, essay help. Free online tutoring and study tools for students.">
+    <meta
+      name="description"
+      content="Get free homework help from students worldwide. Join study groups, ask questions, get answers fast. Math help, science help, essay help. Free online tutoring and study tools for students."
+    />
     <meta name="author" content="StudyHub" />
     <link rel="canonical" href="https://studyhub.world/" />
-    <meta name="keywords" content="homework help, study groups, ask questions, student community, free tutoring, math help, science help, essay help, study tools, flashcards, online learning, student forum">
-    
+    <meta
+      name="keywords"
+      content="homework help, study groups, ask questions, student community, free tutoring, math help, science help, essay help, study tools, flashcards, online learning, student forum"
+    />
+
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://qrquegcexsqrbtwtcicq.supabase.co" crossorigin />
     <link rel="dns-prefetch" href="https://qrquegcexsqrbtwtcicq.supabase.co" />
@@ -19,57 +28,67 @@
     <link rel="dns-prefetch" href="https://bsewdwaowjwuztpmnbyk.supabase.co" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    
+
     <!-- Non-blocking font loading with font-display: swap -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=EB+Garamond:wght@400;500;600;700&family=Fira+Code:wght@400;700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=EB+Garamond:wght@400;500;600;700&family=Fira+Code:wght@400;700&display=swap" media="print" onload="this.media='all'" />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=EB+Garamond:wght@400;500;600;700&family=Fira+Code:wght@400;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=EB+Garamond:wght@400;500;600;700&family=Fira+Code:wght@400;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
     <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=EB+Garamond:wght@400;500;600;700&family=Fira+Code:wght@400;700&display=swap" />
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=EB+Garamond:wght@400;500;600;700&family=Fira+Code:wght@400;700&display=swap"
+      />
     </noscript>
-    
+
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://studyhub.world/" />
-    
-    
-    <meta property="og:image" content="/studyhub-logo.png">
+
+    <meta property="og:image" content="/studyhub-logo.png" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@StudyHub" />
-    
-    
-    <meta name="twitter:image" content="/studyhub-logo.png">
-    
+
+    <meta name="twitter:image" content="/studyhub-logo.png" />
+
     <!-- Critical CSS for hero section - inlined to prevent render blocking -->
     <style>
       /* Font fallback while loading */
       body {
         font-family: 'Lato', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       }
-      
+
       /* Critical hero gradient - CSS-only, no JS */
       .hero-gradient-bg {
-        background: linear-gradient(135deg, 
-          hsl(243 75% 58% / 0.08) 0%, 
-          hsl(215 20% 65% / 0.05) 50%, 
+        background: linear-gradient(135deg,
+          hsl(243 75% 58% / 0.08) 0%,
+          hsl(215 20% 65% / 0.05) 50%,
           transparent 100%);
       }
       .hero-radial-bg {
         background: radial-gradient(ellipse at top, hsl(243 75% 58% / 0.1), transparent 50%);
       }
-      
+
       /* Dark mode hero gradients */
       .dark .hero-gradient-bg {
-        background: linear-gradient(135deg, 
-          hsl(234 89% 73% / 0.08) 0%, 
-          hsl(261 72% 22% / 0.05) 50%, 
+        background: linear-gradient(135deg,
+          hsl(234 89% 73% / 0.08) 0%,
+          hsl(261 72% 22% / 0.05) 50%,
           transparent 100%);
       }
       .dark .hero-radial-bg {
         background: radial-gradient(ellipse at top, hsl(234 89% 73% / 0.1), transparent 50%);
       }
-      
+
       /* Critical hero animations - CSS only */
       @keyframes hero-fade-up {
         from { opacity: 0; transform: translateY(20px); }
@@ -78,12 +97,12 @@
       .animate-hero-fade-up {
         animation: hero-fade-up 0.5s ease-out forwards;
       }
-      
+
       /* Hide SEO fallback content only - not React rendered content */
       #root > .seo-fallback {
         display: none !important;
       }
-      
+
       /* Loading skeleton styles */
       #loading-skeleton {
         position: fixed;
@@ -94,7 +113,7 @@
         flex-direction: column;
         transition: opacity 0.3s ease-out;
       }
-      
+
       /* Dark mode support - OS preference */
       @media (prefers-color-scheme: dark) {
         #loading-skeleton {
@@ -107,7 +126,7 @@
           border-color: hsl(0 0% 32%);
         }
       }
-      
+
       /* Dark mode support - .dark class on html */
       .dark #loading-skeleton {
         background: hsl(0 0% 9%);
@@ -118,37 +137,37 @@
       .dark #loading-skeleton .skeleton-nav {
         border-color: hsl(0 0% 32%);
       }
-      
+
       .skeleton-bar {
         background: hsl(0 0% 90%);
         border-radius: 8px;
         animation: skeleton-shimmer 1.5s ease-in-out infinite;
       }
-      
+
       .skeleton-nav {
         border-bottom: 1px solid hsl(0 0% 83%);
       }
-      
+
       @keyframes skeleton-shimmer {
         0%, 100% { opacity: 1; }
         50% { opacity: 0.5; }
       }
-      
+
       /* Hide skeleton when app loads */
       #loading-skeleton.hidden {
         opacity: 0;
         pointer-events: none;
       }
     </style>
-    
+
     <!-- Mobile WebView compatibility -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="theme-color" content="#5046e5" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#818cf8" media="(prefers-color-scheme: dark)">
-    
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="theme-color" content="#5046e5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#818cf8" media="(prefers-color-scheme: dark)" />
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-KES5M14KWV"></script>
     <script>
@@ -157,51 +176,54 @@
       gtag('js', new Date());
       gtag('config', 'G-KES5M14KWV');
     </script>
-    
+
     <!-- Favicon and PWA -->
-    <link rel="icon" type="image/png" href="/studyhub-logo.png">
-    <link rel="apple-touch-icon" href="/studyhub-logo.png">
-    <link rel="manifest" href="/manifest.json">
-    
+    <link rel="icon" type="image/png" href="/studyhub-logo.png" />
+    <link rel="apple-touch-icon" href="/studyhub-logo.png" />
+    <link rel="manifest" href="/manifest.json" />
+
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "StudyHub",
-      "alternateName": "Study Smarter, Ace Everything",
-      "url": "https://studyhub.world/",
-      "description": "StudyHub is a free global student community where learners connect, ask academic questions, share study materials, and collaborate in study groups.",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://studyhub.world/questions?search={search_term_string}",
-        "query-input": "required name=search_term_string"
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "StudyHub",
+        "alternateName": "Study Smarter, Ace Everything",
+        "url": "https://studyhub.world/",
+        "description": "StudyHub™, A student-only discussion platform focused on school life, questions, and studying!.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://studyhub.world/questions?search={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
       }
-    }
     </script>
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "StudyHub",
-      "slogan": "Study Smarter, Ace Everything",
-      "url": "https://studyhub.world/",
-      "logo": "/studyhub-logo.png",
-      "sameAs": []
-    }
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "StudyHub",
+        "slogan": "Study Smarter, Ace Everything",
+        "url": "https://studyhub.world/",
+        "logo": "/studyhub-logo.png",
+        "sameAs": []
+      }
     </script>
-    
-    <meta property="og:title" content="StudyHub™ — Study Smarter, Ace Everything">
-  <meta name="twitter:title" content="StudyHub™ — Study Smarter, Ace Everything">
-  <meta property="og:description" content="Get free homework help from students worldwide. Join study groups, ask questions, get answers fast. Math help, science help, essay help. Free online tutoring and study tools for students.">
-  <meta name="twitter:description" content="Get free homework help from students worldwide. Join study groups, ask questions, get answers fast. Math help, science help, essay help. Free online tutoring and study tools for students.">
-</head>
+
+    <meta property="og:title" content="StudyHub™ — Study Smarter, Ace Everything" />
+    <meta name="twitter:title" content="StudyHub™ — Study Smarter, Ace Everything" />
+    <meta property="og:description" content="Like Reddit, but built for students." />
+    <meta name="twitter:description" content="Like Reddit, but built for students." />
+  </head>
 
   <body>
     <!-- Loading skeleton - shown immediately, hidden when React mounts -->
     <div id="loading-skeleton" aria-hidden="true">
       <!-- Navbar skeleton -->
-      <div class="skeleton-nav" style="height: 64px; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;">
+      <div
+        class="skeleton-nav"
+        style="height: 64px; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;"
+      >
         <div class="skeleton-bar" style="width: 120px; height: 32px;"></div>
         <div style="display: flex; gap: 16px; align-items: center;">
           <div class="skeleton-bar" style="width: 60px; height: 20px;"></div>
@@ -210,7 +232,7 @@
           <div class="skeleton-bar" style="width: 80px; height: 36px;"></div>
         </div>
       </div>
-      
+
       <!-- Hero skeleton -->
       <div style="padding: 60px 24px 40px; text-align: center;">
         <div class="skeleton-bar" style="width: 60%; max-width: 400px; height: 40px; margin: 0 auto 20px;"></div>
@@ -218,7 +240,7 @@
         <div class="skeleton-bar" style="width: 70%; max-width: 500px; height: 20px; margin: 0 auto 28px;"></div>
         <div class="skeleton-bar" style="width: 140px; height: 44px; margin: 0 auto;"></div>
       </div>
-      
+
       <!-- Content skeleton -->
       <div style="max-width: 900px; margin: 0 auto; padding: 24px;">
         <div class="skeleton-bar" style="width: 100%; height: 140px; margin-bottom: 16px;"></div>
@@ -226,25 +248,25 @@
         <div class="skeleton-bar" style="width: 100%; height: 140px;"></div>
       </div>
     </div>
-    
+
     <div id="root">
       <!-- Static fallback content for SEO crawlers - hidden by CSS, preserved for crawlers -->
       <div class="seo-fallback">
         <header style="padding: 1rem; text-align: center;">
           <h1><strong>StudyHub™</strong> — Study Smarter, Ace Everything</h1>
           <nav>
-            <a href="/">Home</a> |
-            <a href="/questions">Questions</a> |
-            <a href="/groups">Study Groups</a> |
-            <a href="/leaderboard">Leaderboard</a> |
-            <a href="/support">Support</a> |
+            <a href="/">Home</a> | <a href="/questions">Questions</a> | <a href="/groups">Study Groups</a> |
+            <a href="/leaderboard">Leaderboard</a> | <a href="/support">Support</a> |
             <a href="/auth">Sign In</a>
           </nav>
         </header>
         <main style="padding: 2rem; text-align: center;">
           <h2><strong>Connect with Students Worldwide</strong></h2>
-          <p><strong>StudyHub</strong> is the <strong>ultimate platform for students</strong> to share knowledge, ask questions, and collaborate across different countries, subjects, grades, and streams.</p>
-          
+          <p>
+            <strong>StudyHub</strong> is the <strong>ultimate platform for students</strong> to share knowledge, ask
+            questions, and collaborate across different countries, subjects, grades, and streams.
+          </p>
+
           <section>
             <h3><strong>Why Choose StudyHub?</strong></h3>
             <ul style="list-style: none; padding: 0;">
@@ -255,56 +277,61 @@
               <li>🌍 <strong>Connect with students</strong> from different countries</li>
             </ul>
           </section>
-          
+
           <section>
             <h3><strong>Popular Features</strong></h3>
-            <p><a href="/questions"><strong>Browse Questions</strong></a> - Find answers to common study problems</p>
-            <p><a href="/groups"><strong>Study Groups</strong></a> - Join communities of like-minded students</p>
-            <p><a href="/leaderboard"><strong>Leaderboard</strong></a> - See top contributors this week</p>
-            <p><a href="/friends"><strong>Friends</strong></a> - Connect with fellow students and study partners</p>
-            <p><a href="/study"><strong>Study Mode</strong></a> - Focus with our Pomodoro timer</p>
+            <p>
+              <a href="/questions"><strong>Browse Questions</strong></a> - Find answers to common study problems
+            </p>
+            <p>
+              <a href="/groups"><strong>Study Groups</strong></a> - Join communities of like-minded students
+            </p>
+            <p>
+              <a href="/leaderboard"><strong>Leaderboard</strong></a> - See top contributors this week
+            </p>
+            <p>
+              <a href="/friends"><strong>Friends</strong></a> - Connect with fellow students and study partners
+            </p>
+            <p>
+              <a href="/study"><strong>Study Mode</strong></a> - Focus with our Pomodoro timer
+            </p>
+            <p>
+              <a href="/assistant"><strong>Nova AI</strong></a> - Your own Study Buddy
+            </p>
           </section>
-          
+
           <section>
-            <h3><strong>Get Started Today</strong></h3>
+            <h3><strong>Get Started Today!</strong></h3>
             <p>Join <strong>thousands of students</strong> already learning together on <strong>StudyHub</strong>.</p>
             <a href="/auth"><strong>Create Your Free Account</strong></a>
           </section>
         </main>
         <footer style="padding: 1rem; text-align: center; border-top: 1px solid #ccc;">
           <p>&copy; 2025 <strong>StudyHub™</strong> — Study Smarter, Ace Everything. All rights reserved.</p>
-          <p><strong>Study Smarter, Ace Everything</strong> 🎯</p>
+          <p><strong>Study Smarter, Ace Everything</strong> !</p>
           <nav>
-            <a href="/privacy">Privacy Policy</a> |
-            <a href="/terms">Terms & Conditions</a> |
+            <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms & Conditions</a> |
             <a href="/support">Help & Support</a>
           </nav>
         </footer>
       </div>
     </div>
-    
+
     <!-- Noscript fallback for crawlers that don't execute JS -->
     <noscript>
       <div style="padding: 2rem; text-align: center;">
         <h1><strong>StudyHub™</strong> — Study Smarter, Ace Everything</h1>
-        <p><strong>Connect with students worldwide</strong> on StudyHub. Share knowledge, ask questions, and collaborate across different countries, subjects, grades, and streams.</p>
+        <p>Like<strong>Reddi,t</strong>but built for students</p>
         <nav>
-          <a href="/">Home</a> |
-          <a href="/questions">Questions</a> |
-          <a href="/groups">Study Groups</a> |
-          <a href="/leaderboard">Leaderboard</a> |
-          <a href="/friends">Friends</a> |
-          <a href="/study">Study Mode</a> |
-          <a href="/auth">Sign In</a> |
-          <a href="/privacy">Privacy</a> |
-          <a href="/terms">Terms</a> |
+          <a href="/">Home</a> | <a href="/questions">Questions</a> | <a href="/groups">Study Groups</a> |
+          <a href="/leaderboard">Leaderboard</a> | <a href="/friends">Friends</a> | <a href="/study">Study Mode</a> |
+          <a href="/auth">Sign In</a> | <a href="/privacy">Privacy</a> | <a href="/terms">Terms</a> |
           <a href="/support">Support</a>
         </nav>
         <p><strong>Study Smarter, Ace Everything</strong> 🎯</p>
         <p>Please enable JavaScript to use StudyHub's full features.</p>
       </div>
     </noscript>
-    
 
     <script type="module" src="/src/main.tsx"></script>
   </body>
