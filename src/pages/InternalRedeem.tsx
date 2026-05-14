@@ -1,7 +1,7 @@
 // Hidden internal route — not linked anywhere in the public UI.
 // Used by the StudyHub team to grant test-mode Pro access.
 import { useState } from "react";
-import { Helmet } from "react-helmet-async";
+
 import { Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

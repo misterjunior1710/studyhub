@@ -4,7 +4,7 @@ import { CheckCircle2, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/hooks/useSubscription";
 import Navbar from "@/components/Navbar";
-import { Helmet } from "react-helmet-async";
+
 
 export default function CheckoutReturn() {
   const [searchParams] = useSearchParams();
