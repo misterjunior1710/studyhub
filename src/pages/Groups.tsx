@@ -165,6 +165,24 @@ const Groups = () => {
                 <div className="flex justify-center items-center py-12" role="status" aria-label="Loading groups">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
+              ) : error ? (
+                <Card className="text-center py-12">
+                  <CardContent>
+                    <AlertCircle className="h-12 w-12 mx-auto mb-4 text-destructive" aria-hidden="true" />
+                    <h2 className="text-xl font-semibold mb-2">Couldn't load your groups</h2>
+                    <p className="text-muted-foreground mb-4 max-w-md mx-auto">
+                      Something went wrong while fetching your groups. Check your connection and try again.
+                    </p>
+                    <Button onClick={() => refetch()} disabled={isFetching} variant="outline">
+                      {isFetching ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                      )}
+                      Try again
+                    </Button>
+                  </CardContent>
+                </Card>
               ) : groups.length === 0 ? (
                 <Card className="text-center py-12">
                   <CardContent>
