@@ -58,13 +58,6 @@ export default function Pricing() {
 
   return (
     <>
-      <Helmet>
-        <title>StudyHub Pro Pricing — Study Smarter, Ace Everything</title>
-        <meta
-          name="description"
-          content="Upgrade to StudyHub Pro for unlimited AI, advanced study tools, premium themes, and more. Start with a free plan."
-        />
-      </Helmet>
       <PaymentTestModeBanner />
       <Navbar />
       <main className="container mx-auto px-4 py-10 md:py-16 max-w-6xl">

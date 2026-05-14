@@ -47,10 +47,6 @@ export default function InternalRedeem() {
 
   return (
     <>
-      <Helmet>
-        <title>Internal Redeem — StudyHub</title>
-        <meta name="robots" content="noindex,nofollow" />
-      </Helmet>
       <main className="min-h-screen flex items-center justify-center px-4 py-16">
         <Card className="w-full max-w-md p-6">
           <div className="flex items-center gap-2 mb-4">

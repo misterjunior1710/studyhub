@@ -29,9 +29,6 @@ export default function CheckoutReturn() {
 
   return (
     <>
-      <Helmet>
-        <title>Welcome to Pro — StudyHub</title>
-      </Helmet>
       <Navbar />
       <main className="container mx-auto px-4 py-16 max-w-xl text-center">
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent">
