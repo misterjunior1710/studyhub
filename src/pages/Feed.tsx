@@ -197,7 +197,7 @@ const Feed = () => {
                           upvotes={post.upvotes}
                           downvotes={post.downvotes}
                           shareCount={post.share_count ?? 0}
-                          comments={Array.isArray(post.comments) ? post.comments.length : 0}
+                          comments={Array.isArray(post.comments) ? (post.comments[0]?.count ?? 0) : 0}
                           subject={post.subject}
                           grade={post.grade}
                           stream={post.stream}
