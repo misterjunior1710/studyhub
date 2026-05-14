@@ -3,14 +3,22 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 const themeColors: Record<string, { primary: string; accent: string }> = {
-  purple: { primary: "262 83% 58%", accent: "330 85% 60%" },
-  blue: { primary: "217 91% 60%", accent: "199 89% 48%" },
-  green: { primary: "142 76% 36%", accent: "160 84% 39%" },
-  orange: { primary: "24 95% 53%", accent: "38 92% 50%" },
-  red: { primary: "0 72% 51%", accent: "350 89% 60%" },
-  teal: { primary: "173 80% 40%", accent: "187 92% 35%" },
-  indigo: { primary: "239 84% 67%", accent: "250 70% 55%" },
-  slate: { primary: "215 20% 45%", accent: "215 25% 35%" },
+  // Premium / Modern
+  "royal-purple": { primary: "287 67% 38%", accent: "287 67% 55%" },
+  "neon-violet": { primary: "291 64% 42%", accent: "291 70% 60%" },
+  "sunset-orange": { primary: "36 100% 50%", accent: "24 95% 55%" },
+  "crimson-red": { primary: "0 65% 51%", accent: "350 80% 60%" },
+  "rose-pink": { primary: "330 81% 60%", accent: "320 70% 70%" },
+  "graphite-gray": { primary: "217 19% 27%", accent: "217 19% 45%" },
+  "arctic-silver": { primary: "215 20% 65%", accent: "215 25% 75%" },
+  // Calm / Focused
+  "ocean-blue": { primary: "207 90% 54%", accent: "199 89% 60%" },
+  "slate-blue": { primary: "231 44% 56%", accent: "231 50% 70%" },
+  "indigo-night": { primary: "231 48% 48%", accent: "239 70% 60%" },
+  "forest-green": { primary: "123 46% 34%", accent: "142 60% 45%" },
+  "sage-green": { primary: "126 14% 55%", accent: "126 20% 65%" },
+  "teal-focus": { primary: "174 100% 29%", accent: "174 80% 40%" },
+  "midnight-cyan": { primary: "184 100% 20%", accent: "184 80% 32%" },
 };
 
 export const applyThemeColor = (colorName: string) => {
