@@ -26,45 +26,48 @@ interface GroupChat {
 const fetchGroups = async (userId: string | null): Promise<GroupChat[]> => {
   if (!userId) return [];
 
-  // Get all groups where user is a member
   const { data: memberData, error: memberError } = await supabase
     .from("group_members")
     .select("group_id")
     .eq("user_id", userId);
 
-  if (memberError) throw memberError;
+  if (memberError) {
+    console.error("[Groups] Failed to fetch memberships:", memberError);
+    throw memberError;
+  }
 
   if (!memberData || memberData.length === 0) {
     return [];
   }
 
-  const groupIds = memberData.map(m => m.group_id);
+  const groupIds = memberData.map((m) => m.group_id);
 
-  // Get group details and member counts in parallel
   const { data: groupsData, error: groupsError } = await supabase
     .from("group_chats")
     .select("*")
     .in("id", groupIds)
     .order("created_at", { ascending: false });
 
-  if (groupsError) throw groupsError;
+  if (groupsError) {
+    console.error("[Groups] Failed to fetch group details:", groupsError);
+    throw groupsError;
+  }
 
-  // Get member counts for each group
-  const groupsWithCounts = await Promise.all(
-    (groupsData || []).map(async (group) => {
-      const { count } = await supabase
+  // Fetch all member counts in parallel; tolerate individual failures
+  const counts = await Promise.allSettled(
+    (groupsData || []).map((g) =>
+      supabase
         .from("group_members")
         .select("*", { count: "exact", head: true })
-        .eq("group_id", group.id);
-      
-      return {
-        ...group,
-        member_count: count || 0
-      };
-    })
+        .eq("group_id", g.id)
+    )
   );
 
-  return groupsWithCounts;
+  return (groupsData || []).map((group, i) => {
+    const r = counts[i];
+    const count = r.status === "fulfilled" ? r.value.count ?? 0 : 0;
+    return { ...group, member_count: count };
+  });
 };
 
 const Groups = () => {
