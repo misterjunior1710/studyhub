@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const themeColors: Record<string, { primary: string; accent: string }> = {
   // Premium / Modern
-  "royal-purple": { primary: "287 67% 38%", accent: "287 67% 55%" },
+  "royal-purple": { primary: "282 68% 38%", accent: "282 68% 55%" },
   "neon-violet": { primary: "291 64% 42%", accent: "291 70% 60%" },
   "sunset-orange": { primary: "36 100% 50%", accent: "24 95% 55%" },
   "crimson-red": { primary: "0 65% 51%", accent: "350 80% 60%" },
@@ -16,9 +16,9 @@ const themeColors: Record<string, { primary: string; accent: string }> = {
   "slate-blue": { primary: "231 44% 56%", accent: "231 50% 70%" },
   "indigo-night": { primary: "231 48% 48%", accent: "239 70% 60%" },
   "forest-green": { primary: "123 46% 34%", accent: "142 60% 45%" },
-  "sage-green": { primary: "126 14% 55%", accent: "126 20% 65%" },
+  "sage-green": { primary: "127 16% 55%", accent: "127 22% 65%" },
   "teal-focus": { primary: "174 100% 29%", accent: "174 80% 40%" },
-  "midnight-cyan": { primary: "184 100% 20%", accent: "184 80% 32%" },
+  "midnight-cyan": { primary: "182 100% 20%", accent: "182 80% 32%" },
 };
 
 export const applyThemeColor = (colorName: string) => {
