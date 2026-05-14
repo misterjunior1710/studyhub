@@ -613,26 +613,39 @@ const Settings = () => {
                   <CardTitle className="flex items-center gap-2"><Palette className="h-5 w-5 text-primary" />Color Theme</CardTitle>
                   <CardDescription>Choose your preferred color scheme</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    {themeColors.map((theme) => (
-                      <button
-                        key={theme.name}
-                        onClick={() => setProfile(prev => ({ ...prev, theme_color: theme.name }))}
-                        className={`p-4 rounded-lg border-2 transition-all ${
-                          profile.theme_color === theme.name 
-                            ? 'border-primary ring-2 ring-primary/20' 
-                            : 'border-border hover:border-primary/50'
-                        }`}
-                      >
-                        <div 
-                          className="w-full h-12 rounded-md mb-2" 
-                          style={{ background: `linear-gradient(135deg, hsl(${theme.primary}), hsl(${theme.accent}))` }}
-                        />
-                        <p className="text-sm font-medium">{theme.label}</p>
-                      </button>
-                    ))}
-                  </div>
+                <CardContent className="space-y-8">
+                  {[
+                    { title: "Premium / Modern", subtitle: "Bold, expressive palettes", themes: premiumThemes },
+                    { title: "Calm / Focused", subtitle: "Soothing palettes for deep work", themes: calmThemes },
+                  ].map((section) => (
+                    <div key={section.title} className="space-y-3">
+                      <div>
+                        <h3 className="text-base font-semibold">{section.title} Themes</h3>
+                        <p className="text-sm text-muted-foreground">{section.subtitle}</p>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {section.themes.map((theme) => (
+                          <button
+                            key={theme.name}
+                            onClick={() => setProfile(prev => ({ ...prev, theme_color: theme.name }))}
+                            aria-label={`Select ${theme.label} theme`}
+                            className={`p-4 rounded-lg border-2 text-left transition-all ${
+                              profile.theme_color === theme.name
+                                ? 'border-primary ring-2 ring-primary/20'
+                                : 'border-border hover:border-primary/50'
+                            }`}
+                          >
+                            <div
+                              className="w-full h-12 rounded-md mb-2"
+                              style={{ background: `linear-gradient(135deg, hsl(${theme.primary}), hsl(${theme.accent}))` }}
+                            />
+                            <p className="text-sm font-medium">{theme.label}</p>
+                            <p className="text-xs text-muted-foreground">{theme.description}</p>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
 
