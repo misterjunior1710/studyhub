@@ -42,7 +42,6 @@ import { toast } from "sonner";
 import AdminModerationPanel from "@/components/AdminModerationPanel";
 import BanAppealDialog from "@/components/BanAppealDialog";
 import { applyThemeColor } from "@/hooks/useThemePersistence";
-import { SubscriptionManager } from "@/components/pro/SubscriptionManager";
 
 interface ProfileData {
   username: string;
@@ -428,8 +427,6 @@ const Settings = () => {
               Manage your account and preferences
             </p>
           </div>
-
-          <SubscriptionManager />
 
           {/* Ban Notice */}
           {isBanned && userId && (

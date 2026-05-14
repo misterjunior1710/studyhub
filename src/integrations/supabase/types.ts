@@ -1827,30 +1827,6 @@ export type Database = {
         }
         Relationships: []
       }
-      promo_redemptions: {
-        Row: {
-          code: string
-          environment: string
-          id: string
-          redeemed_at: string
-          user_id: string
-        }
-        Insert: {
-          code: string
-          environment?: string
-          id?: string
-          redeemed_at?: string
-          user_id: string
-        }
-        Update: {
-          code?: string
-          environment?: string
-          id?: string
-          redeemed_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       public_profiles: {
         Row: {
           avatar_url: string | null
@@ -2230,54 +2206,6 @@ export type Database = {
           id?: string
           session_type?: string
           started_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      subscriptions: {
-        Row: {
-          cancel_at_period_end: boolean | null
-          created_at: string | null
-          current_period_end: string | null
-          current_period_start: string | null
-          environment: string
-          id: string
-          price_id: string
-          product_id: string
-          status: string
-          stripe_customer_id: string
-          stripe_subscription_id: string
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          cancel_at_period_end?: boolean | null
-          created_at?: string | null
-          current_period_end?: string | null
-          current_period_start?: string | null
-          environment?: string
-          id?: string
-          price_id: string
-          product_id: string
-          status?: string
-          stripe_customer_id: string
-          stripe_subscription_id: string
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          cancel_at_period_end?: boolean | null
-          created_at?: string | null
-          current_period_end?: string | null
-          current_period_start?: string | null
-          environment?: string
-          id?: string
-          price_id?: string
-          product_id?: string
-          status?: string
-          stripe_customer_id?: string
-          stripe_subscription_id?: string
-          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -3152,10 +3080,6 @@ export type Database = {
         Returns: Json
       }
       get_xp_tier: { Args: { p_event_type: string }; Returns: number }
-      has_active_subscription: {
-        Args: { check_env?: string; user_uuid: string }
-        Returns: boolean
-      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
