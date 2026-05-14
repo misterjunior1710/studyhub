@@ -6,9 +6,19 @@ import CookieConsent from "@/components/CookieConsent";
 import SEOHead, { StructuredData, getOrganizationSchema, getCommunitySchema } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  BookOpen, Users, Trophy, Sparkles, ArrowRight, CheckCircle2, 
-  MessageSquare, Brain, Calendar, Bookmark, TrendingUp, Zap
+import {
+  BookOpen,
+  Users,
+  Trophy,
+  Sparkles,
+  ArrowRight,
+  CheckCircle2,
+  MessageSquare,
+  Brain,
+  Calendar,
+  Bookmark,
+  TrendingUp,
+  Zap,
 } from "lucide-react";
 
 import { useAuth } from "@/contexts/AuthContext";
@@ -26,10 +36,13 @@ const Index = () => {
   const totalCount = tasks.length;
   const showContinueSetup = !!user && !isOnboardingComplete && totalCount > 0;
 
-  const structuredData = useMemo(() => ({
-    "@context": "https://schema.org",
-    "@graph": [getOrganizationSchema(), getCommunitySchema()],
-  }), []);
+  const structuredData = useMemo(
+    () => ({
+      "@context": "https://schema.org",
+      "@graph": [getOrganizationSchema(), getCommunitySchema()],
+    }),
+    [],
+  );
 
   const [featuresRef, featuresVisible] = useScrollReveal<HTMLDivElement>();
   const [stepsRef, stepsVisible] = useScrollReveal<HTMLDivElement>();
@@ -45,23 +58,25 @@ const Index = () => {
   };
 
   // Quick action cards - different for logged in vs logged out users
-  const quickActions = user ? [
-    { icon: TrendingUp, label: "My Feed", href: "/feed", color: "from-primary to-accent" },
-    { icon: MessageSquare, label: "Ask a Doubt", href: "/questions", color: "from-accent to-primary" },
-    { icon: Users, label: "Your Groups", href: "/groups", color: "from-info to-primary" },
-    { icon: Brain, label: "Study Tools", href: "/study", color: "from-success to-info" },
-    { icon: Sparkles, label: "AI Tools", href: "/content-generator", color: "from-warning to-accent" },
-    { icon: Calendar, label: "Calendar", href: "/calendar", color: "from-primary to-success" },
-  ] : [
-    { icon: MessageSquare, label: "Browse Questions", href: "/questions", color: "from-primary to-accent" },
-    { icon: Users, label: "Study Groups", href: "/groups", color: "from-accent to-primary" },
-    { icon: Brain, label: "AI Study Tools", href: "/content-generator", color: "from-success to-info" },
-    { icon: BookOpen, label: "Study Mode", href: "/study", color: "from-info to-primary" },
-    { icon: Calendar, label: "Calendar", href: "/calendar", color: "from-primary to-success" },
-    { icon: Sparkles, label: "Nova AI", href: "/assistant", color: "from-warning to-accent" },
-    { icon: Bookmark, label: "Saved Posts", href: "/saved", color: "from-accent to-info" },
-    { icon: Trophy, label: "Leaderboard", href: "/leaderboard", color: "from-warning to-primary" },
-  ];
+  const quickActions = user
+    ? [
+        { icon: TrendingUp, label: "My Feed", href: "/feed", color: "from-primary to-accent" },
+        { icon: MessageSquare, label: "Ask a Doubt", href: "/questions", color: "from-accent to-primary" },
+        { icon: Users, label: "Your Groups", href: "/groups", color: "from-info to-primary" },
+        { icon: Brain, label: "Study Tools", href: "/study", color: "from-success to-info" },
+        { icon: Sparkles, label: "AI Tools", href: "/content-generator", color: "from-warning to-accent" },
+        { icon: Calendar, label: "Calendar", href: "/calendar", color: "from-primary to-success" },
+      ]
+    : [
+        { icon: MessageSquare, label: "Browse Questions", href: "/questions", color: "from-primary to-accent" },
+        { icon: Users, label: "Study Groups", href: "/groups", color: "from-accent to-primary" },
+        { icon: Brain, label: "AI Study Tools", href: "/content-generator", color: "from-success to-info" },
+        { icon: BookOpen, label: "Study Mode", href: "/study", color: "from-info to-primary" },
+        { icon: Calendar, label: "Calendar", href: "/calendar", color: "from-primary to-success" },
+        { icon: Sparkles, label: "Nova AI", href: "/assistant", color: "from-warning to-accent" },
+        { icon: Bookmark, label: "Saved Posts", href: "/saved", color: "from-accent to-info" },
+        { icon: Trophy, label: "Leaderboard", href: "/leaderboard", color: "from-warning to-primary" },
+      ];
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -71,15 +86,15 @@ const Index = () => {
         canonical="https://studyhub.world/"
       />
       <StructuredData data={structuredData} />
-      
+
       <Navbar />
-      
+
       {/* Hero Section */}
       <header className="relative overflow-hidden">
         {/* CSS-only gradient background for performance - no JS animation */}
         <div className="absolute inset-0 hero-gradient-bg" />
         <div className="absolute inset-0 hero-radial-bg" />
-        
+
         <div className="relative container mx-auto px-4 py-16 sm:py-24 md:py-32">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight opacity-0 animate-hero-fade-up">
@@ -88,26 +103,32 @@ const Index = () => {
                 Ace Everything
               </span>
             </h1>
-            
-            <p className="text-muted-foreground text-base sm:text-lg md:text-xl mb-4 max-w-2xl mx-auto opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
-              <strong>StudyHub™</strong>, A student-only discussion platform focused on school life, questions, and studying!
+
+            <p
+              className="text-muted-foreground text-base sm:text-lg md:text-xl mb-4 max-w-2xl mx-auto opacity-0 animate-hero-fade-up"
+              style={{ animationDelay: "100ms" }}
+            >
+              <strong>StudyHub™</strong>, A student-only discussion platform focused on school life, questions, and
+              studying!
             </p>
-            <p className="text-xs sm:text-sm text-muted-foreground/80 mb-8 opacity-0 animate-hero-fade-up" style={{ animationDelay: "150ms" }}>
+            <p
+              className="text-xs sm:text-sm text-muted-foreground/80 mb-8 opacity-0 animate-hero-fade-up"
+              style={{ animationDelay: "150ms" }}
+            >
               StudyHub™ — Study Smarter, Ace Everything
             </p>
-            
-            <div className="flex flex-col sm:flex-row gap-3 justify-center opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }}>
-              <Button 
-                size="lg" 
-                onClick={handleGetStarted}
-                className="gap-2 text-base px-8 py-6 btn-bounce hover-glow"
-              >
+
+            <div
+              className="flex flex-col sm:flex-row gap-3 justify-center opacity-0 animate-hero-fade-up"
+              style={{ animationDelay: "200ms" }}
+            >
+              <Button size="lg" onClick={handleGetStarted} className="gap-2 text-base px-8 py-6 btn-bounce hover-glow">
                 {user ? "Jump to Feed" : "Get Started — It's Free"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               {!user && (
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   variant="outline"
                   onClick={() => navigate("/questions")}
                   className="gap-2 text-base px-8 py-6 btn-bounce"
@@ -165,7 +186,9 @@ const Index = () => {
                 onClick={() => navigate(action.href)}
               >
                 <CardContent className="p-4 flex flex-col items-center text-center gap-2">
-                  <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${action.color} flex items-center justify-center transition-transform duration-200 group-hover:scale-110`}>
+                  <div
+                    className={`w-10 h-10 rounded-full bg-gradient-to-br ${action.color} flex items-center justify-center transition-transform duration-200 group-hover:scale-110`}
+                  >
                     <action.icon className="h-5 w-5 text-white" />
                   </div>
                   <span className="text-sm font-medium">{action.label}</span>
@@ -189,17 +212,17 @@ const Index = () => {
       <section ref={featuresRef} className="py-16 sm:py-24">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="text-center mb-12">
-            <h2 
+            <h2
               className={`text-2xl sm:text-3xl font-bold mb-4 ${featuresVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
             >
               What's StudyHub?
             </h2>
-            <p 
+            <p
               className={`text-muted-foreground max-w-2xl mx-auto ${featuresVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
               style={{ animationDelay: "100ms" }}
             >
-              Think of it as your study buddy that never sleeps. No distractions, 
-              no nonsense — just students helping students crush their goals.
+              Think of it as your study buddy that never sleeps. No distractions, no nonsense — just students helping
+              students crush their goals.
             </p>
           </div>
 
@@ -208,18 +231,20 @@ const Index = () => {
               {
                 icon: BookOpen,
                 title: "Share & Learn",
-                description: "Post questions, drop your notes, and learn from classmates across every subject imaginable."
+                description:
+                  "Post questions, drop your notes, and learn from classmates across every subject imaginable.",
               },
               {
                 icon: Users,
                 title: "Study Squads",
-                description: "Team up in groups for real-time discussions, group study sessions, and exam prep."
+                description: "Team up in groups for real-time discussions, group study sessions, and exam prep.",
               },
               {
                 icon: Trophy,
                 title: "Stay on Track",
-                description: "Build streaks, earn XP, and keep your study momentum going — consistency is the real flex. 😏"
-              }
+                description:
+                  "Build streaks, earn XP, and keep your study momentum going — consistency is the real flex. 😏",
+              },
             ].map((feature, index) => (
               <div
                 key={feature.title}
@@ -241,7 +266,7 @@ const Index = () => {
       <section ref={stepsRef} className="py-16 sm:py-24 bg-muted/30">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="text-center mb-12">
-            <h2 
+            <h2
               className={`text-2xl sm:text-3xl font-bold mb-4 ${stepsVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
             >
               How It Works
@@ -252,7 +277,7 @@ const Index = () => {
             {[
               { step: "1", text: "Sign up (takes 30 seconds) and pick your grade, subjects, and goals" },
               { step: "2", text: "Ask doubts or scroll through questions from students worldwide" },
-              { step: "3", text: "Help others out, rack up points, and level up together 🚀" }
+              { step: "3", text: "Help others out, rack up points, and level up together 🚀" },
             ].map((item, index) => (
               <div
                 key={item.step}
@@ -277,15 +302,25 @@ const Index = () => {
           <h2 className="text-2xl sm:text-3xl font-bold">About StudyHub</h2>
           <p className="text-muted-foreground">
             This is the <strong>official website of StudyHub</strong> (
-            <a href="https://studyhub.world" className="underline hover:text-primary">https://studyhub.world</a>
+            <a href="https://studyhub.world" className="underline hover:text-primary">
+              https://studyhub.world
+            </a>
             ). StudyHub™, A student-only discussion platform focused on school life, questions, and studying!
           </p>
           <p className="text-sm text-muted-foreground">
             Built and maintained by the StudyHub Team. Read our{" "}
-            <a href="/privacy" className="underline hover:text-primary">Privacy Policy</a> and{" "}
-            <a href="/terms" className="underline hover:text-primary">Terms &amp; Conditions</a>.
-            Contact us at{" "}
-            <a href="mailto:support@studyhub.world" className="underline hover:text-primary">support@studyhub.world</a>.
+            <a href="/privacy" className="underline hover:text-primary">
+              Privacy Policy
+            </a>{" "}
+            and{" "}
+            <a href="/terms" className="underline hover:text-primary">
+              Terms &amp; Conditions
+            </a>
+            . Contact us at{" "}
+            <a href="mailto:studyhub.community.web@gmail.com" className="underline hover:text-primary">
+              studyhub.community.web@gmail.com
+            </a>
+            .
           </p>
         </div>
       </section>
@@ -293,51 +328,41 @@ const Index = () => {
       {/* Final CTA Section */}
       <section ref={ctaRef} className="py-16 sm:py-24">
         <div className="container mx-auto px-4 text-center">
-          <div 
+          <div
             className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-6 animate-float ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
           >
             <Sparkles className="h-8 w-8 text-primary" />
           </div>
-          
-          <h2 
+
+          <h2
             className={`text-2xl sm:text-3xl font-bold mb-4 ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
             style={{ animationDelay: "100ms" }}
           >
             Ready to stop stressing and start studying?
           </h2>
-          
-          <p 
+
+          <p
             className={`text-muted-foreground mb-8 max-w-md mx-auto ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
             style={{ animationDelay: "150ms" }}
           >
             Thousands of students are already here helping each other out. Your turn.
           </p>
-          
-          <div 
+
+          <div
             className={`flex flex-col sm:flex-row gap-3 justify-center ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
             style={{ animationDelay: "200ms" }}
           >
-            <Button 
-              size="lg" 
-              onClick={handleGetStarted}
-              className="gap-2 btn-bounce hover-glow"
-            >
+            <Button size="lg" onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
               {user ? "Back to Feed" : "Join StudyHub — Free Forever"}
               <ArrowRight className="h-4 w-4" />
             </Button>
-            <Button 
-              size="lg" 
-              variant="ghost"
-              onClick={() => navigate("/content-generator")}
-              className="gap-2"
-            >
+            <Button size="lg" variant="ghost" onClick={() => navigate("/content-generator")} className="gap-2">
               <Brain className="h-4 w-4" />
               Try AI Study Tools
             </Button>
           </div>
         </div>
       </section>
-
 
       <Footer />
       <CookieConsent />
