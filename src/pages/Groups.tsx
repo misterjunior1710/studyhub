@@ -91,12 +91,14 @@ const Groups = () => {
     checkAuth();
   }, [navigate]);
 
-  const { data: groups = [], isLoading: loading, error } = useQuery({
+  const { data: groups = [], isLoading: loading, error, refetch, isFetching } = useQuery({
     queryKey: ["groups", userId],
     queryFn: () => fetchGroups(userId),
     enabled: !!userId,
     staleTime: 30 * 1000,
     gcTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 4000),
   });
 
   const handleGroupCreated = useCallback(() => {
@@ -119,10 +121,6 @@ const Groups = () => {
     if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
     return `${Math.floor(seconds / 86400)}d ago`;
   };
-
-  if (error) {
-    toast.error("Failed to load groups");
-  }
 
   return (
     <div className="min-h-screen bg-background">
