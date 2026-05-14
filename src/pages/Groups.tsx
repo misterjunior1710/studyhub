@@ -26,17 +26,32 @@ interface GroupChat {
 const fetchGroups = async (userId: string | null): Promise<GroupChat[]> => {
   if (!userId) return [];
 
-  const { data: memberData, error: memberError } = await supabase
-    .from("group_members")
-    .select("group_id")
-    .eq("user_id", userId);
+  const loadMemberships = async () => {
+    const { data, error } = await supabase
+      .from("group_members")
+      .select("group_id")
+      .eq("user_id", userId);
 
-  if (memberError) {
-    console.error("[Groups] Failed to fetch memberships:", memberError);
-    throw memberError;
+    if (error) {
+      console.error("[Groups] Failed to fetch memberships:", error);
+      throw error;
+    }
+
+    return data || [];
+  };
+
+  let memberData = await loadMemberships();
+
+  if (memberData.length === 0) {
+    const { error: syncError } = await supabase.rpc("auto_assign_user_to_groups", { p_user_id: userId });
+    if (syncError) {
+      console.warn("[Groups] Auto group sync skipped:", syncError);
+    } else {
+      memberData = await loadMemberships();
+    }
   }
 
-  if (!memberData || memberData.length === 0) {
+  if (memberData.length === 0) {
     return [];
   }
 

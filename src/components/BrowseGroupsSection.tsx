@@ -14,7 +14,7 @@ interface PublicGroup {
   name: string;
   description: string | null;
   is_public: boolean;
-  member_count?: number;
+  member_count?: number | null;
   is_member?: boolean;
   has_pending_request?: boolean;
 }
@@ -79,27 +79,30 @@ const BrowseGroupsSection = ({ userId, onJoinGroup }: BrowseGroupsSectionProps) 
 
       const pendingGroupIds = new Set(pendingRequests?.map(r => r.group_id) || []);
 
-      // Get member counts and filter out groups with no members (deleted groups)
+      // Member rows are intentionally private for groups the user has not joined.
+      // Count joined groups accurately, but still show browsable public groups.
       const groupsWithCounts = await Promise.all(
         (allGroups || []).map(async (group) => {
-          const { count } = await supabase
-            .from("group_members")
-            .select("*", { count: "exact", head: true })
-            .eq("group_id", group.id);
+          const isMember = memberGroupIds.has(group.id);
+          const { count } = isMember
+            ? await supabase
+                .from("group_members")
+                .select("*", { count: "exact", head: true })
+                .eq("group_id", group.id)
+            : { count: null };
 
           return {
             ...group,
-            member_count: count || 0,
-            is_member: memberGroupIds.has(group.id),
+            member_count: count,
+            is_member: isMember,
             has_pending_request: pendingGroupIds.has(group.id),
           };
         })
       );
 
-      // Filter out groups with no members (likely deleted/abandoned groups)
-      // Also filter out groups where admin has disabled browse visibility
+      // Filter out groups where admin has disabled browse visibility
       return groupsWithCounts.filter(group => 
-        group.member_count > 0 && group.show_in_browse !== false
+        group.show_in_browse !== false
       );
     },
     enabled: !!userId,
@@ -206,7 +209,7 @@ const BrowseGroupsSection = ({ userId, onJoinGroup }: BrowseGroupsSectionProps) 
             <CardTitle className="text-base line-clamp-1">{group.name}</CardTitle>
           </div>
           <Badge variant="secondary" className="shrink-0">
-            {group.member_count} members
+            {group.member_count != null ? `${group.member_count} members` : "Open group"}
           </Badge>
         </div>
         <CardDescription className="line-clamp-2 text-sm">
