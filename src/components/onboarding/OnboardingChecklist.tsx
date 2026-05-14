@@ -20,7 +20,7 @@ const OnboardingChecklist = () => {
 
   const taskActions: Record<string, () => void> = {
     profile: () => navigate("/settings"),
-    browse: () => navigate("/"),
+    browse: () => navigate("/feed"),
     group: () => navigate("/groups"),
     friend: () => navigate("/friends"),
     post: () => {}, // Handled by CreatePostDialog
