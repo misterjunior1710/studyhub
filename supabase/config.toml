@@ -37,3 +37,11 @@ project_id = "qrquegcexsqrbtwtcicq"
     verify_jwt = true
   [functions.google-calendar-sync]
     verify_jwt = false
+  [functions.payments-webhook]
+    verify_jwt = false
+  [functions.create-checkout]
+    verify_jwt = false
+  [functions.create-portal-session]
+    verify_jwt = false
+  [functions.redeem-promo-code]
+    verify_jwt = false
