@@ -106,7 +106,7 @@ export const getOrganizationSchema = () => ({
   "@type": "Organization",
   name: "StudyHub",
   slogan: "Study Smarter, Ace Everything",
-  description: "StudyHub is a free global student community where learners connect, ask academic questions, share study materials, and collaborate in study groups. Join thousands of students from around the world.",
+  description: "StudyHub™, A student-only discussion platform focused on school life, questions, and studying!",
   url: "https://studyhub.world",
   logo: "https://storage.googleapis.com/gpt-engineer-file-uploads/T6FlWUVm6DYTgcsVHeiIqQYaN6A2/uploads/1764745423647-Screenshot 2025-12-03 123228.png",
   sameAs: [],
@@ -122,7 +122,7 @@ export const getCommunitySchema = () => ({
   "@type": "WebSite",
   name: "StudyHub",
   alternateName: "Study Smarter, Ace Everything",
-  description: "StudyHub is a free online learning community for students worldwide. Ask homework questions, join study groups, track your progress, and access AI-powered study tools.",
+  description: "StudyHub™, A student-only discussion platform focused on school life, questions, and studying!",
   url: "https://studyhub.world",
   potentialAction: {
     "@type": "SearchAction",

@@ -66,8 +66,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="StudyHub — Official Student Productivity & Learning Platform"
-        description="Official website of StudyHub (https://studyhub.world). StudyHub is a student productivity and learning platform designed to help users manage assignments, study plans, and life-transition skills from school to adulthood."
+        title="StudyHub — Official Student-Only Discussion Platform"
+        description="Official website of StudyHub (https://studyhub.world). StudyHub™, A student-only discussion platform focused on school life, questions, and studying!"
         canonical="https://studyhub.world/"
       />
       <StructuredData data={structuredData} />
@@ -90,7 +90,7 @@ const Index = () => {
             </h1>
             
             <p className="text-muted-foreground text-base sm:text-lg md:text-xl mb-4 max-w-2xl mx-auto opacity-0 animate-hero-fade-up" style={{ animationDelay: "100ms" }}>
-              <strong>StudyHub™</strong> is a student productivity and learning platform designed to help users manage assignments, study plans, and life-transition skills from school to adulthood.
+              <strong>StudyHub™</strong>, A student-only discussion platform focused on school life, questions, and studying!
             </p>
             <p className="text-xs sm:text-sm text-muted-foreground/80 mb-8 opacity-0 animate-hero-fade-up" style={{ animationDelay: "150ms" }}>
               StudyHub™ — Study Smarter, Ace Everything
@@ -278,8 +278,7 @@ const Index = () => {
           <p className="text-muted-foreground">
             This is the <strong>official website of StudyHub</strong> (
             <a href="https://studyhub.world" className="underline hover:text-primary">https://studyhub.world</a>
-            ). StudyHub is a student productivity and learning platform designed to help users
-            manage assignments, study plans, and life-transition skills from school to adulthood.
+            ). StudyHub™, A student-only discussion platform focused on school life, questions, and studying!
           </p>
           <p className="text-sm text-muted-foreground">
             Built and maintained by the StudyHub Team. Read our{" "}
