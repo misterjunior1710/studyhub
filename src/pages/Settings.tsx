@@ -71,16 +71,27 @@ interface ProfileData {
   theme_color: string;
 }
 
-const themeColors = [
-  { name: "purple", label: "Purple", primary: "262 83% 58%", accent: "330 85% 60%" },
-  { name: "blue", label: "Ocean Blue", primary: "217 91% 60%", accent: "199 89% 48%" },
-  { name: "green", label: "Forest Green", primary: "142 76% 36%", accent: "160 84% 39%" },
-  { name: "orange", label: "Sunset Orange", primary: "24 95% 53%", accent: "38 92% 50%" },
-  { name: "red", label: "Ruby Red", primary: "0 72% 51%", accent: "350 89% 60%" },
-  { name: "teal", label: "Teal", primary: "173 80% 40%", accent: "187 92% 35%" },
-  { name: "indigo", label: "Indigo", primary: "239 84% 67%", accent: "250 70% 55%" },
-  { name: "slate", label: "Slate Gray", primary: "215 20% 45%", accent: "215 25% 35%" },
+const premiumThemes = [
+  { name: "royal-purple", label: "Royal Purple", description: "Elegant purple", primary: "287 67% 38%", accent: "287 67% 55%" },
+  { name: "neon-violet", label: "Neon Violet", description: "Futuristic purple", primary: "291 64% 42%", accent: "291 70% 60%" },
+  { name: "sunset-orange", label: "Sunset Orange", description: "Warm productivity", primary: "36 100% 50%", accent: "24 95% 55%" },
+  { name: "crimson-red", label: "Crimson Red", description: "Strong highlight", primary: "0 65% 51%", accent: "350 80% 60%" },
+  { name: "rose-pink", label: "Rose Pink", description: "Modern soft pink", primary: "330 81% 60%", accent: "320 70% 70%" },
+  { name: "graphite-gray", label: "Graphite Gray", description: "Professional dark", primary: "217 19% 27%", accent: "217 19% 45%" },
+  { name: "arctic-silver", label: "Arctic Silver", description: "Clean UI gray", primary: "215 20% 65%", accent: "215 25% 75%" },
 ];
+
+const calmThemes = [
+  { name: "ocean-blue", label: "Ocean Blue", description: "Deep sky blue", primary: "207 90% 54%", accent: "199 89% 60%" },
+  { name: "slate-blue", label: "Slate Blue", description: "Soft academic blue", primary: "231 44% 56%", accent: "231 50% 70%" },
+  { name: "indigo-night", label: "Indigo Night", description: "Modern indigo", primary: "231 48% 48%", accent: "239 70% 60%" },
+  { name: "forest-green", label: "Forest Green", description: "Calm green", primary: "123 46% 34%", accent: "142 60% 45%" },
+  { name: "sage-green", label: "Sage Green", description: "Soft muted green", primary: "126 14% 55%", accent: "126 20% 65%" },
+  { name: "teal-focus", label: "Teal Focus", description: "Clean teal", primary: "174 100% 29%", accent: "174 80% 40%" },
+  { name: "midnight-cyan", label: "Midnight Cyan", description: "Dark cyan", primary: "184 100% 20%", accent: "184 80% 32%" },
+];
+
+const themeColors = [...premiumThemes, ...calmThemes];
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -119,7 +130,7 @@ const Settings = () => {
     weekly_study_goal: 10,
     daily_hours_target: 2,
     auto_start_focus_timer: false,
-    theme_color: "purple",
+    theme_color: "ocean-blue",
   });
 
   const [newPassword, setNewPassword] = useState("");
@@ -205,7 +216,7 @@ const Settings = () => {
         weekly_study_goal: profileData.weekly_study_goal || 10,
         daily_hours_target: profileData.daily_hours_target || 2,
         auto_start_focus_timer: profileData.auto_start_focus_timer ?? false,
-        theme_color: profileData.theme_color || "purple",
+        theme_color: profileData.theme_color || "ocean-blue",
       });
     }
 
@@ -602,26 +613,39 @@ const Settings = () => {
                   <CardTitle className="flex items-center gap-2"><Palette className="h-5 w-5 text-primary" />Color Theme</CardTitle>
                   <CardDescription>Choose your preferred color scheme</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    {themeColors.map((theme) => (
-                      <button
-                        key={theme.name}
-                        onClick={() => setProfile(prev => ({ ...prev, theme_color: theme.name }))}
-                        className={`p-4 rounded-lg border-2 transition-all ${
-                          profile.theme_color === theme.name 
-                            ? 'border-primary ring-2 ring-primary/20' 
-                            : 'border-border hover:border-primary/50'
-                        }`}
-                      >
-                        <div 
-                          className="w-full h-12 rounded-md mb-2" 
-                          style={{ background: `linear-gradient(135deg, hsl(${theme.primary}), hsl(${theme.accent}))` }}
-                        />
-                        <p className="text-sm font-medium">{theme.label}</p>
-                      </button>
-                    ))}
-                  </div>
+                <CardContent className="space-y-8">
+                  {[
+                    { title: "Premium / Modern", subtitle: "Bold, expressive palettes", themes: premiumThemes },
+                    { title: "Calm / Focused", subtitle: "Soothing palettes for deep work", themes: calmThemes },
+                  ].map((section) => (
+                    <div key={section.title} className="space-y-3">
+                      <div>
+                        <h3 className="text-base font-semibold">{section.title} Themes</h3>
+                        <p className="text-sm text-muted-foreground">{section.subtitle}</p>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {section.themes.map((theme) => (
+                          <button
+                            key={theme.name}
+                            onClick={() => setProfile(prev => ({ ...prev, theme_color: theme.name }))}
+                            aria-label={`Select ${theme.label} theme`}
+                            className={`p-4 rounded-lg border-2 text-left transition-all ${
+                              profile.theme_color === theme.name
+                                ? 'border-primary ring-2 ring-primary/20'
+                                : 'border-border hover:border-primary/50'
+                            }`}
+                          >
+                            <div
+                              className="w-full h-12 rounded-md mb-2"
+                              style={{ background: `linear-gradient(135deg, hsl(${theme.primary}), hsl(${theme.accent}))` }}
+                            />
+                            <p className="text-sm font-medium">{theme.label}</p>
+                            <p className="text-xs text-muted-foreground">{theme.description}</p>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
 
