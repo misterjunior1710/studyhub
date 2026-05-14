@@ -14,7 +14,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "next-themes";
 import { useEasterEggs } from "./EasterEggs";
-import studyhubLogo from "@/assets/studyhub-logo.png";
+import StudyHubLogo from "@/components/StudyHubLogo";
 
 interface NavbarProps {
   onPostCreated?: () => void;
@@ -81,7 +81,7 @@ const Navbar = ({
               className="flex items-center gap-2 px-2 py-1 rounded-lg transition-all hover:bg-accent/10 hover:scale-[1.02] active:scale-95"
               aria-label="StudyHub home"
             >
-              <img src={studyhubLogo} alt="StudyHub logo" className="h-8 w-8 object-contain" />
+              <StudyHubLogo className="h-10 w-10 sm:h-11 sm:w-11 transition-transform group-hover:scale-105" />
               <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 StudyHub™
               </h1>

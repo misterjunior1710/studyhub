@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
-import studyhubLogo from "@/assets/studyhub-logo.png";
+import StudyHubLogo from "@/components/StudyHubLogo";
 
 const Footer = () => {
   return (
@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1 space-y-3">
             <div className="flex items-center gap-2">
-              <img src={studyhubLogo} alt="StudyHub logo" className="h-8 w-8 object-contain" />
+              <StudyHubLogo className="h-10 w-10 sm:h-11 sm:w-11 transition-transform group-hover:scale-105" />
               <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 StudyHub™
               </h3>
