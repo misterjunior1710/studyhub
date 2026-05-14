@@ -7,8 +7,8 @@ import Footer from "@/components/Footer";
 import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Users, Globe, Lock } from "lucide-react";
-import { toast } from "sonner";
+import { Loader2, Users, Globe, Lock, AlertCircle, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import CreateGroupDialog from "@/components/CreateGroupDialog";
 import BrowseGroupsSection from "@/components/BrowseGroupsSection";
 import { useOnboarding } from "@/contexts/OnboardingContext";
@@ -26,45 +26,48 @@ interface GroupChat {
 const fetchGroups = async (userId: string | null): Promise<GroupChat[]> => {
   if (!userId) return [];
 
-  // Get all groups where user is a member
   const { data: memberData, error: memberError } = await supabase
     .from("group_members")
     .select("group_id")
     .eq("user_id", userId);
 
-  if (memberError) throw memberError;
+  if (memberError) {
+    console.error("[Groups] Failed to fetch memberships:", memberError);
+    throw memberError;
+  }
 
   if (!memberData || memberData.length === 0) {
     return [];
   }
 
-  const groupIds = memberData.map(m => m.group_id);
+  const groupIds = memberData.map((m) => m.group_id);
 
-  // Get group details and member counts in parallel
   const { data: groupsData, error: groupsError } = await supabase
     .from("group_chats")
     .select("*")
     .in("id", groupIds)
     .order("created_at", { ascending: false });
 
-  if (groupsError) throw groupsError;
+  if (groupsError) {
+    console.error("[Groups] Failed to fetch group details:", groupsError);
+    throw groupsError;
+  }
 
-  // Get member counts for each group
-  const groupsWithCounts = await Promise.all(
-    (groupsData || []).map(async (group) => {
-      const { count } = await supabase
+  // Fetch all member counts in parallel; tolerate individual failures
+  const counts = await Promise.allSettled(
+    (groupsData || []).map((g) =>
+      supabase
         .from("group_members")
         .select("*", { count: "exact", head: true })
-        .eq("group_id", group.id);
-      
-      return {
-        ...group,
-        member_count: count || 0
-      };
-    })
+        .eq("group_id", g.id)
+    )
   );
 
-  return groupsWithCounts;
+  return (groupsData || []).map((group, i) => {
+    const r = counts[i];
+    const count = r.status === "fulfilled" ? r.value.count ?? 0 : 0;
+    return { ...group, member_count: count };
+  });
 };
 
 const Groups = () => {
@@ -88,12 +91,14 @@ const Groups = () => {
     checkAuth();
   }, [navigate]);
 
-  const { data: groups = [], isLoading: loading, error } = useQuery({
+  const { data: groups = [], isLoading: loading, error, refetch, isFetching } = useQuery({
     queryKey: ["groups", userId],
     queryFn: () => fetchGroups(userId),
     enabled: !!userId,
     staleTime: 30 * 1000,
     gcTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 4000),
   });
 
   const handleGroupCreated = useCallback(() => {
@@ -116,10 +121,6 @@ const Groups = () => {
     if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
     return `${Math.floor(seconds / 86400)}d ago`;
   };
-
-  if (error) {
-    toast.error("Failed to load groups");
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -164,6 +165,24 @@ const Groups = () => {
                 <div className="flex justify-center items-center py-12" role="status" aria-label="Loading groups">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
+              ) : error ? (
+                <Card className="text-center py-12">
+                  <CardContent>
+                    <AlertCircle className="h-12 w-12 mx-auto mb-4 text-destructive" aria-hidden="true" />
+                    <h2 className="text-xl font-semibold mb-2">Couldn't load your groups</h2>
+                    <p className="text-muted-foreground mb-4 max-w-md mx-auto">
+                      Something went wrong while fetching your groups. Check your connection and try again.
+                    </p>
+                    <Button onClick={() => refetch()} disabled={isFetching} variant="outline">
+                      {isFetching ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                      )}
+                      Try again
+                    </Button>
+                  </CardContent>
+                </Card>
               ) : groups.length === 0 ? (
                 <Card className="text-center py-12">
                   <CardContent>
