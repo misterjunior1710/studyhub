@@ -1,0 +1,32 @@
+# StudyHub
+
+> StudyHub™ is a student-only discussion platform focused on school life, questions, and studying.
+
+StudyHub is a community-driven productivity and learning platform for students aged 13+. Members ask homework questions, join study groups, share notes, track tasks and calendars, collaborate on whiteboards and docs, and use Nova, the built-in AI study assistant. The platform also includes life-transition learning modules to help students prepare for adulthood.
+
+## Pages
+
+- [Home](/): Overview of StudyHub and entry point for new students.
+- [Feed](/feed): Community feed of student posts and discussions.
+- [Questions](/questions): Q&A hub where students post and answer school questions.
+- [Tasks](/tasks): Personal task manager with calendar and kanban views.
+- [Calendar](/calendar): Schedule events and deadlines, with optional Google Calendar sync.
+- [Notes](/notes): Rich note-taking with LaTeX, code blocks, mentions, and AI assist.
+- [Whiteboards](/whiteboards): Real-time collaborative whiteboards.
+- [Study Tools](/study): Flashcards, quizzes, mind maps, and Pomodoro timer.
+- [AI Study Tools](/content-generator): Generate study content from trusted sources.
+- [Nova AI Assistant](/assistant): Conversational AI tutor for students.
+- [Friends](/friends): Find and connect with other students.
+- [Groups](/groups): Browse and join study groups (Study Squads).
+- [Leaderboard](/leaderboard): Community ranking based on activity and achievements.
+- [Saved Posts](/saved): Posts the user has bookmarked.
+- [Updates](/updates): Official announcements and product updates.
+- [Transitions](/transitions): Life-skills modules for the transition from school to adulthood.
+- [Install App](/install): Instructions to install StudyHub as a PWA.
+- [Support](/support): Help center and contact for support requests.
+- [Sign In](/auth): Account sign-in and registration.
+
+## Optional
+
+- [Terms of Service](/terms): Legal terms of use.
+- [Privacy Policy](/privacy): How user data is handled.
