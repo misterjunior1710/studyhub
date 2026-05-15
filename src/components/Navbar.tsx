@@ -14,7 +14,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "next-themes";
 import { useEasterEggs } from "./EasterEggs";
 import StudyHubLogo from "@/components/StudyHubLogo";
+import GlobalSearch from "@/components/GlobalSearch";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 interface NavbarProps {
   onPostCreated?: () => void;
