@@ -28,6 +28,18 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
   const { theme, setTheme } = useTheme();
   const { handleLogoClick } = useEasterEggs();
   const { user, username, profileData, isAdmin, profileLoading, signOut } = useAuth();
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.key === "k" || e.key === "K") && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setSearchOpen((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const isActive = (path: string) => location.pathname === path;
 
