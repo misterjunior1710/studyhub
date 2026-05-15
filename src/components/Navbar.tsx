@@ -1,4 +1,4 @@
-import { LogOut, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen, ChevronDown, Trophy, ListChecks, Users, HelpCircle, Search, Briefcase, UserCircle2 } from "lucide-react";
+import { LogOut, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen, ChevronDown, Trophy, ListChecks, Users, HelpCircle, Search, Briefcase, UserCircle2, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -80,6 +80,7 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
     { path: "/friends", label: "Friends", icon: UserPlus },
     { path: "/groups", label: "Groups", icon: Users },
     { path: "/leaderboard", label: "Leaderboard", icon: Trophy },
+    { path: "/missions", label: "Missions", icon: Target },
   ];
 
   const accountItems = [
