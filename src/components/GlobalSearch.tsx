@@ -150,7 +150,7 @@ const GlobalSearch = ({ open, onOpenChange }: GlobalSearchProps) => {
 
     (async () => {
       try {
-        const queries: Promise<any>[] = [
+        const queries: any[] = [
           // Posts (visible: not hidden)
           supabase
             .from("posts")
