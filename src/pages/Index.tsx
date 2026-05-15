@@ -98,9 +98,9 @@ const Index = () => {
         <div className="relative container mx-auto px-4 py-16 sm:py-24 md:py-32">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight opacity-0 animate-hero-fade-up">
-              Study Smarter,{" "}
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Ace Everything
+              <span className="block">Study Smarter.</span>
+              <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Ace Everything.
               </span>
             </h1>
 

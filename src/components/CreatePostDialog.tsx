@@ -200,8 +200,8 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-gradient-to-r from-accent to-accent hover:opacity-90">
-          <Plus className="h-4 w-4 mr-2" />
+        <Button size="sm" className="bg-gradient-to-r from-accent to-accent hover:opacity-90">
+          <Plus className="h-4 w-4 mr-1.5" />
           Create Post
         </Button>
       </DialogTrigger>
