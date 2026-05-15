@@ -268,6 +268,7 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
           </div>
         </div>
       </div>
+      <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </nav>
   );
 };
