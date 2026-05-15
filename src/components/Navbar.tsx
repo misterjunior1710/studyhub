@@ -1,5 +1,4 @@
-import { User, LogOut, Home, HelpCircle, Users, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Bell, Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen, MoreHorizontal, ChevronDown, Trophy, ListChecks, Compass } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { LogOut, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark, Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen, ChevronDown, Trophy, ListChecks, Users, HelpCircle, Search, Briefcase, UserCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,185 +14,181 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "next-themes";
 import { useEasterEggs } from "./EasterEggs";
 import StudyHubLogo from "@/components/StudyHubLogo";
+import { cn } from "@/lib/utils";
 
 interface NavbarProps {
   onPostCreated?: () => void;
 }
 
-const Navbar = ({
-  onPostCreated
-}: NavbarProps) => {
+const Navbar = ({ onPostCreated }: NavbarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { theme, setTheme } = useTheme();
   const { handleLogoClick } = useEasterEggs();
-  const {
-    user,
-    username,
-    profileData,
-    isAdmin,
-    profileLoading,
-    signOut
-  } = useAuth();
-  
+  const { user, username, profileData, isAdmin, profileLoading, signOut } = useAuth();
+
   const isActive = (path: string) => location.pathname === path;
-  
+
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
   };
 
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
+  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
 
   const handleLogoClickWithNav = () => {
     handleLogoClick();
     navigate("/");
   };
 
-  // Secondary nav items for "More" dropdown
-  const moreItems = [
+  // Subtle active style — replaces solid pill with glow + underline + translucent bg
+  const activeClass =
+    "bg-primary/10 text-primary underline underline-offset-[6px] decoration-primary/70 decoration-2 shadow-[0_0_14px_-2px_hsl(var(--primary)/0.4)] hover:bg-primary/15";
+  const inactiveClass = "text-foreground/80 hover:text-foreground hover:bg-accent/10";
+
+  const coreItems = [
+    { path: "/feed", label: "Feed", icon: Rss },
+    { path: "/questions", label: "Questions", icon: HelpCircle },
     { path: "/tasks", label: "Tasks", icon: ListChecks },
-    { path: "/transitions", label: "Life Skills", icon: Compass },
-    { path: "/leaderboard", label: "Leaderboard", icon: Trophy },
-    { path: "/friends", label: "Friends", icon: UserPlus },
+    { path: "/assistant", label: "Nova AI", icon: Sparkles },
+  ];
+
+  const productivityItems = [
+    { path: "/tasks", label: "Tasks", icon: ListChecks },
     { path: "/calendar", label: "Calendar", icon: Calendar },
-    { path: "/whiteboards", label: "Whiteboards", icon: Palette },
     { path: "/notes", label: "Notes", icon: NotebookPen },
+    { path: "/whiteboards", label: "Whiteboards", icon: Palette },
+    { path: "/study", label: "Study Tools", icon: Timer },
+    { path: "/content-generator", label: "AI Study Tools", icon: Sparkles },
+  ];
+
+  const socialItems = [
+    { path: "/friends", label: "Friends", icon: UserPlus },
+    { path: "/groups", label: "Groups", icon: Users },
+    { path: "/leaderboard", label: "Leaderboard", icon: Trophy },
+  ];
+
+  const accountItems = [
     { path: "/saved", label: "Saved Posts", icon: Bookmark },
-    { path: "/updates", label: "Updates", icon: Megaphone },
     { path: "/install", label: "Install App", icon: Download },
+    { path: "/updates", label: "Updates", icon: Megaphone },
     { path: "/support", label: "Support", icon: LifeBuoy },
   ];
 
-  const isMoreActive = moreItems.some(item => isActive(item.path));
+  const groupActive = (items: { path: string }[]) => items.some((i) => isActive(i.path));
+
+  const renderDropdown = (
+    label: string,
+    icon: React.ElementType,
+    items: { path: string; label: string; icon: React.ElementType }[],
+  ) => {
+    const Icon = icon;
+    const active = groupActive(items);
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={cn("h-8 px-2.5 gap-1 rounded-md text-sm font-medium", active ? activeClass : inactiveClass)}
+          >
+            <Icon className="h-4 w-4" />
+            <span className="hidden lg:inline">{label}</span>
+            <ChevronDown className="h-3 w-3 opacity-60" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="center" className="w-48">
+          {items.map((it) => (
+            <DropdownMenuItem key={it.path} onClick={() => navigate(it.path)}>
+              <it.icon className="mr-2 h-4 w-4" />
+              <span>{it.label}</span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-border bg-card/95">
+    <nav className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <div className="container mx-auto px-4">
-        <div className="flex h-14 sm:h-16 items-center justify-between gap-2 sm:gap-4">
-          <div className="flex items-center gap-2 sm:gap-6">
+        <div className="relative flex h-11 sm:h-12 items-center justify-between gap-2">
+          {/* LEFT: Logo only */}
+          <div className="flex items-center gap-1">
             <MobileNav />
             <button
               type="button"
               onClick={handleLogoClickWithNav}
-              className="flex items-center gap-2 px-2 py-1 rounded-lg transition-all hover:bg-accent/10 hover:scale-[1.02] active:scale-95"
+              className="flex items-center gap-2 px-1.5 py-1 rounded-lg transition-all hover:bg-accent/10 hover:scale-[1.02] active:scale-95"
               aria-label="StudyHub home"
             >
-              <StudyHubLogo className="h-10 w-10 sm:h-11 sm:w-11 transition-transform group-hover:scale-105" />
-              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <StudyHubLogo className="h-8 w-8 sm:h-9 sm:w-9" />
+              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 StudyHub™
               </h1>
             </button>
-            <div className="hidden md:flex items-center gap-1">
-              {/* Primary nav items */}
-              <Button variant={isActive("/") ? "default" : "ghost"} size="sm" onClick={() => navigate("/")}>
-                <Home className="h-4 w-4 mr-2" />
-                Home
-              </Button>
-              <Button variant={isActive("/feed") ? "default" : "ghost"} size="sm" onClick={() => navigate("/feed")}>
-                <Rss className="h-4 w-4 mr-2" />
-                Feed
-              </Button>
-              <Button variant={isActive("/questions") ? "default" : "ghost"} size="sm" onClick={() => navigate("/questions")}>
-                <HelpCircle className="h-4 w-4 mr-2" />
-                Questions
-              </Button>
-              <Button variant={isActive("/groups") ? "default" : "ghost"} size="sm" onClick={() => navigate("/groups")}>
-                <Users className="h-4 w-4 mr-2" />
-                Groups
-              </Button>
-
-              {/* Study & AI dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant={(isActive("/study") || isActive("/content-generator")) ? "default" : "ghost"} 
-                    size="sm"
-                    className="gap-1"
-                  >
-                    <Timer className="h-4 w-4 mr-1" />
-                    Study & AI
-                    <ChevronDown className="h-3 w-3 opacity-60" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-48">
-                  <DropdownMenuItem onClick={() => navigate("/study")}>
-                    <Timer className="mr-2 h-4 w-4" />
-                    <span>Study Tools</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/content-generator")}>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    <span>AI Study Tools</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/assistant")}>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    <span>Nova (AI Assistant)</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* More dropdown for secondary items */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant={isMoreActive ? "default" : "ghost"} 
-                    size="sm"
-                    className="gap-1"
-                  >
-                    <MoreHorizontal className="h-4 w-4 mr-1" />
-                    More
-                    <ChevronDown className="h-3 w-3 opacity-60" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-48">
-                  {moreItems.map((item) => (
-                    <DropdownMenuItem key={item.path} onClick={() => navigate(item.path)}>
-                      <item.icon className="mr-2 h-4 w-4" />
-                      <span>{item.label}</span>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
           </div>
 
-          <div className="flex items-center gap-1 sm:gap-2">
-            {/* Mobile: Show theme toggle and notifications outside dropdown */}
+          {/* CENTER: Core actions + categorized dropdowns */}
+          <div className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
+            {coreItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.path);
+              return (
+                <Button
+                  key={item.path}
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate(item.path)}
+                  className={cn("h-8 px-3 rounded-md text-sm font-medium gap-1.5", active ? activeClass : inactiveClass)}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span>{item.label}</span>
+                </Button>
+              );
+            })}
+            <div className="mx-1 h-5 w-px bg-border/60" />
+            {renderDropdown("Productivity", Briefcase, productivityItems)}
+            {renderDropdown("Social", Users, socialItems)}
+            {renderDropdown("Account", UserCircle2, accountItems)}
+          </div>
+
+          {/* RIGHT: Search, Notifications, Create, Avatar */}
+          <div className="flex items-center gap-1 sm:gap-1.5">
             <div className="md:hidden">
               <ThemeToggle />
             </div>
             {user ? (
               <>
-                {/* Gamification widgets - hidden on tiny screens */}
-                <div className="hidden xs:flex items-center gap-1.5 sm:gap-2 mr-1">
+                <div className="hidden xs:flex items-center gap-1 sm:gap-1.5 mr-1">
                   <StreakIndicator />
                   <CoinWallet />
                   <LevelBadge />
                 </div>
-                {/* Show notifications popover - visible on all screens */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 hidden sm:inline-flex"
+                  onClick={() => navigate("/questions")}
+                  aria-label="Search"
+                  title="Search"
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
                 <NotificationsPopover />
-                <div className="hidden sm:block">
-                  <CreatePostDialog onPostCreated={onPostCreated} />
-                </div>
+                <CreatePostDialog onPostCreated={onPostCreated} />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="relative" aria-label={`${username || 'User'}'s profile menu`}>
-                      <Avatar className="h-8 w-8" title={`${username || 'User'}'s profile`}>
-                        {profileData.avatar_url && (
-                          <AvatarImage src={profileData.avatar_url} alt={username || 'User'} />
-                        )}
-                        <AvatarFallback className="bg-primary text-primary-foreground">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 relative" aria-label={`${username || "User"}'s profile menu`}>
+                      <Avatar className="h-7 w-7">
+                        {profileData.avatar_url && <AvatarImage src={profileData.avatar_url} alt={username || "User"} />}
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                           {username.charAt(0).toUpperCase() || "U"}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="w-64 bg-popover text-popover-foreground border border-border shadow-md z-50 p-0"
-                  >
+                  <DropdownMenuContent align="end" className="w-64 bg-popover text-popover-foreground border border-border shadow-md z-50 p-0">
                     <DropdownMenuLabel className="py-3">
                       <div className="flex flex-col gap-2">
                         <div className="flex flex-col space-y-1">
@@ -211,54 +206,30 @@ const Navbar = ({
                           </div>
                           <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                         </div>
-
                         <div className="space-y-1">
                           {profileData.grade && (
-                            <p className="text-xs text-muted-foreground">
-                              <span className="font-medium">Grade:</span> {profileData.grade}
-                            </p>
+                            <p className="text-xs text-muted-foreground"><span className="font-medium">Grade:</span> {profileData.grade}</p>
                           )}
                           {profileData.stream && (
-                            <p className="text-xs text-muted-foreground">
-                              <span className="font-medium">Stream:</span> {profileData.stream}
-                            </p>
+                            <p className="text-xs text-muted-foreground"><span className="font-medium">Stream:</span> {profileData.stream}</p>
                           )}
                           {profileData.country && (
-                            <p className="text-xs text-muted-foreground">
-                              <span className="font-medium">Country:</span> {profileData.country}
-                            </p>
+                            <p className="text-xs text-muted-foreground"><span className="font-medium">Country:</span> {profileData.country}</p>
                           )}
                         </div>
                       </div>
                     </DropdownMenuLabel>
-
                     <DropdownMenuSeparator />
-
-                    {/* Account preferences */}
                     <div className="py-1">
-                      {/* Desktop only: Theme toggle in dropdown */}
                       <DropdownMenuItem onClick={toggleTheme} className="hidden md:flex">
-                        {theme === "dark" ? (
-                          <>
-                            <Sun className="mr-2 h-4 w-4" />
-                            <span>Light Mode</span>
-                          </>
-                        ) : (
-                          <>
-                            <Moon className="mr-2 h-4 w-4" />
-                            <span>Dark Mode</span>
-                          </>
-                        )}
+                        {theme === "dark" ? (<><Sun className="mr-2 h-4 w-4" /><span>Light Mode</span></>) : (<><Moon className="mr-2 h-4 w-4" /><span>Dark Mode</span></>)}
                       </DropdownMenuItem>
-
                       <DropdownMenuItem onClick={() => navigate("/settings")}>
                         <Settings className="mr-2 h-4 w-4" />
                         <span>Settings</span>
                       </DropdownMenuItem>
                     </div>
-
                     <DropdownMenuSeparator />
-
                     <div className="py-1">
                       <DropdownMenuItem onClick={handleSignOut}>
                         <LogOut className="mr-2 h-4 w-4" />
@@ -273,7 +244,7 @@ const Navbar = ({
                 <div className="hidden md:block">
                   <ThemeToggle />
                 </div>
-                <Button onClick={() => navigate("/auth")}>Sign In</Button>
+                <Button size="sm" onClick={() => navigate("/auth")}>Sign In</Button>
               </>
             )}
           </div>
