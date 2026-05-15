@@ -181,13 +181,17 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
                 </div>
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 hidden sm:inline-flex"
-                  onClick={() => navigate("/questions")}
-                  aria-label="Search"
-                  title="Search"
+                  size="sm"
+                  className="h-8 hidden sm:inline-flex items-center gap-2 px-2.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/10"
+                  onClick={() => setSearchOpen(true)}
+                  aria-label="Open global search"
+                  title="Search (Ctrl/Cmd+K)"
                 >
                   <Search className="h-4 w-4" />
+                  <span className="hidden lg:inline text-xs">Search</span>
+                  <kbd className="hidden lg:inline ml-1 px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono text-foreground/70">
+                    ⌘K
+                  </kbd>
                 </Button>
                 <NotificationsPopover />
                 <CreatePostDialog onPostCreated={onPostCreated} />
