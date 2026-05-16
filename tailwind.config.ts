@@ -256,7 +256,8 @@ export default {
   			second: 'moveInCircle 20s reverse infinite',
   			third: 'moveInCircle 40s linear infinite',
   			fourth: 'moveHorizontal 40s ease infinite',
-  			fifth: 'moveInCircle 20s ease infinite'
+  			fifth: 'moveInCircle 20s ease infinite',
+  			'spin-slow': 'spin 40s linear infinite'
   		},
   		boxShadow: {
   			'2xs': 'var(--shadow-2xs)',
