@@ -57,28 +57,35 @@ export function SplineScene({ scene, className }: SplineSceneProps) {
       queued = false;
       if (!canvas) return;
       const rect = canvas.getBoundingClientRect();
-      // Map the global cursor position into the canvas coords. Even when the
-      // cursor is outside the canvas, we feed the projected coordinates so the
-      // robot keeps tracking. Spline reads clientX/clientY and computes
-      // relative to its own bounding rect, so any value works.
-      const event = new PointerEvent('pointermove', {
-        clientX: lastX,
-        clientY: lastY,
-        bubbles: false,
-        cancelable: true,
-        pointerType: 'mouse',
-      });
-      canvas.dispatchEvent(event);
-      // Some Spline builds listen to mousemove too
+      if (rect.width === 0 || rect.height === 0) return;
+
+      // Map the cursor's position within the viewport (0..1) onto the canvas
+      // rect, so the robot's look-at target stays inside its sensible range
+      // no matter where the cursor is on the page.
+      const vw = window.innerWidth || 1;
+      const vh = window.innerHeight || 1;
+      const nx = Math.min(Math.max(lastX / vw, 0), 1);
+      const ny = Math.min(Math.max(lastY / vh, 0), 1);
+      const mappedX = rect.left + nx * rect.width;
+      const mappedY = rect.top + ny * rect.height;
+
+      canvas.dispatchEvent(
+        new PointerEvent('pointermove', {
+          clientX: mappedX,
+          clientY: mappedY,
+          bubbles: false,
+          cancelable: true,
+          pointerType: 'mouse',
+        }),
+      );
       canvas.dispatchEvent(
         new MouseEvent('mousemove', {
-          clientX: lastX,
-          clientY: lastY,
+          clientX: mappedX,
+          clientY: mappedY,
           bubbles: false,
           cancelable: true,
         }),
       );
-      void rect;
     };
 
     const onMove = (e: PointerEvent | MouseEvent) => {
