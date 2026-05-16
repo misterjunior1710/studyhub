@@ -250,86 +250,146 @@
     </div>
 
     <div id="root">
-      <!-- Static fallback content for SEO crawlers - hidden by CSS, preserved for crawlers -->
-      <div class="seo-fallback">
-        <header style="padding: 1rem; text-align: center;">
-          <h1><strong>StudyHub™</strong> — Study Smarter, Ace Everything</h1>
-          <nav>
-            <a href="/">Home</a> | <a href="/questions">Questions</a> | <a href="/groups">Study Groups</a> |
-            <a href="/leaderboard">Leaderboard</a> | <a href="/support">Support</a> |
-            <a href="/auth">Sign In</a>
-          </nav>
-        </header>
-        <main style="padding: 2rem; text-align: center;">
-          <h2><strong>Connect with Students Worldwide</strong></h2>
-          <p>
-            <strong>StudyHub</strong> is the <strong>ultimate platform for students</strong> to share knowledge, ask
-            questions, and collaborate across different countries, subjects, grades, and streams.
-          </p>
+      <!-- Static fallback content for SEO crawlers and no-JS users - mirrors live StudyHub™ branding -->
+      <div class="seo-fallback" style="font-family: 'Lato', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; color: #171717; background: #f5f5f5; min-height: 100vh; line-height: 1.6;">
+        <style>
+          .sh-fallback a { color: #4f46e5; text-decoration: none; transition: color .2s ease; }
+          .sh-fallback a:hover { color: #6366f1; text-decoration: underline; }
+          .sh-fallback .sh-btn { display: inline-block; padding: 12px 24px; border-radius: 12px; font-weight: 700; background: linear-gradient(135deg, #4f46e5, #6366f1); color: #ffffff !important; box-shadow: 0 8px 24px -8px rgba(79,70,229,0.55); }
+          .sh-fallback .sh-btn:hover { color: #ffffff !important; text-decoration: none; opacity: .92; }
+          .sh-fallback .sh-btn-ghost { display: inline-block; padding: 12px 24px; border-radius: 12px; font-weight: 600; background: #ffffff; color: #171717 !important; border: 1px solid #d4d4d4; }
+          .sh-fallback .sh-card { background: #ffffff; border: 1px solid #e5e5e5; border-radius: 20px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+          .sh-fallback .sh-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+          .sh-fallback h1 { font-family: 'EB Garamond', ui-serif, Georgia, serif; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 12px; }
+          .sh-fallback h2 { font-family: 'EB Garamond', ui-serif, Georgia, serif; font-size: clamp(1.5rem, 3.5vw, 2.25rem); margin: 0 0 12px; letter-spacing: -0.015em; }
+          .sh-fallback h3 { font-size: 1.125rem; font-weight: 700; margin: 0 0 8px; }
+          .sh-fallback p { margin: 0 0 12px; color: #404040; }
+          .sh-fallback nav.sh-topnav a { padding: 8px 14px; border-radius: 999px; color: #171717; font-weight: 500; }
+          .sh-fallback nav.sh-topnav a:hover { background: rgba(79,70,229,0.08); text-decoration: none; }
+          @media (prefers-color-scheme: dark) {
+            .sh-fallback { background: #171717 !important; color: #fafafa !important; }
+            .sh-fallback p { color: #d4d4d4; }
+            .sh-fallback .sh-card { background: #262626; border-color: #404040; }
+            .sh-fallback nav.sh-topnav a { color: #fafafa; }
+            .sh-fallback .sh-btn-ghost { background: #262626; color: #fafafa !important; border-color: #525252; }
+            .sh-fallback .sh-divider { border-color: #404040 !important; }
+          }
+        </style>
 
-          <section>
-            <h3><strong>Why Choose StudyHub?</strong></h3>
-            <ul style="list-style: none; padding: 0;">
-              <li>📚 <strong>Ask doubts</strong> and get answers from peers worldwide</li>
-              <li>👥 <strong>Join study groups</strong> based on your subjects and interests</li>
-              <li>🏆 <strong>Earn XP</strong> and climb the leaderboard</li>
-              <li>🔥 <strong>Build study streaks</strong> and stay motivated</li>
-              <li>🌍 <strong>Connect with students</strong> from different countries</li>
-            </ul>
+        <div class="sh-fallback">
+          <!-- Top navigation: mirrors live navbar structure (logo left, core actions center, account right) -->
+          <header style="border-bottom: 1px solid #e5e5e5; background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);">
+            <div style="max-width: 1280px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+              <a href="/" style="display: flex; align-items: center; gap: 10px; color: inherit;">
+                <img src="/studyhub-logo.png" alt="StudyHub logo" width="32" height="32" style="border-radius: 8px;" />
+                <strong style="font-family: 'EB Garamond', serif; font-size: 1.35rem; letter-spacing: -0.01em;">StudyHub<sup style="font-size: 0.55em;">™</sup></strong>
+              </a>
+              <nav class="sh-topnav" style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 0.95rem;">
+                <a href="/feed">Feed</a>
+                <a href="/questions">Questions</a>
+                <a href="/tasks">Tasks</a>
+                <a href="/assistant">Nova AI</a>
+              </nav>
+              <div style="display: flex; gap: 8px;">
+                <a href="/auth" class="sh-btn-ghost">Sign in</a>
+                <a href="/auth" class="sh-btn">Get started</a>
+              </div>
+            </div>
+          </header>
+
+          <!-- Hero: matches live tagline "Study Smarter. Ace Everything." -->
+          <section style="padding: 64px 20px 48px; text-align: center; background: radial-gradient(ellipse at top, rgba(79,70,229,0.10), transparent 60%);">
+            <div style="max-width: 760px; margin: 0 auto;">
+              <span style="display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(79,70,229,0.10); color: #4f46e5; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 18px;">The student-only platform</span>
+              <h1>
+                <span style="display: block;">Study Smarter.</span>
+                <span style="display: block; background: linear-gradient(135deg, #4f46e5, #ec4899); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: #4f46e5;">Ace Everything.</span>
+              </h1>
+              <p style="font-size: 1.125rem; max-width: 620px; margin: 0 auto 28px;">
+                StudyHub™ is a student-only discussion platform for school life, questions, and studying — ask doubts, join study squads, and level up with Nova AI.
+              </p>
+              <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                <a href="/auth" class="sh-btn">Create your free account</a>
+                <a href="/questions" class="sh-btn-ghost">Browse questions</a>
+              </div>
+            </div>
           </section>
 
-          <section>
-            <h3><strong>Popular Features</strong></h3>
-            <p>
-              <a href="/questions"><strong>Browse Questions</strong></a> - Find answers to common study problems
-            </p>
-            <p>
-              <a href="/groups"><strong>Study Groups</strong></a> - Join communities of like-minded students
-            </p>
-            <p>
-              <a href="/leaderboard"><strong>Leaderboard</strong></a> - See top contributors this week
-            </p>
-            <p>
-              <a href="/friends"><strong>Friends</strong></a> - Connect with fellow students and study partners
-            </p>
-            <p>
-              <a href="/study"><strong>Study Mode</strong></a> - Focus with our Pomodoro timer
-            </p>
-            <p>
-              <a href="/assistant"><strong>Nova AI</strong></a> - Your own Study Buddy
-            </p>
+          <!-- Core features -->
+          <section style="max-width: 1100px; margin: 0 auto; padding: 32px 20px;">
+            <h2 style="text-align: center;">Everything you need to study</h2>
+            <p style="text-align: center; margin-bottom: 28px;">One hub for questions, notes, tasks, study tools, and your squad.</p>
+            <div class="sh-grid">
+              <article class="sh-card"><h3>Questions &amp; Answers</h3><p>Post doubts, get verified answers from peers and mentors.</p><a href="/questions">Open Questions →</a></article>
+              <article class="sh-card"><h3>Study Squads</h3><p>Join groups by subject, grade, or curriculum and collaborate live.</p><a href="/groups">Browse Groups →</a></article>
+              <article class="sh-card"><h3>Nova AI Assistant</h3><p>Your personal study buddy for explanations, summaries, and practice.</p><a href="/assistant">Chat with Nova →</a></article>
+              <article class="sh-card"><h3>Tasks &amp; Calendar</h3><p>Plan assignments, track deadlines, and sync to Google Calendar.</p><a href="/tasks">Open Tasks →</a></article>
+              <article class="sh-card"><h3>Study Tools</h3><p>Flashcards, quizzes, mind maps, and a Pomodoro timer in one place.</p><a href="/study">Study Mode →</a></article>
+              <article class="sh-card"><h3>Notes &amp; Whiteboards</h3><p>Real-time collaborative docs and whiteboards for group work.</p><a href="/notes">Open Notes →</a></article>
+              <article class="sh-card"><h3>Missions &amp; XP</h3><p>Complete daily missions, earn XP, and climb the leaderboard.</p><a href="/missions">View Missions →</a></article>
+              <article class="sh-card"><h3>Life Skills</h3><p>Transition guides on budgeting, savings, and life after school.</p><a href="/transitions">Explore Life Skills →</a></article>
+            </div>
           </section>
 
-          <section>
-            <h3><strong>Get Started Today!</strong></h3>
-            <p>Join <strong>thousands of students</strong> already learning together on <strong>StudyHub</strong>.</p>
-            <a href="/auth"><strong>Create Your Free Account</strong></a>
+          <!-- Explore all -->
+          <section style="max-width: 1100px; margin: 0 auto; padding: 16px 20px 48px;">
+            <div class="sh-card">
+              <h3 style="text-align: center;">Explore the platform</h3>
+              <nav style="display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: center; padding-top: 8px;">
+                <a href="/feed">Feed</a>
+                <a href="/questions">Questions</a>
+                <a href="/tasks">Tasks</a>
+                <a href="/calendar">Calendar</a>
+                <a href="/notes">Notes</a>
+                <a href="/whiteboards">Whiteboards</a>
+                <a href="/study">Study Mode</a>
+                <a href="/content-generator">AI Study Tools</a>
+                <a href="/assistant">Nova AI</a>
+                <a href="/friends">Friends</a>
+                <a href="/groups">Groups</a>
+                <a href="/leaderboard">Leaderboard</a>
+                <a href="/missions">Missions</a>
+                <a href="/transitions">Life Skills</a>
+                <a href="/saved">Saved Posts</a>
+                <a href="/updates">Updates</a>
+                <a href="/install">Install App</a>
+                <a href="/support">Support</a>
+              </nav>
+            </div>
           </section>
-        </main>
-        <footer style="padding: 1rem; text-align: center; border-top: 1px solid #ccc;">
-          <p>&copy; 2025 <strong>StudyHub™</strong> — Study Smarter, Ace Everything. All rights reserved.</p>
-          <p><strong>Study Smarter, Ace Everything</strong> !</p>
-          <nav>
-            <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms & Conditions</a> |
-            <a href="/support">Help & Support</a>
-          </nav>
-        </footer>
+
+          <!-- Final CTA -->
+          <section style="text-align: center; padding: 48px 20px 64px;">
+            <h2>Join the squad. It's free.</h2>
+            <p style="max-width: 520px; margin: 0 auto 20px;">Students 13+ — bring your questions, ace your year.</p>
+            <a href="/auth" class="sh-btn">Get started</a>
+          </section>
+
+          <footer class="sh-divider" style="border-top: 1px solid #e5e5e5; padding: 24px 20px; text-align: center; font-size: 0.9rem;">
+            <p style="margin-bottom: 8px;">&copy; 2026 StudyHub™ — Study Smarter. Ace Everything.</p>
+            <nav style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+              <a href="/privacy">Privacy</a>
+              <a href="/terms">Terms</a>
+              <a href="/support">Support</a>
+            </nav>
+          </footer>
+        </div>
       </div>
     </div>
 
-    <!-- Noscript fallback for crawlers that don't execute JS -->
+    <!-- Noscript fallback for crawlers/users without JS -->
     <noscript>
-      <div style="padding: 2rem; text-align: center;">
-        <h1><strong>StudyHub™</strong> — Study Smarter, Ace Everything</h1>
-        <p>Like<strong>Reddi,t</strong>but built for students</p>
-        <nav>
-          <a href="/">Home</a> | <a href="/questions">Questions</a> | <a href="/groups">Study Groups</a> |
-          <a href="/leaderboard">Leaderboard</a> | <a href="/friends">Friends</a> | <a href="/study">Study Mode</a> |
-          <a href="/auth">Sign In</a> | <a href="/privacy">Privacy</a> | <a href="/terms">Terms</a> |
-          <a href="/support">Support</a>
+      <div style="font-family: 'Lato', system-ui, sans-serif; max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem; text-align: center; color: #171717;">
+        <img src="/studyhub-logo.png" alt="StudyHub logo" width="48" height="48" style="border-radius: 10px;" />
+        <h1 style="font-family: 'EB Garamond', serif; font-size: 2.25rem; margin: 12px 0 8px;">StudyHub™</h1>
+        <p style="font-size: 1.1rem; margin-bottom: 20px;"><strong>Study Smarter. Ace Everything.</strong></p>
+        <p>A student-only discussion platform for school life, questions, and studying.</p>
+        <nav style="margin: 20px 0; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+          <a href="/feed">Feed</a> · <a href="/questions">Questions</a> · <a href="/tasks">Tasks</a> ·
+          <a href="/assistant">Nova AI</a> · <a href="/groups">Groups</a> · <a href="/leaderboard">Leaderboard</a> ·
+          <a href="/auth">Sign in</a>
         </nav>
-        <p><strong>Study Smarter, Ace Everything</strong> 🎯</p>
-        <p>Please enable JavaScript to use StudyHub's full features.</p>
+        <p style="margin-top: 24px; color: #525252;">Please enable JavaScript to use the full StudyHub experience.</p>
       </div>
     </noscript>
 
