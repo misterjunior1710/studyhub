@@ -141,7 +141,7 @@ const Groups = () => {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Free Study Groups Online | Join Group Chats | Find Study Partners"
-        description="Join free online study groups. Find study partners, group chat with students, collaborate on homework. Math study groups, science study groups, exam prep groups. Start studying together now."
+        description="Join free online study groups. Find study partners, chat with students & collaborate on homework. Math, science and exam prep groups await."
         canonical="https://studyhub.world/groups"
       />
       <StructuredData data={breadcrumbData} />
