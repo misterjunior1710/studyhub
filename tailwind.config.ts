@@ -219,6 +219,10 @@ export default {
   				'0%': { transform: 'translateY(-50%)' },
   				'50%': { transform: 'translateY(50%)' },
   				'100%': { transform: 'translateY(-50%)' }
+  			},
+  			spotlight: {
+  				'0%': { opacity: '0', transform: 'translate(-72%, -62%) scale(0.5)' },
+  				'100%': { opacity: '1', transform: 'translate(-50%, -40%) scale(1)' }
   			}
   		},
   		animation: {
@@ -257,7 +261,8 @@ export default {
   			third: 'moveInCircle 40s linear infinite',
   			fourth: 'moveHorizontal 40s ease infinite',
   			fifth: 'moveInCircle 20s ease infinite',
-  			'spin-slow': 'spin 40s linear infinite'
+  			'spin-slow': 'spin 40s linear infinite',
+  			spotlight: 'spotlight 2s ease .75s 1 forwards'
   		},
   		boxShadow: {
   			'2xs': 'var(--shadow-2xs)',

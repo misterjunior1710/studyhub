@@ -20,6 +20,8 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
+import { SplineScene } from "@/components/ui/splite";
+import { Spotlight } from "@/components/ui/spotlight";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useOnboarding } from "@/contexts/OnboardingContext";
@@ -196,6 +198,38 @@ const Index = () => {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Interactive 3D Showcase */}
+      <section className="py-16 sm:py-24">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <Card className="w-full h-[500px] bg-black/[0.96] relative overflow-hidden border-border/50">
+            <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="hsl(var(--primary))" />
+            <div className="flex flex-col md:flex-row h-full">
+              <div className="flex-1 p-8 sm:p-10 relative z-10 flex flex-col justify-center">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
+                  Study in 3D
+                </h2>
+                <p className="mt-4 text-white/70 max-w-md text-sm sm:text-base">
+                  StudyHub isn't your average platform. Explore an interactive experience built
+                  to keep you engaged — drag, spin, and see learning come to life.
+                </p>
+                <div className="mt-6">
+                  <Button onClick={handleGetStarted} className="gap-2 btn-bounce">
+                    {user ? "Jump In" : "Join Free"}
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              <div className="flex-1 relative min-h-[280px]">
+                <SplineScene
+                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                  className="w-full h-full"
+                />
+              </div>
+            </div>
+          </Card>
         </div>
       </section>
 
