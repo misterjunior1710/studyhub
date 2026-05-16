@@ -21,6 +21,8 @@ import {
   Save, Plus, Trash2, Download, History, Layers, ChevronRight, Clock, Database,
   GraduationCap, Globe, CheckCircle2
 } from "lucide-react";
+import { PromptInputBox } from "@/components/ui/ai-prompt-box";
+import { NovaIcon } from "@/components/assistant/NovaIcon";
 import { contentGeneratorApi, GeneratedContent } from "@/lib/api/contentGenerator";
 import { getGradesForSelection, getStreamsForGrade, getSubjectsForGrade, COUNTRIES } from "@/lib/constants";
 import { getCurriculumTemplates, getAvailableCurriculums, CurriculumSubject } from "@/lib/curriculumTemplates";
@@ -1115,6 +1117,26 @@ ${generatedContent.examples.map((e, i) => `**Example ${i+1}:** ${e.problem}\n*So
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Floating Ask Nova prompt */}
+      <div className="fixed bottom-4 inset-x-0 z-40 px-4 pointer-events-none">
+        <div className="max-w-2xl mx-auto pointer-events-auto">
+          <div className="rounded-2xl border border-border bg-background/80 backdrop-blur-xl shadow-lg p-2">
+            <div className="flex items-center gap-2 px-3 pt-1 pb-2 text-xs text-muted-foreground">
+              <NovaIcon className="h-4 w-4 text-primary" />
+              <span>Ask Nova about your content, study help, or anything else</span>
+            </div>
+            <PromptInputBox
+              placeholder="Ask Nova anything…"
+              onSend={(message) => {
+                const text = message.trim();
+                if (!text) return;
+                navigate("/assistant", { state: { initialPrompt: text } });
+              }}
+            />
+          </div>
+        </div>
+      </div>
     </>
   );
 });
