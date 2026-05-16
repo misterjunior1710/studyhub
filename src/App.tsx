@@ -129,6 +129,9 @@ const App = () => (
               <Sonner />
               
               <BrowserRouter>
+                <BackgroundGradientAnimation
+                  containerClassName="fixed inset-0 -z-10 h-screen w-screen motion-reduce:hidden"
+                />
                 <a href="#main-content" className="skip-to-main">Skip to main content</a>
                 <SessionExpiredHandler />
                 <OnboardingFlow />
