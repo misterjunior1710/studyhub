@@ -20,7 +20,11 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { lazy, Suspense } from "react";
 import BottomNav from "@/components/BottomNav";
 import AnimatedLoadingSkeleton from "@/components/ui/animated-loading-skeleton";
-import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
+const BackgroundGradientAnimation = lazy(() =>
+  import("@/components/ui/background-gradient-animation").then((m) => ({
+    default: m.BackgroundGradientAnimation,
+  })),
+);
 
 // Eager load critical pages
 import Index from "./pages/Index";
@@ -60,7 +64,7 @@ const Transitions = lazy(() => import("./pages/Transitions"));
 const TransitionModule = lazy(() => import("./pages/TransitionModule"));
 const TransitionResources = lazy(() => import("./pages/TransitionResources"));
 const Pricing = lazy(() => import("./pages/Pricing"));
-import FloatingAssistant from "@/components/assistant/FloatingAssistant";
+const FloatingAssistant = lazy(() => import("@/components/assistant/FloatingAssistant"));
 
 // Optimized QueryClient with proper caching and garbage collection
 const queryClient = new QueryClient({
@@ -129,9 +133,11 @@ const App = () => (
               <Sonner />
               
               <BrowserRouter>
-                <BackgroundGradientAnimation
-                  containerClassName="fixed inset-0 -z-10 h-screen w-screen motion-reduce:hidden"
-                />
+                <Suspense fallback={null}>
+                  <BackgroundGradientAnimation
+                    containerClassName="fixed inset-0 -z-10 h-screen w-screen motion-reduce:hidden"
+                  />
+                </Suspense>
                 <a href="#main-content" className="skip-to-main">Skip to main content</a>
                 <SessionExpiredHandler />
                 <OnboardingFlow />
@@ -183,7 +189,9 @@ const App = () => (
                   </ProfileOnboardingGuard>
                 </Suspense>
                 <BottomNav />
-                <FloatingAssistant />
+                <Suspense fallback={null}>
+                  <FloatingAssistant />
+                </Suspense>
               </BrowserRouter>
             </TooltipProvider>
           </ThemeInitializer>
