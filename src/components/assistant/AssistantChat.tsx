@@ -159,27 +159,17 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
         </div>
       </ScrollArea>
 
-      <div className={cn("border-t border-border p-3 bg-background", compact && "pb-3")}>
-        <div className="max-w-3xl mx-auto flex items-end gap-2">
-          <Textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={onKeyDown}
-            placeholder="Ask anything… (Enter to send, Shift+Enter for new line)"
-            rows={1}
-            className="min-h-[44px] max-h-40 resize-none"
-            aria-label="Message Nova"
-            disabled={sending}
+      <div className={cn("border-t border-border p-3 bg-background/60 backdrop-blur", compact && "pb-3")}>
+        <div className="max-w-3xl mx-auto">
+          <PromptInputBox
+            onSend={(message) => {
+              if (!message.trim()) return;
+              setInput("");
+              void send(message);
+            }}
+            isLoading={sending}
+            placeholder="Ask Nova anything… (Enter to send, Shift+Enter for new line)"
           />
-          <Button
-            onClick={() => void send(input)}
-            disabled={!input.trim() || sending}
-            size="icon"
-            aria-label="Send message"
-          >
-            {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-          </Button>
         </div>
       </div>
     </div>
