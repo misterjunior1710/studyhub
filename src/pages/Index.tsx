@@ -23,6 +23,7 @@ import {
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 import { HeroGeometric } from "@/components/ui/shape-landing-hero";
+import { ReactLenis } from "lenis/react";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useOnboarding } from "@/contexts/OnboardingContext";
@@ -82,6 +83,7 @@ const Index = () => {
       ];
 
   return (
+    <ReactLenis root>
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
         title="StudyHub — Official Student-Only Discussion Platform"
@@ -378,6 +380,7 @@ const Index = () => {
       <Footer />
       <CookieConsent />
     </div>
+    </ReactLenis>
   );
 };
 
