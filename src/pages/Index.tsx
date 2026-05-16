@@ -209,7 +209,7 @@ const Index = () => {
             <div className="flex flex-col md:flex-row h-full">
               <div className="flex-1 p-8 sm:p-10 relative z-10 flex flex-col justify-center">
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
-                  Study in 3D
+                  The Future Of Studying
                 </h2>
                 <p className="mt-4 text-white/70 max-w-md text-sm sm:text-base">
                   StudyHub isn't your average platform. Explore an interactive experience built
