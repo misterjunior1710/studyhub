@@ -181,7 +181,7 @@ const Index = () => {
       </section>
 
       {/* Interactive 3D Showcase */}
-      <section className="py-16 sm:py-24 scroll-fade">
+      <section className="py-16 sm:py-24">
         <div className="container mx-auto px-4 max-w-6xl">
           <Card className="w-full h-[500px] bg-black/[0.96] relative overflow-hidden border-border/50">
             <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="hsl(var(--primary))" />
@@ -213,7 +213,7 @@ const Index = () => {
       </section>
 
       {/* Trust Section */}
-      <section className="border-y border-border bg-muted/30 scroll-fade">
+      <section className="border-y border-border bg-muted/30">
         <div className="container mx-auto px-4 py-8 sm:py-12">
           <p className="text-center text-muted-foreground text-sm sm:text-base">
             Used by students across 16+ countries — and counting 🌍
@@ -222,7 +222,7 @@ const Index = () => {
       </section>
 
       {/* What is StudyHub Section */}
-      <section ref={featuresRef} className="py-16 sm:py-24 scroll-fade">
+      <section ref={featuresRef} className="py-16 sm:py-24">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="text-center mb-12">
             <h2
@@ -276,7 +276,7 @@ const Index = () => {
       </section>
 
       {/* How It Works Section */}
-      <section ref={stepsRef} className="py-16 sm:py-24 bg-muted/30 scroll-fade">
+      <section ref={stepsRef} className="py-16 sm:py-24 bg-muted/30">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="text-center mb-12">
             <h2
@@ -310,7 +310,7 @@ const Index = () => {
       </section>
 
       {/* Transparency / About Section — required for OAuth verification */}
-      <section className="py-12 sm:py-16 bg-muted/20 border-y border-border scroll-fade">
+      <section className="py-12 sm:py-16 bg-muted/20 border-y border-border">
         <div className="container mx-auto px-4 max-w-3xl text-center space-y-4">
           <h2 className="text-2xl sm:text-3xl font-bold">About StudyHub</h2>
           <p className="text-muted-foreground">
@@ -339,7 +339,7 @@ const Index = () => {
       </section>
 
       {/* Final CTA Section */}
-      <section ref={ctaRef} className="py-16 sm:py-24 scroll-fade">
+      <section ref={ctaRef} className="py-16 sm:py-24">
         <div className="container mx-auto px-4 text-center">
           <div
             className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-6 animate-float ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
