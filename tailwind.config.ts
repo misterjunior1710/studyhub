@@ -251,7 +251,12 @@ export default {
   			'tooltip-in': 'tooltip-in 0.15s ease-out',
   			'menu-slide': 'menu-slide 0.2s ease-out',
   			'coin-pop': 'coin-pop 1.5s ease-out forwards',
-  			'pulse-slow': 'pulse-slow 2s ease-in-out infinite'
+  			'pulse-slow': 'pulse-slow 2s ease-in-out infinite',
+  			first: 'moveVertical 30s ease infinite',
+  			second: 'moveInCircle 20s reverse infinite',
+  			third: 'moveInCircle 40s linear infinite',
+  			fourth: 'moveHorizontal 40s ease infinite',
+  			fifth: 'moveInCircle 20s ease infinite'
   		},
   		boxShadow: {
   			'2xs': 'var(--shadow-2xs)',
