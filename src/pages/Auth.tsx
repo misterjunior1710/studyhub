@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, Sparkles, Mail } from "lucide-react";
+import { Loader2, Sparkles, Mail, Sun as Sunburst, Users, Brain, Trophy } from "lucide-react";
 import { z } from "zod";
 import AgeVerificationDialog from "@/components/AgeVerificationDialog";
 import EmailVerificationDialog from "@/components/EmailVerificationDialog";
@@ -293,17 +293,53 @@ const Auth = () => {
         </p>
       </header>
       
-      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-accent/20 p-4">
-        <article className="w-full max-w-md">
-          <Card className="animate-fade-in shadow-xl border-primary/10">
-            <CardHeader className="text-center">
-              <div className="flex justify-center mb-2">
-                <StudyHubLogo className="h-16 w-16 sm:h-20 sm:w-20 animate-bounce-soft drop-shadow-lg" />
-              </div>
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                StudyHub™
-              </CardTitle>
-              <CardDescription>Your study crew is waiting — let's go 📚</CardDescription>
+      <div className="flex-1 grid lg:grid-cols-2 min-h-[calc(100vh-4rem)]">
+        {/* Brand panel */}
+        <aside className="relative hidden lg:flex flex-col justify-between overflow-hidden p-12 bg-gradient-to-br from-primary via-primary/80 to-accent text-primary-foreground">
+          {/* Decorative sunburst */}
+          <div aria-hidden="true" className="absolute -top-24 -right-24 opacity-20">
+            <Sunburst className="h-[28rem] w-[28rem] animate-spin-slow" strokeWidth={1} />
+          </div>
+          <div aria-hidden="true" className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-accent/40 blur-3xl" />
+
+          <div className="relative z-10 flex items-center gap-3">
+            <StudyHubLogo className="h-10 w-10 drop-shadow-lg" />
+            <span className="text-xl font-bold tracking-tight">StudyHub™</span>
+          </div>
+
+          <div className="relative z-10 space-y-6 max-w-md">
+            <h2 className="text-4xl xl:text-5xl font-bold leading-tight">
+              Your study crew, your AI tutor, your wins.
+            </h2>
+            <p className="text-lg text-primary-foreground/85">
+              Ask questions, join Study Squads, generate notes with Nova, and ace every exam — all in one place.
+            </p>
+            <ul className="space-y-3 text-sm text-primary-foreground/90">
+              <li className="flex items-center gap-3"><Users className="h-5 w-5 shrink-0" /> Real students. Real answers. Verified by teachers.</li>
+              <li className="flex items-center gap-3"><Brain className="h-5 w-5 shrink-0" /> Nova AI generates notes, quizzes, and flashcards instantly.</li>
+              <li className="flex items-center gap-3"><Trophy className="h-5 w-5 shrink-0" /> Earn XP, climb leaderboards, stay motivated.</li>
+            </ul>
+          </div>
+
+          <p className="relative z-10 text-xs text-primary-foreground/70">
+            Free forever for students. No credit card. Ever.
+          </p>
+        </aside>
+
+        {/* Form panel */}
+        <section className="flex items-center justify-center p-4 sm:p-8 bg-background">
+          <article className="w-full max-w-md">
+            {/* Mobile brand */}
+            <div className="lg:hidden text-center mb-6">
+              <StudyHubLogo className="h-14 w-14 mx-auto mb-2 drop-shadow-lg" />
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">StudyHub™</h1>
+              <p className="text-sm text-muted-foreground">Your study crew is waiting 📚</p>
+            </div>
+
+          <Card className="animate-fade-in shadow-xl border-primary/10 bg-card/80 backdrop-blur-xl">
+            <CardHeader className="text-center hidden lg:block">
+              <CardTitle className="text-2xl font-bold">Welcome to StudyHub</CardTitle>
+              <CardDescription>Log in or create a free account to get started</CardDescription>
             </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" ref={tabsRef}>
@@ -626,6 +662,7 @@ const Auth = () => {
             </p>
           </aside>
         </article>
+        </section>
       </div>
       <Footer />
       <AgeVerificationDialog open={showAgeVerification} onConfirm={handleAgeVerificationConfirm} onCancel={handleAgeVerificationCancel} />
