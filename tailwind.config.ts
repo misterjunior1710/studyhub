@@ -204,6 +204,21 @@ export default {
   			'pulse-slow': {
   				'0%, 100%': { opacity: '1', transform: 'scale(1)' },
   				'50%': { opacity: '0.85', transform: 'scale(1.08)' }
+  			},
+  			moveHorizontal: {
+  				'0%': { transform: 'translateX(-50%) translateY(-10%)' },
+  				'50%': { transform: 'translateX(50%) translateY(10%)' },
+  				'100%': { transform: 'translateX(-50%) translateY(-10%)' }
+  			},
+  			moveInCircle: {
+  				'0%': { transform: 'rotate(0deg)' },
+  				'50%': { transform: 'rotate(180deg)' },
+  				'100%': { transform: 'rotate(360deg)' }
+  			},
+  			moveVertical: {
+  				'0%': { transform: 'translateY(-50%)' },
+  				'50%': { transform: 'translateY(50%)' },
+  				'100%': { transform: 'translateY(-50%)' }
   			}
   		},
   		animation: {
@@ -236,7 +251,12 @@ export default {
   			'tooltip-in': 'tooltip-in 0.15s ease-out',
   			'menu-slide': 'menu-slide 0.2s ease-out',
   			'coin-pop': 'coin-pop 1.5s ease-out forwards',
-  			'pulse-slow': 'pulse-slow 2s ease-in-out infinite'
+  			'pulse-slow': 'pulse-slow 2s ease-in-out infinite',
+  			first: 'moveVertical 30s ease infinite',
+  			second: 'moveInCircle 20s reverse infinite',
+  			third: 'moveInCircle 40s linear infinite',
+  			fourth: 'moveHorizontal 40s ease infinite',
+  			fifth: 'moveInCircle 20s ease infinite'
   		},
   		boxShadow: {
   			'2xs': 'var(--shadow-2xs)',
