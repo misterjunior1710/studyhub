@@ -1117,6 +1117,26 @@ ${generatedContent.examples.map((e, i) => `**Example ${i+1}:** ${e.problem}\n*So
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Floating Ask Nova prompt */}
+      <div className="fixed bottom-4 inset-x-0 z-40 px-4 pointer-events-none">
+        <div className="max-w-2xl mx-auto pointer-events-auto">
+          <div className="rounded-2xl border border-border bg-background/80 backdrop-blur-xl shadow-lg p-2">
+            <div className="flex items-center gap-2 px-3 pt-1 pb-2 text-xs text-muted-foreground">
+              <NovaIcon className="h-4 w-4 text-primary" />
+              <span>Ask Nova about your content, study help, or anything else</span>
+            </div>
+            <PromptInputBox
+              placeholder="Ask Nova anything…"
+              onSend={(message) => {
+                const text = message.trim();
+                if (!text) return;
+                navigate("/assistant", { state: { initialPrompt: text } });
+              }}
+            />
+          </div>
+        </div>
+      </div>
     </>
   );
 });
