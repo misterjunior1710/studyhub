@@ -87,11 +87,7 @@ const ThemeInitializer = ({ children }: { children: React.ReactNode }) => {
 };
 
 // Loading fallback component
-const PageLoader = () => (
-  <div className="min-h-screen bg-background flex items-center justify-center">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-  </div>
-);
+const PageLoader = () => <AnimatedLoadingSkeleton />;
 
 // Session expired handler component (needs to be inside BrowserRouter)
 const SessionExpiredHandler = () => {
