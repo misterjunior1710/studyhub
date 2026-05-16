@@ -46,6 +46,18 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
   // Keep composer focused
   useEffect(() => { textareaRef.current?.focus(); }, [threadId]);
 
+  // Auto-send initial prompt passed via navigation state (e.g. from Content Generator)
+  const sentInitialRef = useRef(false);
+  useEffect(() => {
+    const initial = (location.state as any)?.initialPrompt as string | undefined;
+    if (initial && !sentInitialRef.current && user) {
+      sentInitialRef.current = true;
+      // Clear state so refresh doesn't re-send
+      navigate(location.pathname, { replace: true, state: {} });
+      void send(initial);
+    }
+  }, [location.state, user, send, navigate, location.pathname]);
+
   const send = useCallback(async (text: string) => {
     if (!text.trim() || sending) return;
     if (!user) { toast.error("Sign in to chat with the assistant"); return; }
