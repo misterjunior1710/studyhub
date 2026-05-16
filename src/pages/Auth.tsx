@@ -662,6 +662,7 @@ const Auth = () => {
             </p>
           </aside>
         </article>
+        </section>
       </div>
       <Footer />
       <AgeVerificationDialog open={showAgeVerification} onConfirm={handleAgeVerificationConfirm} onCancel={handleAgeVerificationCancel} />
