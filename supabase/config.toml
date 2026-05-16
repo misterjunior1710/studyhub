@@ -18,7 +18,7 @@ project_id = "qrquegcexsqrbtwtcicq"
   [functions.process-email-queue]
     verify_jwt = true
   [functions.seed-test-data]
-    verify_jwt = false
+    verify_jwt = true
   [functions.send-support-request]
     verify_jwt = true
   [functions.task-reminders]
