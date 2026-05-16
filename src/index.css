@@ -171,6 +171,14 @@ All colors MUST be HSL.
     -webkit-overflow-scrolling: touch;
   }
 
+  /* Let the site-wide animated gradient show through on top of the base bg */
+  body {
+    background-color: transparent !important;
+  }
+  html {
+    background-color: hsl(var(--background));
+  }
+
   #root {
     overflow-x: hidden;
     min-height: 100vh;
