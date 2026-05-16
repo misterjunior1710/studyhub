@@ -212,8 +212,8 @@ const Index = () => {
                   The Future Of Studying
                 </h2>
                 <p className="mt-4 text-white/70 max-w-md text-sm sm:text-base">
-                  StudyHub isn't your average platform. Explore an interactive experience built
-                  to keep you engaged — drag, spin, and see learning come to life.
+                  StudyHub isn't your average platform. Explore an experience built
+                  to keep you engaged for a lifetime — see learning come to life.
                 </p>
                 <div className="mt-6">
                   <Button onClick={handleGetStarted} className="gap-2 btn-bounce">
