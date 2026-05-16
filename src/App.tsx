@@ -20,6 +20,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { lazy, Suspense } from "react";
 import BottomNav from "@/components/BottomNav";
 import AnimatedLoadingSkeleton from "@/components/ui/animated-loading-skeleton";
+import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 
 // Eager load critical pages
 import Index from "./pages/Index";
