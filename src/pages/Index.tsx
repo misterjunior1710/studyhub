@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
+import { HeroGeometric } from "@/components/ui/shape-landing-hero";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useOnboarding } from "@/contexts/OnboardingContext";
@@ -92,57 +93,33 @@ const Index = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <header className="relative overflow-hidden">
-        {/* CSS-only gradient background for performance - no JS animation */}
-        <div className="absolute inset-0 hero-gradient-bg" />
-        <div className="absolute inset-0 hero-radial-bg" />
-
-        <div className="relative container mx-auto px-4 py-16 sm:py-24 md:py-32">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight opacity-0 animate-hero-fade-up">
-              <span className="block">Study Smarter.</span>
-              <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Ace Everything.
-              </span>
-            </h1>
-
-            <p
-              className="text-muted-foreground text-base sm:text-lg md:text-xl mb-4 max-w-2xl mx-auto opacity-0 animate-hero-fade-up"
-              style={{ animationDelay: "100ms" }}
-            >
-              <strong>StudyHub™</strong>, A student-only discussion platform focused on school life, questions, and
-              studying!
-            </p>
-            <p
-              className="text-xs sm:text-sm text-muted-foreground/80 mb-8 opacity-0 animate-hero-fade-up"
-              style={{ animationDelay: "150ms" }}
-            >
-              StudyHub™ — Study Smarter, Ace Everything
-            </p>
-
-            <div
-              className="flex flex-col sm:flex-row gap-3 justify-center opacity-0 animate-hero-fade-up"
-              style={{ animationDelay: "200ms" }}
-            >
-              <Button size="lg" onClick={handleGetStarted} className="gap-2 text-base px-8 py-6 btn-bounce hover-glow">
-                {user ? "Jump to Feed" : "Get Started — It's Free"}
-                <ArrowRight className="h-4 w-4" />
+      <header className="relative">
+        <HeroGeometric
+          badge="StudyHub™"
+          title1="Study Smarter."
+          title2="Ace Everything."
+          description="A student-only discussion platform focused on school life, questions, and studying!"
+        >
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button size="lg" onClick={handleGetStarted} className="gap-2 text-base px-8 py-6 btn-bounce hover-glow">
+              {user ? "Jump to Feed" : "Get Started — It's Free"}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+            {!user && (
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => navigate("/questions")}
+                className="gap-2 text-base px-8 py-6 btn-bounce"
+              >
+                <Zap className="h-4 w-4" />
+                Browse First
               </Button>
-              {!user && (
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => navigate("/questions")}
-                  className="gap-2 text-base px-8 py-6 btn-bounce"
-                >
-                  <Zap className="h-4 w-4" />
-                  Browse First
-                </Button>
-              )}
-            </div>
+            )}
           </div>
-        </div>
+        </HeroGeometric>
       </header>
+
 
       {/* Continue Setup banner — logged-in users with incomplete onboarding */}
       {showContinueSetup && (
