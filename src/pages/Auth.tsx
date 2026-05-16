@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, Sparkles, Mail } from "lucide-react";
+import { Loader2, Sparkles, Mail, Sun as Sunburst, Users, Brain, Trophy } from "lucide-react";
 import { z } from "zod";
 import AgeVerificationDialog from "@/components/AgeVerificationDialog";
 import EmailVerificationDialog from "@/components/EmailVerificationDialog";
