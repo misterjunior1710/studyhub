@@ -538,3 +538,20 @@ All colors MUST be HSL.
   }
   .hover-lift:hover { transform: none; }
 }
+
+/* Scroll-linked fade: sections fade in as they enter and fade out as they leave */
+@supports (animation-timeline: view()) {
+  .scroll-fade {
+    animation: scroll-fade-inout linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 25%, cover 75% exit 100%;
+  }
+  @keyframes scroll-fade-inout {
+    0% { opacity: 0; transform: translateY(40px); }
+    25%, 75% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-40px); }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-fade { animation: none !important; opacity: 1 !important; transform: none !important; }
+}
