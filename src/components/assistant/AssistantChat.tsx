@@ -85,6 +85,16 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
     }
   }, [sending, user, threadId, location.pathname, setMessages, refresh, onThreadCreated, onAfterSend]);
 
+  // Auto-send initial prompt passed via navigation state (e.g. from Content Generator)
+  useEffect(() => {
+    const initial = (location.state as any)?.initialPrompt as string | undefined;
+    if (initial && !sentInitialRef.current && user) {
+      sentInitialRef.current = true;
+      navigate(location.pathname, { replace: true, state: {} });
+      void send(initial);
+    }
+  }, [location.state, user, send, navigate, location.pathname]);
+
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
