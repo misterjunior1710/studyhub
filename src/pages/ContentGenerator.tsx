@@ -21,6 +21,8 @@ import {
   Save, Plus, Trash2, Download, History, Layers, ChevronRight, Clock, Database,
   GraduationCap, Globe, CheckCircle2
 } from "lucide-react";
+import { PromptInputBox } from "@/components/ui/ai-prompt-box";
+import { NovaIcon } from "@/components/assistant/NovaIcon";
 import { contentGeneratorApi, GeneratedContent } from "@/lib/api/contentGenerator";
 import { getGradesForSelection, getStreamsForGrade, getSubjectsForGrade, COUNTRIES } from "@/lib/constants";
 import { getCurriculumTemplates, getAvailableCurriculums, CurriculumSubject } from "@/lib/curriculumTemplates";
