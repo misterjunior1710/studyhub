@@ -5,7 +5,7 @@ import { NovaIcon } from "./NovaIcon";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { PromptInputBox } from "@/components/ui/ai-prompt-box";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { renderAssistantMarkdown } from "@/lib/assistantMarkdown";
