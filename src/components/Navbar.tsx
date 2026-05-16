@@ -257,6 +257,14 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
               </>
             ) : (
               <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate("/pricing")}
+                  className={cn("hidden sm:inline-flex h-8 px-3 rounded-md text-sm font-medium", isActive("/pricing") ? activeClass : inactiveClass)}
+                >
+                  Pricing
+                </Button>
                 <div className="hidden md:block">
                   <ThemeToggle />
                 </div>
