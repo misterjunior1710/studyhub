@@ -39,6 +39,11 @@ const Footer = () => {
                   Study Groups
                 </Link>
               </li>
+              <li>
+                <Link to="/pricing" className="text-muted-foreground active:text-primary py-1 inline-block">
+                  Pricing
+                </Link>
+              </li>
             </ul>
           </div>
 
