@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
+import { HeroGeometric } from "@/components/ui/shape-landing-hero";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useOnboarding } from "@/contexts/OnboardingContext";
