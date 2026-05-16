@@ -205,14 +205,11 @@ const Pricing = () => {
 
   return (
     <>
-      <Helmet>
-        <title>StudyHub™ Pricing — Free & Pro Plans for Students</title>
-        <meta
-          name="description"
-          content="Affordable StudyHub™ plans for students. Start free, or upgrade to Pro for enhanced Nova AI, advanced study tools, premium themes & priority support."
-        />
-        <link rel="canonical" href="https://studyhub.world/pricing" />
-      </Helmet>
+      <SEOHead
+        title="StudyHub™ Pricing — Free & Pro Plans for Students"
+        description="Affordable StudyHub™ plans for students. Start free, or upgrade to Pro for enhanced Nova AI, advanced study tools, premium themes & priority support."
+        canonical="https://studyhub.world/pricing"
+      />
 
       <Navbar />
 
