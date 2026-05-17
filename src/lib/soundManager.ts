@@ -88,7 +88,9 @@ const tone = (
 ) => {
   const ctx = state.ctx;
   if (!ctx) return;
-  const now = ctx.currentTime + startOffset;
+  // Add a tiny lead-in so notes don't get dropped while ctx is mid-resume on the first gesture.
+  const lead = ctx.state === "running" ? 0.005 : 0.05;
+  const now = ctx.currentTime + lead + startOffset;
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.type = type;
