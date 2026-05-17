@@ -52,6 +52,9 @@ const Index = () => {
   const [stepsRef, stepsVisible] = useScrollReveal<HTMLDivElement>();
   const [ctaRef, ctaVisible] = useScrollReveal<HTMLDivElement>();
   const [quickActionsRef, quickActionsVisible] = useScrollReveal<HTMLDivElement>();
+  const [showcaseRef, showcaseVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.15 });
+  const [trustRef, trustVisible] = useScrollReveal<HTMLDivElement>();
+  const [aboutRef, aboutVisible] = useScrollReveal<HTMLDivElement>();
 
   const handleGetStarted = () => {
     if (user) {
