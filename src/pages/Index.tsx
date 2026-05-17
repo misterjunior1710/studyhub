@@ -315,8 +315,8 @@ const Index = () => {
       </section>
 
       {/* Transparency / About Section — required for OAuth verification */}
-      <section className="py-12 sm:py-16 bg-muted/20 border-y border-border">
-        <div className="container mx-auto px-4 max-w-3xl text-center space-y-4">
+      <section ref={aboutRef} className="py-12 sm:py-16 bg-muted/20 border-y border-border">
+        <div className={`container mx-auto px-4 max-w-3xl text-center space-y-4 ${aboutVisible ? "animate-soft-in" : "opacity-0"}`}>
           <h2 className="text-2xl sm:text-3xl font-bold">About StudyHub</h2>
           <p className="text-muted-foreground">
             This is the <strong>official website of StudyHub</strong> (
