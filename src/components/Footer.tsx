@@ -89,6 +89,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/refund" className="text-muted-foreground active:text-primary py-1 inline-block">
+                  Refund Policy
+                </Link>
+              </li>
+              <li>
                 <Link to="/support" className="text-muted-foreground active:text-primary py-1 inline-block">
                   Need Help?
                 </Link>
