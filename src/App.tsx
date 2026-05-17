@@ -65,6 +65,8 @@ const TransitionModule = lazy(() => import("./pages/TransitionModule"));
 const TransitionResources = lazy(() => import("./pages/TransitionResources"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const Refund = lazy(() => import("./pages/Refund"));
+const SuccessBasic = lazy(() => import("./pages/SuccessBasic"));
+const SuccessPro = lazy(() => import("./pages/SuccessPro"));
 const FloatingAssistant = lazy(() => import("@/components/assistant/FloatingAssistant"));
 
 // Optimized QueryClient with proper caching and garbage collection
@@ -183,6 +185,8 @@ const App = () => (
                         <Route path="/support" element={<Support />} />
                         <Route path="/pricing" element={<Pricing />} />
                         <Route path="/refund" element={<Refund />} />
+                        <Route path="/success/basic" element={<SuccessBasic />} />
+                        <Route path="/success/pro" element={<SuccessPro />} />
                           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                           <Route path="*" element={<NotFound />} />
                         </Routes>
