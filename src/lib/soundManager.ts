@@ -116,7 +116,8 @@ const vibrate = (pattern: number | number[]) => {
 // ---------- Sound presets ----------
 const presets: Record<SoundName, () => void> = {
   click: () => {
-    tone(600, 0.04, "sine", 0.06);
+    tone(720, 0.07, "triangle", 0.14);
+    tone(1080, 0.05, "sine", 0.08, 0.015);
     vibrate(8);
   },
   toggle: () => {
