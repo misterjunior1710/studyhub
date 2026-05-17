@@ -88,7 +88,9 @@ const tone = (
 ) => {
   const ctx = state.ctx;
   if (!ctx) return;
-  const now = ctx.currentTime + startOffset;
+  // Add a tiny lead-in so notes don't get dropped while ctx is mid-resume on the first gesture.
+  const lead = ctx.state === "running" ? 0.005 : 0.05;
+  const now = ctx.currentTime + lead + startOffset;
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.type = type;
@@ -114,7 +116,8 @@ const vibrate = (pattern: number | number[]) => {
 // ---------- Sound presets ----------
 const presets: Record<SoundName, () => void> = {
   click: () => {
-    tone(600, 0.04, "sine", 0.06);
+    tone(720, 0.07, "triangle", 0.14);
+    tone(1080, 0.05, "sine", 0.08, 0.015);
     vibrate(8);
   },
   toggle: () => {
