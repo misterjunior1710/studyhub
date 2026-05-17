@@ -273,19 +273,32 @@ All colors MUST be HSL.
 /* Animation utility classes */
 @layer utilities {
   .hover-lift {
-    @apply transition-all duration-200;
+    @apply transition-all duration-300 ease-out;
+    will-change: transform;
   }
   
   .hover-lift:hover {
-    @apply -translate-y-1 shadow-lg;
+    @apply -translate-y-1.5 shadow-xl;
   }
   
   .hover-glow {
-    @apply transition-shadow duration-300;
+    @apply transition-all duration-300 ease-out;
   }
   
   .hover-glow:hover {
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.25);
+    box-shadow: 0 0 28px hsl(var(--primary) / 0.35);
+    transform: translateY(-1px);
+  }
+
+  /* Soft entrance — used inline via animate-soft-in */
+  .animate-soft-in {
+    animation: soft-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes soft-in {
+    0%   { opacity: 0; transform: translateY(18px) scale(0.985); filter: blur(4px); }
+    60%  { filter: blur(0); }
+    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
   }
   
   .animate-stagger > * {

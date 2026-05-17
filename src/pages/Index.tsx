@@ -52,6 +52,9 @@ const Index = () => {
   const [stepsRef, stepsVisible] = useScrollReveal<HTMLDivElement>();
   const [ctaRef, ctaVisible] = useScrollReveal<HTMLDivElement>();
   const [quickActionsRef, quickActionsVisible] = useScrollReveal<HTMLDivElement>();
+  const [showcaseRef, showcaseVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.15 });
+  const [trustRef, trustVisible] = useScrollReveal<HTMLDivElement>();
+  const [aboutRef, aboutVisible] = useScrollReveal<HTMLDivElement>();
 
   const handleGetStarted = () => {
     if (user) {
@@ -181,9 +184,11 @@ const Index = () => {
       </section>
 
       {/* Interactive 3D Showcase */}
-      <section className="py-16 sm:py-24">
+      <section ref={showcaseRef} className="py-16 sm:py-24">
         <div className="container mx-auto px-4 max-w-6xl">
-          <Card className="w-full h-[500px] bg-black/[0.96] relative overflow-hidden border-border/50">
+          <Card
+            className={`w-full h-[500px] bg-black/[0.96] relative overflow-hidden border-border/50 transition-all duration-500 ease-out hover:shadow-2xl hover:-translate-y-1 ${showcaseVisible ? "animate-soft-in" : "opacity-0"}`}
+          >
             <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="hsl(var(--primary))" />
             <div className="flex flex-col md:flex-row h-full">
               <div className="flex-1 p-8 sm:p-10 relative z-10 flex flex-col justify-center">
@@ -195,7 +200,7 @@ const Index = () => {
                   to keep you engaged for a lifetime — see learning come to life.
                 </p>
                 <div className="mt-6">
-                  <Button onClick={handleGetStarted} className="gap-2 btn-bounce">
+                  <Button onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
                     {user ? "Jump In" : "Join Free"}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
@@ -213,9 +218,9 @@ const Index = () => {
       </section>
 
       {/* Trust Section */}
-      <section className="border-y border-border bg-muted/30">
+      <section ref={trustRef} className="border-y border-border bg-muted/30">
         <div className="container mx-auto px-4 py-8 sm:py-12">
-          <p className="text-center text-muted-foreground text-sm sm:text-base">
+          <p className={`text-center text-muted-foreground text-sm sm:text-base ${trustVisible ? "animate-soft-in" : "opacity-0"}`}>
             Used by students across 16+ countries — and counting 🌍
           </p>
         </div>
@@ -310,8 +315,8 @@ const Index = () => {
       </section>
 
       {/* Transparency / About Section — required for OAuth verification */}
-      <section className="py-12 sm:py-16 bg-muted/20 border-y border-border">
-        <div className="container mx-auto px-4 max-w-3xl text-center space-y-4">
+      <section ref={aboutRef} className="py-12 sm:py-16 bg-muted/20 border-y border-border">
+        <div className={`container mx-auto px-4 max-w-3xl text-center space-y-4 ${aboutVisible ? "animate-soft-in" : "opacity-0"}`}>
           <h2 className="text-2xl sm:text-3xl font-bold">About StudyHub</h2>
           <p className="text-muted-foreground">
             This is the <strong>official website of StudyHub</strong> (
