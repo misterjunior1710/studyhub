@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, Eye, Lock, Database, Bell, Users, Trash2, Mail, Server, Globe, UserCheck, Cookie } from "lucide-react";
+import { Shield, Eye, Lock, Database, Bell, Users, Trash2, Mail, Server, Globe, UserCheck, Cookie, CreditCard } from "lucide-react";
 
 const Privacy = () => {
   const breadcrumbData = getBreadcrumbSchema([
@@ -232,6 +232,7 @@ const Privacy = () => {
                 <li><strong>AI services:</strong> AI models used for content generation and writing assistance process your prompts but do not retain them</li>
                 <li><strong>Analytics:</strong> Google Analytics to understand platform usage and improve user experience</li>
                 <li><strong>Email services:</strong> To send notifications and support communications</li>
+                <li><strong>Payment processing:</strong> <a href="https://dodopayments.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Dodo Payments</a> is our Merchant of Record for paid plans. It handles card data, taxes, invoicing, and chargebacks on our behalf. See the "Payments &amp; Billing" section below for details</li>
                 <li><strong>Content delivery:</strong> To ensure fast and reliable access to platform resources</li>
               </ul>
               <p className="text-muted-foreground text-sm">
@@ -351,6 +352,84 @@ const Privacy = () => {
                 <li>If you are under the age of consent in your country, please have a parent or guardian review this policy</li>
                 <li>Parents or guardians may contact us to review, delete, or stop collection of their child's information</li>
               </ul>
+            </CardContent>
+          </Card>
+
+          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.62s" }}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="h-5 w-5 text-primary" />
+                Payments &amp; Billing (Dodo Payments)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                Paid StudyHub plans (such as <strong>StudyHub Pro</strong>, billed at $4.99/month or $39.99/year) are processed by{" "}
+                <a
+                  href="https://dodopayments.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Dodo Payments
+                </a>
+                , our third-party payment processor and Merchant of Record. The free <strong>StudyHub Basic</strong> plan does not involve payment processing.
+              </p>
+              <div className="space-y-3">
+                <div>
+                  <h4 className="font-medium text-foreground">Data Shared With Dodo Payments</h4>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                    <li>Your name, email address, and StudyHub user ID (to associate the purchase with your account)</li>
+                    <li>Billing address, country, and tax identifiers where required by law</li>
+                    <li>The plan or product purchased and the amount charged</li>
+                    <li>IP address and basic device data used by Dodo for fraud prevention</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium text-foreground">Data StudyHub Never Sees</h4>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                    <li>Full credit/debit card numbers, CVV codes, or expiry dates</li>
+                    <li>Bank account credentials or wallet authentication details</li>
+                    <li>Any sensitive payment instrument data — these are collected directly by Dodo Payments on PCI-DSS compliant infrastructure</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium text-foreground">What We Store</h4>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                    <li>Subscription status (active, cancelled, past due), plan tier, and billing cycle</li>
+                    <li>Order/transaction IDs and the last 4 digits and brand of the card (where provided by Dodo)</li>
+                    <li>Invoice history and renewal dates needed to provide and support your subscription</li>
+                  </ul>
+                </div>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                Dodo Payments processes your payment data under its own{" "}
+                <a
+                  href="https://dodopayments.com/privacy-policy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Privacy Policy
+                </a>{" "}
+                and{" "}
+                <a
+                  href="https://dodopayments.com/terms-of-service"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Terms of Service
+                </a>
+                . As Merchant of Record, Dodo is responsible for tax calculation, collection, remittance, chargebacks, and billing-related compliance. Refund requests are handled per our{" "}
+                <a href="/refund" className="text-primary hover:underline">
+                  Refund Policy
+                </a>
+                .
+              </p>
+              <p className="text-muted-foreground text-sm">
+                Webhooks from Dodo (e.g. <code>payment.succeeded</code>, <code>subscription.cancelled</code>) are received over HTTPS, signature-verified, and used solely to update your subscription status on StudyHub.
+              </p>
             </CardContent>
           </Card>
 
