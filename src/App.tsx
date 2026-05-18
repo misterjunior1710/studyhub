@@ -72,21 +72,24 @@ const SuccessPro = lazy(() => import("./pages/SuccessPro"));
 const FloatingAssistant = lazy(() => import("@/components/assistant/FloatingAssistant"));
 const AdminAudit = lazy(() => import("./pages/AdminAudit"));
 
-// Optimized QueryClient with proper caching and garbage collection
+// Optimized QueryClient — tuned aggressively to minimize DB hits.
+// staleTime is 5 min so a re-mount within that window is FREE.
+// refetchOnWindowFocus is OFF (realtime + manual refresh cover live updates).
+// retries are 1 so failing requests don't 4x our DB cost on outages.
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60 * 1000, // 1 minute
-      gcTime: 30 * 60 * 1000, // 30 minutes
-      refetchOnWindowFocus: true,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 30 * 60 * 1000,
+      refetchOnWindowFocus: false,
       refetchOnReconnect: true,
-      refetchOnMount: true,
-      retry: 3,
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      refetchOnMount: false,
+      retry: 1,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
       networkMode: "online",
     },
     mutations: {
-      retry: 2,
+      retry: 1,
       networkMode: "online",
     },
   },
