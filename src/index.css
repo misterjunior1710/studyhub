@@ -41,7 +41,7 @@ All colors MUST be HSL.
     --input: 220 14% 90%;
     --ring: 243 75% 58%;
 
-    --radius: 1rem;
+    --radius: 1.25rem;
 
     /* ── Status (calmer, accessible) ────────────────────── */
     --success: 152 60% 38%;
