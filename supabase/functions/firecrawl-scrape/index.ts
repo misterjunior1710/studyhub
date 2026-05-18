@@ -122,10 +122,9 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error scraping:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Failed to scrape';
+    console.error('[firecrawl-scrape]', error);
     return new Response(
-      JSON.stringify({ success: false, error: errorMessage }),
+      JSON.stringify({ success: false, error: 'Scrape failed' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
