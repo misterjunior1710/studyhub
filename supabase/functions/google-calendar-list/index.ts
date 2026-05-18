@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
     }));
     return json(200, { calendars });
   } catch (e) {
-    console.error(e);
-    return json(500, { error: (e as Error).message });
+    console.error('[google-calendar-list]', e);
+    return json(500, { error: 'Failed to load calendars' });
   }
 });
