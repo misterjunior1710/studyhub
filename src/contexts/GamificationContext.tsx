@@ -246,7 +246,10 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${user.id}` },
-        () => scheduleFetch(),
+        () => {
+          // Refetch the shared profile in AuthContext, then re-derive gamification.
+          refetchProfile().finally(() => scheduleFetch());
+        },
       )
       .on(
         "postgres_changes",
