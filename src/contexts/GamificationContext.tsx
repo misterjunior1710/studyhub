@@ -88,7 +88,7 @@ const getLocalDate = (timezone: string): string => {
 };
 
 export const GamificationProvider = ({ children }: { children: ReactNode }) => {
-  const { user } = useAuth();
+  const { user, profileData } = useAuth();
   const [state, setState] = useState<GamificationState>(defaultState);
   const [recentCoinGain, setRecentCoinGain] = useState<{ amount: number; key: number } | null>(null);
   const [levelUpEvent, setLevelUpEvent] = useState<{ level: number; key: number } | null>(null);
@@ -98,6 +98,8 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
   const prevLevelRef = useRef<number>(0);
   const knownBadgesRef = useRef<Set<string> | null>(null);
   const animKeyRef = useRef(0);
+  const profileRef = useRef(profileData);
+  profileRef.current = profileData;
 
   const fetchAll = useCallback(async () => {
     if (!user) {
@@ -107,30 +109,24 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
     }
 
     try {
-      const [walletRes, profileRes, xpRes] = await Promise.all([
+      // Profile data (streak_days, sound_enabled, timezone, current_league) is
+      // already loaded by AuthContext — reuse it instead of refetching profiles.
+      const profile = profileRef.current || {};
+      const tz = profile.timezone || "UTC";
+      const today = getLocalDate(tz);
+
+      const [walletRes, xpRes, goalsRes, badgesRes] = await Promise.all([
         supabase.from("user_wallet").select("*").eq("user_id", user.id).maybeSingle(),
-        supabase
-          .from("profiles")
-          .select("streak_days, sound_enabled, timezone, current_league")
-          .eq("id", user.id)
-          .maybeSingle(),
         supabase
           .from("user_xp_totals")
           .select("total_xp, weekly_xp")
           .eq("user_id", user.id)
           .maybeSingle(),
-      ]);
-
-      const tz = profileRes.data?.timezone || "UTC";
-      const today = getLocalDate(tz);
-
-      const [goalsRes, badgesRes] = await Promise.all([
         supabase.from("daily_goals").select("*").eq("user_id", user.id).eq("local_date", today),
         supabase.from("user_badges").select("badge_slug").eq("user_id", user.id),
       ]);
 
       const wallet = walletRes.data;
-      const profile = profileRes.data;
       const xp = xpRes.data;
       const goals = (goalsRes.data || []) as DailyGoal[];
 
