@@ -20,11 +20,19 @@ interface AuthContextType {
     grade?: string;
     stream?: string;
     avatar_url?: string;
+    theme_color?: string;
+    streak_days?: number;
+    sound_enabled?: boolean;
+    timezone?: string;
+    current_league?: string;
+    onboarding_completed?: boolean;
+    onboarding_tasks?: string[];
   };
   showSessionExpired: boolean;
   refreshSession: () => Promise<void>;
   signOut: () => Promise<void>;
   resetSessionExpired: () => void;
+  refetchProfile: () => Promise<void>;
 }
 
 const defaultAuthContext: AuthContextType = {
@@ -39,6 +47,7 @@ const defaultAuthContext: AuthContextType = {
   refreshSession: async () => {},
   signOut: async () => {},
   resetSessionExpired: () => {},
+  refetchProfile: async () => {},
 };
 
 const AuthContext = createContext<AuthContextType>(defaultAuthContext);
