@@ -68,6 +68,7 @@ const Refund = lazy(() => import("./pages/Refund"));
 const SuccessBasic = lazy(() => import("./pages/SuccessBasic"));
 const SuccessPro = lazy(() => import("./pages/SuccessPro"));
 const FloatingAssistant = lazy(() => import("@/components/assistant/FloatingAssistant"));
+const AdminAudit = lazy(() => import("./pages/AdminAudit"));
 
 // Optimized QueryClient with proper caching and garbage collection
 const queryClient = new QueryClient({
