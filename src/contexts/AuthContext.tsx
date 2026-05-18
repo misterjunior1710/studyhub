@@ -67,12 +67,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
-  const [profileData, setProfileData] = useState<{
-    country?: string;
-    grade?: string;
-    stream?: string;
-    avatar_url?: string;
-  }>({});
+  const [profileData, setProfileData] = useState<AuthContextType["profileData"]>({});
   const [showSessionExpired, setShowSessionExpired] = useState(false);
   
   // Activity tracking refs
