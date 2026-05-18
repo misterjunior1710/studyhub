@@ -1,10 +1,16 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
+import { checkRateLimit, rateLimitedResponse } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+const deleteSchema = z.object({
+  confirmation: z.literal("DELETE_MY_ACCOUNT"),
+});
 
 const jsonResponse = (body: Record<string, unknown>, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -29,8 +35,8 @@ serve(async (req) => {
       return jsonResponse({ error: "Authentication required" }, 401);
     }
 
-    const { confirmation } = await req.json().catch(() => ({}));
-    if (confirmation !== "DELETE_MY_ACCOUNT") {
+    const parsed = deleteSchema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) {
       return jsonResponse({ error: "Invalid confirmation" }, 400);
     }
 

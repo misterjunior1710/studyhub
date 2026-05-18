@@ -1,17 +1,19 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
+import { checkRateLimit, rateLimitedResponse } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface GenerationRequest {
-  topic: string;
-  subject: string;
-  grade: string;
-  stream: string;
-}
+const generateSchema = z.object({
+  topic: z.string().trim().min(2).max(300),
+  subject: z.string().trim().min(1).max(100),
+  grade: z.string().trim().min(1).max(50),
+  stream: z.string().trim().min(1).max(100),
+});
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -37,14 +39,18 @@ serve(async (req) => {
       });
     }
 
-    const { topic, subject, grade, stream } = await req.json() as GenerationRequest;
+    // Rate limit: 10 generations per hour per user (expensive)
+    const rl = await checkRateLimit({ userId: userData.user.id, bucket: "generate-study-content", max: 10, windowSeconds: 3600 });
+    if (!rl.allowed) return rateLimitedResponse(rl.retryAfterSeconds, corsHeaders);
 
-    if (!topic || !subject || !grade || !stream) {
+    const parsed = generateSchema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) {
       return new Response(
-        JSON.stringify({ success: false, error: 'Topic, subject, grade, and stream are required' }),
+        JSON.stringify({ success: false, error: 'Invalid input', details: parsed.error.flatten() }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+    const { topic, subject, grade, stream } = parsed.data;
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     const FIRECRAWL_API_KEY = Deno.env.get('FIRECRAWL_API_KEY');
