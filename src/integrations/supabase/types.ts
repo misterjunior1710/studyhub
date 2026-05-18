@@ -178,6 +178,45 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_id: string | null
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json
+          target_id: string | null
+          target_type: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json
+          target_id?: string | null
+          target_type?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json
+          target_id?: string | null
+          target_type?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       badges: {
         Row: {
           created_at: string
@@ -2041,6 +2080,27 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limits: {
+        Row: {
+          bucket_key: string
+          count: number
+          user_id: string
+          window_start: string
+        }
+        Insert: {
+          bucket_key: string
+          count?: number
+          user_id: string
+          window_start?: string
+        }
+        Update: {
+          bucket_key?: string
+          count?: number
+          user_id?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       reading_sessions: {
         Row: {
           created_at: string
@@ -3096,10 +3156,20 @@ export type Database = {
         Returns: boolean
       }
       check_and_award_badges: { Args: { p_user_id: string }; Returns: number }
+      check_rate_limit: {
+        Args: {
+          _bucket_key: string
+          _max_count: number
+          _user_id: string
+          _window_seconds: number
+        }
+        Returns: Json
+      }
       claim_mission_reward: {
         Args: { _user_mission_id: string }
         Returns: Json
       }
+      cleanup_rate_limits: { Args: never; Returns: number }
       create_whiteboard: {
         Args: { p_group_id?: string; p_name?: string }
         Returns: string
@@ -3188,6 +3258,16 @@ export type Database = {
       is_whiteboard_owner: {
         Args: { _user_id: string; _whiteboard_id: string }
         Returns: boolean
+      }
+      log_audit_event: {
+        Args: {
+          _action: string
+          _actor_id?: string
+          _metadata?: Json
+          _target_id?: string
+          _target_type?: string
+        }
+        Returns: string
       }
       move_to_dlq: {
         Args: {
