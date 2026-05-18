@@ -20,7 +20,11 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import { SplineScene } from "@/components/ui/splite";
+import { lazy, Suspense } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+const SplineScene = lazy(() =>
+  import("@/components/ui/splite").then((m) => ({ default: m.SplineScene })),
+);
 import { Spotlight } from "@/components/ui/spotlight";
 import { HeroGeometric } from "@/components/ui/shape-landing-hero";
 import { ReactLenis } from "lenis/react";
@@ -34,6 +38,7 @@ import { TasksWidget } from "@/components/tasks/TasksWidget";
 
 const Index = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const { user } = useAuth();
   const { isOnboardingComplete, tasks } = useOnboarding();
   const completedCount = tasks.filter((t) => t.completed).length;
@@ -206,11 +211,15 @@ const Index = () => {
                   </Button>
                 </div>
               </div>
-              <div className="flex-1 relative min-h-[280px]">
-                <SplineScene
-                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                  className="w-full h-full"
-                />
+              <div className="hidden md:block flex-1 relative min-h-[280px]">
+                {!isMobile && (
+                  <Suspense fallback={<div className="w-full h-full" aria-hidden />}>
+                    <SplineScene
+                      scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                      className="w-full h-full"
+                    />
+                  </Suspense>
+                )}
               </div>
             </div>
           </Card>
