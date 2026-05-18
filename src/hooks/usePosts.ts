@@ -155,12 +155,14 @@ export const usePosts = (options: UsePostsOptions) => {
   const query = useQuery({
     queryKey,
     queryFn: () => fetchPosts(options),
-    staleTime: 60 * 1000, // 1 minute
-    gcTime: 30 * 60 * 1000, // 30 minutes
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    // Feed content is non-critical for freshness; 2 min stale + no focus
+    // refetch eliminates dozens of redundant Feed fetches per session.
+    staleTime: 2 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    retry: 1,
     enabled: options.enabled !== false,
   });
 
@@ -168,13 +170,21 @@ export const usePosts = (options: UsePostsOptions) => {
     queryClient.invalidateQueries({ queryKey: ["posts"] });
   }, [queryClient]);
 
-  // Set up realtime subscription with proper cleanup
+  // Set up realtime subscription with proper cleanup.
+  // Debounce invalidations so a burst of edits/votes collapses into one refetch.
+  const debounceRef = useRef<number | null>(null);
   useEffect(() => {
-    // Clean up existing channel if any
     if (channelRef.current) {
       supabase.removeChannel(channelRef.current);
     }
 
+    const scheduleInvalidate = () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+      debounceRef.current = window.setTimeout(() => invalidatePosts(), 2000);
+    };
+
+    // Filter by post_type so a Doubts page doesn't refetch on Updates inserts
+    // and vice versa (cuts realtime-triggered DB load roughly in thirds).
     const channel = supabase
       .channel(`posts-${options.postType}`)
       .on(
@@ -183,16 +193,16 @@ export const usePosts = (options: UsePostsOptions) => {
           event: "*",
           schema: "public",
           table: "posts",
+          filter: `post_type=eq.${options.postType}`,
         },
-        () => {
-          invalidatePosts();
-        }
+        scheduleInvalidate,
       )
       .subscribe();
 
     channelRef.current = channel;
 
     return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
       if (channelRef.current) {
         supabase.removeChannel(channelRef.current);
         channelRef.current = null;
