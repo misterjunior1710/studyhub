@@ -79,7 +79,10 @@ const fetchPosts = async ({
   // Always fetch by created_at to get a stable, complete result set, then
   // re-rank in JS for "hot" / "top". This avoids brittle multi-column ordering
   // edge cases and makes ranking transparent.
-  query = query.order("created_at", { ascending: false }).limit(500);
+  // Was limit(500) — that's a huge payload sent to every client on every
+  // Feed mount. 150 is plenty for client-side hot/top re-ranking and cuts
+  // bandwidth + DB read cost by ~70%.
+  query = query.order("created_at", { ascending: false }).limit(150);
 
   const { data, error } = await query;
 
