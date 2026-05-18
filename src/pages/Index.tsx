@@ -325,34 +325,67 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Transparency / About Section — required for OAuth verification */}
-      <section ref={aboutRef} className="py-12 sm:py-16 bg-muted/20 border-y border-border">
-        <div className={`container mx-auto px-4 max-w-3xl text-center space-y-4 ${aboutVisible ? "animate-soft-in" : "opacity-0"}`}>
-          <h2 className="text-2xl sm:text-3xl font-bold">About StudyHub</h2>
-          <p className="text-muted-foreground">
-            This is the <strong>official website of StudyHub</strong> (
-            <a href="https://studyhub.world" className="underline hover:text-primary">
-              https://studyhub.world
-            </a>
-            ). StudyHub™, A student-only discussion platform focused on school life, questions, and studying!
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Built and maintained by the StudyHub Team. Read our{" "}
-            <a href="/privacy" className="underline hover:text-primary">
-              Privacy Policy
-            </a>{" "}
-            and{" "}
-            <a href="/terms" className="underline hover:text-primary">
-              Terms &amp; Conditions
-            </a>
-            . Contact us at{" "}
-            <a href="mailto:studyhub.community.web@gmail.com" className="underline hover:text-primary">
-              studyhub.community.web@gmail.com
-            </a>
-            .
-          </p>
+      {/* Transparency / About Section — required for Google OAuth verification */}
+      <section ref={aboutRef} id="about" className="py-12 sm:py-16 bg-muted/20 border-y border-border">
+        <div className={`container mx-auto px-4 max-w-3xl space-y-6 ${aboutVisible ? "animate-soft-in" : "opacity-0"}`}>
+          <div className="text-center space-y-3">
+            <h2 className="text-2xl sm:text-3xl font-bold">About StudyHub</h2>
+            <p className="text-muted-foreground">
+              This is the <strong>official website of StudyHub™</strong> (
+              <a href="https://studyhub.world" className="underline hover:text-primary">
+                https://studyhub.world
+              </a>
+              ) — a student-only discussion platform for school life, questions, study notes, AI study tools,
+              flashcards, group chats, and exam prep. Built and maintained by the StudyHub Team.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-border bg-card/60 p-5 sm:p-6 text-left space-y-3">
+            <h3 className="font-semibold text-lg">Why we ask for your Google account info</h3>
+            <p className="text-sm text-muted-foreground">
+              When you choose <strong>Sign in with Google</strong>, StudyHub requests only the basic profile
+              information Google provides by default:
+            </p>
+            <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+              <li><strong>Email address</strong> — to create and identify your StudyHub account and send
+                essential service notifications.</li>
+              <li><strong>Name and profile picture</strong> — to personalize your profile so classmates can
+                recognize you in discussions and study groups.</li>
+              <li><strong>Google account ID (OpenID)</strong> — to securely sign you in on future visits
+                without needing a separate password.</li>
+            </ul>
+            <p className="text-sm text-muted-foreground">
+              We do <strong>not</strong> read your Gmail, contacts, Drive, or any other Google data. We do
+              not sell your information. You can revoke access at any time from your{" "}
+              <a
+                href="https://myaccount.google.com/permissions"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-primary"
+              >
+                Google Account permissions page
+              </a>
+              {" "}or by deleting your StudyHub account in Settings.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Full details are in our{" "}
+              <a href="/privacy" className="underline hover:text-primary font-medium">
+                Privacy Policy
+              </a>{" "}
+              and{" "}
+              <a href="/terms" className="underline hover:text-primary font-medium">
+                Terms &amp; Conditions
+              </a>
+              . Questions? Contact{" "}
+              <a href="mailto:studyhub.community.web@gmail.com" className="underline hover:text-primary">
+                studyhub.community.web@gmail.com
+              </a>
+              .
+            </p>
+          </div>
         </div>
       </section>
+
 
       {/* Final CTA Section */}
       <section ref={ctaRef} className="py-16 sm:py-24">
