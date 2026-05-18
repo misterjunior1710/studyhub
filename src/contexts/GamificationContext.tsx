@@ -215,6 +215,17 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
     fetchAll();
   }, [fetchAll]);
 
+  // When AuthContext's profile fields we depend on change, update local state
+  // (without a refetch — those fields aren't fetched here anymore).
+  useEffect(() => {
+    setState((prev) => ({
+      ...prev,
+      streakDays: profileData?.streak_days ?? prev.streakDays,
+      soundEnabled: profileData?.sound_enabled ?? prev.soundEnabled,
+      currentLeague: profileData?.current_league || prev.currentLeague,
+    }));
+  }, [profileData?.streak_days, profileData?.sound_enabled, profileData?.current_league]);
+
   // Debounced fetch — many realtime events in close succession should
   // collapse into a single round-trip to keep DB usage low.
   const debouncedFetchRef = useRef<number | null>(null);
