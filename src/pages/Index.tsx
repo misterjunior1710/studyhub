@@ -22,9 +22,11 @@ import {
 } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { shouldSkipHeavyVisuals } from "@/lib/networkAware";
 const SplineScene = lazy(() =>
   import("@/components/ui/splite").then((m) => ({ default: m.SplineScene })),
 );
+const skipHeavy3D = shouldSkipHeavyVisuals();
 import { Spotlight } from "@/components/ui/spotlight";
 import { HeroGeometric } from "@/components/ui/shape-landing-hero";
 import { ReactLenis } from "lenis/react";
