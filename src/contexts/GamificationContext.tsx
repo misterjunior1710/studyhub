@@ -88,7 +88,7 @@ const getLocalDate = (timezone: string): string => {
 };
 
 export const GamificationProvider = ({ children }: { children: ReactNode }) => {
-  const { user, profileData } = useAuth();
+  const { user, profileData, refetchProfile } = useAuth();
   const [state, setState] = useState<GamificationState>(defaultState);
   const [recentCoinGain, setRecentCoinGain] = useState<{ amount: number; key: number } | null>(null);
   const [levelUpEvent, setLevelUpEvent] = useState<{ level: number; key: number } | null>(null);
