@@ -31,34 +31,20 @@ export const applyThemeColor = (colorName: string) => {
 };
 
 export const useThemePersistence = () => {
-  const { user } = useAuth();
-  const hasFetchedRef = useRef<string | null>(null);
+  const { user, profileData } = useAuth();
+  const appliedRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const loadUserTheme = async () => {
-      if (!user) return;
-      
-      // Prevent duplicate fetches for same user
-      if (hasFetchedRef.current === user.id) return;
-      hasFetchedRef.current = user.id;
-
-      try {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("theme_color")
-          .eq("id", user.id)
-          .maybeSingle();
-
-        if (profile?.theme_color) {
-          applyThemeColor(profile.theme_color);
-        }
-      } catch (error) {
-        console.error("Error loading theme:", error);
-      }
-    };
-
-    loadUserTheme();
-  }, [user]);
+    if (!user) {
+      appliedRef.current = null;
+      return;
+    }
+    const color = profileData?.theme_color;
+    if (color && appliedRef.current !== color) {
+      applyThemeColor(color);
+      appliedRef.current = color;
+    }
+  }, [user, profileData?.theme_color]);
 };
 
 export default useThemePersistence;
