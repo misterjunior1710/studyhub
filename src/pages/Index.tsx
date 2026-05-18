@@ -211,11 +211,15 @@ const Index = () => {
                   </Button>
                 </div>
               </div>
-              <div className="flex-1 relative min-h-[280px]">
-                <SplineScene
-                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                  className="w-full h-full"
-                />
+              <div className="hidden md:block flex-1 relative min-h-[280px]">
+                {!isMobile && (
+                  <Suspense fallback={<div className="w-full h-full" aria-hidden />}>
+                    <SplineScene
+                      scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                      className="w-full h-full"
+                    />
+                  </Suspense>
+                )}
               </div>
             </div>
           </Card>
