@@ -139,11 +139,13 @@ const App = () => (
               <Sonner />
               
               <BrowserRouter>
-                <Suspense fallback={null}>
-                  <BackgroundGradientAnimation
-                    containerClassName="fixed inset-0 -z-10 h-screen w-screen motion-reduce:hidden"
-                  />
-                </Suspense>
+                {!skipHeavyBg && (
+                  <Suspense fallback={null}>
+                    <BackgroundGradientAnimation
+                      containerClassName="fixed inset-0 -z-10 h-screen w-screen motion-reduce:hidden"
+                    />
+                  </Suspense>
+                )}
                 <a href="#main-content" className="skip-to-main">Skip to main content</a>
                 <SessionExpiredHandler />
                 <OnboardingFlow />
