@@ -20,11 +20,19 @@ interface AuthContextType {
     grade?: string;
     stream?: string;
     avatar_url?: string;
+    theme_color?: string;
+    streak_days?: number;
+    sound_enabled?: boolean;
+    timezone?: string;
+    current_league?: string;
+    onboarding_completed?: boolean;
+    onboarding_tasks?: string[];
   };
   showSessionExpired: boolean;
   refreshSession: () => Promise<void>;
   signOut: () => Promise<void>;
   resetSessionExpired: () => void;
+  refetchProfile: () => Promise<void>;
 }
 
 const defaultAuthContext: AuthContextType = {
@@ -39,6 +47,7 @@ const defaultAuthContext: AuthContextType = {
   refreshSession: async () => {},
   signOut: async () => {},
   resetSessionExpired: () => {},
+  refetchProfile: async () => {},
 };
 
 const AuthContext = createContext<AuthContextType>(defaultAuthContext);
@@ -58,12 +67,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
-  const [profileData, setProfileData] = useState<{
-    country?: string;
-    grade?: string;
-    stream?: string;
-    avatar_url?: string;
-  }>({});
+  const [profileData, setProfileData] = useState<AuthContextType["profileData"]>({});
   const [showSessionExpired, setShowSessionExpired] = useState(false);
   
   // Activity tracking refs
@@ -88,17 +92,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     lastActivityRef.current = Date.now();
   }, []);
 
-  const fetchUserProfile = useCallback(async (userId: string) => {
-    // Prevent duplicate fetches for the same user
-    if (fetchedUserIdRef.current === userId) return;
-    fetchedUserIdRef.current = userId;
-    
+  const doFetchProfile = useCallback(async (userId: string) => {
     setProfileLoading(true);
     try {
       const [profileResult, roleResult] = await Promise.all([
         supabase
           .from("profiles")
-          .select("username, country, grade, stream, avatar_url")
+          .select(
+            "username, country, grade, stream, avatar_url, theme_color, streak_days, sound_enabled, timezone, current_league, onboarding_completed, onboarding_tasks",
+          )
           .eq("id", userId)
           .maybeSingle(),
         supabase
@@ -106,7 +108,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           .select("role")
           .eq("user_id", userId)
           .eq("role", "admin")
-          .maybeSingle()
+          .maybeSingle(),
       ]);
 
       if (profileResult.error) {
@@ -114,13 +116,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUsername("");
         setProfileData({});
       } else if (profileResult.data) {
-        setUsername(profileResult.data.username || "");
-        setProfileData({
-          country: profileResult.data.country || undefined,
-          grade: profileResult.data.grade || undefined,
-          stream: profileResult.data.stream || undefined,
-          avatar_url: profileResult.data.avatar_url || undefined,
-        });
+        const p: any = profileResult.data;
+        setUsername(p.username || "");
+        const next: AuthContextType["profileData"] = {
+          country: p.country || undefined,
+          grade: p.grade || undefined,
+          stream: p.stream || undefined,
+          avatar_url: p.avatar_url || undefined,
+          theme_color: p.theme_color || undefined,
+          streak_days: typeof p.streak_days === "number" ? p.streak_days : undefined,
+          sound_enabled: typeof p.sound_enabled === "boolean" ? p.sound_enabled : undefined,
+          timezone: p.timezone || undefined,
+          current_league: p.current_league || undefined,
+          onboarding_completed: typeof p.onboarding_completed === "boolean" ? p.onboarding_completed : undefined,
+          onboarding_tasks: Array.isArray(p.onboarding_tasks) ? (p.onboarding_tasks as string[]) : undefined,
+        };
+        setProfileData(next);
+        try {
+          localStorage.setItem(
+            `auth:profile:${userId}`,
+            JSON.stringify({ username: p.username || "", data: next, isAdmin: !!roleResult.data }),
+          );
+        } catch {}
       } else {
         setUsername("");
         setProfileData({});
@@ -136,6 +153,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setProfileLoading(false);
     }
   }, []);
+
+  const fetchUserProfile = useCallback(
+    async (userId: string) => {
+      // Prevent duplicate fetches for the same user
+      if (fetchedUserIdRef.current === userId) return;
+      fetchedUserIdRef.current = userId;
+
+      // Hydrate from localStorage synchronously to avoid a flash & give downstream
+      // hooks data immediately, eliminating duplicate startup fetches.
+      try {
+        const cached = localStorage.getItem(`auth:profile:${userId}`);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed?.data) setProfileData(parsed.data);
+          if (typeof parsed?.username === "string") setUsername(parsed.username);
+          if (typeof parsed?.isAdmin === "boolean") setIsAdmin(parsed.isAdmin);
+        }
+      } catch {}
+
+      await doFetchProfile(userId);
+    },
+    [doFetchProfile],
+  );
+
+  const refetchProfile = useCallback(async () => {
+    if (!user) return;
+    await doFetchProfile(user.id);
+  }, [user, doFetchProfile]);
 
   const refreshSession = useCallback(async () => {
     try {
@@ -309,6 +354,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         refreshSession,
         signOut,
         resetSessionExpired,
+        refetchProfile,
       }}
     >
       {children}
