@@ -38,6 +38,7 @@ import { TasksWidget } from "@/components/tasks/TasksWidget";
 
 const Index = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const { user } = useAuth();
   const { isOnboardingComplete, tasks } = useOnboarding();
   const completedCount = tasks.filter((t) => t.completed).length;
