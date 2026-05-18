@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
 
     return back(APP_RETURN_PATH);
   } catch (e) {
-    console.error("callback error:", e);
-    return back(`${APP_ERROR_PATH}&reason=${encodeURIComponent((e as Error).message.slice(0, 80))}`);
+    console.error("[google-calendar-callback]", e);
+    return back(`${APP_ERROR_PATH}&reason=connection_failed`);
   }
 });

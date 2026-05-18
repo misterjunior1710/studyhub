@@ -280,10 +280,9 @@ Generate comprehensive study material with:
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error generating content:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[generate-study-content]', error);
     return new Response(
-      JSON.stringify({ success: false, error: errorMessage }),
+      JSON.stringify({ success: false, error: 'Failed to generate content' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

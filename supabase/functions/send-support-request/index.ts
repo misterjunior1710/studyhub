@@ -118,9 +118,9 @@ const handler = async (req: Request): Promise<Response> => {
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   } catch (error: any) {
-    console.error("Error in send-support-request function:", error);
+    console.error("[send-support-request]", error);
     return new Response(
-      JSON.stringify({ error: error.message || "Failed to submit support request" }),
+      JSON.stringify({ error: "Failed to submit support request" }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }

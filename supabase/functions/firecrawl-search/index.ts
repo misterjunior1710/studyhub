@@ -30,14 +30,18 @@ serve(async (req) => {
       });
     }
 
-    const { query, options } = await req.json();
+    const body = await req.json().catch(() => null) as { query?: unknown; options?: any } | null;
+    const rawQuery = body?.query;
+    const options = body?.options;
 
-    if (!query) {
+    if (typeof rawQuery !== 'string' || rawQuery.trim().length === 0 || rawQuery.length > 500) {
       return new Response(
-        JSON.stringify({ success: false, error: 'Query is required' }),
+        JSON.stringify({ success: false, error: 'Query is required (1-500 chars)' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+    // Strip control characters to mitigate prompt-injection of tool/system markers
+    const query = rawQuery.replace(/[\u0000-\u001F\u007F]/g, ' ').trim();
 
     const apiKey = Deno.env.get('FIRECRAWL_API_KEY');
     if (!apiKey) {
@@ -81,10 +85,9 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error searching:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Failed to search';
+    console.error('[firecrawl-search]', error);
     return new Response(
-      JSON.stringify({ success: false, error: errorMessage }),
+      JSON.stringify({ success: false, error: 'Search failed' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

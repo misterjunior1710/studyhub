@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
     });
     return json(200, { url: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}` });
   } catch (e) {
-    console.error(e);
-    return json(500, { error: (e as Error).message });
+    console.error('[google-calendar-auth-url]', e);
+    return json(500, { error: 'Failed to start Google sign-in' });
   }
 });

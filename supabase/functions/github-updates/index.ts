@@ -170,17 +170,16 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    console.error("GitHub fetch failed:", err);
-    // Fallback to stale cache if available
+    console.error("[github-updates]", err);
     if (cached) {
       return new Response(JSON.stringify({
         ...(cached.payload as CachedPayload),
         from_cache: true,
         stale: true,
-        error: String(err),
+        error: "upstream_unavailable",
       }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
-    return new Response(JSON.stringify({ error: String(err), items: [] }), {
+    return new Response(JSON.stringify({ error: "upstream_unavailable", items: [] }), {
       status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }

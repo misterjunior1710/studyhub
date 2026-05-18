@@ -3254,6 +3254,7 @@ export type Database = {
         Args: { _user_a: string; _user_b: string }
         Returns: boolean
       }
+      is_super_admin: { Args: never; Returns: boolean }
       is_verifier: { Args: { _user_id: string }; Returns: boolean }
       is_whiteboard_owner: {
         Args: { _user_id: string; _whiteboard_id: string }
