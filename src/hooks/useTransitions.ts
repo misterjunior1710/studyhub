@@ -32,31 +32,57 @@ export interface TransitionLesson {
   order_index: number;
 }
 
+// Module-level cache for transitions content. This is essentially static
+// seeded data — caching it across mounts eliminates 3 SELECTs every time
+// any user navigates to /transitions or any module/lesson page.
+let contentCache: {
+  modules: TransitionModule[];
+  topics: TransitionTopic[];
+  lessons: TransitionLesson[];
+} | null = null;
+let contentPromise: Promise<typeof contentCache> | null = null;
+
 export const useTransitionsContent = () => {
-  const [modules, setModules] = useState<TransitionModule[]>([]);
-  const [topics, setTopics] = useState<TransitionTopic[]>([]);
-  const [lessons, setLessons] = useState<TransitionLesson[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [modules, setModules] = useState<TransitionModule[]>(contentCache?.modules ?? []);
+  const [topics, setTopics] = useState<TransitionTopic[]>(contentCache?.topics ?? []);
+  const [lessons, setLessons] = useState<TransitionLesson[]>(contentCache?.lessons ?? []);
+  const [loading, setLoading] = useState(!contentCache);
 
   useEffect(() => {
     let active = true;
-    (async () => {
-      setLoading(true);
-      const [m, t, l] = await Promise.all([
-        supabase.from("transition_modules" as any).select("*").order("order_index"),
-        supabase.from("transition_topics" as any).select("*").order("order_index"),
-        supabase.from("transition_lessons" as any).select("*").order("order_index"),
-      ]);
-      if (!active) return;
-      if (m.error || t.error || l.error) {
-        toast.error("Couldn't load life skills content");
-      } else {
-        setModules((m.data ?? []) as any);
-        setTopics((t.data ?? []) as any);
-        setLessons((l.data ?? []) as any);
+    if (contentCache) return;
+
+    if (!contentPromise) {
+      contentPromise = (async () => {
+        const [m, t, l] = await Promise.all([
+          supabase.from("transition_modules" as any).select("*").order("order_index"),
+          supabase.from("transition_topics" as any).select("*").order("order_index"),
+          supabase.from("transition_lessons" as any).select("*").order("order_index"),
+        ]);
+        if (m.error || t.error || l.error) {
+          toast.error("Couldn't load life skills content");
+          return null;
+        }
+        contentCache = {
+          modules: (m.data ?? []) as any,
+          topics: (t.data ?? []) as any,
+          lessons: (l.data ?? []) as any,
+        };
+        return contentCache;
+      })();
+    }
+
+    contentPromise.then((cached) => {
+      if (!active || !cached) {
+        setLoading(false);
+        return;
       }
+      setModules(cached.modules);
+      setTopics(cached.topics);
+      setLessons(cached.lessons);
       setLoading(false);
-    })();
+    });
+
     return () => {
       active = false;
     };
@@ -90,21 +116,9 @@ export const useLessonProgress = () => {
     void refresh();
   }, [refresh]);
 
-  // Realtime sync
-  useEffect(() => {
-    if (!user) return;
-    const ch = supabase
-      .channel(`lesson-progress:${user.id}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "user_lesson_progress", filter: `user_id=eq.${user.id}` },
-        () => void refresh(),
-      )
-      .subscribe();
-    return () => {
-      void supabase.removeChannel(ch);
-    };
-  }, [user, refresh]);
+  // No realtime channel here: toggleLesson is already optimistic and the
+  // only writer is the user themselves. A realtime listener would just
+  // double-fetch on every self-triggered toggle.
 
   const toggleLesson = useCallback(
     async (lessonId: string) => {
