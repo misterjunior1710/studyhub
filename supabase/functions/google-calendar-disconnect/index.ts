@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
 
     return json(200, { ok: true });
   } catch (e) {
-    console.error(e);
-    return json(500, { error: (e as Error).message });
+    console.error('[google-calendar-disconnect]', e);
+    return json(500, { error: 'Failed to disconnect calendar' });
   }
 });
