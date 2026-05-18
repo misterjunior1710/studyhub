@@ -1,10 +1,17 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
+import { checkRateLimit, rateLimitedResponse } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const writingSchema = z.object({
+  text: z.string().trim().min(1).max(10000),
+  action: z.enum(["improve", "grammar", "summarize", "simplify"]),
+});
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -31,14 +38,18 @@ serve(async (req) => {
       });
     }
 
-    const { text, action } = await req.json();
-    
-    if (!text || !action) {
+    // Rate limit: 60 writing-assist calls per 5 minutes per user
+    const rl = await checkRateLimit({ userId: userData.user.id, bucket: "ai-writing-assist", max: 60, windowSeconds: 300 });
+    if (!rl.allowed) return rateLimitedResponse(rl.retryAfterSeconds, corsHeaders);
+
+    const parsed = writingSchema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) {
       return new Response(
-        JSON.stringify({ error: 'Text and action are required' }),
+        JSON.stringify({ error: "Invalid input", details: parsed.error.flatten() }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+    const { text, action } = parsed.data;
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {

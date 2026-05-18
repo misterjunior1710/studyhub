@@ -2,6 +2,8 @@
 // Saves user + assistant messages to assistant_messages, updates thread metadata,
 // and returns the assistant reply as JSON.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
+import { checkRateLimit, rateLimitedResponse } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -91,13 +93,24 @@ Deno.serve(async (req) => {
   if (authErr || !userId) return json(401, { error: "Unauthorized" });
   if (!LOVABLE_API_KEY) return json(500, { error: "AI not configured" });
 
+  // Rate limit: 30 AI assistant messages per 5 minutes per user
+  const rl = await checkRateLimit({ userId, bucket: "ai-assistant", max: 30, windowSeconds: 300 });
+  if (!rl.allowed) return rateLimitedResponse(rl.retryAfterSeconds, corsHeaders);
+
   let body: any;
   try { body = await req.json(); } catch { return json(400, { error: "Invalid JSON" }); }
 
-  const message = String(body?.message ?? "").slice(0, 4000).trim();
-  const route = String(body?.route ?? "/").slice(0, 200);
-  let threadId = body?.thread_id ? String(body.thread_id) : null;
-  if (!message) return json(400, { error: "message required" });
+  const schema = z.object({
+    message: z.string().trim().min(1).max(4000),
+    route: z.string().max(200).optional(),
+    thread_id: z.string().uuid().optional().nullable(),
+  });
+  const parsed = schema.safeParse(body);
+  if (!parsed.success) return json(400, { error: "Invalid input", details: parsed.error.flatten() });
+
+  const message = parsed.data.message;
+  const route = parsed.data.route ?? "/";
+  let threadId: string | null = parsed.data.thread_id ?? null;
 
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
 
