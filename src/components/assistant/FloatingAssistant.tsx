@@ -59,15 +59,6 @@ export const FloatingAssistant = () => {
               >
                 <Maximize2 className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setOpen(false)}
-                aria-label="Close assistant"
-              >
-                <X className="h-4 w-4" />
-              </Button>
             </div>
           </div>
           <div className="flex-1 min-h-0">
