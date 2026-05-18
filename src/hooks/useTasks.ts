@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Task } from "@/lib/tasks";
@@ -35,16 +35,24 @@ export const useTasks = () => {
     void refresh();
   }, [refresh]);
 
-  // Realtime sync — keep tasks fresh across tabs/devices
+  // Realtime sync — debounced so a burst of edits (mutation + echo) collapses
+  // into a single SELECT instead of one per change event.
+  const debounceRef = useRef<number | null>(null);
   useEffect(() => {
     if (!user) return;
     const channel = supabase
       .channel(`tasks:${user.id}`)
       .on("postgres_changes",
         { event: "*", schema: "public", table: "tasks", filter: `user_id=eq.${user.id}` },
-        () => { void refresh(); })
+        () => {
+          if (debounceRef.current) window.clearTimeout(debounceRef.current);
+          debounceRef.current = window.setTimeout(() => void refresh(), 1500);
+        })
       .subscribe();
-    return () => { void supabase.removeChannel(channel); };
+    return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+      void supabase.removeChannel(channel);
+    };
   }, [user, refresh]);
 
   const createTask = useCallback(async (input: Partial<Task> & { title: string }) => {
