@@ -57,6 +57,20 @@ serve(async (req) => {
     }
 
     const userId = userData.user.id;
+    const userEmail = userData.user.email ?? null;
+
+    // Rate limit: max 3 delete-account attempts per day per user (prevents abuse loops)
+    const rl = await checkRateLimit({ userId, bucket: "delete-account", max: 3, windowSeconds: 86400 });
+    if (!rl.allowed) return rateLimitedResponse(rl.retryAfterSeconds, corsHeaders);
+
+    // Audit: record the deletion intent BEFORE the user row is removed
+    await adminClient.rpc("log_audit_event", {
+      _action: "account_deleted",
+      _target_type: "user",
+      _target_id: userId,
+      _metadata: { email: userEmail, self_initiated: true },
+      _actor_id: userId,
+    });
     const deleteOperations = [
       adminClient.from("notifications").delete().eq("user_id", userId),
       adminClient.from("bookmarks").delete().eq("user_id", userId),
