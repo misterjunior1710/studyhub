@@ -214,7 +214,7 @@ const Index = () => {
                 </div>
               </div>
               <div className="hidden md:block flex-1 relative min-h-[280px]">
-                {!isMobile && (
+                {!isMobile && !skipHeavy3D && (
                   <Suspense fallback={<div className="w-full h-full" aria-hidden />}>
                     <SplineScene
                       scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
