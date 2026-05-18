@@ -151,7 +151,8 @@ Deno.serve(async (req) => {
         try {
           results.push({ user_id: c.user_id, ...(await syncForUser(c.user_id)) });
         } catch (e) {
-          results.push({ user_id: c.user_id, error: (e as Error).message });
+          console.error('[google-calendar-sync user]', c.user_id, e);
+          results.push({ user_id: c.user_id, error: 'sync_failed' });
         }
       }
       return json(200, { ran: results.length, results });
