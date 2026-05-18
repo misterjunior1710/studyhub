@@ -22,9 +22,11 @@ import {
 } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { shouldSkipHeavyVisuals } from "@/lib/networkAware";
 const SplineScene = lazy(() =>
   import("@/components/ui/splite").then((m) => ({ default: m.SplineScene })),
 );
+const skipHeavy3D = shouldSkipHeavyVisuals();
 import { Spotlight } from "@/components/ui/spotlight";
 import { HeroGeometric } from "@/components/ui/shape-landing-hero";
 import { ReactLenis } from "lenis/react";
@@ -212,7 +214,7 @@ const Index = () => {
                 </div>
               </div>
               <div className="hidden md:block flex-1 relative min-h-[280px]">
-                {!isMobile && (
+                {!isMobile && !skipHeavy3D && (
                   <Suspense fallback={<div className="w-full h-full" aria-hidden />}>
                     <SplineScene
                       scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
