@@ -20,11 +20,16 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { lazy, Suspense } from "react";
 import BottomNav from "@/components/BottomNav";
 import AnimatedLoadingSkeleton from "@/components/ui/animated-loading-skeleton";
+import { lazy, Suspense } from "react";
+import BottomNav from "@/components/BottomNav";
+import AnimatedLoadingSkeleton from "@/components/ui/animated-loading-skeleton";
+import { shouldSkipHeavyVisuals } from "@/lib/networkAware";
 const BackgroundGradientAnimation = lazy(() =>
   import("@/components/ui/background-gradient-animation").then((m) => ({
     default: m.BackgroundGradientAnimation,
   })),
 );
+const skipHeavyBg = shouldSkipHeavyVisuals();
 
 // Eager load critical pages
 import Index from "./pages/Index";
