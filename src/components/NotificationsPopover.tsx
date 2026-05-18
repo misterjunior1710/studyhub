@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Notification {
   id: string;
@@ -19,37 +20,53 @@ interface Notification {
 
 const NotificationsPopover = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
+  const debounceRef = useRef<number | null>(null);
 
   useEffect(() => {
+    if (!user) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
     loadNotifications();
 
+    const scheduleReload = () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+      debounceRef.current = window.setTimeout(() => loadNotifications(), 1500);
+    };
+
+    // Filter realtime to THIS user only — prevents every notification insert
+    // anywhere in the app from triggering a refetch for every signed-in user.
     const channel = supabase
-      .channel("notifications")
+      .channel(`notifications:${user.id}`)
       .on(
         "postgres_changes",
         {
           event: "INSERT",
           schema: "public",
           table: "notifications",
+          filter: `user_id=eq.${user.id}`,
         },
-        () => {
-          loadNotifications();
-        }
+        scheduleReload,
       )
       .subscribe();
 
     return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [user?.id]);
 
   const loadNotifications = async () => {
+    if (!user) return;
     const { data } = await supabase
       .from("notifications")
-      .select("*")
+      .select("id, type, content, post_id, is_read, created_at")
+      .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(10);
 
