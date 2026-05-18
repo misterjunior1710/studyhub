@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, UserCheck, Shield, AlertTriangle, Scale, Ban, RefreshCw, Mail, BookOpen, Users, Gavel, Clock, Globe, Sparkles } from "lucide-react";
+import { FileText, UserCheck, Shield, AlertTriangle, Scale, Ban, RefreshCw, Mail, BookOpen, Users, Gavel, Clock, Globe, Sparkles, CreditCard } from "lucide-react";
 
 const Terms = () => {
   const breadcrumbData = getBreadcrumbSchema([
@@ -304,6 +304,75 @@ const Terms = () => {
               <p className="text-muted-foreground text-sm">
                 Some jurisdictions do not allow limitation of liability for certain damages, so some of the above limitations may not apply to you.
               </p>
+            </CardContent>
+          </Card>
+
+          <Card variant="gradient" className="animate-fade-in" style={{ animationDelay: "0.52s" }}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="h-5 w-5 text-primary" />
+                Paid Plans, Subscriptions &amp; Billing
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                StudyHub offers both free and paid plans. By purchasing a paid plan, you agree to the following billing terms in addition to these Terms &amp; Conditions.
+              </p>
+              <div className="space-y-3">
+                <div>
+                  <h4 className="font-medium text-foreground">Available Plans</h4>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                    <li><strong>StudyHub Basic — Free:</strong> Access to essential features including group collaboration, academic organisation tools, productivity features, and student workspace access.</li>
+                    <li><strong>StudyHub Pro — $4.99/month or $39.99/year (USD):</strong> Unlocks premium features including advanced productivity tools, enhanced collaboration, expanded workspace capabilities, and future Pro-only features as they are released.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium text-foreground">Payment Processor (Dodo Payments)</h4>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                    <li>All paid plans are processed by <a href="https://dodopayments.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Dodo Payments</a>, acting as Merchant of Record.</li>
+                    <li>Dodo is the seller of record for your transaction and is responsible for invoicing, sales tax / VAT / GST, fraud prevention, and chargeback handling.</li>
+                    <li>By purchasing, you also agree to Dodo Payments'{" "}
+                      <a href="https://dodopayments.com/terms-of-service" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Terms of Service</a>{" "}
+                      and{" "}
+                      <a href="https://dodopayments.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Privacy Policy</a>.
+                    </li>
+                    <li>StudyHub never receives or stores your full card details — see our <a href="/privacy" className="underline hover:text-primary">Privacy Policy</a>.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium text-foreground">Subscriptions, Renewals &amp; Cancellation</h4>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                    <li>Paid plans are billed in advance on a recurring basis (monthly or yearly) and automatically renew at the end of each billing cycle until cancelled.</li>
+                    <li>You may cancel at any time from your Settings page or by contacting <a href="mailto:support@studyhub.world" className="underline hover:text-primary">support@studyhub.world</a>. Cancellation takes effect at the end of the current billing period; you keep Pro access until then.</li>
+                    <li>Renewal charges are non-refundable once processed. Cancel before your renewal date to avoid being charged.</li>
+                    <li>Prices are listed in US dollars. Local taxes (VAT, GST, sales tax) may be added by Dodo Payments based on your billing country.</li>
+                    <li>We may change pricing for future billing cycles with at least 14 days' notice; existing pre-paid periods are honoured at the original price.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium text-foreground">Refunds, Chargebacks &amp; Failed Payments</h4>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                    <li>Refunds are governed by our <a href="/refund" className="underline hover:text-primary">Refund Policy</a>, including a 14-day money-back guarantee on initial purchases.</li>
+                    <li>If a payment fails or a chargeback is filed, we may immediately suspend access to paid features until the balance is resolved.</li>
+                    <li>Filing a fraudulent chargeback for a service you used is a material breach of these Terms and may result in account termination.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium text-foreground">Free Trials &amp; Promotions</h4>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                    <li>From time to time we may offer free trials, discounts, or promotional pricing on StudyHub Pro.</li>
+                    <li>Unless stated otherwise, trials convert to a paid subscription at the standard price at the end of the trial period unless cancelled beforehand.</li>
+                    <li>Promotional offers are limited to one per user and may not be combined with other offers.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium text-foreground">Eligibility to Purchase</h4>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                    <li>You must be at least 18 years old, or have verifiable consent from a parent or legal guardian who agrees to these terms on your behalf, to purchase a paid plan.</li>
+                    <li>You represent that the payment method you use belongs to you or that you are authorised to use it.</li>
+                  </ul>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
