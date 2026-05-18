@@ -62,9 +62,11 @@ const NotificationsPopover = () => {
   }, [user?.id]);
 
   const loadNotifications = async () => {
+    if (!user) return;
     const { data } = await supabase
       .from("notifications")
-      .select("*")
+      .select("id, type, content, post_id, is_read, created_at")
+      .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(10);
 
