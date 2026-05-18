@@ -219,6 +219,19 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
     fetchAll();
   }, [fetchAll]);
 
+  // Debounced fetch — many realtime events in close succession should
+  // collapse into a single round-trip to keep DB usage low.
+  const debouncedFetchRef = useRef<number | null>(null);
+  const scheduleFetch = useCallback(
+    (onAfter?: () => void) => {
+      if (debouncedFetchRef.current) window.clearTimeout(debouncedFetchRef.current);
+      debouncedFetchRef.current = window.setTimeout(() => {
+        fetchAll().then(() => onAfter?.());
+      }, 800);
+    },
+    [fetchAll],
+  );
+
   // Realtime subscriptions
   useEffect(() => {
     if (!user) return;
@@ -227,50 +240,56 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "user_wallet", filter: `user_id=eq.${user.id}` },
-        () => fetchAll(),
+        () => scheduleFetch(),
       )
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "daily_goals", filter: `user_id=eq.${user.id}` },
-        () => {
-          fetchAll().then(() => sounds.goalComplete());
-        },
+        () => scheduleFetch(() => sounds.goalComplete()),
       )
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${user.id}` },
-        () => fetchAll(),
+        () => scheduleFetch(),
       )
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "user_xp_totals", filter: `user_id=eq.${user.id}` },
-        () => fetchAll(),
+        () => scheduleFetch(),
       )
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "user_badges", filter: `user_id=eq.${user.id}` },
-        () => fetchAll(),
+        () => scheduleFetch(),
       )
       .subscribe();
 
     return () => {
+      if (debouncedFetchRef.current) window.clearTimeout(debouncedFetchRef.current);
       supabase.removeChannel(channel);
     };
-  }, [user, fetchAll]);
+  }, [user, scheduleFetch]);
 
-  // Fallback re-sync: window focus + online
+  // Fallback re-sync only when coming back online or returning to tab
+  // after being hidden for a while. NO interval polling — realtime covers
+  // live updates and the cost of a 60s poll for every signed-in user is
+  // the dominant DB-bill driver.
   useEffect(() => {
     if (!user) return;
-    const handler = () => fetchAll();
-    window.addEventListener("focus", handler);
-    window.addEventListener("online", handler);
-    const interval = setInterval(() => {
-      if (document.visibilityState === "visible") fetchAll();
-    }, 60000);
+    let lastHidden = 0;
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") {
+        lastHidden = Date.now();
+      } else if (Date.now() - lastHidden > 5 * 60_000) {
+        fetchAll();
+      }
+    };
+    const onOnline = () => fetchAll();
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("online", onOnline);
     return () => {
-      window.removeEventListener("focus", handler);
-      window.removeEventListener("online", handler);
-      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("online", onOnline);
     };
   }, [user, fetchAll]);
 
