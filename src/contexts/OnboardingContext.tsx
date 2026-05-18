@@ -40,7 +40,9 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [isOnboardingComplete, setIsOnboardingComplete] = useState(true);
   const [initialized, setInitialized] = useState(false);
 
-  // Initialize onboarding state
+  // Initialize onboarding state — reuses profile data from AuthContext to avoid
+  // a duplicate profiles fetch on every app load. Heavy count queries only run
+  // when the user has NOT completed onboarding (a small minority after first session).
   useEffect(() => {
     const initOnboarding = async () => {
       if (!user) {
@@ -50,14 +52,10 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Check if user has completed onboarding
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("onboarding_completed, onboarding_tasks, username, country, grade, stream")
-        .eq("id", user.id)
-        .single();
+      // Wait until AuthContext has populated profile data
+      if (profileData?.onboarding_completed === undefined) return;
 
-      if (profile?.onboarding_completed) {
+      if (profileData.onboarding_completed) {
         setIsOnboardingComplete(true);
         setShowWelcome(false);
         setShowChecklist(false);
@@ -67,11 +65,9 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
       setIsOnboardingComplete(false);
 
-      // Load saved tasks or initialize new ones
-      const savedTasks = profile?.onboarding_tasks as string[] | null;
-      const completedTaskIds = savedTasks || [];
+      const completedTaskIds = profileData.onboarding_tasks || [];
 
-      // Check actual completion status for tasks
+      // Only here (incomplete onboarding) do we hit the DB for count checks.
       const [groupMember, hasFriend, hasPost] = await Promise.all([
         supabase
           .from("group_members")
@@ -87,8 +83,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
           .eq("user_id", user.id),
       ]);
 
-      // Determine which tasks are complete
-      const profileComplete = !!(profile?.username && profile?.country && profile?.grade && profile?.stream);
+      const profileComplete = !!(username && profileData.country && profileData.grade && profileData.stream);
       const browsedFeed = completedTaskIds.includes("browse") || localStorage.getItem("studyhub_browsed_feed") === "true";
       const joinedGroup = (groupMember.count || 0) > 0;
       const addedFriend = (hasFriend.count || 0) > 0;
@@ -104,10 +99,8 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
       setTasks(updatedTasks);
 
-      // Check if all tasks are now complete
       const allDone = updatedTasks.every((t) => t.completed);
-      if (allDone && !profile?.onboarding_completed) {
-        // Mark onboarding as complete
+      if (allDone) {
         await supabase
           .from("profiles")
           .update({ onboarding_completed: true })
@@ -116,7 +109,6 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         setShowWelcome(false);
         setShowChecklist(false);
       } else {
-        // Show welcome if first time
         const hasSeenWelcome = localStorage.getItem("studyhub_onboarding_seen") === "true";
         if (!hasSeenWelcome) {
           setShowWelcome(true);
@@ -129,7 +121,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     };
 
     initOnboarding();
-  }, [user]);
+  }, [user, profileData?.onboarding_completed, profileData?.onboarding_tasks, profileData?.country, profileData?.grade, profileData?.stream, username]);
 
   // Re-check profile task when profileData changes
   useEffect(() => {
