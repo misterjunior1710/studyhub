@@ -354,6 +354,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         refreshSession,
         signOut,
         resetSessionExpired,
+        refetchProfile,
       }}
     >
       {children}
