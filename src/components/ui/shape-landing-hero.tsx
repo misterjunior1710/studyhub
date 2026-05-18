@@ -29,7 +29,8 @@ function ElegantShape({
         ease: [0.23, 0.86, 0.39, 0.96],
         opacity: { duration: 1.2 },
       }}
-      className={cn("absolute", className)}
+      className={cn("absolute pointer-events-none", className)}
+      aria-hidden="true"
     >
       <motion.div
         animate={{ y: [0, 15, 0] }}
