@@ -29,9 +29,15 @@ export const useLeaderboard = (scope: LeaderboardScope, period: LeaderboardPerio
   return useQuery({
     queryKey: ["leaderboard", scope, period, safeLimit, user?.id],
     enabled: !!user, // auth-gated: never fetch for logged-out users
-    staleTime: 60 * 1000,
+    staleTime: 5 * 60 * 1000, // 5 min — leaderboard rarely changes
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    // Single retry with long backoff so a transient RPC failure does not
+    // hammer Supabase every few seconds.
+    retry: 1,
+    retryDelay: 30_000,
     queryFn: async (): Promise<LeaderboardRow[]> => {
-      // Fetch a small buffer so excluded users don't shrink the visible list.
       const fetchLimit = Math.min(safeLimit + EXCLUDED_USER_IDS.size, LEADERBOARD_MAX + 5);
       const { data, error } = await supabase.rpc("get_leaderboard", {
         p_scope: scope,
@@ -39,7 +45,6 @@ export const useLeaderboard = (scope: LeaderboardScope, period: LeaderboardPerio
         p_limit: fetchLimit,
       });
       if (error) throw error;
-      // Filter excluded users, strip sensitive fields, then slice & re-rank.
       return ((data || []) as LeaderboardRow[])
         .filter((r) => !EXCLUDED_USER_IDS.has(r.user_id))
         .slice(0, safeLimit)
@@ -61,13 +66,22 @@ export const useUserRank = (scope: LeaderboardScope, period: LeaderboardPeriod =
   return useQuery({
     queryKey: ["userRank", scope, period, user?.id],
     enabled: !!user,
-    staleTime: 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    retry: 1,
+    retryDelay: 30_000,
     queryFn: async () => {
       const { data, error } = await supabase.rpc("get_user_rank", {
         p_scope: scope,
         p_period: period,
       });
-      if (error) throw error;
+      if (error) {
+        // Swallow & log — rank is non-critical UI, never spam retries.
+        console.warn("[useUserRank] RPC failed:", error.message);
+        return { rank: null, total: 0, xp: 0 };
+      }
       return data as { rank: number | null; total: number; xp: number };
     },
   });
