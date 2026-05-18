@@ -29,7 +29,8 @@ function ElegantShape({
         ease: [0.23, 0.86, 0.39, 0.96],
         opacity: { duration: 1.2 },
       }}
-      className={cn("absolute", className)}
+      className={cn("absolute pointer-events-none", className)}
+      aria-hidden="true"
     >
       <motion.div
         animate={{ y: [0, 15, 0] }}
@@ -85,7 +86,7 @@ function HeroGeometric({
     <div className="relative min-h-[80vh] w-full flex items-center justify-center overflow-hidden bg-background">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.05] via-transparent to-accent/[0.05] blur-3xl" />
 
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
         <ElegantShape
           delay={0.3}
           width={600}

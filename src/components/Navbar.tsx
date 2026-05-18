@@ -344,7 +344,7 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
                 <Button
                   size="sm"
                   onClick={() => navigate("/auth")}
-                  className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90"
+                  className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 px-3 sm:px-4 text-xs sm:text-sm whitespace-nowrap"
                 >
                   Get Started
                 </Button>
