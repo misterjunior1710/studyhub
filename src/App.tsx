@@ -68,6 +68,7 @@ const Refund = lazy(() => import("./pages/Refund"));
 const SuccessBasic = lazy(() => import("./pages/SuccessBasic"));
 const SuccessPro = lazy(() => import("./pages/SuccessPro"));
 const FloatingAssistant = lazy(() => import("@/components/assistant/FloatingAssistant"));
+const AdminAudit = lazy(() => import("./pages/AdminAudit"));
 
 // Optimized QueryClient with proper caching and garbage collection
 const queryClient = new QueryClient({
@@ -187,6 +188,7 @@ const App = () => (
                         <Route path="/refund" element={<Refund />} />
                         <Route path="/success/basic" element={<SuccessBasic />} />
                         <Route path="/success/pro" element={<SuccessPro />} />
+                        <Route path="/admin/audit" element={<AdminAudit />} />
                           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                           <Route path="*" element={<NotFound />} />
                         </Routes>
