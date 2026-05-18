@@ -20,7 +20,11 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import { SplineScene } from "@/components/ui/splite";
+import { lazy, Suspense } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+const SplineScene = lazy(() =>
+  import("@/components/ui/splite").then((m) => ({ default: m.SplineScene })),
+);
 import { Spotlight } from "@/components/ui/spotlight";
 import { HeroGeometric } from "@/components/ui/shape-landing-hero";
 import { ReactLenis } from "lenis/react";
