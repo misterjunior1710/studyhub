@@ -267,7 +267,7 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
       if (debouncedFetchRef.current) window.clearTimeout(debouncedFetchRef.current);
       supabase.removeChannel(channel);
     };
-  }, [user, scheduleFetch]);
+  }, [user, scheduleFetch, refetchProfile]);
 
   // Fallback re-sync only when coming back online or returning to tab
   // after being hidden for a while. NO interval polling — realtime covers
