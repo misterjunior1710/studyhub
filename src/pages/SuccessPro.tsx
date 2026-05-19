@@ -29,6 +29,7 @@ const SuccessPro = () => {
       <Navbar />
 
       <div className="min-h-screen bg-background text-foreground">
+        <PaymentVerifyingGate expectedPlan="pro_monthly" retryHref="/pricing?cycle=monthly">
         <section className="relative overflow-hidden">
           <div className="pointer-events-none absolute inset-0 -z-10">
             <div className="absolute left-1/2 top-[-10%] h-[460px] w-[900px] -translate-x-1/2 rounded-full bg-primary/25 blur-[130px] opacity-70" />
