@@ -182,20 +182,63 @@ const FAQ_ITEMS = [
 
 const Pricing = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { user } = useAuth();
+  const { isPro, plan: currentPlan } = useSubscription();
   const [cycle, setCycle] = useState<BillingCycle>("yearly");
+  const [loadingPlan, setLoadingPlan] = useState<Plan["id"] | null>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 
-  const handleSelectPlan = (plan: Plan) => {
+  // Handle canceled-from-checkout return
+  useEffect(() => {
+    if (searchParams.get("canceled") === "1") {
+      toast("Checkout canceled", {
+        description: "No charge was made. You can try again anytime.",
+      });
+    }
+  }, [searchParams]);
+
+  const handleSelectPlan = async (plan: Plan) => {
     if (plan.id === "free") {
-      navigate("/auth");
+      if (!user) {
+        navigate("/auth");
+      } else {
+        navigate("/feed");
+      }
       return;
     }
-    toast("Checkout coming soon", {
-      description: "Subscriptions launch shortly. Hang tight!",
-    });
+
+    // Already subscribed to this plan
+    if (isPro && currentPlan === plan.id) {
+      navigate("/settings#billing");
+      return;
+    }
+
+    if (!user) {
+      navigate(`/auth?next=${encodeURIComponent(`/pricing?cycle=${cycle}`)}`);
+      return;
+    }
+
+    setLoadingPlan(plan.id);
+    try {
+      const { data, error } = await supabase.functions.invoke("dodo-create-checkout", {
+        body: { plan: plan.id, origin: window.location.origin },
+      });
+      if (error) throw error;
+      if (!data?.url) throw new Error("No checkout URL returned");
+      // Hosted Dodo checkout — full-page redirect feels smoothest on mobile
+      window.location.href = data.url as string;
+    } catch (e: any) {
+      console.error("Checkout error", e);
+      setLoadingPlan(null);
+      toast.error("Couldn't start checkout", {
+        description: e?.message ?? "Please try again in a moment.",
+        action: { label: "Retry", onClick: () => handleSelectPlan(plan) },
+      });
+    }
   };
 
   const visiblePlans = PLANS.filter((p) => {
