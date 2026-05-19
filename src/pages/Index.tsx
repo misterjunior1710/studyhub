@@ -108,26 +108,24 @@ const Index = () => {
       <header className="relative">
         <HeroGeometric
           badge="StudyHub™"
-          title1="Study Smarter."
-          title2="Ace Everything."
-          description="A student-only discussion platform focused on school life, questions, and studying!"
+          title1="Where Students"
+          title2="Help Students."
+          description="Ask questions, share answers, and learn together. A student-powered academic community — with study tools built in."
         >
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button size="lg" onClick={handleGetStarted} className="gap-2 text-base px-8 py-6 btn-bounce hover-glow">
-              {user ? "Jump to Feed" : "Get Started — It's Free"}
+              {user ? "Jump to Feed" : "Join the Community — Free"}
               <ArrowRight className="h-4 w-4" />
             </Button>
-            {!user && (
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => navigate("/questions")}
-                className="gap-2 text-base px-8 py-6 btn-bounce"
-              >
-                <Zap className="h-4 w-4" />
-                Browse First
-              </Button>
-            )}
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => navigate("/questions")}
+              className="gap-2 text-base px-8 py-6 btn-bounce"
+            >
+              <MessageSquare className="h-4 w-4" />
+              {user ? "Ask a Question" : "Browse Questions"}
+            </Button>
           </div>
         </HeroGeometric>
       </header>
