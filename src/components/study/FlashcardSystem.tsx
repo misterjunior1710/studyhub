@@ -76,8 +76,6 @@ export function FlashcardSystem() {
   const dueCards = cards.filter(c => new Date(c.next_review_at) <= new Date());
   // Track which cards have been reviewed in this session (for unlimited practice)
   const [reviewedInSession, setReviewedInSession] = useState<Set<string>>(new Set());
-  // Use all cards for practice, not just due ones
-  const practiceCards = cards;
   const reviewCards = useMemo(
     () => reviewCardIds.map((id) => cards.find((card) => card.id === id)).filter(Boolean) as Flashcard[],
     [cards, reviewCardIds]
