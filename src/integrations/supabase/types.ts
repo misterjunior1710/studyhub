@@ -1824,6 +1824,7 @@ export type Database = {
           id: string
           is_banned: boolean | null
           is_public: boolean | null
+          is_test_account: boolean
           last_active_date: string | null
           last_streak_date: string | null
           notify_announcements: boolean | null
@@ -1869,6 +1870,7 @@ export type Database = {
           id: string
           is_banned?: boolean | null
           is_public?: boolean | null
+          is_test_account?: boolean
           last_active_date?: string | null
           last_streak_date?: string | null
           notify_announcements?: boolean | null
@@ -1914,6 +1916,7 @@ export type Database = {
           id?: string
           is_banned?: boolean | null
           is_public?: boolean | null
+          is_test_account?: boolean
           last_active_date?: string | null
           last_streak_date?: string | null
           notify_announcements?: boolean | null
