@@ -41,8 +41,6 @@ type LinkItem = {
 };
 
 const studyLinks: LinkItem[] = [
-  { title: "Feed", href: "/feed", icon: Rss, description: "Latest posts from your Study Squad" },
-  { title: "Questions", href: "/questions", icon: HelpCircle, description: "Ask, answer, and get unstuck" },
   { title: "Study Tools", href: "/study", icon: Timer, description: "Flashcards, quizzes, Pomodoro" },
   { title: "Nova AI", href: "/assistant", icon: Sparkles, description: "Your personal AI study buddy" },
   { title: "Notes", href: "/notes", icon: NotebookPen, description: "Capture and organise ideas" },
@@ -195,6 +193,32 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
           <div className="hidden md:flex absolute left-1/2 -translate-x-1/2">
             <NavigationMenu>
               <NavigationMenuList>
+                <NavigationMenuItem>
+                  <button
+                    type="button"
+                    onClick={() => navigate("/feed")}
+                    className={cn(
+                      "inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                      isActive("/feed") && "text-primary bg-accent/40",
+                    )}
+                  >
+                    <Rss className="h-4 w-4" />
+                    Feed
+                  </button>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <button
+                    type="button"
+                    onClick={() => navigate("/questions")}
+                    className={cn(
+                      "inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                      isActive("/questions") && "text-primary bg-accent/40",
+                    )}
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                    Questions
+                  </button>
+                </NavigationMenuItem>
                 {renderMegaMenu("Study", studyLinks)}
                 {renderMegaMenu("Plan", planLinks)}
                 {renderMegaMenu("Community", communityLinks)}

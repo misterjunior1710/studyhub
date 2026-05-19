@@ -9,7 +9,9 @@ import { usePosts, getTimeAgo } from "@/hooks/usePosts";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Search, Flame, MessageCircleQuestion, Clock, TrendingUp, HelpCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   Pagination,
   PaginationContent,
@@ -25,17 +27,31 @@ const POSTS_PER_PAGE = 10;
 const Questions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
+  const [filter, setFilter] = useState<"all" | "unanswered" | "trending" | "recent">("all");
   const searchQuery = useDebounce(searchInput, 300);
-  
+
+  const sortBy = filter === "trending" ? "top" : "new";
+
   const {
-    data: allPosts = [],
+    data: rawPosts = [],
     isLoading: loading,
     invalidatePosts
   } = usePosts({
     postType: "doubt",
-    sortBy: "new",
+    sortBy,
     searchQuery
   });
+
+  // Client-side filter for "unanswered"
+  const allPosts = useMemo(() => {
+    if (filter === "unanswered") {
+      return rawPosts.filter((p: any) => {
+        const count = Array.isArray(p.comments) ? (p.comments[0]?.count ?? 0) : 0;
+        return count === 0;
+      });
+    }
+    return rawPosts;
+  }, [rawPosts, filter]);
 
   // Paginate posts
   const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
@@ -120,7 +136,33 @@ const Questions = () => {
               />
             </div>
           </div>
-          
+
+          <div className="mt-4 flex flex-wrap gap-2 opacity-0 animate-hero-fade-up" style={{ animationDelay: "175ms" }} role="tablist" aria-label="Filter questions">
+            {[
+              { id: "all" as const, label: "All", icon: HelpCircle },
+              { id: "trending" as const, label: "Trending", icon: Flame },
+              { id: "unanswered" as const, label: "Need Help Fast", icon: MessageCircleQuestion },
+              { id: "recent" as const, label: "Recent", icon: Clock },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const active = filter === tab.id;
+              return (
+                <Button
+                  key={tab.id}
+                  size="sm"
+                  variant={active ? "default" : "outline"}
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => { setFilter(tab.id); setCurrentPage(1); }}
+                  className={cn("rounded-full gap-1.5 h-8 text-xs sm:text-sm", active && "shadow-sm")}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {tab.label}
+                </Button>
+              );
+            })}
+          </div>
+
           <nav className="mt-3 text-sm opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }} aria-label="Related pages">
             <span className="text-muted-foreground">See also: </span>
             <a href="/feed" className="text-primary hover:underline">Home Feed</a>
@@ -135,12 +177,18 @@ const Questions = () => {
               <PostSkeletonList count={4} />
             ) : allPosts.length === 0 ? (
               <div className="text-center py-12">
-                <h2 className="text-lg font-semibold mb-2">No questions yet — be the first! 🎯</h2>
+                <h2 className="text-lg font-semibold mb-2">
+                  {filter === "unanswered"
+                    ? "Every question's been answered 🎉"
+                    : "No questions yet — be the first! 🎯"}
+                </h2>
                 <p className="text-muted-foreground mb-4">
-                  Hit the Create Post button up top and drop your question.
+                  {filter === "unanswered"
+                    ? "Nice — the community's caught up. Try another filter or ask something new."
+                    : "Hit the Create Post button up top and drop your question."}
                 </p>
                 <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                  Ask about anything — homework, exam prep, tricky concepts, study strategies. 
+                  Ask about anything — homework, exam prep, tricky concepts, study strategies.
                   The community is ready to help.
                 </p>
               </div>

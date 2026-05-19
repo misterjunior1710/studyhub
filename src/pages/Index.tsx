@@ -19,6 +19,7 @@ import {
   Bookmark,
   TrendingUp,
   Zap,
+  Rss,
 } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -75,21 +76,21 @@ const Index = () => {
   const quickActions = user
     ? [
         { icon: TrendingUp, label: "My Feed", href: "/feed", color: "from-primary to-accent" },
-        { icon: MessageSquare, label: "Ask a Doubt", href: "/questions", color: "from-accent to-primary" },
+        { icon: MessageSquare, label: "Ask a Question", href: "/questions", color: "from-accent to-primary" },
         { icon: Users, label: "Your Groups", href: "/groups", color: "from-info to-primary" },
-        { icon: Brain, label: "Study Tools", href: "/study", color: "from-success to-info" },
         { icon: Sparkles, label: "AI Tools", href: "/content-generator", color: "from-warning to-accent" },
+        { icon: Brain, label: "Study Tools", href: "/study", color: "from-success to-info" },
         { icon: Calendar, label: "Calendar", href: "/calendar", color: "from-primary to-success" },
       ]
     : [
-        { icon: MessageSquare, label: "Browse Questions", href: "/questions", color: "from-primary to-accent" },
-        { icon: Users, label: "Study Groups", href: "/groups", color: "from-accent to-primary" },
-        { icon: Brain, label: "AI Study Tools", href: "/content-generator", color: "from-success to-info" },
-        { icon: BookOpen, label: "Study Mode", href: "/study", color: "from-info to-primary" },
-        { icon: Calendar, label: "Calendar", href: "/calendar", color: "from-primary to-success" },
-        { icon: Sparkles, label: "Nova AI", href: "/assistant", color: "from-warning to-accent" },
-        { icon: Bookmark, label: "Saved Posts", href: "/saved", color: "from-accent to-info" },
+        { icon: TrendingUp, label: "Browse Feed", href: "/feed", color: "from-primary to-accent" },
+        { icon: MessageSquare, label: "Browse Questions", href: "/questions", color: "from-accent to-primary" },
+        { icon: Users, label: "Study Groups", href: "/groups", color: "from-info to-primary" },
         { icon: Trophy, label: "Leaderboard", href: "/leaderboard", color: "from-warning to-primary" },
+        { icon: Brain, label: "AI Study Tools", href: "/content-generator", color: "from-success to-info" },
+        { icon: Sparkles, label: "Nova AI", href: "/assistant", color: "from-warning to-accent" },
+        { icon: BookOpen, label: "Study Mode", href: "/study", color: "from-info to-primary" },
+        { icon: Bookmark, label: "Saved Posts", href: "/saved", color: "from-accent to-info" },
       ];
 
   return (
@@ -108,26 +109,24 @@ const Index = () => {
       <header className="relative">
         <HeroGeometric
           badge="StudyHub™"
-          title1="Study Smarter."
-          title2="Ace Everything."
-          description="A student-only discussion platform focused on school life, questions, and studying!"
+          title1="Where Students"
+          title2="Help Students."
+          description="Ask questions, share answers, and learn together. A student-powered academic community — with study tools built in."
         >
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button size="lg" onClick={handleGetStarted} className="gap-2 text-base px-8 py-6 btn-bounce hover-glow">
-              {user ? "Jump to Feed" : "Get Started — It's Free"}
+              {user ? "Jump to Feed" : "Join the Community — Free"}
               <ArrowRight className="h-4 w-4" />
             </Button>
-            {!user && (
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => navigate("/questions")}
-                className="gap-2 text-base px-8 py-6 btn-bounce"
-              >
-                <Zap className="h-4 w-4" />
-                Browse First
-              </Button>
-            )}
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => navigate("/questions")}
+              className="gap-2 text-base px-8 py-6 btn-bounce"
+            >
+              <MessageSquare className="h-4 w-4" />
+              {user ? "Ask a Question" : "Browse Questions"}
+            </Button>
           </div>
         </HeroGeometric>
       </header>
@@ -258,10 +257,16 @@ const Index = () => {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                icon: BookOpen,
-                title: "Share & Learn",
+                icon: MessageSquare,
+                title: "Ask & Answer",
                 description:
-                  "Post questions, drop your notes, and learn from classmates across every subject imaginable.",
+                  "Stuck on homework? Post your question and get answers from students worldwide — usually within minutes.",
+              },
+              {
+                icon: Rss,
+                title: "Live Study Feed",
+                description:
+                  "Scroll through discussions, notes, and exam prep from your grade and subjects. The smartest feed in studying.",
               },
               {
                 icon: Users,
@@ -269,10 +274,22 @@ const Index = () => {
                 description: "Team up in groups for real-time discussions, group study sessions, and exam prep.",
               },
               {
-                icon: Trophy,
-                title: "Stay on Track",
+                icon: BookOpen,
+                title: "Share Knowledge",
                 description:
-                  "Build streaks, earn XP, and keep your study momentum going — consistency is the real flex. 😏",
+                  "Drop your notes, summaries, and study guides. Help classmates and build your reputation.",
+              },
+              {
+                icon: Brain,
+                title: "Smart Study Tools",
+                description:
+                  "Flashcards, AI summaries, mind maps, and quizzes — all powered by the community's best content.",
+              },
+              {
+                icon: Trophy,
+                title: "Earn & Level Up",
+                description:
+                  "Build streaks, earn XP, and climb the leaderboard — consistency is the real flex. 😏",
               },
             ].map((feature, index) => (
               <div
