@@ -132,7 +132,7 @@ const SavedPosts = () => {
             <p className="text-muted-foreground mb-4 max-w-md mx-auto">
               Hit the bookmark icon on any post to save it here for later.
             </p>
-            <Button onClick={() => navigate("/")} variant="outline">
+            <Button onClick={() => navigate("/feed")} variant="outline">
               Browse Posts
             </Button>
           </div>

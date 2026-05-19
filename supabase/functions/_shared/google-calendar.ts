@@ -46,15 +46,17 @@ const getKey = async () => {
   );
 };
 
-export const signState = async (userId: string): Promise<string> => {
-  const payload = { uid: userId, ts: Date.now() };
+export const signState = async (userId: string, origin?: string): Promise<string> => {
+  const payload = { uid: userId, ts: Date.now(), origin: origin ?? null };
   const data = b64u(enc.encode(JSON.stringify(payload)));
   const key = await getKey();
   const sig = await crypto.subtle.sign("HMAC", key, enc.encode(data));
   return `${data}.${b64u(sig)}`;
 };
 
-export const verifyState = async (state: string): Promise<string | null> => {
+export const verifyState = async (
+  state: string,
+): Promise<{ uid: string; origin: string | null } | null> => {
   const [data, sig] = state.split(".");
   if (!data || !sig) return null;
   const key = await getKey();
@@ -63,10 +65,27 @@ export const verifyState = async (state: string): Promise<string | null> => {
   try {
     const payload = JSON.parse(dec.decode(b64uDecode(data)));
     if (Date.now() - payload.ts > 15 * 60 * 1000) return null;
-    return payload.uid as string;
+    return { uid: payload.uid as string, origin: (payload.origin ?? null) as string | null };
   } catch {
     return null;
   }
+};
+
+const ALLOWED_ORIGINS = [
+  "https://studyhub.world",
+  "https://www.studyhub.world",
+  "https://studyhubstudentportal.lovable.app",
+];
+export const resolveReturnOrigin = (origin: string | null): string => {
+  if (!origin) return "https://studyhub.world";
+  try {
+    const u = new URL(origin);
+    if (ALLOWED_ORIGINS.includes(u.origin)) return u.origin;
+    if (u.hostname.endsWith(".lovable.app") || u.hostname.endsWith(".lovableproject.com")) {
+      return u.origin;
+    }
+  } catch {}
+  return "https://studyhub.world";
 };
 
 export const getRedirectUri = () => {

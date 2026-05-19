@@ -78,7 +78,9 @@ export const TaskEditorDialog = ({ open, onOpenChange, initial, onSave }: Props)
       setNotes(block);
       toast.success(`Added ${subs.length} subtasks to notes`);
     } catch (e: any) {
-      toast.error(e?.message ?? "AI breakdown failed");
+      console.error("[ai-breakdown]", e);
+      const detail = e?.context?.error || e?.context?.message || e?.message || "AI breakdown failed";
+      toast.error("AI breakdown unavailable", { description: detail });
     } finally {
       setBreakingDown(false);
     }

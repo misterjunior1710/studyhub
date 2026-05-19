@@ -44,6 +44,8 @@ export function MindMapBuilder() {
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [draggingNode, setDraggingNode] = useState<string | null>(null);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  // Local optimistic positions while dragging — avoids hammering the DB on each pointer move.
+  const [localPositions, setLocalPositions] = useState<Record<string, { x: number; y: number }>>({});
 
   const { data: maps = [], isLoading: mapsLoading } = useQuery({
     queryKey: ["mind-maps", user?.id],
@@ -128,7 +130,12 @@ export function MindMapBuilder() {
       }).eq("id", nodeId);
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_d, vars) => {
+      // Drop the local override now that the server has the new position.
+      setLocalPositions(prev => {
+        const { [vars.nodeId]: _gone, ...rest } = prev;
+        return rest;
+      });
       queryClient.invalidateQueries({ queryKey: ["mind-map-nodes"] });
     },
   });
@@ -157,30 +164,41 @@ export function MindMapBuilder() {
     },
   });
 
-  const handleMouseDown = (e: React.MouseEvent, nodeId: string) => {
+  const getNodePos = (n: MindMapNode) => {
+    const local = localPositions[n.id];
+    return local ?? { x: n.position_x, y: n.position_y };
+  };
+
+  const handlePointerDown = (e: React.PointerEvent, nodeId: string) => {
     e.stopPropagation();
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     setDraggingNode(nodeId);
     setDragStart({ x: e.clientX, y: e.clientY });
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (draggingNode) {
-      const node = nodes.find(n => n.id === draggingNode);
-      if (node) {
-        const dx = (e.clientX - dragStart.x) / zoom;
-        const dy = (e.clientY - dragStart.y) / zoom;
-        updateNodePositionMutation.mutate({
-          nodeId: draggingNode,
-          x: node.position_x + dx,
-          y: node.position_y + dy,
-        });
-        setDragStart({ x: e.clientX, y: e.clientY });
-      }
-    }
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!draggingNode) return;
+    const node = nodes.find(n => n.id === draggingNode);
+    if (!node) return;
+    const current = getNodePos(node);
+    const dx = (e.clientX - dragStart.x) / zoom;
+    const dy = (e.clientY - dragStart.y) / zoom;
+    setLocalPositions(prev => ({
+      ...prev,
+      [draggingNode]: { x: current.x + dx, y: current.y + dy },
+    }));
+    setDragStart({ x: e.clientX, y: e.clientY });
   };
 
-  const handleMouseUp = () => {
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (!draggingNode) return;
+    const finalPos = localPositions[draggingNode];
+    const id = draggingNode;
     setDraggingNode(null);
+    try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+    if (finalPos) {
+      updateNodePositionMutation.mutate({ nodeId: id, x: finalPos.x, y: finalPos.y });
+    }
   };
 
   const getColorClass = (color: string) => {
@@ -255,10 +273,10 @@ export function MindMapBuilder() {
 
         <div
           ref={canvasRef}
-          className="relative w-full h-[500px] bg-gradient-to-br from-muted/30 via-background to-muted/20 rounded-xl overflow-hidden border-2 border-dashed border-muted"
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
+          className="relative w-full h-[500px] bg-gradient-to-br from-muted/30 via-background to-muted/20 rounded-xl overflow-hidden border-2 border-dashed border-muted touch-none select-none"
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
         >
           {/* Grid pattern background */}
           <div className="absolute inset-0 opacity-30" style={{
@@ -277,18 +295,19 @@ export function MindMapBuilder() {
               if (!node.parent_id) return null;
               const parent = nodes.find(n => n.id === node.parent_id);
               if (!parent) return null;
-              
+              const np = getNodePos(node);
+              const pp = getNodePos(parent);
+
               // Calculate control points for curved lines
-              const midX = (parent.position_x + node.position_x) / 2;
-              const midY = (parent.position_y + node.position_y) / 2;
-              const dx = node.position_x - parent.position_x;
+              const midX = (pp.x + np.x) / 2;
+              const dx = np.x - pp.x;
               const curveOffset = Math.min(Math.abs(dx) * 0.3, 50);
-              
+
               return (
                 <g key={`line-${node.id}`}>
                   {/* Shadow line */}
                   <path
-                    d={`M ${parent.position_x} ${parent.position_y} Q ${midX} ${parent.position_y + curveOffset} ${node.position_x} ${node.position_y}`}
+                    d={`M ${pp.x} ${pp.y} Q ${midX} ${pp.y + curveOffset} ${np.x} ${np.y}`}
                     fill="none"
                     stroke="hsl(var(--muted-foreground) / 0.1)"
                     strokeWidth="6"
@@ -296,7 +315,7 @@ export function MindMapBuilder() {
                   />
                   {/* Main line */}
                   <path
-                    d={`M ${parent.position_x} ${parent.position_y} Q ${midX} ${parent.position_y + curveOffset} ${node.position_x} ${node.position_y}`}
+                    d={`M ${pp.x} ${pp.y} Q ${midX} ${pp.y + curveOffset} ${np.x} ${np.y}`}
                     fill="none"
                     stroke="url(#lineGradient)"
                     strokeWidth="2.5"
@@ -311,24 +330,25 @@ export function MindMapBuilder() {
           <div style={{ transform: `scale(${zoom})`, transformOrigin: "center" }}>
             {nodes.map(node => {
               const isRoot = !node.parent_id;
+              const pos = getNodePos(node);
               return (
                 <div
                   key={node.id}
                   className={cn(
-                    "absolute cursor-move select-none px-4 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200",
+                    "absolute cursor-move select-none px-4 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200 touch-none",
                     getColorClass(node.color),
                     isRoot ? "text-base px-5 py-3 font-semibold" : "",
                     selectedNode === node.id && "ring-2 ring-white ring-offset-2 ring-offset-background scale-105",
                     draggingNode === node.id && "opacity-70 scale-110 cursor-grabbing"
                   )}
                   style={{
-                    left: node.position_x - (isRoot ? 60 : 50),
-                    top: node.position_y - (isRoot ? 20 : 15),
+                    left: pos.x - (isRoot ? 60 : 50),
+                    top: pos.y - (isRoot ? 20 : 15),
                     minWidth: isRoot ? "120px" : "100px",
                     textAlign: "center",
                     boxShadow: `0 4px 20px -4px`,
                   }}
-                  onMouseDown={e => handleMouseDown(e, node.id)}
+                  onPointerDown={e => handlePointerDown(e, node.id)}
                   onClick={e => { e.stopPropagation(); setSelectedNode(node.id === selectedNode ? null : node.id); }}
                 >
                   {node.content}

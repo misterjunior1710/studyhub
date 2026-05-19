@@ -34,14 +34,21 @@ export const useMissions = () => {
     }
 
     try {
-      // Lazy-assign daily/weekly missions at most ONCE per day per user
-      // (skipping repeat RPCs on every mount cuts a large amount of DB load).
+      // Lazy-assign daily/weekly missions at most ONCE per day per user.
+      // The RPCs use auth.uid() internally — do NOT pass _user_id (no such arg).
       const today = new Date().toISOString().slice(0, 10);
       const assignKey = `missions:assigned:${user.id}:${today}`;
-      if (typeof window !== "undefined" && !window.localStorage.getItem(assignKey)) {
-        await supabase.rpc("assign_daily_missions" as any, { _user_id: user.id });
-        await supabase.rpc("assign_weekly_missions" as any, { _user_id: user.id });
-        try { window.localStorage.setItem(assignKey, "1"); } catch {}
+      const alreadyAssigned = typeof window !== "undefined" && window.localStorage.getItem(assignKey);
+      if (!alreadyAssigned) {
+        const [d, w] = await Promise.all([
+          supabase.rpc("assign_daily_missions" as any),
+          supabase.rpc("assign_weekly_missions" as any),
+        ]);
+        if (!d.error && !w.error) {
+          try { window.localStorage.setItem(assignKey, "1"); } catch {}
+        } else {
+          console.warn("[useMissions] assign failed", d.error, w.error);
+        }
       }
 
       const { data, error } = await supabase

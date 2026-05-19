@@ -338,7 +338,24 @@ const StudyMode = () => {
                         <Settings2 className="h-4 w-4" />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-72">
+                    <PopoverContent
+                      className="w-72"
+                      onOpenAutoFocus={(e) => e.preventDefault()}
+                      onPointerDownOutside={(e) => {
+                        // Prevent the Radix Slider's pointer release (which lands
+                        // outside the popover due to pointer capture) from closing it.
+                        const t = e.target as HTMLElement | null;
+                        if (t && t.closest("[data-radix-popper-content-wrapper], [role=slider], [data-radix-slider-thumb], [data-radix-slider-track]")) {
+                          e.preventDefault();
+                        }
+                      }}
+                      onInteractOutside={(e) => {
+                        const t = e.target as HTMLElement | null;
+                        if (t && t.closest("[role=slider], [data-radix-slider-thumb], [data-radix-slider-track]")) {
+                          e.preventDefault();
+                        }
+                      }}
+                    >
                       <div className="space-y-4">
                         <h4 className="font-medium">Timer Settings</h4>
                         <div className="space-y-2">

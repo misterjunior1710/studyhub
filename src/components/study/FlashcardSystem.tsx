@@ -221,18 +221,18 @@ export function FlashcardSystem() {
         </div>
         <div
           className={cn(
-            "w-full max-w-md h-64 cursor-pointer perspective-1000",
+            "w-full max-w-md cursor-pointer perspective-1000",
             "transition-transform duration-500"
           )}
           onClick={() => setIsFlipped(!isFlipped)}
         >
           <Card className={cn(
-            "w-full h-full flex items-center justify-center text-center p-6",
+            "w-full min-h-64 flex items-center justify-center text-center p-6",
             "transition-all duration-300",
             isFlipped ? "bg-primary/10" : "bg-card"
           )}>
-            <CardContent className="p-0">
-              <p className="text-lg font-medium">
+            <CardContent className="p-0 w-full max-h-[60vh] overflow-y-auto">
+              <p className="text-lg font-medium break-words [overflow-wrap:anywhere] whitespace-pre-wrap hyphens-auto">
                 {isFlipped ? currentCard.back : currentCard.front}
               </p>
               {!isFlipped && (
@@ -331,18 +331,18 @@ export function FlashcardSystem() {
                           Box {card.box_number}
                         </span>
                       </div>
-                      <p className="font-medium text-sm sm:text-base leading-relaxed">{card.front}</p>
+                      <p className="font-medium text-sm sm:text-base leading-relaxed break-words [overflow-wrap:anywhere] whitespace-pre-wrap hyphens-auto">{card.front}</p>
                     </div>
                     
                     {/* Divider */}
                     <div className="h-px bg-border" />
                     
                     {/* Answer Section */}
-                    <div className="space-y-1">
+                    <div className="space-y-1 min-w-0">
                       <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                         Answer
                       </span>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{card.back}</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed break-words [overflow-wrap:anywhere] whitespace-pre-wrap hyphens-auto">{card.back}</p>
                     </div>
                     
                     {/* Actions */}

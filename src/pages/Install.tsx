@@ -249,7 +249,7 @@ const Install = () => {
           <Card className="border-success/50 bg-success/5">
             <CardContent className="pt-6 text-center">
               <Check className="h-12 w-12 text-success mx-auto mb-4" aria-hidden="true" />
-              <h2 className="text-xl font-semibold mb-2">Already Installed</h2>
+              <h2 className="text-xl font-semibold mb-2">Installed</h2>
               <p className="text-muted-foreground">
                 StudyHub is on your device. Look for it on your home screen or Dock.
               </p>

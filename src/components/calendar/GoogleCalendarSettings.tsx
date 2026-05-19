@@ -89,7 +89,9 @@ const GoogleCalendarSettings = ({ userId, onSyncComplete }: Props) => {
   const handleConnect = async () => {
     setBusy("connect");
     try {
-      const { data, error } = await supabase.functions.invoke("google-calendar-auth-url");
+      const { data, error } = await supabase.functions.invoke("google-calendar-auth-url", {
+        body: { origin: window.location.origin },
+      });
       if (error || !data?.url) throw new Error(error?.message || "No URL returned");
       window.location.href = data.url;
     } catch (e: any) {
