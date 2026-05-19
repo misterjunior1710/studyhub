@@ -136,7 +136,33 @@ const Questions = () => {
               />
             </div>
           </div>
-          
+
+          <div className="mt-4 flex flex-wrap gap-2 opacity-0 animate-hero-fade-up" style={{ animationDelay: "175ms" }} role="tablist" aria-label="Filter questions">
+            {[
+              { id: "all" as const, label: "All", icon: HelpCircle },
+              { id: "trending" as const, label: "Trending", icon: Flame },
+              { id: "unanswered" as const, label: "Need Help Fast", icon: MessageCircleQuestion },
+              { id: "recent" as const, label: "Recent", icon: Clock },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const active = filter === tab.id;
+              return (
+                <Button
+                  key={tab.id}
+                  size="sm"
+                  variant={active ? "default" : "outline"}
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => { setFilter(tab.id); setCurrentPage(1); }}
+                  className={cn("rounded-full gap-1.5 h-8 text-xs sm:text-sm", active && "shadow-sm")}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {tab.label}
+                </Button>
+              );
+            })}
+          </div>
+
           <nav className="mt-3 text-sm opacity-0 animate-hero-fade-up" style={{ animationDelay: "200ms" }} aria-label="Related pages">
             <span className="text-muted-foreground">See also: </span>
             <a href="/feed" className="text-primary hover:underline">Home Feed</a>
