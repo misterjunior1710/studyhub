@@ -27,17 +27,31 @@ const POSTS_PER_PAGE = 10;
 const Questions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
+  const [filter, setFilter] = useState<"all" | "unanswered" | "trending" | "recent">("all");
   const searchQuery = useDebounce(searchInput, 300);
-  
+
+  const sortBy = filter === "trending" ? "top" : "new";
+
   const {
-    data: allPosts = [],
+    data: rawPosts = [],
     isLoading: loading,
     invalidatePosts
   } = usePosts({
     postType: "doubt",
-    sortBy: "new",
+    sortBy,
     searchQuery
   });
+
+  // Client-side filter for "unanswered"
+  const allPosts = useMemo(() => {
+    if (filter === "unanswered") {
+      return rawPosts.filter((p: any) => {
+        const count = Array.isArray(p.comments) ? (p.comments[0]?.count ?? 0) : 0;
+        return count === 0;
+      });
+    }
+    return rawPosts;
+  }, [rawPosts, filter]);
 
   // Paginate posts
   const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
