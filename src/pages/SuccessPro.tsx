@@ -102,6 +102,7 @@ const SuccessPro = () => {
             </p>
           </div>
         </section>
+        </PaymentVerifyingGate>
 
         <Footer />
       </div>
