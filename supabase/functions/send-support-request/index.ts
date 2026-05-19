@@ -113,6 +113,64 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Support request saved successfully:", data.id);
 
+    // Enqueue email notification to support inbox
+    const SUPPORT_INBOX = "studyhub.community.web@gmail.com";
+    const SITE_NAME = "StudyHub";
+    const SENDER_DOMAIN = "notify.studyhub.world";
+    const FROM_DOMAIN = "studyhub.world";
+
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+    const safeCategory = escapeHtml(category);
+    const safeSubject = escapeHtml(subject);
+    const safeMessage = escapeHtml(message).replace(/\n/g, "<br/>");
+
+    const html = `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f6f7fb;padding:24px;">
+      <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;padding:32px;">
+        <h2 style="color:#4f46e5;margin:0 0 16px;">New Support Request</h2>
+        <p style="margin:4px 0;"><strong>From:</strong> ${safeName} &lt;${safeEmail}&gt;</p>
+        <p style="margin:4px 0;"><strong>Category:</strong> ${safeCategory}</p>
+        <p style="margin:4px 0;"><strong>Subject:</strong> ${safeSubject}</p>
+        <p style="margin:4px 0;"><strong>Request ID:</strong> ${data.id}</p>
+        <hr style="border:none;border-top:1px solid #eee;margin:20px 0;" />
+        <div style="color:#333;line-height:1.6;">${safeMessage}</div>
+        <hr style="border:none;border-top:1px solid #eee;margin:20px 0;" />
+        <p style="color:#888;font-size:12px;">Reply directly to ${safeEmail} to respond to this user.</p>
+      </div></body></html>`;
+
+    const text = `New Support Request\n\nFrom: ${name} <${email}>\nCategory: ${category}\nSubject: ${subject}\nRequest ID: ${data.id}\n\n${message}\n\nReply to ${email} to respond.`;
+
+    const messageId = crypto.randomUUID();
+
+    await supabase.from("email_send_log").insert({
+      message_id: messageId,
+      template_name: "support_request",
+      recipient_email: SUPPORT_INBOX,
+      status: "pending",
+    });
+
+    const { error: enqueueError } = await supabase.rpc("enqueue_email", {
+      queue_name: "transactional_emails",
+      payload: {
+        message_id: messageId,
+        to: SUPPORT_INBOX,
+        from: `${SITE_NAME} Support <noreply@${FROM_DOMAIN}>`,
+        reply_to: email,
+        sender_domain: SENDER_DOMAIN,
+        subject: `[Support][${category}] ${subject}`,
+        html,
+        text,
+        purpose: "transactional",
+        label: "support_request",
+        queued_at: new Date().toISOString(),
+      },
+    });
+
+    if (enqueueError) {
+      console.error("Failed to enqueue support email:", enqueueError);
+      // Don't fail the request — submission was saved
+    }
+
     return new Response(
       JSON.stringify({ success: true, message: "Support request submitted successfully", id: data.id }),
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
