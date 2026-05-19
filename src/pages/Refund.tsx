@@ -61,8 +61,8 @@ const Refund = () => {
             <h2 className="text-2xl font-semibold">How to Request a Refund</h2>
             <p className="text-muted-foreground">
               Email{" "}
-              <a href="mailto:support@studyhub.world" className="underline hover:text-primary">
-                support@studyhub.world
+              <a href="mailto:studyhub.community.web@gmail.com" className="underline hover:text-primary">
+                studyhub.community.web@gmail.com
               </a>{" "}
               from the address associated with your account. Include your order ID or payment
               receipt. We review refund requests within 3 business days, and approved refunds are
@@ -90,8 +90,8 @@ const Refund = () => {
             <h2 className="text-2xl font-semibold">Contact</h2>
             <p className="text-muted-foreground">
               Questions? Reach us at{" "}
-              <a href="mailto:support@studyhub.world" className="underline hover:text-primary">
-                support@studyhub.world
+              <a href="mailto:studyhub.community.web@gmail.com" className="underline hover:text-primary">
+                studyhub.community.web@gmail.com
               </a>
               .
             </p>

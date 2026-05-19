@@ -126,8 +126,8 @@ const Footer = () => {
             <p>© {new Date().getFullYear()} StudyHub™ — Study Smarter, Ace Everything. All rights reserved.</p>
             <p>
               Built and maintained by the StudyHub Team ·{" "}
-              <a href="mailto:support@studyhub.world" className="underline hover:text-primary">
-                support@studyhub.world
+              <a href="mailto:studyhub.community.web@gmail.com" className="underline hover:text-primary">
+                studyhub.community.web@gmail.com
               </a>
             </p>
           </div>

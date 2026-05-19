@@ -343,7 +343,7 @@ const Terms = () => {
                   <h4 className="font-medium text-foreground">Subscriptions, Renewals &amp; Cancellation</h4>
                   <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                     <li>Paid plans are billed in advance on a recurring basis (monthly or yearly) and automatically renew at the end of each billing cycle until cancelled.</li>
-                    <li>You may cancel at any time from your Settings page or by contacting <a href="mailto:support@studyhub.world" className="underline hover:text-primary">support@studyhub.world</a>. Cancellation takes effect at the end of the current billing period; you keep Pro access until then.</li>
+                    <li>You may cancel at any time from your Settings page or by contacting <a href="mailto:studyhub.community.web@gmail.com" className="underline hover:text-primary">studyhub.community.web@gmail.com</a>. Cancellation takes effect at the end of the current billing period; you keep Pro access until then.</li>
                     <li>Renewal charges are non-refundable once processed. Cancel before your renewal date to avoid being charged.</li>
                     <li>Prices are listed in US dollars. Local taxes (VAT, GST, sales tax) may be added by Dodo Payments based on your billing country.</li>
                     <li>We may change pricing for future billing cycles with at least 14 days' notice; existing pre-paid periods are honoured at the original price.</li>
