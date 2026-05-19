@@ -256,10 +256,16 @@ const Index = () => {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                icon: BookOpen,
-                title: "Share & Learn",
+                icon: MessageSquare,
+                title: "Ask & Answer",
                 description:
-                  "Post questions, drop your notes, and learn from classmates across every subject imaginable.",
+                  "Stuck on homework? Post your question and get answers from students worldwide — usually within minutes.",
+              },
+              {
+                icon: Rss,
+                title: "Live Study Feed",
+                description:
+                  "Scroll through discussions, notes, and exam prep from your grade and subjects. The smartest feed in studying.",
               },
               {
                 icon: Users,
@@ -267,10 +273,22 @@ const Index = () => {
                 description: "Team up in groups for real-time discussions, group study sessions, and exam prep.",
               },
               {
-                icon: Trophy,
-                title: "Stay on Track",
+                icon: BookOpen,
+                title: "Share Knowledge",
                 description:
-                  "Build streaks, earn XP, and keep your study momentum going — consistency is the real flex. 😏",
+                  "Drop your notes, summaries, and study guides. Help classmates and build your reputation.",
+              },
+              {
+                icon: Brain,
+                title: "Smart Study Tools",
+                description:
+                  "Flashcards, AI summaries, mind maps, and quizzes — all powered by the community's best content.",
+              },
+              {
+                icon: Trophy,
+                title: "Earn & Level Up",
+                description:
+                  "Build streaks, earn XP, and climb the leaderboard — consistency is the real flex. 😏",
               },
             ].map((feature, index) => (
               <div
