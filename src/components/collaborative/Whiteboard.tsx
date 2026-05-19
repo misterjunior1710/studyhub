@@ -453,8 +453,9 @@ const Whiteboard = ({ whiteboardId, isReadOnly = false }: WhiteboardProps) => {
             onPointerCancel={handlePointerUp}
           />
           {textPosition && textboxScreen && (
-            <div className="absolute z-10" style={{ left: textboxScreen.left, top: textboxScreen.top }}>
+            <div className="absolute z-10" style={{ left: textboxScreen.left, top: textboxScreen.top }} onPointerDown={(e) => e.stopPropagation()}>
               <Input
+                ref={textInputRef}
                 value={textInput}
                 onChange={(e) => setTextInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -465,7 +466,6 @@ const Whiteboard = ({ whiteboardId, isReadOnly = false }: WhiteboardProps) => {
                   }
                 }}
                 onBlur={handleTextSubmit}
-                autoFocus
                 className="w-48"
                 placeholder="Type text…"
               />
