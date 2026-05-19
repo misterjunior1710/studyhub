@@ -20,7 +20,7 @@ interface RequireProProps {
  * (edge functions check `is_pro_user`, RLS on whiteboards requires Pro, etc.).
  */
 const RequirePro = ({ feature, description, highlights, children }: RequireProProps) => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { isPro, loading: subLoading } = useSubscription();
   const location = useLocation();
 
