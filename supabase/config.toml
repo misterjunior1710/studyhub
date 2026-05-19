@@ -37,3 +37,7 @@ project_id = "qrquegcexsqrbtwtcicq"
     verify_jwt = true
   [functions.google-calendar-sync]
     verify_jwt = false
+  [functions.dodo-create-checkout]
+    verify_jwt = true
+  [functions.dodo-webhook]
+    verify_jwt = false
