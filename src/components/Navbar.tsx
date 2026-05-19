@@ -41,8 +41,6 @@ type LinkItem = {
 };
 
 const studyLinks: LinkItem[] = [
-  { title: "Feed", href: "/feed", icon: Rss, description: "Latest posts from your Study Squad" },
-  { title: "Questions", href: "/questions", icon: HelpCircle, description: "Ask, answer, and get unstuck" },
   { title: "Study Tools", href: "/study", icon: Timer, description: "Flashcards, quizzes, Pomodoro" },
   { title: "Nova AI", href: "/assistant", icon: Sparkles, description: "Your personal AI study buddy" },
   { title: "Notes", href: "/notes", icon: NotebookPen, description: "Capture and organise ideas" },
