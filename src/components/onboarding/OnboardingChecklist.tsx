@@ -11,7 +11,8 @@ import { cn } from "@/lib/utils";
 const OnboardingChecklist = () => {
   const navigate = useNavigate();
   const { showChecklist, tasks, dismissChecklist, isOnboardingComplete } = useOnboarding();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const isMobile = useIsMobile();
+  const [isCollapsed, setIsCollapsed] = useState(isMobile);
 
   if (!showChecklist || isOnboardingComplete) return null;
 
