@@ -29,9 +29,9 @@ const OnboardingChecklist = () => {
   };
 
   return (
-    <div className="fixed top-20 right-4 z-40 animate-slide-in-right">
-      <Card className="w-72 shadow-lg border-primary/20">
-        <CardHeader className="pb-2">
+    <div className="fixed top-20 right-2 sm:right-4 z-40 animate-slide-in-right max-w-[calc(100vw-1rem)]">
+      <Card className="w-[260px] sm:w-72 shadow-lg border-primary/20">
+        <CardHeader className="pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
