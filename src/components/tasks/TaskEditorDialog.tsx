@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/integrations/supabase/client";
+import { callEdgeFunction } from "@/lib/callEdgeFunction";
 import { toast } from "sonner";
 import {
   CATEGORY_META, PRIORITY_META,
@@ -54,15 +54,12 @@ export const TaskEditorDialog = ({ open, onOpenChange, initial, onSave }: Props)
     }
     setBreakingDown(true);
     try {
-      const { data, error } = await supabase.functions.invoke("ai-task-assist", {
-        body: {
-          action: "breakdown",
-          title: title.trim(),
-          notes: notes.trim(),
-          due_at: dueDate ? dueDate.toISOString() : null,
-        },
+      const data = await callEdgeFunction<{ subtasks?: { title: string; estimated_minutes: number }[]; tip?: string }>("ai-task-assist", {
+        action: "breakdown",
+        title: title.trim(),
+        notes: notes.trim(),
+        due_at: dueDate ? dueDate.toISOString() : null,
       });
-      if (error) throw error;
       const subs = (data?.subtasks ?? []) as { title: string; estimated_minutes: number }[];
       if (subs.length === 0) {
         toast.info("No subtasks suggested. Try refining the title.");

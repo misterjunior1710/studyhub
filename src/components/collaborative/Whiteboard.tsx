@@ -47,6 +47,7 @@ const Whiteboard = ({ whiteboardId, isReadOnly = false }: WhiteboardProps) => {
   const [dirty, setDirty] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
   const ignoreNextRemoteRef = useRef(false);
+  const textInputRef = useRef<HTMLInputElement>(null);
 
   // Load whiteboard data + realtime subscription
   useEffect(() => {
@@ -180,14 +181,17 @@ const Whiteboard = ({ whiteboardId, isReadOnly = false }: WhiteboardProps) => {
     if (isReadOnly) return;
     // Allow non-primary buttons to fall through (eg right-click)
     if (e.button !== 0 && e.pointerType === "mouse") return;
-    (e.currentTarget as HTMLCanvasElement).setPointerCapture(e.pointerId);
 
     const pos = getPointerPos(e);
 
     if (tool === "text") {
+      e.preventDefault();
+      e.stopPropagation();
       setTextPosition(pos);
       return;
     }
+
+    (e.currentTarget as HTMLCanvasElement).setPointerCapture(e.pointerId);
 
     if (tool === "eraser") {
       const updated = elements.filter((el) => {
@@ -333,6 +337,10 @@ const Whiteboard = ({ whiteboardId, isReadOnly = false }: WhiteboardProps) => {
     setDirty(true);
   };
 
+  useEffect(() => {
+    if (textPosition) window.setTimeout(() => textInputRef.current?.focus(), 0);
+  }, [textPosition]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -445,8 +453,9 @@ const Whiteboard = ({ whiteboardId, isReadOnly = false }: WhiteboardProps) => {
             onPointerCancel={handlePointerUp}
           />
           {textPosition && textboxScreen && (
-            <div className="absolute z-10" style={{ left: textboxScreen.left, top: textboxScreen.top }}>
+            <div className="absolute z-10" style={{ left: textboxScreen.left, top: textboxScreen.top }} onPointerDown={(e) => e.stopPropagation()}>
               <Input
+                ref={textInputRef}
                 value={textInput}
                 onChange={(e) => setTextInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -457,7 +466,6 @@ const Whiteboard = ({ whiteboardId, isReadOnly = false }: WhiteboardProps) => {
                   }
                 }}
                 onBlur={handleTextSubmit}
-                autoFocus
                 className="w-48"
                 placeholder="Type text…"
               />

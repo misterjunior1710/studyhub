@@ -7,7 +7,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, x-supabase-api-version, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 const json = (status: number, body: unknown) =>
@@ -56,8 +56,8 @@ Deno.serve(async (req) => {
   const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     global: { headers: { Authorization: auth } },
   });
-  const { data: claims, error: authErr } = await client.auth.getClaims(auth.slice(7));
-  if (authErr || !claims?.claims?.sub) return json(401, { error: "Unauthorized" });
+  const { data: userData, error: authErr } = await client.auth.getUser(auth.slice(7));
+  if (authErr || !userData?.user?.id) return json(401, { error: "Unauthorized" });
 
   if (!LOVABLE_API_KEY) return json(500, { error: "AI not configured" });
 

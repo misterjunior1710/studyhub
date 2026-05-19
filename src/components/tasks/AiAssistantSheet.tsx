@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Sparkles, Loader2, ListChecks, Calendar as CalIcon } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { callEdgeFunction } from "@/lib/callEdgeFunction";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from "@/components/ui/sheet";
@@ -50,8 +50,7 @@ export const AiAssistantSheet = ({ tasks }: Props) => {
           category: t.category, due_at: t.due_at,
         })),
       };
-      const { data, error } = await supabase.functions.invoke("ai-task-assist", { body: payload });
-      if (error) throw error;
+      const data = await callEdgeFunction<ScheduleResult | PrioritizeResult>("ai-task-assist", payload);
       if (action === "schedule") setSchedule(data as ScheduleResult);
       else setPrio(data as PrioritizeResult);
     } catch (e: any) {

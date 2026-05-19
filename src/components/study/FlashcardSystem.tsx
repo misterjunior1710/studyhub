@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -40,6 +40,7 @@ export function FlashcardSystem() {
   const [createCardOpen, setCreateCardOpen] = useState(false);
   const [editCardOpen, setEditCardOpen] = useState(false);
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
+  const [reviewCardIds, setReviewCardIds] = useState<string[]>([]);
   const [newDeck, setNewDeck] = useState({ title: "", description: "", is_public: false });
   const [newCard, setNewCard] = useState({ front: "", back: "" });
   const [editCard, setEditCard] = useState({ front: "", back: "" });
@@ -75,8 +76,10 @@ export function FlashcardSystem() {
   const dueCards = cards.filter(c => new Date(c.next_review_at) <= new Date());
   // Track which cards have been reviewed in this session (for unlimited practice)
   const [reviewedInSession, setReviewedInSession] = useState<Set<string>>(new Set());
-  // Use all cards for practice, not just due ones
-  const practiceCards = cards;
+  const reviewCards = useMemo(
+    () => reviewCardIds.map((id) => cards.find((card) => card.id === id)).filter(Boolean) as Flashcard[],
+    [cards, reviewCardIds]
+  );
 
   const createDeckMutation = useMutation({
     mutationFn: async () => {
@@ -191,7 +194,8 @@ export function FlashcardSystem() {
   };
 
   const handleAnswer = (wasCorrect: boolean) => {
-    const currentCard = practiceCards[currentCardIndex];
+    const currentCard = reviewCards[currentCardIndex];
+    if (!currentCard) return;
     // Only track stats if this card is due and hasn't been reviewed in this session
     const isDue = new Date(currentCard.next_review_at) <= new Date();
     const shouldTrackStats = isDue && !reviewedInSession.has(currentCard.id);
@@ -202,22 +206,23 @@ export function FlashcardSystem() {
     setReviewedInSession(prev => new Set(prev).add(currentCard.id));
     
     setIsFlipped(false);
-    if (currentCardIndex < practiceCards.length - 1) {
+    if (currentCardIndex < reviewCards.length - 1) {
       setCurrentCardIndex(prev => prev + 1);
     } else {
       setReviewMode(false);
       setCurrentCardIndex(0);
+      setReviewCardIds([]);
       setReviewedInSession(new Set()); // Reset for next session
       toast.success("Practice session complete!");
     }
   };
 
-  if (reviewMode && practiceCards.length > 0) {
-    const currentCard = practiceCards[currentCardIndex];
+  if (reviewMode && reviewCards.length > 0) {
+    const currentCard = reviewCards[currentCardIndex];
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-6">
         <div className="text-sm text-muted-foreground">
-          Card {currentCardIndex + 1} of {practiceCards.length} • Box {currentCard.box_number}
+          Card {currentCardIndex + 1} of {reviewCards.length} • Box {currentCard.box_number}
         </div>
         <div
           className={cn(
@@ -251,7 +256,7 @@ export function FlashcardSystem() {
             </Button>
           </div>
         )}
-        <Button variant="ghost" onClick={() => { setReviewMode(false); setReviewedInSession(new Set()); }}>
+        <Button variant="ghost" onClick={() => { setReviewMode(false); setReviewCardIds([]); setReviewedInSession(new Set()); }}>
           Exit Review
         </Button>
       </div>
@@ -294,7 +299,7 @@ export function FlashcardSystem() {
               </DialogContent>
             </Dialog>
             {cards.length > 0 && (
-              <Button onClick={() => { setReviewedInSession(new Set()); setCurrentCardIndex(0); setReviewMode(true); }}>
+              <Button onClick={() => { setReviewedInSession(new Set()); setReviewCardIds(cards.map((card) => card.id)); setCurrentCardIndex(0); setIsFlipped(false); setReviewMode(true); }}>
                 <Play className="h-4 w-4 mr-2" /> Practice ({cards.length})
               </Button>
             )}
