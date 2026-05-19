@@ -434,13 +434,23 @@ const Pricing = () => {
                       onClick={() => handleSelectPlan(plan)}
                       size="lg"
                       variant={isPro ? "default" : "outline"}
+                      disabled={loadingPlan === plan.id}
                       className={cn(
                         "mt-6 w-full h-11 rounded-md font-semibold transition-all",
                         isPro &&
                           "shadow-[0_10px_30px_-12px_hsl(var(--primary)/0.6)] hover:shadow-[0_14px_36px_-12px_hsl(var(--primary)/0.7)] hover:-translate-y-0.5",
                       )}
                     >
-                      {plan.cta}
+                      {loadingPlan === plan.id ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Redirecting…
+                        </>
+                      ) : userIsPro && currentPlan === plan.id ? (
+                        "Manage subscription"
+                      ) : (
+                        plan.cta
+                      )}
                     </Button>
 
                     <ul className="mt-6 space-y-3">
