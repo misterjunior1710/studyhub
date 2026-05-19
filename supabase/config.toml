@@ -24,9 +24,9 @@ project_id = "qrquegcexsqrbtwtcicq"
   [functions.task-reminders]
     verify_jwt = false
   [functions.ai-task-assist]
-    verify_jwt = true
+    verify_jwt = false
   [functions.ai-assistant]
-    verify_jwt = true
+    verify_jwt = false
   [functions.google-calendar-auth-url]
     verify_jwt = true
   [functions.google-calendar-callback]
