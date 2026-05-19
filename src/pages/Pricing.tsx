@@ -624,9 +624,14 @@ const Pricing = () => {
               <Button
                 size="lg"
                 onClick={() => handleSelectPlan(PLANS[2])}
+                disabled={loadingPlan === "pro_yearly"}
                 className="h-11 px-6 rounded-md font-semibold shadow-[0_10px_30px_-12px_hsl(var(--primary)/0.6)] hover:shadow-[0_14px_36px_-12px_hsl(var(--primary)/0.7)] transition-all hover:-translate-y-0.5"
               >
-                <Crown className="mr-2 h-4 w-4" />
+                {loadingPlan === "pro_yearly" ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Crown className="mr-2 h-4 w-4" />
+                )}
                 Get Yearly Pro
               </Button>
               <Button
