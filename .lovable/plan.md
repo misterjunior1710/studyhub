@@ -1,105 +1,159 @@
-# StudyHub Priority Bug Fix Pass
+## Goal
 
-Targeted fixes across 10 issues. Each item lists root cause, fix approach, and affected files.
+Integrate Dodo Payments into `/pricing` and the subscription flow. Webhooks are the source of truth; the UI reflects DB state in realtime.
 
-## 1. Pomodoro Settings Auto-Closes
+## Payment Links
 
-**Root cause:** Radix `<PopoverContent>` (`src/pages/StudyMode.tsx` L335–354) closes on pointer-down outside. The Radix `<Slider>` thumb uses pointer capture, and on touch/some pointer flows the released pointer lands outside the popover, triggering `onPointerDownOutside`/`onInteractOutside`.
-**Fix:** Add `onPointerDownOutside`/`onInteractOutside` handlers on `PopoverContent` that call `e.preventDefault()` when the target is the slider/related UI, plus `onOpenAutoFocus` guard. Safer: also stop propagation on the inner container and add `onFocusOutside` prevention. Keep `Escape` and explicit outside-click on body to close.
-**Files:** `src/pages/StudyMode.tsx`.
+- Free → in-app (no Dodo)
+- Pro Monthly → `https://dodo.pe/monthproplan`
+- Pro Yearly → `https://dodo.pe/yearproplan`
+- `https://dodo.pe/freeshplan` is intentionally not wired to checkout (Free CTA stays in-app per spec).
 
-## 2. Flashcard Text Overflow
+## Architecture (high level)
 
-**Root cause:** Card body lacks wrapping rules for long words/URLs; uses fixed/min height with overflow visible.
-**Fix:** In `FlashcardSystem.tsx`, apply `break-words overflow-wrap-anywhere whitespace-pre-wrap` plus `overflow-y-auto max-h-[…]` on the answer/question containers, and ensure the card uses `min-h` instead of fixed `h`. Add `hyphens-auto` for paragraphs.
-**Files:** `src/components/study/FlashcardSystem.tsx`.
+```text
+Pricing CTA ──► edge: dodo-create-checkout ──► returns Dodo URL w/ metadata{user_id, plan}
+                                                │
+User completes payment on Dodo ─────────────────┘
+                │
+                ├─► redirect_url → /success/pro  or  /success/pro/yearly
+                │       (polls subscription row until webhook lands)
+                │
+                └─► Dodo webhook ──► edge: dodo-webhook (verify signature, upsert)
+                                          │
+                                          ▼
+                                  public.subscriptions  (realtime)
+                                          │
+                                          ▼
+                              useSubscription() hook in app
+```
 
-## 3. Mind Map Node Dragging
+The frontend never trusts the redirect alone. The success page subscribes to the `subscriptions` table over realtime and shows "Verifying…" until the webhook confirms `active`.
 
-**Root cause:** `MindMapBuilder.tsx` likely renders nodes without pointer drag handlers (only click-to-select), so positions can't be moved.
-**Fix:** Add `onPointerDown`/`onPointerMove`/`onPointerUp` with `setPointerCapture` for unified mouse+touch drag. Store offset relative to node origin; update node `x/y` in state on move; edges re-render automatically because they read node coords. Add `touch-action: none` on draggable nodes to prevent scroll interception. Persist final position on pointer-up.
-**Files:** `src/components/study/MindMapBuilder.tsx`.
+## Backend changes
 
-## 4. Whiteboard Major Fix Pass
+### Schema migration
 
-**Root causes:**
+Extend `public.subscriptions` to be provider-agnostic and Dodo-ready:
 
-- Coordinate misalignment: drawing uses `clientX/Y` without subtracting the canvas bounding rect and dividing by current zoom/scroll offsets.
-- Textbox creation: handler likely guarded by `tool === 'text'` but the click pipeline is swallowed by the drawing handler.
-- No save / no autosave: persistence only on explicit button; if button broken, nothing persists.
-- Mobile drawing fails: listeners use `mousedown/mousemove` only, no `pointerdown/pointermove` or `touch-action: none` on the canvas.
+- add `provider text default 'dodo'`
+- add `dodo_subscription_id text`, `dodo_payment_id text`, `dodo_customer_id text`
+- add `plan text` (`pro_monthly` | `pro_yearly`)
+- make legacy `stripe_*` columns nullable (keep for backwards-compat)
+- unique index on `(provider, dodo_subscription_id)`
+- enable realtime on `public.subscriptions`
+- helper RPC `get_my_subscription()` returning active plan + status
 
-**Fix:**
+RLS already correct (user reads own; service role writes).
 
-- Replace mouse listeners with **pointer events** (`onPointerDown/Move/Up`) + `setPointerCapture`. Add `touch-action: none` and `user-select: none` on the canvas wrapper.
-- Coordinate helper: `const rect = canvas.getBoundingClientRect(); x = (e.clientX - rect.left) * (canvas.width / rect.width) / zoom + scrollX;` apply same to y. Use this in draw, text-placement, and hit-testing.
-- Restore textbox creation: when `tool === 'text'`, on pointer-up insert an editable `<textarea>` positioned at translated coords; commit to shapes on blur.
-- Autosave: debounced (1.5s) effect that calls the existing save mutation whenever shapes change AND there are unsaved edits; show a small "Saved · just now" indicator. Also save on `beforeunload` via `navigator.sendBeacon` fallback (or skip on unsupported). Keep explicit save button.
-- Verify save mutation: inspect for stale closure or RLS error; surface server errors via toast.
+### Edge functions (new)
 
-**Files:** `src/components/collaborative/Whiteboard.tsx`, possibly the whiteboard hook used for persistence.
+1. `**dodo-create-checkout**` (JWT-verified)
+  - Input: `{ plan: 'pro_monthly' | 'pro_yearly' }`
+  - Builds redirect URL: `https://dodo.pe/{slug}?metadata_user_id={uid}&metadata_plan={plan}&redirect_url={origin}/success/pro[/yearly]`
+  - Returns `{ url }`. Inserts a pending `subscription_intent` audit row.
+2. `**dodo-webhook**` (public, no JWT)
+  - Verifies `webhook-signature` header using `DODO_WEBHOOK_SECRET` (HMAC).
+  - Handles: `payment.succeeded`, `payment.failed`, `subscription.active`, `subscription.cancelled`, `subscription.on_hold`, `subscription.renewed`.
+  - Upserts `public.subscriptions` keyed by `dodo_subscription_id`; sets `status`, `current_period_end`, `plan`, `user_id` (from metadata).
+  - Idempotent via `event_id` log table.
+3. `**dodo-subscription-status**` (JWT-verified, optional)
+  - Server-side fetch fallback when webhook is delayed (polled by success page after 10s).
 
-## 5. Task AI Breakdown — "Failed to send request to Edge Function"
+### Secrets to add
 
-**Root cause:** `supabase/config.toml` has `[functions.ai-task-assist] verify_jwt = true`. Per Lovable Cloud signing-keys system, edge functions should deploy with `verify_jwt = false` and validate the token in code (the function already does `client.auth.getClaims`). The platform-level JWT verify rejects the request before the function runs, returning a non-2xx that `supabase.functions.invoke` reports as the generic "Failed to send a request to the Edge Function" error.
-**Fix:** Flip `verify_jwt = false` for `ai-task-assist`. Also improve client-side error surface in `AiAssistantSheet` and `TaskEditorDialog` breakdown to show `error.context?.error || error.message`. Re-deploy function.
-**Files:** `supabase/config.toml`, `src/components/tasks/AiAssistantSheet.tsx`, `src/components/tasks/TaskEditorDialog.tsx`.
+- `DODO_API_KEY` (server-side fetch + sub mgmt)
+- `DODO_WEBHOOK_SECRET` (signature verify)
 
-## 6. Google Calendar Redirect Goes to `/`
+User must register the webhook URL `https://qrquegcexsqrbtwtcicq.supabase.co/functions/v1/dodo-webhook` in the Dodo dashboard.
 
-**Root cause:** `google-calendar-callback/index.ts` hard-codes `APP_ORIGIN = "https://studyhub.world"` and redirects to `/calendar?google=connected`. When the user starts OAuth from `studyhubstudentportal.lovable.app` (or a preview), they get bounced to studyhub.world; if not logged in there, `Calendar.tsx` redirects to `/auth`, and on some flows further to `/`. Additionally `/calendar` requires auth — a fresh session in the wrong origin lands on `/`.
-**Fix:** Encode the originating app origin into the OAuth `state` (generated by `google-calendar-auth-url`), then on callback redirect back to that exact origin + `/calendar?google=connected`. Validate the origin against an allowlist (`studyhub.world`, `www.studyhub.world`, `studyhubstudentportal.lovable.app`, preview `*.lovableproject.com`). Keep error path identical. No client change needed beyond confirming Calendar reads the `?google=` flag for a toast.
-**Files:** `supabase/functions/google-calendar-callback/index.ts`, `supabase/functions/google-calendar-auth-url/index.ts`, `supabase/functions/_shared/google-calendar.ts` (state encode/verify).
+## Frontend changes
 
-## 7. Resource Library Quality
+### New: `src/hooks/useSubscription.ts`
 
-**Scope:** `src/pages/TransitionResources.tsx` (and its data source).
-**Fix:** Restructure the resource items to a richer schema: `{ title, description, type: 'pdf'|'guide'|'video'|'tool'|'template', url, source, durationOrSize, tags[] }`. Curate ~25–40 high-quality free resources (Khan Academy, MIT OCW, OpenStax PDFs, NHS/CDC teen mental health PDFs, financial-literacy PDFs from CFPB, study templates). Render with type badges, icons, downloadable indicator, and category filter. Keep static (no DB calls) to avoid bandwidth cost. Lazy-render below the fold.
-**Files:** `src/pages/TransitionResources.tsx`, possibly extract to `src/lib/transitionResources.ts`.
+- Reads `public.subscriptions` for `auth.uid()`, subscribes to realtime changes.
+- Exposes `{ isPro, plan, status, periodEnd, loading, refetch }`.
+- Invalidates on `AuthContext` user change. 5-min staleTime fits existing caching standards.
 
-## 8. Missions Not Appearing
+### `src/pages/Pricing.tsx`
 
-**Probable causes:**
+- Replace `handleSelectPlan` placeholder with:
+  - **Free**: logged-out → `/auth`; logged-in → `/feed`.
+  - **Pro M/Y**: logged-out → `/auth?next=/pricing`; logged-in → call `dodo-create-checkout`, then `window.location.href = url` (Dodo links are hosted-only).
+- Per-card loading spinner, disabled state during request, toast on error with retry.
+- If `useSubscription().isPro` and the cycle matches, swap CTA to "Manage subscription" → `/settings#billing`.
+- Keep all existing layout, animations, and responsive behavior. USD prices already in place.
+- Add Apple Pay / Google Pay badge row under Pro cards (lucide + small SVG), shown only when `import.meta.env.VITE_DODO_WALLET_BADGES === 'true'` so we can flip it on later without redeploying logic.
 
-- `assign_daily_missions` / `assign_weekly_missions` RPC not creating rows (no missions seeded in `missions` table, or RPC fails silently — current hook ignores its return).
-- The localStorage gate in `useMissions.ts` (`missions:assigned:<uid>:<date>`) means a one-time failure permanently suppresses retries for the day.
+### `src/pages/SuccessPro.tsx` and `src/pages/SuccessProYearly.tsx`
 
-**Fix:**
+- On mount: read `?payment_id=` from query (Dodo appends it).
+- Show three states:
+  1. **Verifying** (default): polite spinner + "Confirming your payment securely…" — relies on realtime + 2s polling fallback for max 60s.
+  2. **Confirmed**: existing celebratory layout; trigger `refetchProfile()` + `queryClient.invalidateQueries`.
+  3. **Pending / failed**: friendly message + "Retry payment" → back to Dodo link, "Contact support" → `/support`.
+- No manual page refresh needed — realtime drives the transition.
 
-- Diagnostic read against `missions` and `user_missions` to confirm seeded data and RPC behavior.
-- Only set the localStorage flag **after** confirming the RPCs returned without error.
-- If `missions` table is empty, seed a baseline set via migration (daily: complete 1 task, study 25min, post 1 question; weekly: maintain 5-day streak, 3 quizzes, etc.) with proper `period`, `event_type`, `target`, rewards.
-- Verify RLS on `user_missions` allows the user to `SELECT` their own rows and the RPCs are `SECURITY DEFINER` if they insert.
-- Improve empty/error UI in `Missions.tsx` (already has empty state; add explicit "Generate missions" retry button calling the RPC manually).
+### Cancellation / retry UX
 
-**Files:** `src/hooks/useMissions.ts`, `src/pages/Missions.tsx`, possible migration to seed missions / fix RPC / RLS.
+- `/settings` billing section: shows current plan, period end, "Manage on Dodo" button (links to Dodo customer portal URL once user provides it; placeholder hidden until env set).
+- Graceful cancellation page at `/pricing?canceled=1` shows a toast "Checkout canceled — no charge made."
 
-## 9. Saved Posts "Browse Posts" → `/`
+### Pro feature gating
 
-**Fix:** Change `navigate("/")` to `navigate("/feed")` in `src/pages/SavedPosts.tsx` L135.
-**Files:** `src/pages/SavedPosts.tsx`.
+- Add `src/lib/pro.ts` exporting `useIsPro()` (thin wrapper over `useSubscription`).
+- No feature unlock logic is changed in this pass beyond making `isPro` available; existing Pro-gated UI can adopt it next.
 
-## 10. Install Page Wording
+### Guards
 
-**Fix:** Change "Already Installed" → "Installed" in `src/pages/Install.tsx` L252.
-**Files:** `src/pages/Install.tsx`.
+- `ProfileOnboardingGuard` already exempts `/success`, `/pricing`, `/refund` — no change.
 
-## Cross-cutting checks
+## Security & production posture
 
-- After each change: confirm desktop + mobile viewport.
-- No new DB calls added; missions hook keeps once-per-day gate (with success guard).
-- All RLS unchanged except possibly tightening mission RLS if found loose during audit.
-- Edge function deploy: `ai-task-assist`, `google-calendar-callback`, `google-calendar-auth-url`.
+- Frontend never sees `DODO_API_KEY` or webhook secret.
+- Webhook signature verified with constant-time compare; bad signatures return 401 and are logged.
+- All edge functions: zod validation, CORS, rate-limit via existing `check_rate_limit` RPC on create-checkout.
+- Subscription writes happen only via service role in `dodo-webhook`. RLS keeps users read-only on their own row.
+- Idempotency: webhook stores `dodo_event_id` in a new `dodo_webhook_events` table; duplicates are no-ops.
+- Backward compatibility: existing `has_active_subscription` RPC continues to work (status check is provider-agnostic).
 
-## Deliverables
+## What I need from you before building
 
-Final summary will list: root causes, fixes applied, remaining limitations, and affected files per item.  
+1. Confirm the **redirect URL** behavior — Dodo Payment Links typically accept `?redirect_url=` and `?metadata_*=` query params. If your links are locked to a fixed redirect in the Dodo dashboard, I'll set them to `/success/pro` and `/success/pro/yearly` there instead and adapt the edge function to skip URL building.
+2. You'll need to add two secrets after I scaffold: `DODO_API_KEY`, `DODO_WEBHOOK_SECRET`. I'll prompt for them.
+3. Confirm webhook URL registration in the Dodo dashboard once deployed.
+
+Approve and I'll implement in this order: migration → edge functions → secrets prompt → `useSubscription` hook → Pricing wiring → Success page polling → settings billing block.  
   
-Before applying changes:
+User Answer : 
 
-- create a rollback-safe checkpoint
-- avoid unnecessary refactors outside affected systems
-- preserve existing query optimizations/security hardening
-- avoid introducing additional startup DB queries
-- verify no regressions in mobile responsiveness
-- keep changes scoped tightly to the listed issues only
+Approved. Proceed with the implementation in the exact order proposed.
+
+For redirect behavior:  
+Dodo redirects do support query parameters and redirect_url handling correctly on my side, so proceed with the dynamic redirect URL architecture.
+
+After deployment, I will:
+
+add DODO_API_KEY
+
+add DODO_WEBHOOK_SECRET
+
+register the webhook URL in the Dodo dashboard
+
+Keep the implementation production-ready, secure, optimized, and compatible with all existing RLS/auth/subscription systems.
+
+Also ensure:
+
+no duplicate subscription rows are possible
+
+canceled/expired subscriptions downgrade correctly
+
+realtime listeners are cleaned up properly
+
+subscription cache invalidation is efficient
+
+polling stops immediately after webhook confirmation
+
+mobile redirect flow feels smooth after payment completion
+
+Proceed.

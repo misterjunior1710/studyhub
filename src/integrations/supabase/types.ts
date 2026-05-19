@@ -738,6 +738,30 @@ export type Database = {
           },
         ]
       }
+      dodo_webhook_events: {
+        Row: {
+          event_id: string
+          event_type: string
+          id: string
+          payload: Json
+          processed_at: string
+        }
+        Insert: {
+          event_id: string
+          event_type: string
+          id?: string
+          payload: Json
+          processed_at?: string
+        }
+        Update: {
+          event_id?: string
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed_at?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -2294,19 +2318,54 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_intents: {
+        Row: {
+          checkout_url: string | null
+          created_at: string
+          id: string
+          plan: string
+          provider: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          checkout_url?: string | null
+          created_at?: string
+          id?: string
+          plan: string
+          provider?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          checkout_url?: string | null
+          created_at?: string
+          id?: string
+          plan?: string
+          provider?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           cancel_at_period_end: boolean | null
           created_at: string | null
           current_period_end: string | null
           current_period_start: string | null
+          dodo_customer_id: string | null
+          dodo_payment_id: string | null
+          dodo_subscription_id: string | null
           environment: string
           id: string
-          price_id: string
-          product_id: string
+          plan: string | null
+          price_id: string | null
+          product_id: string | null
+          provider: string
           status: string
-          stripe_customer_id: string
-          stripe_subscription_id: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           updated_at: string | null
           user_id: string
         }
@@ -2315,13 +2374,18 @@ export type Database = {
           created_at?: string | null
           current_period_end?: string | null
           current_period_start?: string | null
+          dodo_customer_id?: string | null
+          dodo_payment_id?: string | null
+          dodo_subscription_id?: string | null
           environment?: string
           id?: string
-          price_id: string
-          product_id: string
+          plan?: string | null
+          price_id?: string | null
+          product_id?: string | null
+          provider?: string
           status?: string
-          stripe_customer_id: string
-          stripe_subscription_id: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           updated_at?: string | null
           user_id: string
         }
@@ -2330,13 +2394,18 @@ export type Database = {
           created_at?: string | null
           current_period_end?: string | null
           current_period_start?: string | null
+          dodo_customer_id?: string | null
+          dodo_payment_id?: string | null
+          dodo_subscription_id?: string | null
           environment?: string
           id?: string
-          price_id?: string
-          product_id?: string
+          plan?: string | null
+          price_id?: string | null
+          product_id?: string | null
+          provider?: string
           status?: string
-          stripe_customer_id?: string
-          stripe_subscription_id?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           updated_at?: string | null
           user_id?: string
         }
@@ -3216,6 +3285,18 @@ export type Database = {
           xp: number
         }[]
       }
+      get_my_subscription: {
+        Args: never
+        Returns: {
+          cancel_at_period_end: boolean
+          current_period_end: string
+          id: string
+          is_pro: boolean
+          plan: string
+          provider: string
+          status: string
+        }[]
+      }
       get_user_level: { Args: { p_total_xp: number }; Returns: Json }
       get_user_rank: {
         Args: { p_period?: string; p_scope?: string }
@@ -3254,6 +3335,7 @@ export type Database = {
         Args: { _user_a: string; _user_b: string }
         Returns: boolean
       }
+      is_pro_user: { Args: { _user_id: string }; Returns: boolean }
       is_super_admin: { Args: never; Returns: boolean }
       is_verifier: { Args: { _user_id: string }; Returns: boolean }
       is_whiteboard_owner: {
