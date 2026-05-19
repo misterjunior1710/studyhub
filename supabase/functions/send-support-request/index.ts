@@ -113,11 +113,10 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Support request saved successfully:", data.id);
 
-    // Enqueue email notification to support inbox
+    // Send via Resend (through Lovable connector gateway)
     const SUPPORT_INBOX = "studyhub.community.web@gmail.com";
     const SITE_NAME = "StudyHub";
-    const SENDER_DOMAIN = "notify.studyhub.world";
-    const FROM_DOMAIN = "studyhub.world";
+    const RESEND_FROM = Deno.env.get("RESEND_FROM") || "StudyHub Support <onboarding@resend.dev>";
 
     const safeName = escapeHtml(name);
     const safeEmail = escapeHtml(email);
@@ -140,35 +139,41 @@ const handler = async (req: Request): Promise<Response> => {
 
     const text = `New Support Request\n\nFrom: ${name} <${email}>\nCategory: ${category}\nSubject: ${subject}\nRequest ID: ${data.id}\n\n${message}\n\nReply to ${email} to respond.`;
 
-    const messageId = crypto.randomUUID();
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
-    await supabase.from("email_send_log").insert({
-      message_id: messageId,
-      template_name: "support_request",
-      recipient_email: SUPPORT_INBOX,
-      status: "pending",
-    });
-
-    const { error: enqueueError } = await supabase.rpc("enqueue_email", {
-      queue_name: "transactional_emails",
-      payload: {
-        message_id: messageId,
-        to: SUPPORT_INBOX,
-        from: `${SITE_NAME} Support <noreply@${FROM_DOMAIN}>`,
-        reply_to: email,
-        sender_domain: SENDER_DOMAIN,
-        subject: `[Support][${category}] ${subject}`,
-        html,
-        text,
-        purpose: "transactional",
-        label: "support_request",
-        queued_at: new Date().toISOString(),
-      },
-    });
-
-    if (enqueueError) {
-      console.error("Failed to enqueue support email:", enqueueError);
-      // Don't fail the request — submission was saved
+    if (!LOVABLE_API_KEY || !RESEND_API_KEY) {
+      console.error("Missing Resend connector env vars", {
+        hasLovable: !!LOVABLE_API_KEY,
+        hasResend: !!RESEND_API_KEY,
+      });
+    } else {
+      try {
+        const resp = await fetch("https://connector-gateway.lovable.dev/resend/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+            "X-Connection-Api-Key": RESEND_API_KEY,
+          },
+          body: JSON.stringify({
+            from: RESEND_FROM,
+            to: [SUPPORT_INBOX],
+            reply_to: email,
+            subject: `[Support][${category}] ${subject}`,
+            html,
+            text,
+          }),
+        });
+        const respText = await resp.text();
+        if (!resp.ok) {
+          console.error("Resend send failed", resp.status, respText);
+        } else {
+          console.log("Resend send ok", respText);
+        }
+      } catch (sendErr) {
+        console.error("Resend send threw", sendErr);
+      }
     }
 
     return new Response(
