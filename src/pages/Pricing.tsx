@@ -184,7 +184,7 @@ const Pricing = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  const { isPro, plan: currentPlan } = useSubscription();
+  const { isPro: userIsPro, plan: currentPlan } = useSubscription();
   const [cycle, setCycle] = useState<BillingCycle>("yearly");
   const [loadingPlan, setLoadingPlan] = useState<Plan["id"] | null>(null);
 
