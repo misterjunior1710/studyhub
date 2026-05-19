@@ -290,18 +290,19 @@ export function MindMapBuilder() {
               if (!node.parent_id) return null;
               const parent = nodes.find(n => n.id === node.parent_id);
               if (!parent) return null;
-              
+              const np = getNodePos(node);
+              const pp = getNodePos(parent);
+
               // Calculate control points for curved lines
-              const midX = (parent.position_x + node.position_x) / 2;
-              const midY = (parent.position_y + node.position_y) / 2;
-              const dx = node.position_x - parent.position_x;
+              const midX = (pp.x + np.x) / 2;
+              const dx = np.x - pp.x;
               const curveOffset = Math.min(Math.abs(dx) * 0.3, 50);
-              
+
               return (
                 <g key={`line-${node.id}`}>
                   {/* Shadow line */}
                   <path
-                    d={`M ${parent.position_x} ${parent.position_y} Q ${midX} ${parent.position_y + curveOffset} ${node.position_x} ${node.position_y}`}
+                    d={`M ${pp.x} ${pp.y} Q ${midX} ${pp.y + curveOffset} ${np.x} ${np.y}`}
                     fill="none"
                     stroke="hsl(var(--muted-foreground) / 0.1)"
                     strokeWidth="6"
@@ -309,7 +310,7 @@ export function MindMapBuilder() {
                   />
                   {/* Main line */}
                   <path
-                    d={`M ${parent.position_x} ${parent.position_y} Q ${midX} ${parent.position_y + curveOffset} ${node.position_x} ${node.position_y}`}
+                    d={`M ${pp.x} ${pp.y} Q ${midX} ${pp.y + curveOffset} ${np.x} ${np.y}`}
                     fill="none"
                     stroke="url(#lineGradient)"
                     strokeWidth="2.5"
@@ -324,24 +325,25 @@ export function MindMapBuilder() {
           <div style={{ transform: `scale(${zoom})`, transformOrigin: "center" }}>
             {nodes.map(node => {
               const isRoot = !node.parent_id;
+              const pos = getNodePos(node);
               return (
                 <div
                   key={node.id}
                   className={cn(
-                    "absolute cursor-move select-none px-4 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200",
+                    "absolute cursor-move select-none px-4 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200 touch-none",
                     getColorClass(node.color),
                     isRoot ? "text-base px-5 py-3 font-semibold" : "",
                     selectedNode === node.id && "ring-2 ring-white ring-offset-2 ring-offset-background scale-105",
                     draggingNode === node.id && "opacity-70 scale-110 cursor-grabbing"
                   )}
                   style={{
-                    left: node.position_x - (isRoot ? 60 : 50),
-                    top: node.position_y - (isRoot ? 20 : 15),
+                    left: pos.x - (isRoot ? 60 : 50),
+                    top: pos.y - (isRoot ? 20 : 15),
                     minWidth: isRoot ? "120px" : "100px",
                     textAlign: "center",
                     boxShadow: `0 4px 20px -4px`,
                   }}
-                  onMouseDown={e => handleMouseDown(e, node.id)}
+                  onPointerDown={e => handlePointerDown(e, node.id)}
                   onClick={e => { e.stopPropagation(); setSelectedNode(node.id === selectedNode ? null : node.id); }}
                 >
                   {node.content}
