@@ -241,8 +241,6 @@ const StudyMode = () => {
     if (!isRunning) {
       setTimeRemaining(sessionType === "focus" ? newFocus : newBreak);
     }
-    setShowTimerSettings(false);
-    toast({ title: "Timer updated", description: `Focus: ${newFocus / 60}min, Break: ${newBreak / 60}min` });
   }, [isRunning, sessionType]);
 
   useEffect(() => {
@@ -334,7 +332,7 @@ const StudyMode = () => {
                 <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3">
                   <Popover open={showTimerSettings} onOpenChange={setShowTimerSettings}>
                     <PopoverTrigger asChild>
-                      <Button variant="outline" size="icon" disabled={isRunning} title="Timer Settings">
+                      <Button variant="outline" size="icon" disabled={isRunning} title="Timer Settings" aria-label="Timer settings">
                         <Settings2 className="h-4 w-4" />
                       </Button>
                     </PopoverTrigger>
@@ -356,16 +354,17 @@ const StudyMode = () => {
                         }
                       }}
                     >
-                      <div className="space-y-4">
+                      <div className="space-y-4" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
                         <h4 className="font-medium">Timer Settings</h4>
                         <div className="space-y-2">
-                          <label className="text-sm">Focus: {focusDuration / 60} min</label>
-                          <Slider value={[focusDuration / 60]} min={5} max={60} step={5} onValueChange={([v]) => updateTimerDurations(v * 60, breakDuration)} />
+                          <label className="text-sm" htmlFor="focus-duration-slider">Focus: {focusDuration / 60} min</label>
+                          <Slider id="focus-duration-slider" value={[focusDuration / 60]} min={5} max={60} step={5} onValueChange={([v]) => updateTimerDurations(v * 60, breakDuration)} />
                         </div>
                         <div className="space-y-2">
-                          <label className="text-sm">Break: {breakDuration / 60} min</label>
-                          <Slider value={[breakDuration / 60]} min={1} max={30} step={1} onValueChange={([v]) => updateTimerDurations(focusDuration, v * 60)} />
+                          <label className="text-sm" htmlFor="break-duration-slider">Break: {breakDuration / 60} min</label>
+                          <Slider id="break-duration-slider" value={[breakDuration / 60]} min={1} max={30} step={1} onValueChange={([v]) => updateTimerDurations(focusDuration, v * 60)} />
                         </div>
+                        <Button size="sm" className="w-full" onClick={() => setShowTimerSettings(false)}>Done</Button>
                       </div>
                     </PopoverContent>
                   </Popover>
