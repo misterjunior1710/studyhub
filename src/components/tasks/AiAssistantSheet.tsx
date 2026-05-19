@@ -55,10 +55,9 @@ export const AiAssistantSheet = ({ tasks }: Props) => {
       if (action === "schedule") setSchedule(data as ScheduleResult);
       else setPrio(data as PrioritizeResult);
     } catch (e: any) {
-      console.error(e);
-      toast.error(e?.message ?? "AI assistant failed", {
-        description: "Try again in a moment.",
-      });
+      console.error("[ai-task-assist]", e);
+      const detail = e?.context?.error || e?.context?.message || e?.message || "AI assistant failed";
+      toast.error("AI assistant unavailable", { description: detail });
     } finally {
       setLoading(false);
     }
