@@ -221,18 +221,18 @@ export function FlashcardSystem() {
         </div>
         <div
           className={cn(
-            "w-full max-w-md h-64 cursor-pointer perspective-1000",
+            "w-full max-w-md cursor-pointer perspective-1000",
             "transition-transform duration-500"
           )}
           onClick={() => setIsFlipped(!isFlipped)}
         >
           <Card className={cn(
-            "w-full h-full flex items-center justify-center text-center p-6",
+            "w-full min-h-64 flex items-center justify-center text-center p-6",
             "transition-all duration-300",
             isFlipped ? "bg-primary/10" : "bg-card"
           )}>
-            <CardContent className="p-0">
-              <p className="text-lg font-medium">
+            <CardContent className="p-0 w-full max-h-[60vh] overflow-y-auto">
+              <p className="text-lg font-medium break-words [overflow-wrap:anywhere] whitespace-pre-wrap hyphens-auto">
                 {isFlipped ? currentCard.back : currentCard.front}
               </p>
               {!isFlipped && (
