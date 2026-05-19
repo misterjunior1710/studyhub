@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import {
   Check,
@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Rocket,
   Star,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -23,6 +24,9 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/hooks/useSubscription";
+import { supabase } from "@/integrations/supabase/client";
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -155,8 +159,8 @@ const FAQ_ITEMS = [
     a: "Yes. You can cancel your StudyHub™ Pro subscription at any time from your account settings. You'll keep Pro access until the end of your current billing period.",
   },
   {
-    q: "Is this in test mode?",
-    a: "Right now, checkout is in preview / test mode while we finish our payments setup. CTA buttons are placeholders and won't charge you. We'll switch on live payments before launch.",
+    q: "Is checkout secure?",
+    a: "Yes. Checkout is processed by Dodo Payments — a PCI-compliant payment provider — and supports international cards, Apple Pay, Google Pay, and more. StudyHub™ never sees or stores your card details.",
   },
   {
     q: "What payment methods are supported?",
@@ -178,20 +182,63 @@ const FAQ_ITEMS = [
 
 const Pricing = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { user } = useAuth();
+  const { isPro: userIsPro, plan: currentPlan } = useSubscription();
   const [cycle, setCycle] = useState<BillingCycle>("yearly");
+  const [loadingPlan, setLoadingPlan] = useState<Plan["id"] | null>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 
-  const handleSelectPlan = (plan: Plan) => {
+  // Handle canceled-from-checkout return
+  useEffect(() => {
+    if (searchParams.get("canceled") === "1") {
+      toast("Checkout canceled", {
+        description: "No charge was made. You can try again anytime.",
+      });
+    }
+  }, [searchParams]);
+
+  const handleSelectPlan = async (plan: Plan) => {
     if (plan.id === "free") {
-      navigate("/auth");
+      if (!user) {
+        navigate("/auth");
+      } else {
+        navigate("/feed");
+      }
       return;
     }
-    toast("Checkout coming soon", {
-      description: "Subscriptions launch shortly. Hang tight!",
-    });
+
+    // Already subscribed to this plan
+    if (userIsPro && currentPlan === plan.id) {
+      navigate("/settings#billing");
+      return;
+    }
+
+    if (!user) {
+      navigate(`/auth?next=${encodeURIComponent(`/pricing?cycle=${cycle}`)}`);
+      return;
+    }
+
+    setLoadingPlan(plan.id);
+    try {
+      const { data, error } = await supabase.functions.invoke("dodo-create-checkout", {
+        body: { plan: plan.id, origin: window.location.origin },
+      });
+      if (error) throw error;
+      if (!data?.url) throw new Error("No checkout URL returned");
+      // Hosted Dodo checkout — full-page redirect feels smoothest on mobile
+      window.location.href = data.url as string;
+    } catch (e: any) {
+      console.error("Checkout error", e);
+      setLoadingPlan(null);
+      toast.error("Couldn't start checkout", {
+        description: e?.message ?? "Please try again in a moment.",
+        action: { label: "Retry", onClick: () => handleSelectPlan(plan) },
+      });
+    }
   };
 
   const visiblePlans = PLANS.filter((p) => {
@@ -255,9 +302,14 @@ const Pricing = () => {
                 <Button
                   size="lg"
                   onClick={() => handleSelectPlan(PLANS[1])}
+                  disabled={loadingPlan === "pro_monthly"}
                   className="h-11 px-6 rounded-md font-semibold shadow-[0_10px_30px_-12px_hsl(var(--primary)/0.6)] hover:shadow-[0_14px_36px_-12px_hsl(var(--primary)/0.7)] transition-all hover:-translate-y-0.5"
                 >
-                  <Crown className="mr-2 h-4 w-4" />
+                  {loadingPlan === "pro_monthly" ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Crown className="mr-2 h-4 w-4" />
+                  )}
                   Try Pro
                 </Button>
                 <Button
@@ -382,13 +434,23 @@ const Pricing = () => {
                       onClick={() => handleSelectPlan(plan)}
                       size="lg"
                       variant={isPro ? "default" : "outline"}
+                      disabled={loadingPlan === plan.id}
                       className={cn(
                         "mt-6 w-full h-11 rounded-md font-semibold transition-all",
                         isPro &&
                           "shadow-[0_10px_30px_-12px_hsl(var(--primary)/0.6)] hover:shadow-[0_14px_36px_-12px_hsl(var(--primary)/0.7)] hover:-translate-y-0.5",
                       )}
                     >
-                      {plan.cta}
+                      {loadingPlan === plan.id ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Redirecting…
+                        </>
+                      ) : userIsPro && currentPlan === plan.id ? (
+                        "Manage subscription"
+                      ) : (
+                        plan.cta
+                      )}
                     </Button>
 
                     <ul className="mt-6 space-y-3">
@@ -562,9 +624,14 @@ const Pricing = () => {
               <Button
                 size="lg"
                 onClick={() => handleSelectPlan(PLANS[2])}
+                disabled={loadingPlan === "pro_yearly"}
                 className="h-11 px-6 rounded-md font-semibold shadow-[0_10px_30px_-12px_hsl(var(--primary)/0.6)] hover:shadow-[0_14px_36px_-12px_hsl(var(--primary)/0.7)] transition-all hover:-translate-y-0.5"
               >
-                <Crown className="mr-2 h-4 w-4" />
+                {loadingPlan === "pro_yearly" ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Crown className="mr-2 h-4 w-4" />
+                )}
                 Get Yearly Pro
               </Button>
               <Button
