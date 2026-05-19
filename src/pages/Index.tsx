@@ -75,21 +75,21 @@ const Index = () => {
   const quickActions = user
     ? [
         { icon: TrendingUp, label: "My Feed", href: "/feed", color: "from-primary to-accent" },
-        { icon: MessageSquare, label: "Ask a Doubt", href: "/questions", color: "from-accent to-primary" },
+        { icon: MessageSquare, label: "Ask a Question", href: "/questions", color: "from-accent to-primary" },
         { icon: Users, label: "Your Groups", href: "/groups", color: "from-info to-primary" },
-        { icon: Brain, label: "Study Tools", href: "/study", color: "from-success to-info" },
         { icon: Sparkles, label: "AI Tools", href: "/content-generator", color: "from-warning to-accent" },
+        { icon: Brain, label: "Study Tools", href: "/study", color: "from-success to-info" },
         { icon: Calendar, label: "Calendar", href: "/calendar", color: "from-primary to-success" },
       ]
     : [
-        { icon: MessageSquare, label: "Browse Questions", href: "/questions", color: "from-primary to-accent" },
-        { icon: Users, label: "Study Groups", href: "/groups", color: "from-accent to-primary" },
-        { icon: Brain, label: "AI Study Tools", href: "/content-generator", color: "from-success to-info" },
-        { icon: BookOpen, label: "Study Mode", href: "/study", color: "from-info to-primary" },
-        { icon: Calendar, label: "Calendar", href: "/calendar", color: "from-primary to-success" },
-        { icon: Sparkles, label: "Nova AI", href: "/assistant", color: "from-warning to-accent" },
-        { icon: Bookmark, label: "Saved Posts", href: "/saved", color: "from-accent to-info" },
+        { icon: TrendingUp, label: "Browse Feed", href: "/feed", color: "from-primary to-accent" },
+        { icon: MessageSquare, label: "Browse Questions", href: "/questions", color: "from-accent to-primary" },
+        { icon: Users, label: "Study Groups", href: "/groups", color: "from-info to-primary" },
         { icon: Trophy, label: "Leaderboard", href: "/leaderboard", color: "from-warning to-primary" },
+        { icon: Brain, label: "AI Study Tools", href: "/content-generator", color: "from-success to-info" },
+        { icon: Sparkles, label: "Nova AI", href: "/assistant", color: "from-warning to-accent" },
+        { icon: BookOpen, label: "Study Mode", href: "/study", color: "from-info to-primary" },
+        { icon: Bookmark, label: "Saved Posts", href: "/saved", color: "from-accent to-info" },
       ];
 
   return (
