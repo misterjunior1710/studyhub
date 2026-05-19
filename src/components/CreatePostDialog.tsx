@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { lazy, Suspense, useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,9 +8,10 @@ import { Switch } from "@/components/ui/switch";
 import { Plus, Loader2, Upload, X, Eye, EyeOff, BellOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import RichTextEditor from "./RichTextEditor";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { ALL_GRADES, getStreamsForGrade, getSubjectsForGrade, COUNTRIES, isAdultGrade } from "@/lib/constants";
+
+const RichTextEditor = lazy(() => import("./RichTextEditor"));
 
 interface CreatePostDialogProps {
   onPostCreated?: () => void;
@@ -242,11 +243,13 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
 
           <div className="space-y-2">
             <Label htmlFor="content">Content</Label>
-            <RichTextEditor
-              content={content}
-              onChange={setContent}
-              placeholder="Give some context — the more detail, the better the answers..."
-            />
+            <Suspense fallback={<div className="min-h-[200px] rounded-md border bg-muted/20 animate-pulse" aria-label="Loading editor" />}>
+              <RichTextEditor
+                content={content}
+                onChange={setContent}
+                placeholder="Give some context — the more detail, the better the answers..."
+              />
+            </Suspense>
           </div>
 
           <div className="space-y-2">
