@@ -134,7 +134,15 @@ const Whiteboards = () => {
       setSelectedWhiteboard(data);
     } catch (error: any) {
       console.error("Error creating whiteboard:", error);
-      toast.error(error?.message || "Failed to create whiteboard");
+      const msg = (error?.message || "").toString();
+      if (msg.includes("pro_required")) {
+        toast.error("StudyHub Pro required", {
+          description: "Collaborative whiteboards are a Pro feature.",
+          action: { label: "Upgrade", onClick: () => navigate("/pricing") },
+        });
+      } else {
+        toast.error(msg || "Failed to create whiteboard");
+      }
     } finally {
       setCreating(false);
     }
