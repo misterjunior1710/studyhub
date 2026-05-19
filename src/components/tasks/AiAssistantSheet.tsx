@@ -55,8 +55,12 @@ export const AiAssistantSheet = ({ tasks }: Props) => {
       else setPrio(data as PrioritizeResult);
     } catch (e: any) {
       console.error("[ai-task-assist]", e);
-      const detail = e?.context?.error || e?.context?.message || e?.message || "AI assistant failed";
-      toast.error("AI assistant unavailable", { description: detail });
+      const { handlePremiumError } = await import("@/lib/proErrors");
+      const handled = await handlePremiumError(e, { feature: "AI Task Assistant" });
+      if (!handled) {
+        const detail = e?.context?.error || e?.context?.message || e?.message || "AI assistant failed";
+        toast.error("AI assistant unavailable", { description: detail });
+      }
     } finally {
       setLoading(false);
     }
