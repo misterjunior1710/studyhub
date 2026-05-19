@@ -139,11 +139,6 @@ export function MindMapBuilder() {
       queryClient.invalidateQueries({ queryKey: ["mind-map-nodes"] });
     },
   });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["mind-map-nodes"] });
-    },
-  });
 
   const deleteNodeMutation = useMutation({
     mutationFn: async (nodeId: string) => {
