@@ -3,9 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Pencil, Square, Circle, Type, Eraser, Trash2, 
-  Save, Loader2, MousePointer, Minus 
+import {
+  Pencil, Square, Circle, Type, Eraser, Trash2,
+  Save, Loader2, MousePointer, Minus, Check
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -28,8 +28,12 @@ interface WhiteboardProps {
   isReadOnly?: boolean;
 }
 
-const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardProps) => {
+const CANVAS_W = 1200;
+const CANVAS_H = 750;
+
+const Whiteboard = ({ whiteboardId, isReadOnly = false }: WhiteboardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const [elements, setElements] = useState<WhiteboardElement[]>([]);
   const [tool, setTool] = useState<"select" | "pencil" | "rectangle" | "circle" | "text" | "line" | "eraser">("pencil");
   const [color, setColor] = useState("#000000");
@@ -40,8 +44,11 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
   const [loading, setLoading] = useState(true);
   const [textInput, setTextInput] = useState("");
   const [textPosition, setTextPosition] = useState<{ x: number; y: number } | null>(null);
+  const [dirty, setDirty] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
+  const ignoreNextRemoteRef = useRef(false);
 
-  // Load whiteboard data
+  // Load whiteboard data + realtime subscription
   useEffect(() => {
     const loadWhiteboard = async () => {
       try {
@@ -52,15 +59,15 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
           .single();
 
         if (error) throw error;
-        
+
         if (data?.canvas_data) {
-          const canvasData = typeof data.canvas_data === 'string' 
-            ? JSON.parse(data.canvas_data) 
+          const canvasData = typeof data.canvas_data === "string"
+            ? JSON.parse(data.canvas_data)
             : data.canvas_data;
           setElements(canvasData.elements || []);
         }
-      } catch (error) {
-        console.error("Error loading whiteboard:", error);
+      } catch (err) {
+        console.error("Error loading whiteboard:", err);
         toast.error("Failed to load whiteboard");
       } finally {
         setLoading(false);
@@ -69,21 +76,19 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
 
     loadWhiteboard();
 
-    // Subscribe to real-time updates
     const channel = supabase
       .channel(`whiteboard_${whiteboardId}`)
       .on(
         "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "whiteboards",
-          filter: `id=eq.${whiteboardId}`,
-        },
+        { event: "UPDATE", schema: "public", table: "whiteboards", filter: `id=eq.${whiteboardId}` },
         (payload) => {
+          if (ignoreNextRemoteRef.current) {
+            ignoreNextRemoteRef.current = false;
+            return;
+          }
           const newData = payload.new as any;
           if (newData?.canvas_data) {
-            const canvasData = typeof newData.canvas_data === 'string'
+            const canvasData = typeof newData.canvas_data === "string"
               ? JSON.parse(newData.canvas_data)
               : newData.canvas_data;
             setElements(canvasData.elements || []);
@@ -97,20 +102,17 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
     };
   }, [whiteboardId]);
 
-  // Render canvas
+  // Render canvas (uses fixed internal resolution; CSS scales it visually)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Clear canvas
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw all elements
-    elements.forEach((el) => {
+    const drawElement = (el: WhiteboardElement) => {
       ctx.strokeStyle = el.color;
       ctx.fillStyle = el.color;
       ctx.lineWidth = el.strokeWidth;
@@ -136,7 +138,7 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
         case "circle":
           if (el.x !== undefined && el.y !== undefined && el.width !== undefined) {
             ctx.beginPath();
-            ctx.arc(el.x, el.y, el.width / 2, 0, Math.PI * 2);
+            ctx.arc(el.x, el.y, Math.abs(el.width) / 2, 0, Math.PI * 2);
             ctx.stroke();
           }
           break;
@@ -150,69 +152,37 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
           break;
         case "text":
           if (el.x !== undefined && el.y !== undefined && el.text) {
-            ctx.font = `${el.strokeWidth * 8}px sans-serif`;
+            ctx.font = `${Math.max(12, el.strokeWidth * 8)}px sans-serif`;
             ctx.fillText(el.text, el.x, el.y);
           }
           break;
       }
-    });
+    };
 
-    // Draw current element being drawn
-    if (currentElement) {
-      ctx.strokeStyle = currentElement.color;
-      ctx.fillStyle = currentElement.color;
-      ctx.lineWidth = currentElement.strokeWidth;
-
-      switch (currentElement.type) {
-        case "pencil":
-          if (currentElement.points && currentElement.points.length >= 4) {
-            ctx.beginPath();
-            ctx.moveTo(currentElement.points[0], currentElement.points[1]);
-            for (let i = 2; i < currentElement.points.length; i += 2) {
-              ctx.lineTo(currentElement.points[i], currentElement.points[i + 1]);
-            }
-            ctx.stroke();
-          }
-          break;
-        case "rectangle":
-          if (currentElement.x !== undefined && currentElement.y !== undefined && 
-              currentElement.width !== undefined && currentElement.height !== undefined) {
-            ctx.strokeRect(currentElement.x, currentElement.y, currentElement.width, currentElement.height);
-          }
-          break;
-        case "circle":
-          if (currentElement.x !== undefined && currentElement.y !== undefined && currentElement.width !== undefined) {
-            ctx.beginPath();
-            ctx.arc(currentElement.x, currentElement.y, currentElement.width / 2, 0, Math.PI * 2);
-            ctx.stroke();
-          }
-          break;
-        case "line":
-          if (currentElement.points && currentElement.points.length >= 4) {
-            ctx.beginPath();
-            ctx.moveTo(currentElement.points[0], currentElement.points[1]);
-            ctx.lineTo(currentElement.points[2], currentElement.points[3]);
-            ctx.stroke();
-          }
-          break;
-      }
-    }
+    elements.forEach(drawElement);
+    if (currentElement) drawElement(currentElement);
   }, [elements, currentElement]);
 
-  const getMousePos = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  // Map pointer event to canvas internal coordinates (handles CSS scaling)
+  const getPointerPos = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
     return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
     };
   };
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (isReadOnly) return;
-    
-    const pos = getMousePos(e);
+    // Allow non-primary buttons to fall through (eg right-click)
+    if (e.button !== 0 && e.pointerType === "mouse") return;
+    (e.currentTarget as HTMLCanvasElement).setPointerCapture(e.pointerId);
+
+    const pos = getPointerPos(e);
 
     if (tool === "text") {
       setTextPosition(pos);
@@ -220,30 +190,38 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
     }
 
     if (tool === "eraser") {
-      // Find and remove element at position
-      const updatedElements = elements.filter((el) => {
+      const updated = elements.filter((el) => {
         if (el.type === "pencil" && el.points) {
           for (let i = 0; i < el.points.length; i += 2) {
             const dx = el.points[i] - pos.x;
             const dy = el.points[i + 1] - pos.y;
             if (Math.sqrt(dx * dx + dy * dy) < 20) return false;
           }
+        } else if ((el.type === "rectangle" || el.type === "circle") && el.x !== undefined && el.y !== undefined) {
+          const dx = (el.x + (el.width || 0) / 2) - pos.x;
+          const dy = (el.y + (el.height || 0) / 2) - pos.y;
+          if (Math.sqrt(dx * dx + dy * dy) < 40) return false;
+        } else if (el.type === "text" && el.x !== undefined && el.y !== undefined) {
+          if (Math.abs(el.x - pos.x) < 60 && Math.abs(el.y - pos.y) < 24) return false;
+        } else if (el.type === "line" && el.points && el.points.length >= 4) {
+          const dx = (el.points[0] + el.points[2]) / 2 - pos.x;
+          const dy = (el.points[1] + el.points[3]) / 2 - pos.y;
+          if (Math.sqrt(dx * dx + dy * dy) < 30) return false;
         }
         return true;
       });
-      setElements(updatedElements);
+      setElements(updated);
+      setDirty(true);
       return;
     }
 
     setIsDrawing(true);
-
     const newElement: WhiteboardElement = {
       id: crypto.randomUUID(),
       type: tool === "select" ? "pencil" : tool,
       color,
       strokeWidth,
     };
-
     if (tool === "pencil") {
       newElement.points = [pos.x, pos.y];
     } else if (tool === "rectangle" || tool === "circle") {
@@ -254,17 +232,13 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
     } else if (tool === "line") {
       newElement.points = [pos.x, pos.y, pos.x, pos.y];
     }
-
     setCurrentElement(newElement);
   };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (!isDrawing || !currentElement || isReadOnly) return;
-
-    const pos = getMousePos(e);
-
+    const pos = getPointerPos(e);
     const updated = { ...currentElement };
-
     if (currentElement.type === "pencil" && updated.points) {
       updated.points = [...updated.points, pos.x, pos.y];
     } else if (currentElement.type === "rectangle" || currentElement.type === "circle") {
@@ -273,15 +247,16 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
     } else if (currentElement.type === "line" && updated.points) {
       updated.points = [updated.points[0], updated.points[1], pos.x, pos.y];
     }
-
     setCurrentElement(updated);
   };
 
-  const handleMouseUp = () => {
+  const handlePointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    try { (e.currentTarget as HTMLCanvasElement).releasePointerCapture(e.pointerId); } catch {}
     if (!isDrawing || !currentElement) return;
     setIsDrawing(false);
-    setElements([...elements, currentElement]);
+    setElements((prev) => [...prev, currentElement]);
     setCurrentElement(null);
+    setDirty(true);
   };
 
   const handleTextSubmit = () => {
@@ -290,7 +265,6 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
       setTextInput("");
       return;
     }
-
     const newElement: WhiteboardElement = {
       id: crypto.randomUUID(),
       type: "text",
@@ -300,15 +274,17 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
       color,
       strokeWidth,
     };
-
-    setElements([...elements, newElement]);
+    setElements((prev) => [...prev, newElement]);
     setTextPosition(null);
     setTextInput("");
+    setDirty(true);
   };
 
-  const saveWhiteboard = useCallback(async () => {
+  const saveWhiteboard = useCallback(async (silent = false) => {
+    if (isReadOnly) return;
     setSaving(true);
     try {
+      ignoreNextRemoteRef.current = true;
       const { error } = await supabase
         .from("whiteboards")
         .update({
@@ -316,19 +292,45 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
           updated_at: new Date().toISOString(),
         })
         .eq("id", whiteboardId);
-
       if (error) throw error;
-      toast.success("Whiteboard saved");
-    } catch (error) {
-      console.error("Error saving whiteboard:", error);
-      toast.error("Failed to save whiteboard");
+      setDirty(false);
+      setLastSavedAt(Date.now());
+      if (!silent) toast.success("Whiteboard saved");
+    } catch (err) {
+      console.error("Error saving whiteboard:", err);
+      if (!silent) toast.error("Failed to save whiteboard");
     } finally {
       setSaving(false);
     }
-  }, [elements, whiteboardId]);
+  }, [elements, whiteboardId, isReadOnly]);
+
+  // Debounced autosave whenever elements change after first load
+  useEffect(() => {
+    if (loading || isReadOnly || !dirty) return;
+    const t = window.setTimeout(() => { saveWhiteboard(true); }, 1500);
+    return () => window.clearTimeout(t);
+  }, [elements, dirty, loading, isReadOnly, saveWhiteboard]);
+
+  // Best-effort save on unload
+  useEffect(() => {
+    const handler = () => {
+      if (dirty && !isReadOnly) {
+        try {
+          // fire-and-forget; browser may not wait
+          supabase.from("whiteboards").update({
+            canvas_data: JSON.stringify({ elements, background: "#ffffff" }),
+            updated_at: new Date().toISOString(),
+          }).eq("id", whiteboardId).then(() => {});
+        } catch {}
+      }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [dirty, elements, whiteboardId, isReadOnly]);
 
   const clearCanvas = () => {
     setElements([]);
+    setDirty(true);
   };
 
   if (loading) {
@@ -339,31 +341,46 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
     );
   }
 
+  const savedLabel = saving
+    ? "Saving…"
+    : dirty
+      ? "Unsaved changes"
+      : lastSavedAt
+        ? "Saved"
+        : "";
+
+  // Compute the textbox screen position from the canvas internal coords
+  const textboxScreen = (() => {
+    if (!textPosition) return null;
+    const canvas = canvasRef.current;
+    if (!canvas) return { left: textPosition.x, top: textPosition.y };
+    const rect = canvas.getBoundingClientRect();
+    const wrapperRect = wrapperRef.current?.getBoundingClientRect();
+    const scaleX = rect.width / canvas.width;
+    const scaleY = rect.height / canvas.height;
+    return {
+      left: textPosition.x * scaleX + (rect.left - (wrapperRect?.left ?? rect.left)),
+      top: textPosition.y * scaleY + (rect.top - (wrapperRect?.top ?? rect.top)) - 8,
+    };
+  })();
+
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg flex items-center justify-between">
+        <CardTitle className="text-lg flex items-center justify-between gap-2">
           <span>Whiteboard</span>
           {!isReadOnly && (
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearCanvas}
-              >
+            <div className="flex gap-2 items-center">
+              <span className="text-xs text-muted-foreground hidden sm:inline-flex items-center gap-1">
+                {!dirty && lastSavedAt && <Check className="h-3 w-3 text-success" />}
+                {savedLabel}
+              </span>
+              <Button variant="outline" size="sm" onClick={clearCanvas}>
                 <Trash2 className="h-4 w-4 mr-1" />
                 Clear
               </Button>
-              <Button
-                size="sm"
-                onClick={saveWhiteboard}
-                disabled={saving}
-              >
-                {saving ? (
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                ) : (
-                  <Save className="h-4 w-4 mr-1" />
-                )}
+              <Button size="sm" onClick={() => saveWhiteboard(false)} disabled={saving}>
+                {saving ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Save className="h-4 w-4 mr-1" />}
                 Save
               </Button>
             </div>
@@ -373,60 +390,25 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
       <CardContent>
         {!isReadOnly && (
           <div className="flex flex-wrap gap-2 mb-3 pb-3 border-b">
-            <Button
-              variant={tool === "select" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setTool("select")}
-              aria-label="Select tool"
-            >
+            <Button variant={tool === "select" ? "default" : "outline"} size="icon" onClick={() => setTool("select")} aria-label="Select tool">
               <MousePointer className="h-4 w-4" />
             </Button>
-            <Button
-              variant={tool === "pencil" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setTool("pencil")}
-              aria-label="Pencil tool"
-            >
+            <Button variant={tool === "pencil" ? "default" : "outline"} size="icon" onClick={() => setTool("pencil")} aria-label="Pencil tool">
               <Pencil className="h-4 w-4" />
             </Button>
-            <Button
-              variant={tool === "line" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setTool("line")}
-              aria-label="Line tool"
-            >
+            <Button variant={tool === "line" ? "default" : "outline"} size="icon" onClick={() => setTool("line")} aria-label="Line tool">
               <Minus className="h-4 w-4" />
             </Button>
-            <Button
-              variant={tool === "rectangle" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setTool("rectangle")}
-              aria-label="Rectangle tool"
-            >
+            <Button variant={tool === "rectangle" ? "default" : "outline"} size="icon" onClick={() => setTool("rectangle")} aria-label="Rectangle tool">
               <Square className="h-4 w-4" />
             </Button>
-            <Button
-              variant={tool === "circle" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setTool("circle")}
-              aria-label="Circle tool"
-            >
+            <Button variant={tool === "circle" ? "default" : "outline"} size="icon" onClick={() => setTool("circle")} aria-label="Circle tool">
               <Circle className="h-4 w-4" />
             </Button>
-            <Button
-              variant={tool === "text" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setTool("text")}
-              aria-label="Text tool"
-            >
+            <Button variant={tool === "text" ? "default" : "outline"} size="icon" onClick={() => setTool("text")} aria-label="Text tool">
               <Type className="h-4 w-4" />
             </Button>
-            <Button
-              variant={tool === "eraser" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setTool("eraser")}
-              aria-label="Eraser tool"
-            >
+            <Button variant={tool === "eraser" ? "default" : "outline"} size="icon" onClick={() => setTool("eraser")} aria-label="Eraser tool">
               <Eraser className="h-4 w-4" />
             </Button>
             <div className="flex items-center gap-2 ml-2">
@@ -435,6 +417,7 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
                 className="w-8 h-8 rounded cursor-pointer"
+                aria-label="Stroke color"
               />
               <Input
                 type="number"
@@ -443,27 +426,26 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
                 min={1}
                 max={20}
                 className="w-16"
+                aria-label="Stroke width"
               />
             </div>
           </div>
         )}
 
-        <div className="relative">
+        <div className="relative" ref={wrapperRef}>
           <canvas
             ref={canvasRef}
-            width={800}
-            height={500}
-            className="border rounded-lg bg-white cursor-crosshair w-full"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
+            width={CANVAS_W}
+            height={CANVAS_H}
+            className="border rounded-lg bg-white cursor-crosshair w-full touch-none select-none"
+            style={{ aspectRatio: `${CANVAS_W} / ${CANVAS_H}` }}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
           />
-          {textPosition && (
-            <div
-              className="absolute"
-              style={{ left: textPosition.x, top: textPosition.y }}
-            >
+          {textPosition && textboxScreen && (
+            <div className="absolute z-10" style={{ left: textboxScreen.left, top: textboxScreen.top }}>
               <Input
                 value={textInput}
                 onChange={(e) => setTextInput(e.target.value)}
@@ -476,8 +458,8 @@ const Whiteboard = ({ whiteboardId, groupId, isReadOnly = false }: WhiteboardPro
                 }}
                 onBlur={handleTextSubmit}
                 autoFocus
-                className="w-40"
-                placeholder="Type text..."
+                className="w-48"
+                placeholder="Type text…"
               />
             </div>
           )}
