@@ -331,18 +331,18 @@ export function FlashcardSystem() {
                           Box {card.box_number}
                         </span>
                       </div>
-                      <p className="font-medium text-sm sm:text-base leading-relaxed">{card.front}</p>
+                      <p className="font-medium text-sm sm:text-base leading-relaxed break-words [overflow-wrap:anywhere] whitespace-pre-wrap hyphens-auto">{card.front}</p>
                     </div>
                     
                     {/* Divider */}
                     <div className="h-px bg-border" />
                     
                     {/* Answer Section */}
-                    <div className="space-y-1">
+                    <div className="space-y-1 min-w-0">
                       <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                         Answer
                       </span>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{card.back}</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed break-words [overflow-wrap:anywhere] whitespace-pre-wrap hyphens-auto">{card.back}</p>
                     </div>
                     
                     {/* Actions */}
