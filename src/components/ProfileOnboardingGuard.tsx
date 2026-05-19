@@ -6,7 +6,7 @@ interface ProfileOnboardingGuardProps {
   children: React.ReactNode;
 }
 
-const EXEMPT_PATHS = ["/auth", "/profile-onboarding", "/privacy", "/terms", "/support"];
+const EXEMPT_PATHS = ["/auth", "/profile-onboarding", "/privacy", "/terms", "/support", "/success", "/refund", "/pricing"];
 
 const ProfileOnboardingGuard = ({ children }: ProfileOnboardingGuardProps) => {
   const navigate = useNavigate();
