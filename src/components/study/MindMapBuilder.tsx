@@ -44,6 +44,8 @@ export function MindMapBuilder() {
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [draggingNode, setDraggingNode] = useState<string | null>(null);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  // Local optimistic positions while dragging — avoids hammering the DB on each pointer move.
+  const [localPositions, setLocalPositions] = useState<Record<string, { x: number; y: number }>>({});
 
   const { data: maps = [], isLoading: mapsLoading } = useQuery({
     queryKey: ["mind-maps", user?.id],
@@ -157,30 +159,41 @@ export function MindMapBuilder() {
     },
   });
 
-  const handleMouseDown = (e: React.MouseEvent, nodeId: string) => {
+  const getNodePos = (n: MindMapNode) => {
+    const local = localPositions[n.id];
+    return local ?? { x: n.position_x, y: n.position_y };
+  };
+
+  const handlePointerDown = (e: React.PointerEvent, nodeId: string) => {
     e.stopPropagation();
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     setDraggingNode(nodeId);
     setDragStart({ x: e.clientX, y: e.clientY });
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (draggingNode) {
-      const node = nodes.find(n => n.id === draggingNode);
-      if (node) {
-        const dx = (e.clientX - dragStart.x) / zoom;
-        const dy = (e.clientY - dragStart.y) / zoom;
-        updateNodePositionMutation.mutate({
-          nodeId: draggingNode,
-          x: node.position_x + dx,
-          y: node.position_y + dy,
-        });
-        setDragStart({ x: e.clientX, y: e.clientY });
-      }
-    }
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!draggingNode) return;
+    const node = nodes.find(n => n.id === draggingNode);
+    if (!node) return;
+    const current = getNodePos(node);
+    const dx = (e.clientX - dragStart.x) / zoom;
+    const dy = (e.clientY - dragStart.y) / zoom;
+    setLocalPositions(prev => ({
+      ...prev,
+      [draggingNode]: { x: current.x + dx, y: current.y + dy },
+    }));
+    setDragStart({ x: e.clientX, y: e.clientY });
   };
 
-  const handleMouseUp = () => {
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (!draggingNode) return;
+    const finalPos = localPositions[draggingNode];
+    const id = draggingNode;
     setDraggingNode(null);
+    try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+    if (finalPos) {
+      updateNodePositionMutation.mutate({ nodeId: id, x: finalPos.x, y: finalPos.y });
+    }
   };
 
   const getColorClass = (color: string) => {
