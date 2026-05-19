@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import RichTextEditor from "./RichTextEditor";
+
+const RichTextEditor = lazy(() => import("./RichTextEditor"));
 
 interface CreateUpdatePostDialogProps {
   onPostCreated?: () => void;
@@ -120,7 +121,9 @@ const CreateUpdatePostDialog = ({ onPostCreated }: CreateUpdatePostDialogProps) 
           </div>
           <div className="space-y-2">
             <Label>Content</Label>
-            <RichTextEditor content={content} onChange={setContent} placeholder="Describe the update..." />
+            <Suspense fallback={<div className="min-h-[200px] rounded-md border bg-muted/20 animate-pulse" aria-label="Loading editor" />}>
+              <RichTextEditor content={content} onChange={setContent} placeholder="Describe the update..." />
+            </Suspense>
           </div>
           <div className="flex gap-2 justify-end">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
