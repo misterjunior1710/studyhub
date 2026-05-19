@@ -4,6 +4,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
 import { checkRateLimit, rateLimitedResponse } from "../_shared/rateLimit.ts";
+import { consumeQuota, quotaExceededResponse } from "../_shared/pro.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -96,6 +97,10 @@ Deno.serve(async (req) => {
   // Rate limit: 30 AI assistant messages per 5 minutes per user
   const rl = await checkRateLimit({ userId, bucket: "ai-assistant", max: 30, windowSeconds: 300 });
   if (!rl.allowed) return rateLimitedResponse(rl.retryAfterSeconds, corsHeaders);
+
+  // Free tier: 3 Nova messages per day. Pro: unlimited.
+  const quota = await consumeQuota({ userId, bucket: "nova_chat", freeLimit: 3 });
+  if (!quota.allowed) return quotaExceededResponse("nova_chat", quota.limit, corsHeaders);
 
   let body: any;
   try { body = await req.json(); } catch { return json(400, { error: "Invalid JSON" }); }

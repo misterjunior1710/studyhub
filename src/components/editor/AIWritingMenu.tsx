@@ -52,7 +52,9 @@ const AIWritingMenu = ({ selectedText, onReplace, onInsert, disabled }: AIWritin
       }
     } catch (err) {
       console.error('AI writing assist error:', err);
-      toast.error('Failed to process text. Please try again.');
+      const { handlePremiumError } = await import('@/lib/proErrors');
+      const handled = await handlePremiumError(err, { feature: 'AI Writing Assist' });
+      if (!handled) toast.error('Failed to process text. Please try again.');
     } finally {
       setLoading(false);
       setCurrentAction(null);

@@ -62,6 +62,30 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_usage_daily: {
+        Row: {
+          bucket: string
+          count: number
+          local_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bucket: string
+          count?: number
+          local_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bucket?: string
+          count?: number
+          local_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       announcements: {
         Row: {
           author_id: string
@@ -586,6 +610,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey_profiles"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_pro_status"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1179,11 +1210,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "friends_friend_id_fkey"
+            columns: ["friend_id"]
+            isOneToOne: false
+            referencedRelation: "user_pro_status"
+            referencedColumns: ["user_id"]
+          },
+          {
             foreignKeyName: "friends_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friends_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_pro_status"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1704,6 +1749,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_pro_status"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -3184,7 +3236,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_pro_status: {
+        Row: {
+          is_pro: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          is_pro?: never
+          user_id?: string | null
+        }
+        Update: {
+          is_pro?: never
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       activate_powerup: { Args: { _slug: string }; Returns: Json }
@@ -3239,6 +3305,10 @@ export type Database = {
         Returns: Json
       }
       cleanup_rate_limits: { Args: never; Returns: number }
+      consume_ai_quota: {
+        Args: { _bucket: string; _free_limit: number; _user_id: string }
+        Returns: Json
+      }
       create_whiteboard: {
         Args: { p_group_id?: string; p_name?: string }
         Returns: string

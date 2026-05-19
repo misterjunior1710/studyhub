@@ -78,7 +78,9 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
     } catch (e: any) {
       console.error(e);
       setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
-      toast.error("Couldn't send", { description: e?.message ?? "Try again in a moment." });
+      const { handlePremiumError } = await import("@/lib/proErrors");
+      const handled = await handlePremiumError(e, { feature: "Nova AI" });
+      if (!handled) toast.error("Couldn't send", { description: e?.message ?? "Try again in a moment." });
     } finally {
       setSending(false);
       requestAnimationFrame(() => textareaRef.current?.focus());

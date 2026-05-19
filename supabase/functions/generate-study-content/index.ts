@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
 import { checkRateLimit, rateLimitedResponse } from "../_shared/rateLimit.ts";
+import { consumeQuota, quotaExceededResponse } from "../_shared/pro.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -42,6 +43,10 @@ serve(async (req) => {
     // Rate limit: 10 generations per hour per user (expensive)
     const rl = await checkRateLimit({ userId: userData.user.id, bucket: "generate-study-content", max: 10, windowSeconds: 3600 });
     if (!rl.allowed) return rateLimitedResponse(rl.retryAfterSeconds, corsHeaders);
+
+    // Free tier: 2 study-content generations per day. Pro: unlimited (still rate-limited above).
+    const quota = await consumeQuota({ userId: userData.user.id, bucket: "ai_generate", freeLimit: 2 });
+    if (!quota.allowed) return quotaExceededResponse("ai_generate", quota.limit, corsHeaders);
 
     const parsed = generateSchema.safeParse(await req.json().catch(() => null));
     if (!parsed.success) {

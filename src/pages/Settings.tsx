@@ -42,6 +42,7 @@ import { toast } from "sonner";
 import AdminModerationPanel from "@/components/AdminModerationPanel";
 import BanAppealDialog from "@/components/BanAppealDialog";
 import { applyThemeColor } from "@/hooks/useThemePersistence";
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface ProfileData {
   username: string;
@@ -72,13 +73,13 @@ interface ProfileData {
 }
 
 const premiumThemes = [
-  { name: "royal-purple", label: "Royal Purple", description: "Elegant purple", primary: "282 68% 38%", accent: "282 68% 55%" },
-  { name: "neon-violet", label: "Neon Violet", description: "Futuristic purple", primary: "291 64% 42%", accent: "291 70% 60%" },
-  { name: "sunset-orange", label: "Sunset Orange", description: "Warm productivity", primary: "36 100% 50%", accent: "24 95% 55%" },
-  { name: "crimson-red", label: "Crimson Red", description: "Strong highlight", primary: "0 65% 51%", accent: "350 80% 60%" },
-  { name: "rose-pink", label: "Rose Pink", description: "Modern soft pink", primary: "330 81% 60%", accent: "320 70% 70%" },
-  { name: "graphite-gray", label: "Graphite Gray", description: "Professional dark", primary: "217 19% 27%", accent: "217 19% 45%" },
-  { name: "arctic-silver", label: "Arctic Silver", description: "Clean UI gray", primary: "215 20% 65%", accent: "215 25% 75%" },
+  { name: "royal-purple", label: "Royal Purple", description: "Elegant purple", primary: "282 68% 38%", accent: "282 68% 55%", pro: true },
+  { name: "neon-violet", label: "Neon Violet", description: "Futuristic purple", primary: "291 64% 42%", accent: "291 70% 60%", pro: true },
+  { name: "sunset-orange", label: "Sunset Orange", description: "Warm productivity", primary: "36 100% 50%", accent: "24 95% 55%", pro: true },
+  { name: "crimson-red", label: "Crimson Red", description: "Strong highlight", primary: "0 65% 51%", accent: "350 80% 60%", pro: true },
+  { name: "rose-pink", label: "Rose Pink", description: "Modern soft pink", primary: "330 81% 60%", accent: "320 70% 70%", pro: true },
+  { name: "graphite-gray", label: "Graphite Gray", description: "Professional dark", primary: "217 19% 27%", accent: "217 19% 45%", pro: true },
+  { name: "arctic-silver", label: "Arctic Silver", description: "Clean UI gray", primary: "215 20% 65%", accent: "215 25% 75%", pro: true },
 ];
 
 const calmThemes = [
@@ -95,6 +96,7 @@ const themeColors = [...premiumThemes, ...calmThemes];
 
 const Settings = () => {
   const navigate = useNavigate();
+  const { isPro } = useSubscription();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -624,25 +626,49 @@ const Settings = () => {
                         <p className="text-sm text-muted-foreground">{section.subtitle}</p>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {section.themes.map((theme) => (
-                          <button
-                            key={theme.name}
-                            onClick={() => setProfile(prev => ({ ...prev, theme_color: theme.name }))}
-                            aria-label={`Select ${theme.label} theme`}
-                            className={`p-4 rounded-lg border-2 text-left transition-all ${
-                              profile.theme_color === theme.name
-                                ? 'border-primary ring-2 ring-primary/20'
-                                : 'border-border hover:border-primary/50'
-                            }`}
-                          >
-                            <div
-                              className="w-full h-12 rounded-md mb-2"
-                              style={{ background: `linear-gradient(135deg, hsl(${theme.primary}), hsl(${theme.accent}))` }}
-                            />
-                            <p className="text-sm font-medium">{theme.label}</p>
-                            <p className="text-xs text-muted-foreground">{theme.description}</p>
-                          </button>
-                        ))}
+                        {section.themes.map((theme: any) => {
+                          const locked = theme.pro && !isPro;
+                          return (
+                            <button
+                              key={theme.name}
+                              onClick={() => {
+                                if (locked) {
+                                  toast.error("Premium theme", {
+                                    description: "Unlock all premium themes with StudyHub Pro.",
+                                    action: { label: "Upgrade", onClick: () => navigate("/pricing") },
+                                  });
+                                  return;
+                                }
+                                setProfile(prev => ({ ...prev, theme_color: theme.name }));
+                              }}
+                              aria-label={locked ? `${theme.label} theme — Pro required` : `Select ${theme.label} theme`}
+                              className={`relative p-4 rounded-lg border-2 text-left transition-all ${
+                                profile.theme_color === theme.name
+                                  ? 'border-primary ring-2 ring-primary/20'
+                                  : 'border-border hover:border-primary/50'
+                              } ${locked ? 'opacity-80' : ''}`}
+                            >
+                              <div
+                                className="w-full h-12 rounded-md mb-2"
+                                style={{ background: `linear-gradient(135deg, hsl(${theme.primary}), hsl(${theme.accent}))` }}
+                              />
+                              <p className="text-sm font-medium flex items-center gap-1.5">
+                                {theme.label}
+                                {theme.pro && (
+                                  <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-primary">
+                                    Pro
+                                  </span>
+                                )}
+                              </p>
+                              <p className="text-xs text-muted-foreground">{theme.description}</p>
+                              {locked && (
+                                <span className="absolute right-2 top-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-background/80 text-primary">
+                                  <Lock className="h-3 w-3" />
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   ))}
