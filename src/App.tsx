@@ -72,6 +72,7 @@ const SuccessPro = lazy(() => import("./pages/SuccessPro"));
 const SuccessProYearly = lazy(() => import("./pages/SuccessProYearly"));
 const FloatingAssistant = lazy(() => import("@/components/assistant/FloatingAssistant"));
 const AdminAudit = lazy(() => import("./pages/AdminAudit"));
+const RequirePro = lazy(() => import("@/components/pro/RequirePro"));
 
 // Optimized QueryClient — tuned aggressively to minimize DB hits.
 // staleTime is 5 min so a re-mount within that window is FREE.
@@ -175,12 +176,20 @@ const App = () => (
                         <Route path="/dm/:friendId" element={<DirectMessage />} />
                         <Route path="/user/:userId" element={<UserProfile />} />
                         <Route path="/study" element={<StudyMode />} />
-                        <Route path="/content-generator" element={<ContentGenerator />} />
+                        <Route path="/content-generator" element={
+                          <RequirePro feature="AI Study Content Generator" description="Generate full study notes, key concepts, examples, and practice questions in seconds with the Pro AI generator.">
+                            <ContentGenerator />
+                          </RequirePro>
+                        } />
                         <Route path="/updates" element={<Updates />} />
                         <Route path="/saved" element={<SavedPosts />} />
                         <Route path="/install" element={<Install />} />
                         <Route path="/calendar" element={<Calendar />} />
-                        <Route path="/whiteboards" element={<Whiteboards />} />
+                        <Route path="/whiteboards" element={
+                          <RequirePro feature="Collaborative Whiteboards" description="Brainstorm together in real time. Pro unlocks unlimited collaborative whiteboards and docs.">
+                            <Whiteboards />
+                          </RequirePro>
+                        } />
                         <Route path="/notes" element={<Notes />} />
                         <Route path="/leaderboard" element={<Leaderboard />} />
                         <Route path="/missions" element={<Missions />} />
