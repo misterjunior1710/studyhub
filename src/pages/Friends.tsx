@@ -124,6 +124,7 @@ const Friends = () => {
         .select("id, username, avatar_url, country, grade")
         .ilike("username", `%${searchQuery}%`)
         .eq("is_public", true)
+        .eq("is_test_account", false)
         .neq("id", currentUserId)
         .limit(10);
 
