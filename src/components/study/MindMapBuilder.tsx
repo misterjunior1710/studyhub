@@ -130,6 +130,16 @@ export function MindMapBuilder() {
       }).eq("id", nodeId);
       if (error) throw error;
     },
+    onSuccess: (_d, vars) => {
+      // Drop the local override now that the server has the new position.
+      setLocalPositions(prev => {
+        const { [vars.nodeId]: _gone, ...rest } = prev;
+        return rest;
+      });
+      queryClient.invalidateQueries({ queryKey: ["mind-map-nodes"] });
+    },
+  });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["mind-map-nodes"] });
     },
