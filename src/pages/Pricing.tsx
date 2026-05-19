@@ -212,7 +212,7 @@ const Pricing = () => {
     }
 
     // Already subscribed to this plan
-    if (isPro && currentPlan === plan.id) {
+    if (userIsPro && currentPlan === plan.id) {
       navigate("/settings#billing");
       return;
     }
