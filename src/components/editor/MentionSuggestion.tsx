@@ -36,6 +36,8 @@ const MentionSuggestion = forwardRef<MentionSuggestionRef, MentionSuggestionProp
             .from('profiles')
             .select('id, username')
             .ilike('username', `%${query}%`)
+            .eq('is_public', true)
+            .eq('is_test_account', false)
             .limit(8);
 
           if (error) throw error;
