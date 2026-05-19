@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import PaymentVerifyingGate from "@/components/PaymentVerifyingGate";
 
 const SuccessProYearly = () => {
   useEffect(() => {
