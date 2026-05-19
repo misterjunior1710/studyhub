@@ -10,7 +10,17 @@ Deno.serve(async (req) => {
     const clientId = Deno.env.get("GOOGLE_CLIENT_ID");
     if (!clientId) return json(500, { error: "GOOGLE_CLIENT_ID not configured" });
 
-    const state = await signState(user.id);
+    // Preserve the originating app origin so callback redirects back to the same host.
+    let origin: string | null = null;
+    try {
+      if (req.method === "POST") {
+        const body = await req.json().catch(() => ({}));
+        if (typeof body?.origin === "string") origin = body.origin;
+      }
+    } catch {}
+    if (!origin) origin = req.headers.get("origin") || req.headers.get("referer");
+
+    const state = await signState(user.id, origin || undefined);
     const params = new URLSearchParams({
       client_id: clientId,
       redirect_uri: getRedirectUri(),
