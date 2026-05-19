@@ -1,159 +1,120 @@
-## Goal
+# Pro / Premium Enforcement Audit + Hardening Plan
 
-Integrate Dodo Payments into `/pricing` and the subscription flow. Webhooks are the source of truth; the UI reflects DB state in realtime.
+## Current state (audit findings)
 
-## Payment Links
+**What exists today**
+- `useSubscription()` / `useIsPro()` hook reads `subscriptions` and listens to realtime.
+- DB function `is_pro_user(uuid)` exists and is correct (covers active/trialing/renewed + grace period).
+- Dodo checkout + webhook deployed; subscriptions table populated correctly.
 
-- Free → in-app (no Dodo)
-- Pro Monthly → `https://dodo.pe/monthproplan`
-- Pro Yearly → `https://dodo.pe/yearproplan`
-- `https://dodo.pe/freeshplan` is intentionally not wired to checkout (Free CTA stays in-app per spec).
+**What is missing or weak (vulnerabilities)**
+1. **No edge function checks Pro status.** `ai-assistant`, `ai-writing-assist`, `ai-task-assist`, `generate-study-content`, `firecrawl-*` are all open to any authenticated user with only generic rate limits — a free user gets the same daily allowance as Pro.
+2. **No per-day caps for free tier** (Nova 3/day, tiny AI tools 2/day) — current limits are 30/5min, 60/5min etc., which is way above the free-tier cap.
+3. **No frontend gating** anywhere. `/content-generator`, `/whiteboards`, premium themes, collaborative docs, etc. are reachable by free users via URL or UI.
+4. **Premium themes** in `Settings.tsx` (`premiumThemes` array) are selectable by anyone — no Pro gate.
+5. **`create_whiteboard` RPC** does not check Pro; collaborative whiteboards/docs are supposed to be Pro.
+6. **No Pro badge** rendered on profile cards / posts.
+7. **No reusable `RequirePro` route guard** or `ProGate` component — checks would be scattered.
+8. **No usage ledger** — even with caps, no visible "X/3 messages used today" UI.
 
-## Architecture (high level)
+---
 
-```text
-Pricing CTA ──► edge: dodo-create-checkout ──► returns Dodo URL w/ metadata{user_id, plan}
-                                                │
-User completes payment on Dodo ─────────────────┘
-                │
-                ├─► redirect_url → /success/pro  or  /success/pro/yearly
-                │       (polls subscription row until webhook lands)
-                │
-                └─► Dodo webhook ──► edge: dodo-webhook (verify signature, upsert)
-                                          │
-                                          ▼
-                                  public.subscriptions  (realtime)
-                                          │
-                                          ▼
-                              useSubscription() hook in app
-```
+## Proposed architecture
 
-The frontend never trusts the redirect alone. The success page subscribes to the `subscriptions` table over realtime and shows "Verifying…" until the webhook confirms `active`.
+### 1. Single source of truth: `useIsPro()` + `RequirePro`
+- Keep existing `useSubscription()` hook (already realtime).
+- Add `src/components/pro/RequirePro.tsx` — route wrapper that:
+  - Shows skeleton while `loading`.
+  - If not pro → renders `<UpgradeWall feature="..."/>` (polished CTA → `/pricing`), no crash, no redirect-loop.
+- Add `src/components/pro/ProGate.tsx` — inline wrapper for sub-features (e.g. premium theme picker, "create collaborative doc" button). Shows blurred/locked state with upgrade CTA.
+- Add `src/components/pro/ProBadge.tsx` — small crown badge shown next to username when `is_pro`.
 
-## Backend changes
+### 2. Server-side enforcement helper
+- New `supabase/functions/_shared/pro.ts`:
+  ```ts
+  export async function getProAndUsage(admin, userId) { ... }
+  // returns { isPro: boolean }
+  ```
+  Calls `is_pro_user(userId)` RPC with service role.
+- Used by every premium edge function before doing AI work.
 
-### Schema migration
+### 3. Free-tier daily usage caps (DB-backed, tamper-proof)
+- New table `ai_usage_daily(user_id, bucket, local_date, count)` with unique `(user_id, bucket, local_date)`.
+- New RPC `consume_ai_quota(_bucket, _free_limit)`:
+  - If `is_pro_user(auth.uid())` → allow, no increment.
+  - Else atomically increment row for today and reject if `count > _free_limit`.
+  - Returns `{ allowed, used, limit, is_pro }`.
+- Edge functions call this RPC (service role with explicit user id) before running:
+  | Function | Bucket | Free limit |
+  |---|---|---|
+  | `ai-assistant` (Nova) | `nova_chat` | 3 / day |
+  | `ai-writing-assist` | `ai_writing` | 2 / day |
+  | `ai-task-assist` | `ai_task` | 2 / day |
+  | `generate-study-content` | `ai_generate` | 2 / day |
+  | `firecrawl-search` / `firecrawl-scrape` | `ai_research` | 2 / day |
 
-Extend `public.subscriptions` to be provider-agnostic and Dodo-ready:
+### 4. Pro-only edge functions / actions
+- `dodo-create-checkout`: no change.
+- A new lightweight `get-subscription` is not needed — use existing realtime hook + `get_my_subscription` RPC.
+- Any future "premium-only" edge function: gate with `getProAndUsage()` and return 402 `{ error: "pro_required" }` if not pro. Frontend maps 402 → upgrade modal.
 
-- add `provider text default 'dodo'`
-- add `dodo_subscription_id text`, `dodo_payment_id text`, `dodo_customer_id text`
-- add `plan text` (`pro_monthly` | `pro_yearly`)
-- make legacy `stripe_*` columns nullable (keep for backwards-compat)
-- unique index on `(provider, dodo_subscription_id)`
-- enable realtime on `public.subscriptions`
-- helper RPC `get_my_subscription()` returning active plan + status
+### 5. Whiteboards / Collaborative docs (Pro-only)
+- Update `create_whiteboard()` RPC: require `is_pro_user(auth.uid())`. Solo whiteboard for free users can be a separate non-persisted local mode, but per pricing copy "collaborative whiteboards & docs" is Pro — so all whiteboard creation moves behind Pro.
+- Tighten RLS on `whiteboards` INSERT and `collaborative_docs` (if exists) INSERT to require `is_pro_user(auth.uid())`. SELECT/UPDATE of existing rows unchanged so paid users who downgrade still see their data read-only.
+- Frontend: wrap `/whiteboards` and `/collaborative-docs` (if route) in `<RequirePro>`.
 
-RLS already correct (user reads own; service role writes).
+### 6. Premium themes
+- Mark `premiumThemes` entries with `pro: true`.
+- `Settings.tsx` theme picker: non-pro users see them with a lock icon; clicking opens upgrade modal. If a free user already has a premium theme stored, force-revert to default on load.
 
-### Edge functions (new)
+### 7. Pro badge
+- Render `<ProBadge/>` in: `Navbar` profile dropdown, `UserProfile`, `StudyPost` author line, comment author line, leaderboard rows.
+- Driven by `is_pro` returned from a small batched lookup (`subscriptions` SELECT public-safe view).
+  - Add view `public.user_pro_status (user_id, is_pro)` exposed via SELECT to authenticated users — only flag, no plan/dates.
 
-1. `**dodo-create-checkout**` (JWT-verified)
-  - Input: `{ plan: 'pro_monthly' | 'pro_yearly' }`
-  - Builds redirect URL: `https://dodo.pe/{slug}?metadata_user_id={uid}&metadata_plan={plan}&redirect_url={origin}/success/pro[/yearly]`
-  - Returns `{ url }`. Inserts a pending `subscription_intent` audit row.
-2. `**dodo-webhook**` (public, no JWT)
-  - Verifies `webhook-signature` header using `DODO_WEBHOOK_SECRET` (HMAC).
-  - Handles: `payment.succeeded`, `payment.failed`, `subscription.active`, `subscription.cancelled`, `subscription.on_hold`, `subscription.renewed`.
-  - Upserts `public.subscriptions` keyed by `dodo_subscription_id`; sets `status`, `current_period_end`, `plan`, `user_id` (from metadata).
-  - Idempotent via `event_id` log table.
-3. `**dodo-subscription-status**` (JWT-verified, optional)
-  - Server-side fetch fallback when webhook is delayed (polled by success page after 10s).
+### 8. UX when blocked
+- 402 from any edge function → toast + `<UpgradeDialog feature=…/>` (already-styled, uses existing tokens).
+- `RequirePro` wall: feature illustration, "What you get with Pro", CTA → `/pricing?from=<feature>`.
+- Never throw / never expose raw "RLS violation"; map to friendly copy in a shared `handlePremiumError(e)` util.
 
-### Secrets to add
+---
 
-- `DODO_API_KEY` (server-side fetch + sub mgmt)
-- `DODO_WEBHOOK_SECRET` (signature verify)
+## Technical details
 
-User must register the webhook URL `https://qrquegcexsqrbtwtcicq.supabase.co/functions/v1/dodo-webhook` in the Dodo dashboard.
+**New / changed files**
+- `src/components/pro/RequirePro.tsx`, `ProGate.tsx`, `ProBadge.tsx`, `UpgradeDialog.tsx`, `UpgradeWall.tsx`
+- `src/lib/proErrors.ts` (maps 402 / pro_required)
+- `src/hooks/useProUsage.ts` (optional: returns today's `{used, limit}` for display)
+- `src/App.tsx` — wrap `/whiteboards`, `/content-generator` (Pro tier of generations gated inside), Pro-only routes with `RequirePro`
+- `src/pages/Settings.tsx` — gate premium themes
+- `src/components/Navbar.tsx`, `StudyPost.tsx`, `UserProfile.tsx`, leaderboard rows — add `<ProBadge>`
+- `supabase/functions/_shared/pro.ts` — `assertPro()`, `consumeQuota()` helpers
+- All AI edge functions (`ai-assistant`, `ai-writing-assist`, `ai-task-assist`, `generate-study-content`, `firecrawl-search`, `firecrawl-scrape`) — call `consumeQuota()` and return 402 on cap hit
 
-## Frontend changes
+**DB migrations**
+- Create `ai_usage_daily` table + indexes + RLS (user can SELECT own; only service role can INSERT/UPDATE).
+- Create `consume_ai_quota(_bucket text, _free_limit int)` SECURITY DEFINER RPC.
+- Update `create_whiteboard()` to check `is_pro_user(auth.uid())`.
+- Tighten `whiteboards` INSERT policy (require pro).
+- Create `user_pro_status` view (only `user_id, is_pro`).
+- No new RLS on `subscriptions` (already protected).
 
-### New: `src/hooks/useSubscription.ts`
+**No changes to**
+- Auth flow, Dodo webhook, payment URLs, existing user data.
 
-- Reads `public.subscriptions` for `auth.uid()`, subscribes to realtime changes.
-- Exposes `{ isPro, plan, status, periodEnd, loading, refetch }`.
-- Invalidates on `AuthContext` user change. 5-min staleTime fits existing caching standards.
+---
 
-### `src/pages/Pricing.tsx`
+## Rollout
 
-- Replace `handleSelectPlan` placeholder with:
-  - **Free**: logged-out → `/auth`; logged-in → `/feed`.
-  - **Pro M/Y**: logged-out → `/auth?next=/pricing`; logged-in → call `dodo-create-checkout`, then `window.location.href = url` (Dodo links are hosted-only).
-- Per-card loading spinner, disabled state during request, toast on error with retry.
-- If `useSubscription().isPro` and the cycle matches, swap CTA to "Manage subscription" → `/settings#billing`.
-- Keep all existing layout, animations, and responsive behavior. USD prices already in place.
-- Add Apple Pay / Google Pay badge row under Pro cards (lucide + small SVG), shown only when `import.meta.env.VITE_DODO_WALLET_BADGES === 'true'` so we can flip it on later without redeploying logic.
+1. Migration (caps table, RPC, whiteboard gate, view).
+2. Shared edge helper + update each AI function.
+3. Frontend `RequirePro` + gates + badge + theme lock.
+4. QA: free-user smoke test (URL bypass, devtools localStorage edits, direct `supabase.functions.invoke`, direct `supabase.from("whiteboards").insert`).
+5. Document in `mem://features/pro-enforcement`.
 
-### `src/pages/SuccessPro.tsx` and `src/pages/SuccessProYearly.tsx`
-
-- On mount: read `?payment_id=` from query (Dodo appends it).
-- Show three states:
-  1. **Verifying** (default): polite spinner + "Confirming your payment securely…" — relies on realtime + 2s polling fallback for max 60s.
-  2. **Confirmed**: existing celebratory layout; trigger `refetchProfile()` + `queryClient.invalidateQueries`.
-  3. **Pending / failed**: friendly message + "Retry payment" → back to Dodo link, "Contact support" → `/support`.
-- No manual page refresh needed — realtime drives the transition.
-
-### Cancellation / retry UX
-
-- `/settings` billing section: shows current plan, period end, "Manage on Dodo" button (links to Dodo customer portal URL once user provides it; placeholder hidden until env set).
-- Graceful cancellation page at `/pricing?canceled=1` shows a toast "Checkout canceled — no charge made."
-
-### Pro feature gating
-
-- Add `src/lib/pro.ts` exporting `useIsPro()` (thin wrapper over `useSubscription`).
-- No feature unlock logic is changed in this pass beyond making `isPro` available; existing Pro-gated UI can adopt it next.
-
-### Guards
-
-- `ProfileOnboardingGuard` already exempts `/success`, `/pricing`, `/refund` — no change.
-
-## Security & production posture
-
-- Frontend never sees `DODO_API_KEY` or webhook secret.
-- Webhook signature verified with constant-time compare; bad signatures return 401 and are logged.
-- All edge functions: zod validation, CORS, rate-limit via existing `check_rate_limit` RPC on create-checkout.
-- Subscription writes happen only via service role in `dodo-webhook`. RLS keeps users read-only on their own row.
-- Idempotency: webhook stores `dodo_event_id` in a new `dodo_webhook_events` table; duplicates are no-ops.
-- Backward compatibility: existing `has_active_subscription` RPC continues to work (status check is provider-agnostic).
-
-## What I need from you before building
-
-1. Confirm the **redirect URL** behavior — Dodo Payment Links typically accept `?redirect_url=` and `?metadata_*=` query params. If your links are locked to a fixed redirect in the Dodo dashboard, I'll set them to `/success/pro` and `/success/pro/yearly` there instead and adapt the edge function to skip URL building.
-2. You'll need to add two secrets after I scaffold: `DODO_API_KEY`, `DODO_WEBHOOK_SECRET`. I'll prompt for them.
-3. Confirm webhook URL registration in the Dodo dashboard once deployed.
-
-Approve and I'll implement in this order: migration → edge functions → secrets prompt → `useSubscription` hook → Pricing wiring → Success page polling → settings billing block.  
-  
-User Answer : 
-
-Approved. Proceed with the implementation in the exact order proposed.
-
-For redirect behavior:  
-Dodo redirects do support query parameters and redirect_url handling correctly on my side, so proceed with the dynamic redirect URL architecture.
-
-After deployment, I will:
-
-add DODO_API_KEY
-
-add DODO_WEBHOOK_SECRET
-
-register the webhook URL in the Dodo dashboard
-
-Keep the implementation production-ready, secure, optimized, and compatible with all existing RLS/auth/subscription systems.
-
-Also ensure:
-
-no duplicate subscription rows are possible
-
-canceled/expired subscriptions downgrade correctly
-
-realtime listeners are cleaned up properly
-
-subscription cache invalidation is efficient
-
-polling stops immediately after webhook confirmation
-
-mobile redirect flow feels smooth after payment completion
-
-Proceed.
+## Audit-report template (delivered after build)
+- Protected systems: list
+- Vulns found: list above
+- Fixes applied: per-file diff summary
+- Remaining weak spots: e.g. premium-only push topics, future modules
+- Confirmation: free user can no longer (a) call AI past cap, (b) create whiteboard, (c) pick premium theme, (d) get Pro badge.
