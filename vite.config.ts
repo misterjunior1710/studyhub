@@ -110,24 +110,6 @@ export default defineConfig(({ mode }) => ({
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]',
-        manualChunks(id) {
-          if (!id.includes("node_modules")) return;
-          // React + its tightly-coupled runtime deps MUST be grouped together
-          // and matched FIRST so nothing else accidentally pulls them into
-          // another chunk (which causes "useState of undefined" at runtime).
-          if (/[\\/]node_modules[\\/](react|react-dom|scheduler|use-sync-external-store|react-is)[\\/]/.test(id)) {
-            return "react";
-          }
-          if (id.includes("@splinetool") || id.includes("three")) return "spline";
-          if (id.includes("framer-motion") || id.includes("motion-dom") || id.includes("motion-utils")) return "motion";
-          if (id.includes("@tiptap") || id.includes("prosemirror")) return "editor";
-          if (id.includes("recharts") || id.includes("d3-")) return "charts";
-          if (id.includes("@tanstack/react-query")) return "query";
-          if (id.includes("@supabase")) return "supabase";
-          if (id.includes("@radix-ui")) return "radix";
-          if (id.includes("lucide-react")) return "icons";
-          if (id.includes("lenis")) return "lenis";
-        },
       },
     },
   },

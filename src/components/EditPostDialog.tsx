@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import RichTextEditor from "./RichTextEditor";
+
+const RichTextEditor = lazy(() => import("./RichTextEditor"));
 
 interface EditPostDialogProps {
   postId: string;
@@ -129,11 +130,13 @@ const EditPostDialog = ({
 
           <div className="space-y-2">
             <Label htmlFor="edit-content">Content</Label>
-            <RichTextEditor
-              content={content}
-              onChange={setContent}
-              placeholder="Provide details, context, or your thoughts..."
-            />
+            <Suspense fallback={<div className="min-h-[200px] rounded-md border bg-muted/20 animate-pulse" aria-label="Loading editor" />}>
+              <RichTextEditor
+                content={content}
+                onChange={setContent}
+                placeholder="Provide details, context, or your thoughts..."
+              />
+            </Suspense>
           </div>
 
           <div className="flex gap-2 justify-end">

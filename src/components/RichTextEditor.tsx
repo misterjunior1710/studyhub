@@ -9,7 +9,8 @@ import {
   Bold, Italic, List, ListOrdered, Heading2, Quote, Undo, Redo,
   Code2, Hash, AtSign, Sigma, Link2
 } from 'lucide-react';
-import { FormulaDialog, AIWritingMenu } from './editor';
+import FormulaDialog from './editor/FormulaDialog';
+import AIWritingMenu from './editor/AIWritingMenu';
 import katex from 'katex';
 
 // Create lowlight instance with common languages
