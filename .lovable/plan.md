@@ -1,75 +1,105 @@
-## Transition Life Skills Modules
+# StudyHub Priority Bug Fix Pass
 
-Build a comprehensive Life Skills hub at `/transitions` with two modules (HS→College, College→Adult), progress tracking, interactive tools, and a resource library.
+Targeted fixes across 10 issues. Each item lists root cause, fix approach, and affected files.
 
-### Scope
+## 1. Pomodoro Settings Auto-Closes
 
-**Phase 1 (this build):**
-1. Database schema for modules, lessons, user progress, budgets, savings goals
-2. Main `/transitions` hub page with two module cards + progress rings
-3. Module detail pages with topic sections, lesson checklists, completion tracking
-4. Seeded content for all 8 topic areas across both modules
-5. Interactive Budget Calculator (income vs expenses, category breakdown)
-6. Savings Goal Tracker (set goal, log contributions, progress bar)
-7. Resource Library (searchable, filterable cards: worksheets/templates/guides)
-8. Achievement badges on milestones (25/50/100% module completion)
-9. Navbar entry under "More" → "Life Skills"
-10. Realtime sync via Supabase channels on user_progress
+**Root cause:** Radix `<PopoverContent>` (`src/pages/StudyMode.tsx` L335–354) closes on pointer-down outside. The Radix `<Slider>` thumb uses pointer capture, and on touch/some pointer flows the released pointer lands outside the popover, triggering `onPointerDownOutside`/`onInteractOutside`.
+**Fix:** Add `onPointerDownOutside`/`onInteractOutside` handlers on `PopoverContent` that call `e.preventDefault()` when the target is the slider/related UI, plus `onOpenAutoFocus` guard. Safer: also stop propagation on the inner container and add `onFocusOutside` prevention. Keep `Escape` and explicit outside-click on body to close.
+**Files:** `src/pages/StudyMode.tsx`.
 
-**Phase 2 (future, not built now):**
-- AI coaching integration (Nova-powered personalized transition plan)
-- Push reminder scheduling for transition tasks
-- Downloadable PDF worksheets
+## 2. Flashcard Text Overflow
 
-### Database
+**Root cause:** Card body lacks wrapping rules for long words/URLs; uses fixed/min height with overflow visible.
+**Fix:** In `FlashcardSystem.tsx`, apply `break-words overflow-wrap-anywhere whitespace-pre-wrap` plus `overflow-y-auto max-h-[…]` on the answer/question containers, and ensure the card uses `min-h` instead of fixed `h`. Add `hyphens-auto` for paragraphs.
+**Files:** `src/components/study/FlashcardSystem.tsx`.
 
-Tables (all RLS-protected, user-owned where applicable):
-- `transition_modules` (public read): id, slug, title, phase, description, order_index, icon, color
-- `transition_topics` (public read): module_id, slug, title, description, order_index, icon
-- `transition_lessons` (public read): topic_id, title, content (markdown), estimated_minutes, order_index, lesson_type ('reading'|'checklist'|'exercise')
-- `transition_resources` (public read): title, description, category, resource_type, url/content, tags[]
-- `user_lesson_progress` (user-owned): user_id, lesson_id, completed, completed_at, notes
-- `user_budgets` (user-owned): user_id, name, period, income, categories (jsonb)
-- `user_savings_goals` (user-owned): user_id, title, target_amount, current_amount, deadline, contributions (jsonb)
+## 3. Mind Map Node Dragging
 
-### File Structure
+**Root cause:** `MindMapBuilder.tsx` likely renders nodes without pointer drag handlers (only click-to-select), so positions can't be moved.
+**Fix:** Add `onPointerDown`/`onPointerMove`/`onPointerUp` with `setPointerCapture` for unified mouse+touch drag. Store offset relative to node origin; update node `x/y` in state on move; edges re-render automatically because they read node coords. Add `touch-action: none` on draggable nodes to prevent scroll interception. Persist final position on pointer-up.
+**Files:** `src/components/study/MindMapBuilder.tsx`.
 
-```
-src/pages/Transitions.tsx              — hub page
-src/pages/TransitionModule.tsx         — module detail
-src/pages/TransitionResources.tsx      — resource library
-src/components/transitions/
-  ModuleCard.tsx
-  TopicAccordion.tsx
-  LessonItem.tsx
-  ProgressRing.tsx
-  BudgetCalculator.tsx
-  SavingsGoalTracker.tsx
-  ResourceCard.tsx
-src/hooks/useTransitions.ts            — load modules/progress
-src/lib/transitionsContent.ts          — seed content helpers
-```
+## 4. Whiteboard Major Fix Pass
 
-### Design
+**Root causes:**
 
-- Glassmorphism cards (existing `.glass-card`, `.hover-lift`)
-- Two distinct module accents: HS→College = blue/teal, College→Adult = purple/amber
-- Progress rings using SVG stroke-dashoffset
-- Tab nav inside module page: Overview | Lessons | Tools
-- Mobile: stacked cards; desktop: 2-col module grid
+- Coordinate misalignment: drawing uses `clientX/Y` without subtracting the canvas bounding rect and dividing by current zoom/scroll offsets.
+- Textbox creation: handler likely guarded by `tool === 'text'` but the click pipeline is swallowed by the drawing handler.
+- No save / no autosave: persistence only on explicit button; if button broken, nothing persists.
+- Mobile drawing fails: listeners use `mousedown/mousemove` only, no `pointerdown/pointermove` or `touch-action: none` on the canvas.
 
-### Routes
+**Fix:**
 
-- `/transitions` (hub)
-- `/transitions/:moduleSlug` (module detail w/ tabs)
-- `/transitions/resources` (library)
+- Replace mouse listeners with **pointer events** (`onPointerDown/Move/Up`) + `setPointerCapture`. Add `touch-action: none` and `user-select: none` on the canvas wrapper.
+- Coordinate helper: `const rect = canvas.getBoundingClientRect(); x = (e.clientX - rect.left) * (canvas.width / rect.width) / zoom + scrollX;` apply same to y. Use this in draw, text-placement, and hit-testing.
+- Restore textbox creation: when `tool === 'text'`, on pointer-up insert an editable `<textarea>` positioned at translated coords; commit to shapes on blur.
+- Autosave: debounced (1.5s) effect that calls the existing save mutation whenever shapes change AND there are unsaved edits; show a small "Saved · just now" indicator. Also save on `beforeunload` via `navigator.sendBeacon` fallback (or skip on unsupported). Keep explicit save button.
+- Verify save mutation: inspect for stale closure or RLS error; surface server errors via toast.
 
-### Seeding
+**Files:** `src/components/collaborative/Whiteboard.tsx`, possibly the whiteboard hook used for persistence.
 
-Migration inserts ~2 modules, 8 topics, ~24 lessons, ~20 resources covering all topics from the spec. Content kept concise, student-friendly, motivating.
+## 5. Task AI Breakdown — "Failed to send request to Edge Function"
 
-### Out of Scope
+**Root cause:** `supabase/config.toml` has `[functions.ai-task-assist] verify_jwt = true`. Per Lovable Cloud signing-keys system, edge functions should deploy with `verify_jwt = false` and validate the token in code (the function already does `client.auth.getClaims`). The platform-level JWT verify rejects the request before the function runs, returning a non-2xx that `supabase.functions.invoke` reports as the generic "Failed to send a request to the Edge Function" error.
+**Fix:** Flip `verify_jwt = false` for `ai-task-assist`. Also improve client-side error surface in `AiAssistantSheet` and `TaskEditorDialog` breakdown to show `error.context?.error || error.message`. Re-deploy function.
+**Files:** `supabase/config.toml`, `src/components/tasks/AiAssistantSheet.tsx`, `src/components/tasks/TaskEditorDialog.tsx`.
 
-- Stripe/loan calculators with real APR (keep generic)
-- Real banking integrations
-- Video content (links only in resources)
+## 6. Google Calendar Redirect Goes to `/`
+
+**Root cause:** `google-calendar-callback/index.ts` hard-codes `APP_ORIGIN = "https://studyhub.world"` and redirects to `/calendar?google=connected`. When the user starts OAuth from `studyhubstudentportal.lovable.app` (or a preview), they get bounced to studyhub.world; if not logged in there, `Calendar.tsx` redirects to `/auth`, and on some flows further to `/`. Additionally `/calendar` requires auth — a fresh session in the wrong origin lands on `/`.
+**Fix:** Encode the originating app origin into the OAuth `state` (generated by `google-calendar-auth-url`), then on callback redirect back to that exact origin + `/calendar?google=connected`. Validate the origin against an allowlist (`studyhub.world`, `www.studyhub.world`, `studyhubstudentportal.lovable.app`, preview `*.lovableproject.com`). Keep error path identical. No client change needed beyond confirming Calendar reads the `?google=` flag for a toast.
+**Files:** `supabase/functions/google-calendar-callback/index.ts`, `supabase/functions/google-calendar-auth-url/index.ts`, `supabase/functions/_shared/google-calendar.ts` (state encode/verify).
+
+## 7. Resource Library Quality
+
+**Scope:** `src/pages/TransitionResources.tsx` (and its data source).
+**Fix:** Restructure the resource items to a richer schema: `{ title, description, type: 'pdf'|'guide'|'video'|'tool'|'template', url, source, durationOrSize, tags[] }`. Curate ~25–40 high-quality free resources (Khan Academy, MIT OCW, OpenStax PDFs, NHS/CDC teen mental health PDFs, financial-literacy PDFs from CFPB, study templates). Render with type badges, icons, downloadable indicator, and category filter. Keep static (no DB calls) to avoid bandwidth cost. Lazy-render below the fold.
+**Files:** `src/pages/TransitionResources.tsx`, possibly extract to `src/lib/transitionResources.ts`.
+
+## 8. Missions Not Appearing
+
+**Probable causes:**
+
+- `assign_daily_missions` / `assign_weekly_missions` RPC not creating rows (no missions seeded in `missions` table, or RPC fails silently — current hook ignores its return).
+- The localStorage gate in `useMissions.ts` (`missions:assigned:<uid>:<date>`) means a one-time failure permanently suppresses retries for the day.
+
+**Fix:**
+
+- Diagnostic read against `missions` and `user_missions` to confirm seeded data and RPC behavior.
+- Only set the localStorage flag **after** confirming the RPCs returned without error.
+- If `missions` table is empty, seed a baseline set via migration (daily: complete 1 task, study 25min, post 1 question; weekly: maintain 5-day streak, 3 quizzes, etc.) with proper `period`, `event_type`, `target`, rewards.
+- Verify RLS on `user_missions` allows the user to `SELECT` their own rows and the RPCs are `SECURITY DEFINER` if they insert.
+- Improve empty/error UI in `Missions.tsx` (already has empty state; add explicit "Generate missions" retry button calling the RPC manually).
+
+**Files:** `src/hooks/useMissions.ts`, `src/pages/Missions.tsx`, possible migration to seed missions / fix RPC / RLS.
+
+## 9. Saved Posts "Browse Posts" → `/`
+
+**Fix:** Change `navigate("/")` to `navigate("/feed")` in `src/pages/SavedPosts.tsx` L135.
+**Files:** `src/pages/SavedPosts.tsx`.
+
+## 10. Install Page Wording
+
+**Fix:** Change "Already Installed" → "Installed" in `src/pages/Install.tsx` L252.
+**Files:** `src/pages/Install.tsx`.
+
+## Cross-cutting checks
+
+- After each change: confirm desktop + mobile viewport.
+- No new DB calls added; missions hook keeps once-per-day gate (with success guard).
+- All RLS unchanged except possibly tightening mission RLS if found loose during audit.
+- Edge function deploy: `ai-task-assist`, `google-calendar-callback`, `google-calendar-auth-url`.
+
+## Deliverables
+
+Final summary will list: root causes, fixes applied, remaining limitations, and affected files per item.  
+  
+Before applying changes:
+
+- create a rollback-safe checkpoint
+- avoid unnecessary refactors outside affected systems
+- preserve existing query optimizations/security hardening
+- avoid introducing additional startup DB queries
+- verify no regressions in mobile responsiveness
+- keep changes scoped tightly to the listed issues only
