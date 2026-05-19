@@ -63,6 +63,7 @@ const Index = () => {
   const [showcaseRef, showcaseVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.15 });
   const [trustRef, trustVisible] = useScrollReveal<HTMLDivElement>();
   const [aboutRef, aboutVisible] = useScrollReveal<HTMLDivElement>();
+  const [testimonialsRef, testimonialsVisible] = useScrollReveal<HTMLDivElement>();
 
   const handleGetStarted = () => {
     if (user) {
@@ -338,6 +339,41 @@ const Index = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+      {/* Testimonials Section */}
+      <section ref={testimonialsRef} className="py-16 sm:py-24">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className={`text-2xl sm:text-3xl font-bold mb-4 ${testimonialsVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}>
+              What Students Say
+            </h2>
+            <p className={`text-muted-foreground max-w-2xl mx-auto ${testimonialsVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`} style={{ animationDelay: "100ms" }}>
+              Don't just take our word for it — hear from the students already using StudyHub.
+            </p>
+          </div>
+          <div className={`flex justify-center ${testimonialsVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`} style={{ animationDelay: "200ms" }}>
+            <div className="bg-card border border-border rounded-xl p-8 max-w-xl w-full relative hover-lift">
+              <div className="text-6xl leading-none text-primary/20 font-serif absolute top-4 left-6 select-none" aria-hidden="true">&ldquo;</div>
+              <blockquote className="mt-5 text-sm sm:text-base text-foreground leading-relaxed italic">
+                Studyhub has been a game-changer for my history revision. The flashcard feature, in particular, made a real difference in how I retained information for my board exams. What I also love is how customisable the platform is — from light and dark mode to colour preferences, it genuinely feels tailored to the way I like to study. Performance-wise, it's flawless; everything runs smoothly without any hiccups. If you're just starting out and looking for a study tool that's easy to use and actually helps you hit your academic goals, I'd wholeheartedly recommend Studyhub.
+              </blockquote>
+              <div className="mt-6 pt-5 border-t border-border flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center font-semibold text-primary text-sm flex-shrink-0">R</div>
+                <div>
+                  <p className="font-semibold text-sm">Rachel</p>
+                  <p className="text-xs text-muted-foreground">Undergraduate, 1st Year</p>
+                </div>
+                <div className="ml-auto flex gap-0.5" aria-label="5 out of 5 stars">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="h-4 w-4 text-yellow-500 fill-yellow-500" viewBox="0 0 20 20" aria-hidden="true">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
