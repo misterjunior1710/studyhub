@@ -9,7 +9,9 @@ import { usePosts, getTimeAgo } from "@/hooks/usePosts";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Search, Flame, MessageCircleQuestion, Clock, TrendingUp, HelpCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   Pagination,
   PaginationContent,
