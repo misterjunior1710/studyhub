@@ -112,6 +112,12 @@ export default defineConfig(({ mode }) => ({
         assetFileNames: 'assets/[name]-[hash].[ext]',
         manualChunks(id) {
           if (!id.includes("node_modules")) return;
+          // React + its tightly-coupled runtime deps MUST be grouped together
+          // and matched FIRST so nothing else accidentally pulls them into
+          // another chunk (which causes "useState of undefined" at runtime).
+          if (/[\\/]node_modules[\\/](react|react-dom|scheduler|use-sync-external-store|react-is)[\\/]/.test(id)) {
+            return "react";
+          }
           if (id.includes("@splinetool") || id.includes("three")) return "spline";
           if (id.includes("framer-motion") || id.includes("motion-dom") || id.includes("motion-utils")) return "motion";
           if (id.includes("@tiptap") || id.includes("prosemirror")) return "editor";
@@ -121,7 +127,6 @@ export default defineConfig(({ mode }) => ({
           if (id.includes("@radix-ui")) return "radix";
           if (id.includes("lucide-react")) return "icons";
           if (id.includes("lenis")) return "lenis";
-          if (id.includes("react-dom") || id.includes("/react/")) return "react";
         },
       },
     },
