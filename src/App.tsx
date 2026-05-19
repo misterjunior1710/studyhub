@@ -69,6 +69,7 @@ const Pricing = lazy(() => import("./pages/Pricing"));
 const Refund = lazy(() => import("./pages/Refund"));
 const SuccessBasic = lazy(() => import("./pages/SuccessBasic"));
 const SuccessPro = lazy(() => import("./pages/SuccessPro"));
+const SuccessProYearly = lazy(() => import("./pages/SuccessProYearly"));
 const FloatingAssistant = lazy(() => import("@/components/assistant/FloatingAssistant"));
 const AdminAudit = lazy(() => import("./pages/AdminAudit"));
 
@@ -195,6 +196,7 @@ const App = () => (
                         <Route path="/refund" element={<Refund />} />
                         <Route path="/success/basic" element={<SuccessBasic />} />
                         <Route path="/success/pro" element={<SuccessPro />} />
+                        <Route path="/success/pro/yearly" element={<SuccessProYearly />} />
                         <Route path="/admin/audit" element={<AdminAudit />} />
                           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                           <Route path="*" element={<NotFound />} />
