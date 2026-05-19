@@ -159,8 +159,8 @@ const FAQ_ITEMS = [
     a: "Yes. You can cancel your StudyHub™ Pro subscription at any time from your account settings. You'll keep Pro access until the end of your current billing period.",
   },
   {
-    q: "Is this in test mode?",
-    a: "Right now, checkout is in preview / test mode while we finish our payments setup. CTA buttons are placeholders and won't charge you. We'll switch on live payments before launch.",
+    q: "Is checkout secure?",
+    a: "Yes. Checkout is processed by Dodo Payments — a PCI-compliant payment provider — and supports international cards, Apple Pay, Google Pay, and more. StudyHub™ never sees or stores your card details.",
   },
   {
     q: "What payment methods are supported?",
