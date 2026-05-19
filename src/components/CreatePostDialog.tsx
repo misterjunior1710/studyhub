@@ -42,6 +42,14 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     { value: "general", label: "General Post" }
   ];
 
+  // Allow other parts of the app (e.g. onboarding checklist) to programmatically
+  // open the Create Post dialog by dispatching a window event.
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    window.addEventListener("studyhub:open-create-post", handler as EventListener);
+    return () => window.removeEventListener("studyhub:open-create-post", handler as EventListener);
+  }, []);
+
   useEffect(() => {
     const loadUserProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser();

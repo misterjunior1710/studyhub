@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 const OnboardingChecklist = () => {
   const navigate = useNavigate();
-  const { showChecklist, tasks, dismissChecklist, isOnboardingComplete } = useOnboarding();
+  const { showChecklist, tasks, dismissChecklist, isOnboardingComplete, completeTask } = useOnboarding();
   const isMobile = useIsMobile();
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
 
@@ -22,10 +22,22 @@ const OnboardingChecklist = () => {
 
   const taskActions: Record<string, () => void> = {
     profile: () => navigate("/settings"),
-    browse: () => navigate("/feed"),
+    browse: () => {
+      // Mark "browse the feed" complete as soon as user actually navigates there.
+      try { localStorage.setItem("studyhub_browsed_feed", "true"); } catch {}
+      completeTask("browse");
+      navigate("/feed");
+    },
     group: () => navigate("/groups"),
     friend: () => navigate("/friends"),
-    post: () => {}, // Handled by CreatePostDialog
+    post: () => {
+      // CreatePostDialog (mounted in Navbar) listens for this event and opens itself.
+      navigate("/feed");
+      // Defer so dialog mounts after route change.
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent("studyhub:open-create-post"));
+      }, 50);
+    },
   };
 
   return (
