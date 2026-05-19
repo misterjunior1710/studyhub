@@ -268,10 +268,10 @@ export function MindMapBuilder() {
 
         <div
           ref={canvasRef}
-          className="relative w-full h-[500px] bg-gradient-to-br from-muted/30 via-background to-muted/20 rounded-xl overflow-hidden border-2 border-dashed border-muted"
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
+          className="relative w-full h-[500px] bg-gradient-to-br from-muted/30 via-background to-muted/20 rounded-xl overflow-hidden border-2 border-dashed border-muted touch-none select-none"
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
         >
           {/* Grid pattern background */}
           <div className="absolute inset-0 opacity-30" style={{
