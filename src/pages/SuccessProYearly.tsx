@@ -104,6 +104,7 @@ const SuccessProYearly = () => {
             </p>
           </div>
         </section>
+        </PaymentVerifyingGate>
 
         <Footer />
       </div>
