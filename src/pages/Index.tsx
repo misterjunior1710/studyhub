@@ -19,6 +19,7 @@ import {
   Bookmark,
   TrendingUp,
   Zap,
+  Rss,
 } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
