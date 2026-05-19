@@ -164,6 +164,7 @@ const GlobalSearch = ({ open, onOpenChange }: GlobalSearchProps) => {
             .from("profiles")
             .select("id, username, avatar_url, is_public")
             .eq("is_public", true)
+            .eq("is_test_account", false)
             .ilike("username", like)
             .limit(5),
           // Groups (RLS will scope to public/member)
