@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
 import { checkRateLimit, rateLimitedResponse } from "../_shared/rateLimit.ts";
+import { consumeQuota, quotaExceededResponse } from "../_shared/pro.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -41,6 +42,10 @@ serve(async (req) => {
     // Rate limit: 60 writing-assist calls per 5 minutes per user
     const rl = await checkRateLimit({ userId: userData.user.id, bucket: "ai-writing-assist", max: 60, windowSeconds: 300 });
     if (!rl.allowed) return rateLimitedResponse(rl.retryAfterSeconds, corsHeaders);
+
+    // Free tier: 2 uses per day. Pro: unlimited.
+    const quota = await consumeQuota({ userId: userData.user.id, bucket: "ai_writing", freeLimit: 2 });
+    if (!quota.allowed) return quotaExceededResponse("ai_writing", quota.limit, corsHeaders);
 
     const parsed = writingSchema.safeParse(await req.json().catch(() => null));
     if (!parsed.success) {

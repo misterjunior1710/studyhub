@@ -4,6 +4,7 @@
 //   - "schedule": suggest time blocks across upcoming tasks
 //   - "prioritize": reorder a list of pending tasks by urgency/impact
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { consumeQuota, quotaExceededResponse } from "../_shared/pro.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -60,6 +61,10 @@ Deno.serve(async (req) => {
   if (authErr || !userData?.user?.id) return json(401, { error: "Unauthorized" });
 
   if (!LOVABLE_API_KEY) return json(500, { error: "AI not configured" });
+
+  // Free tier: 2 tiny AI tool uses per day. Pro: unlimited.
+  const quota = await consumeQuota({ userId: userData.user.id, bucket: "ai_task", freeLimit: 2 });
+  if (!quota.allowed) return quotaExceededResponse("ai_task", quota.limit, corsHeaders);
 
   let body: any;
   try { body = await req.json(); } catch { return json(400, { error: "Invalid JSON" }); }
