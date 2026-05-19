@@ -177,12 +177,18 @@ const Questions = () => {
               <PostSkeletonList count={4} />
             ) : allPosts.length === 0 ? (
               <div className="text-center py-12">
-                <h2 className="text-lg font-semibold mb-2">No questions yet — be the first! 🎯</h2>
+                <h2 className="text-lg font-semibold mb-2">
+                  {filter === "unanswered"
+                    ? "Every question's been answered 🎉"
+                    : "No questions yet — be the first! 🎯"}
+                </h2>
                 <p className="text-muted-foreground mb-4">
-                  Hit the Create Post button up top and drop your question.
+                  {filter === "unanswered"
+                    ? "Nice — the community's caught up. Try another filter or ask something new."
+                    : "Hit the Create Post button up top and drop your question."}
                 </p>
                 <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                  Ask about anything — homework, exam prep, tricky concepts, study strategies. 
+                  Ask about anything — homework, exam prep, tricky concepts, study strategies.
                   The community is ready to help.
                 </p>
               </div>
