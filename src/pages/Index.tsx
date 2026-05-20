@@ -381,7 +381,7 @@ const Index = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-sm">Rachel</p>
-                    <p className="text-xs text-muted-foreground">Undergraduate, 1st Year at Madras Christian College</p>
+                    <p className="text-xs text-muted-foreground">Undergraduate, 1st Year </p>
                   </div>
                   <div className="ml-auto flex gap-0.5" aria-label="5 out of 5 stars">
                     {[...Array(5)].map((_, i) => (
