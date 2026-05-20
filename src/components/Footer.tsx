@@ -190,14 +190,12 @@ const Footer = () => {
                 href="https://huzzler.so/products/YANKqlFcka/studyhub?utm_source=huzzler_product_website&utm_medium=badge&utm_campaign=free_listing"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Featured on Huzzler"
               >
                 <img
                   alt="Huzzler Embed Badge"
                   src="https://huzzler.so/assets/images/embeddable-badges/featured.png"
-                  width={159}
-                  height={55}
-                  loading="lazy"
+                  width="159"
+                  height="55"
                 />
               </a>
               <a
