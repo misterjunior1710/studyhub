@@ -36,6 +36,7 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import GamificationDashboard from "@/components/gamification/GamificationDashboard";
 import LeaderboardPreview from "@/components/gamification/LeaderboardPreview";
 import { TasksWidget } from "@/components/tasks/TasksWidget";
+import SocialProofStats from "@/components/SocialProofStats";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -136,6 +137,9 @@ const Index = () => {
             </p>
           </HeroGeometric>
         </header>
+
+        {/* Social Proof — real Google Search Console metrics since launch */}
+        <SocialProofStats />
 
         {/* Continue Setup banner — logged-in users with incomplete onboarding */}
         {showContinueSetup && (
