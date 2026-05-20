@@ -1,61 +1,70 @@
 import { memo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Sparkles, Users, BookOpen, MessageCircle } from "lucide-react";
+import { MessageCircleQuestion, ArrowRight } from "lucide-react";
 import { useOnboarding } from "@/contexts/OnboardingContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const OnboardingWelcome = () => {
+  const navigate = useNavigate();
   const { showWelcome, dismissWelcome } = useOnboarding();
+  const { username } = useAuth();
+
+  const handleAsk = () => {
+    dismissWelcome();
+    navigate("/feed");
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("studyhub:open-create-post"));
+    }, 80);
+  };
+
+  const handleSkip = () => {
+    dismissWelcome();
+  };
 
   return (
     <Dialog open={showWelcome} onOpenChange={(open) => !open && dismissWelcome()}>
-      <DialogContent className="sm:max-w-lg p-0 overflow-hidden border-0">
-        {/* Header with gradient */}
-        <div className="bg-gradient-to-br from-primary via-primary to-accent p-8 text-center text-white">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm mb-4">
-            <GraduationCap className="h-10 w-10" />
+      <DialogContent
+        className="sm:max-w-md p-0 overflow-hidden border-0 bg-background"
+        aria-describedby={undefined}
+      >
+        <div className="relative px-6 sm:px-8 pt-10 pb-7 text-center">
+          {/* Soft ambient gradient */}
+          <div
+            className="pointer-events-none absolute inset-x-0 -top-24 h-56 bg-gradient-to-b from-primary/25 via-primary/5 to-transparent blur-2xl"
+            aria-hidden="true"
+          />
+
+          <div className="relative">
+            <div className="mx-auto mb-5 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20">
+              <MessageCircleQuestion className="h-8 w-8 text-primary" aria-hidden="true" />
+            </div>
+
+            <h2 className="text-2xl sm:text-[28px] font-bold tracking-tight text-foreground">
+              {username ? `Welcome, ${username}` : "Welcome to StudyHub"}
+            </h2>
+            <p className="mt-2 text-sm sm:text-base text-muted-foreground max-w-sm mx-auto">
+              StudyHub works best when students help students. Start by asking your first question — the community takes it from here.
+            </p>
+
+            <Button
+              onClick={handleAsk}
+              size="lg"
+              className="mt-7 w-full h-12 text-base font-medium"
+            >
+              Ask your first question
+              <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            </Button>
+
+            <button
+              type="button"
+              onClick={handleSkip}
+              className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              I'll explore first
+            </button>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold mb-2">Welcome to StudyHub! 🎉</h2>
-          <p className="text-white/90 text-sm sm:text-base">
-            You just made your future self very happy
-          </p>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 space-y-6">
-          <p className="text-muted-foreground text-center">
-            Connect with students worldwide, share knowledge, and crush your exams together. 
-            Here's a quick look at what you can do:
-          </p>
-
-          {/* Feature highlights */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-secondary/50">
-              <Users className="h-5 w-5 text-primary shrink-0" />
-              <span className="text-sm">Study Squads</span>
-            </div>
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-secondary/50">
-              <MessageCircle className="h-5 w-5 text-primary shrink-0" />
-              <span className="text-sm">Ask Doubts</span>
-            </div>
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-secondary/50">
-              <BookOpen className="h-5 w-5 text-primary shrink-0" />
-              <span className="text-sm">Share Notes</span>
-            </div>
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-secondary/50">
-              <Sparkles className="h-5 w-5 text-primary shrink-0" />
-              <span className="text-sm">Earn XP</span>
-            </div>
-          </div>
-
-          <Button 
-            onClick={dismissWelcome} 
-            className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
-            size="lg"
-          >
-            Let's Go!
-            <Sparkles className="ml-2 h-4 w-4" />
-          </Button>
         </div>
       </DialogContent>
     </Dialog>
