@@ -109,7 +109,7 @@ const Index = () => {
           <HeroGeometric
             badge="StudyHub™"
             title1="Study Smarter"
-            title2="Help Students."
+            title2="Ace Everything."
             description="Ask questions, share answers, and learn together. A student-powered academic community — with study tools built in."
           >
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
