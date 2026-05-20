@@ -322,15 +322,15 @@ const Index = () => {
               <h2
                 className={`text-2xl sm:text-3xl font-bold mb-4 ${stepsVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
               >
-                How It Works
+                From "I'm stuck" to "got it" in 3 steps
               </h2>
             </div>
 
             <div className="space-y-6">
               {[
-                { step: "1", text: "Sign up (takes 30 seconds) and pick your grade, subjects, and goals" },
-                { step: "2", text: "Ask doubts or scroll through questions from students worldwide" },
-                { step: "3", text: "Help others out, rack up points, and level up together 🚀" },
+                { step: "1", text: "Post your homework question — type it, paste it, or snap a photo. Takes 30 seconds." },
+                { step: "2", text: "Students studying the same subject jump in with worked-out answers, usually within minutes." },
+                { step: "3", text: "Mark the answer that helped, save it, and turn it into flashcards so it sticks for the exam 🚀" },
               ].map((item, index) => (
                 <div
                   key={item.step}
