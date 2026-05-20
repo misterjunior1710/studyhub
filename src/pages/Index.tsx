@@ -113,8 +113,13 @@ const Index = () => {
             description="Ask questions, share answers, and learn together. A student-powered academic community — with study tools built in."
           >
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button size="lg" onClick={handleGetStarted} className="gap-2 text-base px-8 py-6 btn-bounce hover-glow">
-                {user ? "Jump to Feed" : "Join the Community — Free"}
+              <Button
+                size="lg"
+                onClick={() => navigate(user ? "/questions" : "/auth")}
+                className="gap-2 text-base px-8 py-6 btn-bounce hover-glow"
+              >
+                <MessageSquare className="h-4 w-4" />
+                {user ? "Ask your question" : "Ask your first question"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
@@ -123,10 +128,12 @@ const Index = () => {
                 onClick={() => navigate("/questions")}
                 className="gap-2 text-base px-8 py-6 btn-bounce"
               >
-                <MessageSquare className="h-4 w-4" />
-                {user ? "Ask a Question" : "Browse Questions"}
+                See questions getting answered
               </Button>
             </div>
+            <p className="mt-5 text-center text-sm text-muted-foreground">
+              Get your homework questions answered in minutes — by real students, for free.
+            </p>
           </HeroGeometric>
         </header>
 
@@ -197,15 +204,15 @@ const Index = () => {
               <div className="flex flex-col md:flex-row h-full">
                 <div className="flex-1 p-8 sm:p-10 relative z-10 flex flex-col justify-center">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
-                    The Future Of Studying
+                    Stuck on a question? Post it.
                   </h2>
                   <p className="mt-4 text-white/70 max-w-md text-sm sm:text-base">
-                    StudyHub isn't your average platform. Explore an experience built to keep you engaged for a lifetime
-                    — see learning come to life.
+                    Snap a photo, type it out, or paste the problem. Students from your grade jump in with worked-out answers — usually within minutes.
                   </p>
                   <div className="mt-6">
-                    <Button onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
-                      {user ? "Jump In" : "Join Free"}
+                    <Button onClick={() => navigate(user ? "/questions" : "/auth")} className="gap-2 btn-bounce hover-glow">
+                      <MessageSquare className="h-4 w-4" />
+                      {user ? "Post a question" : "Ask your first question"}
                       <ArrowRight className="h-4 w-4" />
                     </Button>
                   </div>
@@ -231,7 +238,7 @@ const Index = () => {
             <p
               className={`text-center text-muted-foreground text-sm sm:text-base ${trustVisible ? "animate-soft-in" : "opacity-0"}`}
             >
-              Used by students across 16+ countries — and counting 🌍
+              Most homework questions get a first answer in under 10 minutes — from students across 16+ countries 🌍
             </p>
           </div>
         </section>
@@ -243,14 +250,13 @@ const Index = () => {
               <h2
                 className={`text-2xl sm:text-3xl font-bold mb-4 ${featuresVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
               >
-                What's StudyHub?
+                How StudyHub gets your question answered
               </h2>
               <p
                 className={`text-muted-foreground max-w-2xl mx-auto ${featuresVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
                 style={{ animationDelay: "100ms" }}
               >
-                Think of it as your study buddy that never sleeps. No distractions, no nonsense — just students helping
-                students crush their goals.
+                Built around one job: turn the homework problem you're stuck on into a clear answer — fast, free, and from real students who get it.
               </p>
             </div>
 
@@ -258,37 +264,39 @@ const Index = () => {
               {[
                 {
                   icon: MessageSquare,
-                  title: "Ask & Answer",
+                  title: "Post it in 30 seconds",
                   description:
-                    "Stuck on homework? Post your question and get answers from students worldwide — usually within minutes.",
+                    "Type the question, snap a photo of your worksheet, or paste it in. Tag the subject and grade — done.",
+                },
+                {
+                  icon: Zap,
+                  title: "Answers in minutes",
+                  description:
+                    "Your question lands in front of students studying the same thing right now. Most get a first reply in under 10 minutes.",
+                },
+                {
+                  icon: CheckCircle2,
+                  title: "Worked-out, not copied",
+                  description:
+                    "Real students show their steps so you actually understand it — and verified answers get marked so you know what to trust.",
                 },
                 {
                   icon: Rss,
-                  title: "Live Study Feed",
+                  title: "A feed tuned to your syllabus",
                   description:
-                    "Scroll through discussions, notes, and exam prep from your grade and subjects. The smartest feed in studying.",
+                    "Browse questions and explanations from your grade and subjects — chances are, someone already asked yours.",
                 },
                 {
                   icon: Users,
-                  title: "Study Squads",
-                  description: "Team up in groups for real-time discussions, group study sessions, and exam prep.",
-                },
-                {
-                  icon: BookOpen,
-                  title: "Share Knowledge",
+                  title: "Study squads for tough topics",
                   description:
-                    "Drop your notes, summaries, and study guides. Help classmates and build your reputation.",
+                    "Stuck on a whole unit, not just one question? Drop into a group chat with classmates tackling the same thing.",
                 },
                 {
                   icon: Brain,
-                  title: "Smart Study Tools",
+                  title: "Tools to lock the answer in",
                   description:
-                    "Flashcards, AI summaries, mind maps, and quizzes — all powered by the community's best content.",
-                },
-                {
-                  icon: Trophy,
-                  title: "Earn & Level Up",
-                  description: "Build streaks, earn XP, and climb the leaderboard — consistency is the real flex. 😏",
+                    "Turn any answered question into flashcards, summaries, or a quick quiz — so it sticks for the exam, not just tonight.",
                 },
               ].map((feature, index) => (
                 <div
@@ -314,15 +322,15 @@ const Index = () => {
               <h2
                 className={`text-2xl sm:text-3xl font-bold mb-4 ${stepsVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
               >
-                How It Works
+                From "I'm stuck" to "got it" in 3 steps
               </h2>
             </div>
 
             <div className="space-y-6">
               {[
-                { step: "1", text: "Sign up (takes 30 seconds) and pick your grade, subjects, and goals" },
-                { step: "2", text: "Ask doubts or scroll through questions from students worldwide" },
-                { step: "3", text: "Help others out, rack up points, and level up together 🚀" },
+                { step: "1", text: "Post your homework question — type it, paste it, or snap a photo. Takes 30 seconds." },
+                { step: "2", text: "Students studying the same subject jump in with worked-out answers, usually within minutes." },
+                { step: "3", text: "Mark the answer that helped, save it, and turn it into flashcards so it sticks for the exam 🚀" },
               ].map((item, index) => (
                 <div
                   key={item.step}
@@ -482,27 +490,27 @@ const Index = () => {
               className={`text-2xl sm:text-3xl font-bold mb-4 ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: "100ms" }}
             >
-              Ready to stop stressing and start studying?
+              Got a question due tonight? Post it now.
             </h2>
 
             <p
               className={`text-muted-foreground mb-8 max-w-md mx-auto ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: "150ms" }}
             >
-              Thousands of students are already here helping each other out. Your turn.
+              Free, fast, and full of students who've already solved what you're stuck on.
             </p>
 
             <div
               className={`flex flex-col sm:flex-row gap-3 justify-center ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: "200ms" }}
             >
-              <Button size="lg" onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
-                {user ? "Back to Feed" : "Join StudyHub — Free Forever"}
+              <Button size="lg" onClick={() => navigate(user ? "/questions" : "/auth")} className="gap-2 btn-bounce hover-glow">
+                <MessageSquare className="h-4 w-4" />
+                {user ? "Ask a question" : "Ask your first question — free"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
-              <Button size="lg" variant="ghost" onClick={() => navigate("/content-generator")} className="gap-2">
-                <Brain className="h-4 w-4" />
-                Try AI Study Tools
+              <Button size="lg" variant="ghost" onClick={() => navigate("/questions")} className="gap-2">
+                See answered questions
               </Button>
             </div>
           </div>
