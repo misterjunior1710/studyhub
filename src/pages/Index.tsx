@@ -238,7 +238,7 @@ const Index = () => {
             <p
               className={`text-center text-muted-foreground text-sm sm:text-base ${trustVisible ? "animate-soft-in" : "opacity-0"}`}
             >
-              Used by students across 16+ countries — and counting 🌍
+              Most homework questions get a first answer in under 10 minutes — from students across 16+ countries 🌍
             </p>
           </div>
         </section>
