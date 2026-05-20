@@ -250,14 +250,13 @@ const Index = () => {
               <h2
                 className={`text-2xl sm:text-3xl font-bold mb-4 ${featuresVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
               >
-                What's StudyHub?
+                How StudyHub gets your question answered
               </h2>
               <p
                 className={`text-muted-foreground max-w-2xl mx-auto ${featuresVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
                 style={{ animationDelay: "100ms" }}
               >
-                Think of it as your study buddy that never sleeps. No distractions, no nonsense — just students helping
-                students crush their goals.
+                Built around one job: turn the homework problem you're stuck on into a clear answer — fast, free, and from real students who get it.
               </p>
             </div>
 
@@ -265,37 +264,39 @@ const Index = () => {
               {[
                 {
                   icon: MessageSquare,
-                  title: "Ask & Answer",
+                  title: "Post it in 30 seconds",
                   description:
-                    "Stuck on homework? Post your question and get answers from students worldwide — usually within minutes.",
+                    "Type the question, snap a photo of your worksheet, or paste it in. Tag the subject and grade — done.",
+                },
+                {
+                  icon: Zap,
+                  title: "Answers in minutes",
+                  description:
+                    "Your question lands in front of students studying the same thing right now. Most get a first reply in under 10 minutes.",
+                },
+                {
+                  icon: CheckCircle2,
+                  title: "Worked-out, not copied",
+                  description:
+                    "Real students show their steps so you actually understand it — and verified answers get marked so you know what to trust.",
                 },
                 {
                   icon: Rss,
-                  title: "Live Study Feed",
+                  title: "A feed tuned to your syllabus",
                   description:
-                    "Scroll through discussions, notes, and exam prep from your grade and subjects. The smartest feed in studying.",
+                    "Browse questions and explanations from your grade and subjects — chances are, someone already asked yours.",
                 },
                 {
                   icon: Users,
-                  title: "Study Squads",
-                  description: "Team up in groups for real-time discussions, group study sessions, and exam prep.",
-                },
-                {
-                  icon: BookOpen,
-                  title: "Share Knowledge",
+                  title: "Study squads for tough topics",
                   description:
-                    "Drop your notes, summaries, and study guides. Help classmates and build your reputation.",
+                    "Stuck on a whole unit, not just one question? Drop into a group chat with classmates tackling the same thing.",
                 },
                 {
                   icon: Brain,
-                  title: "Smart Study Tools",
+                  title: "Tools to lock the answer in",
                   description:
-                    "Flashcards, AI summaries, mind maps, and quizzes — all powered by the community's best content.",
-                },
-                {
-                  icon: Trophy,
-                  title: "Earn & Level Up",
-                  description: "Build streaks, earn XP, and climb the leaderboard — consistency is the real flex. 😏",
+                    "Turn any answered question into flashcards, summaries, or a quick quiz — so it sticks for the exam, not just tonight.",
                 },
               ].map((feature, index) => (
                 <div
