@@ -204,15 +204,15 @@ const Index = () => {
               <div className="flex flex-col md:flex-row h-full">
                 <div className="flex-1 p-8 sm:p-10 relative z-10 flex flex-col justify-center">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
-                    The Future Of Studying
+                    Stuck on a question? Post it.
                   </h2>
                   <p className="mt-4 text-white/70 max-w-md text-sm sm:text-base">
-                    StudyHub isn't your average platform. Explore an experience built to keep you engaged for a lifetime
-                    — see learning come to life.
+                    Snap a photo, type it out, or paste the problem. Students from your grade jump in with worked-out answers — usually within minutes.
                   </p>
                   <div className="mt-6">
-                    <Button onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
-                      {user ? "Jump In" : "Join Free"}
+                    <Button onClick={() => navigate(user ? "/questions" : "/auth")} className="gap-2 btn-bounce hover-glow">
+                      <MessageSquare className="h-4 w-4" />
+                      {user ? "Post a question" : "Ask your first question"}
                       <ArrowRight className="h-4 w-4" />
                     </Button>
                   </div>
