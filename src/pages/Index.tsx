@@ -137,6 +137,9 @@ const Index = () => {
           </HeroGeometric>
         </header>
 
+        {/* Social Proof — real Google Search Console metrics since launch */}
+        <SocialProofStats />
+
         {/* Continue Setup banner — logged-in users with incomplete onboarding */}
         {showContinueSetup && (
           <section className="container mx-auto px-4 max-w-5xl pt-6 -mt-4 relative z-10">
