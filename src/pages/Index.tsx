@@ -368,7 +368,7 @@ const Index = () => {
                   &ldquo;
                 </div>
                 <blockquote className="mt-5 text-sm sm:text-base text-foreground leading-relaxed italic">
-                  Studyhub has been a game-changer for my history revision. The flashcard feature, in particular, made a
+                  StudyHub has been a game-changer for my history revision. The flashcard feature, in particular, made a
                   real difference in how I retained information for my board exams. What I also love is how customisable
                   the platform is — from light and dark mode to colour preferences, it genuinely feels tailored to the
                   way I like to study. Performance-wise, it's flawless; everything runs smoothly without any hiccups. If
@@ -381,7 +381,7 @@ const Index = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-sm">Rachel</p>
-                    <p className="text-xs text-muted-foreground">Undergraduate, 1st Year</p>
+                    <p className="text-xs text-muted-foreground">Undergraduate, 1st Year at Madras Christian College</p>
                   </div>
                   <div className="ml-auto flex gap-0.5" aria-label="5 out of 5 stars">
                     {[...Array(5)].map((_, i) => (
