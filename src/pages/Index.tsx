@@ -368,12 +368,11 @@ const Index = () => {
                   &ldquo;
                 </div>
                 <blockquote className="mt-5 text-sm sm:text-base text-foreground leading-relaxed italic">
-                  StudyHub has been a game-changer for my history revision. The flashcard feature, in particular, made a
-                  real difference in how I retained information for my board exams. What I also love is how customisable
-                  the platform is — from light and dark mode to colour preferences, it genuinely feels tailored to the
-                  way I like to study. Performance-wise, it's flawless; everything runs smoothly without any hiccups. If
-                  you're just starting out and looking for a study tool that's easy to use and actually helps you hit
-                  your academic goals, I'd wholeheartedly recommend Studyhub.
+                  The StudyHub site has completely transformed the way I learn history. For instance, the flashcards on
+                  the site have made my history board exams easier to prepare for. Additionally, what I really like
+                  about StudyHub is that it allows customization such that I can make use of the application as per my
+                  requirements. In terms of efficiency, StudyHub is Really Good – there are absolutely no lags at all.
+                  If you are a beginner, then StudyHub is definitely for you!
                 </blockquote>
                 <div className="mt-6 pt-5 border-t border-border flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center font-semibold text-primary text-sm flex-shrink-0">
