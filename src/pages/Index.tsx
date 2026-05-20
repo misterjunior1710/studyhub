@@ -490,27 +490,27 @@ const Index = () => {
               className={`text-2xl sm:text-3xl font-bold mb-4 ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: "100ms" }}
             >
-              Ready to stop stressing and start studying?
+              Got a question due tonight? Post it now.
             </h2>
 
             <p
               className={`text-muted-foreground mb-8 max-w-md mx-auto ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: "150ms" }}
             >
-              Thousands of students are already here helping each other out. Your turn.
+              Free, fast, and full of students who've already solved what you're stuck on.
             </p>
 
             <div
               className={`flex flex-col sm:flex-row gap-3 justify-center ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: "200ms" }}
             >
-              <Button size="lg" onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
-                {user ? "Back to Feed" : "Join StudyHub — Free Forever"}
+              <Button size="lg" onClick={() => navigate(user ? "/questions" : "/auth")} className="gap-2 btn-bounce hover-glow">
+                <MessageSquare className="h-4 w-4" />
+                {user ? "Ask a question" : "Ask your first question — free"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
-              <Button size="lg" variant="ghost" onClick={() => navigate("/content-generator")} className="gap-2">
-                <Brain className="h-4 w-4" />
-                Try AI Study Tools
+              <Button size="lg" variant="ghost" onClick={() => navigate("/questions")} className="gap-2">
+                See answered questions
               </Button>
             </div>
           </div>
