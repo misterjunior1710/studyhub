@@ -113,8 +113,13 @@ const Index = () => {
             description="Ask questions, share answers, and learn together. A student-powered academic community — with study tools built in."
           >
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button size="lg" onClick={handleGetStarted} className="gap-2 text-base px-8 py-6 btn-bounce hover-glow">
-                {user ? "Jump to Feed" : "Join the Community — Free"}
+              <Button
+                size="lg"
+                onClick={() => navigate(user ? "/questions" : "/auth")}
+                className="gap-2 text-base px-8 py-6 btn-bounce hover-glow"
+              >
+                <MessageSquare className="h-4 w-4" />
+                {user ? "Ask your question" : "Ask your first question"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
@@ -123,10 +128,12 @@ const Index = () => {
                 onClick={() => navigate("/questions")}
                 className="gap-2 text-base px-8 py-6 btn-bounce"
               >
-                <MessageSquare className="h-4 w-4" />
-                {user ? "Ask a Question" : "Browse Questions"}
+                See questions getting answered
               </Button>
             </div>
+            <p className="mt-5 text-center text-sm text-muted-foreground">
+              Get your homework questions answered in minutes — by real students, for free.
+            </p>
           </HeroGeometric>
         </header>
 
