@@ -36,6 +36,7 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import GamificationDashboard from "@/components/gamification/GamificationDashboard";
 import LeaderboardPreview from "@/components/gamification/LeaderboardPreview";
 import { TasksWidget } from "@/components/tasks/TasksWidget";
+import SocialProofStats from "@/components/SocialProofStats";
 
 const Index = () => {
   const navigate = useNavigate();
