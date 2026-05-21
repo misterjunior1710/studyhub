@@ -300,8 +300,8 @@ const Pricing = () => {
                 </span>
               </h1>
               <p className="mt-5 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-                Start free and upgrade when you're ready. StudyHub™ Pro gives you enhanced AI,
-                advanced study tools, and premium collaboration — all designed for students.
+                Start with a <strong className="text-foreground">7-day free trial</strong> of StudyHub™ Pro —
+                cancel anytime before it ends and you won't be charged. Pick monthly or yearly billing afterwards.
               </p>
 
               {/* Hero CTAs */}
