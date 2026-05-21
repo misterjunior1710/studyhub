@@ -109,7 +109,7 @@ const Index = () => {
         <header className="relative">
           <HeroGeometric
             badge="StudyHub™"
-            title1="Study Smarter"
+            title1="Study Smarter."
             title2="Ace Everything."
             description="Ask questions, share answers, and learn together. A student-powered academic community — with study tools built in."
           >
