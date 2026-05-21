@@ -278,4 +278,10 @@ const Leaderboard = () => {
   );
 };
 
+const RowProBadge = ({ userId }: { userId: string }) => {
+  const isPro = useProStatus(userId);
+  if (!isPro) return null;
+  return <ProBadge />;
+};
+
 export default Leaderboard;
