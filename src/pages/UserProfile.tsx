@@ -354,4 +354,10 @@ const UserProfile = () => {
   );
 };
 
+const ProfileProBadge = ({ userId }: { userId: string }) => {
+  const isPro = useProStatus(userId);
+  if (!isPro) return null;
+  return <ProBadge variant="pill" className="text-sm" />;
+};
+
 export default UserProfile;
