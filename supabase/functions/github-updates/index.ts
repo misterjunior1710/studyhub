@@ -117,7 +117,20 @@ Deno.serve(async (req) => {
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
   const githubToken = Deno.env.get("GITHUB_TOKEN");
+
+  // Require a signed-in user before serving repo data or hitting GitHub
+  const authHeader = req.headers.get("Authorization") ?? "";
+  const authClient = createClient(supabaseUrl, anonKey, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const { data: userData } = await authClient.auth.getUser();
+  if (!userData?.user) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
   const supabase = createClient(supabaseUrl, serviceKey);
 
@@ -126,7 +139,13 @@ Deno.serve(async (req) => {
     ? await req.json().catch(() => ({})) as { mode?: string; refresh?: boolean }
     : {};
   const mode: UpdateMode = requestBody.mode === "all" || url.searchParams.get("mode") === "all" ? "all" : "newest";
-  const force = requestBody.refresh === true || url.searchParams.get("refresh") === "1";
+  // Only allow forced cache refresh by admins to prevent GitHub rate-limit exhaustion
+  const wantsRefresh = requestBody.refresh === true || url.searchParams.get("refresh") === "1";
+  let force = false;
+  if (wantsRefresh) {
+    const { data: isAdmin } = await authClient.rpc("is_admin");
+    force = Boolean(isAdmin);
+  }
   const cacheKey = `${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${mode}`;
 
   // Try cache first
