@@ -86,7 +86,7 @@ const SocialProofStats = memo(function SocialProofStats() {
       className="container mx-auto px-4 max-w-5xl pt-8 sm:pt-12 relative z-10"
     >
       <Card
-        className={`relative overflow-hidden border-border/50 bg-gradient-to-br from-card via-card to-primary/5 p-6 sm:p-8 transition-all duration-700 ${
+        className={`relative overflow-hidden border-border/60 bg-card p-6 sm:p-8 transition-all duration-700 ${
           visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
