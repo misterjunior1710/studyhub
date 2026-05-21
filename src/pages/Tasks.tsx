@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Plus, Search, ListChecks, AlertCircle, CheckCircle2, Clock, TrendingUp, Lock, Crown, Eye, EyeOff } from "lucide-react";
+import { Plus, Search, ListChecks, AlertCircle, CheckCircle2, Clock, TrendingUp, Lock, Crown, Eye, EyeOff, GripVertical, X, Info } from "lucide-react";
 import { isPast, isToday } from "date-fns";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -37,6 +37,14 @@ const Tasks = () => {
     try { return localStorage.getItem("studyhub_tasks_hide_completed") === "1"; } catch { return false; }
   });
   const [tab, setTab] = useState<"today" | "upcoming" | "all" | "completed" | "kanban" | "calendar">("today");
+  const [kanbanTipDismissed, setKanbanTipDismissed] = useState<boolean>(() => {
+    try { return localStorage.getItem("studyhub_kanban_tip_dismissed") === "1"; } catch { return false; }
+  });
+
+  const dismissKanbanTip = () => {
+    setKanbanTipDismissed(true);
+    try { localStorage.setItem("studyhub_kanban_tip_dismissed", "1"); } catch {}
+  };
 
   const toggleHideCompleted = () => {
     setHideCompleted((prev) => {
@@ -211,20 +219,44 @@ const Tasks = () => {
                 ))}
           </TabsContent>
 
-          <TabsContent value="kanban" className="mt-4">
+          <TabsContent value="kanban" className="mt-4 space-y-3">
             {!isPro ? <ProTabLock label="Kanban board" /> : loading ? <ListSkeleton /> : (
-              <TasksKanban
-                tasks={filtered}
-                onEdit={openEdit}
-                onUpdateStatus={(id, status: TaskStatus) => {
-                  if (status === "completed") {
-                    const t = tasks.find((x) => x.id === id);
-                    if (t) completeTask(t);
-                  } else {
-                    reopenTask(id);
-                  }
-                }}
-              />
+              <>
+                {!kanbanTipDismissed && (
+                  <Card className="p-4 border-primary/20 bg-primary/5 relative">
+                    <button
+                      onClick={dismissKanbanTip}
+                      className="absolute top-2 right-2 p-1 rounded-md hover:bg-muted transition-colors"
+                      aria-label="Dismiss Kanban tip"
+                    >
+                      <X className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
+                    <div className="flex items-start gap-3">
+                      <Info className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden="true" />
+                      <div>
+                        <h4 className="text-sm font-semibold mb-1">What is Kanban?</h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          Kanban is a simple visual system to manage your work. Each card is a task, and each column is a stage.
+                          Drag tasks from <strong>Backlog</strong> → <strong>Due today</strong> → <strong>Completed</strong> as you work through them.
+                          It helps you see exactly what needs attention at a glance — no more juggling mental to-do lists!
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                )}
+                <TasksKanban
+                  tasks={filtered}
+                  onEdit={openEdit}
+                  onUpdateStatus={(id, status: TaskStatus) => {
+                    if (status === "completed") {
+                      const t = tasks.find((x) => x.id === id);
+                      if (t) completeTask(t);
+                    } else {
+                      reopenTask(id);
+                    }
+                  }}
+                />
+              </>
             )}
           </TabsContent>
 
