@@ -47,6 +47,20 @@ const Index = () => {
   const totalCount = tasks.length;
   const showContinueSetup = !!user && !isOnboardingComplete && totalCount > 0;
 
+  useEffect(() => {
+    const id = "elfsight-platform-script";
+    if (document.getElementById(id)) {
+      // @ts-ignore
+      window.eapps?.AppsManager?.initAll?.();
+      return;
+    }
+    const s = document.createElement("script");
+    s.id = id;
+    s.src = "https://elfsightcdn.com/platform.js";
+    s.async = true;
+    document.body.appendChild(s);
+  }, []);
+
   const structuredData = useMemo(
     () => ({
       "@context": "https://schema.org",
