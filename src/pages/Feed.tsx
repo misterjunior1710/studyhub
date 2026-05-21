@@ -16,6 +16,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import MissionsSidebar from "@/components/gamification/MissionsSidebar";
+import FreeUserAdBanner from "@/components/ads/FreeUserAdBanner";
 
 const Feed = () => {
   const [sortBy, setSortBy] = useState<"hot" | "new" | "top">("hot");
@@ -118,6 +119,7 @@ const Feed = () => {
               onStreamChange={setSelectedStream}
               onClearAll={handleClearFilters}
             />
+            {user && <FreeUserAdBanner />}
             {user && <MissionsSidebar />}
           </aside>
           
