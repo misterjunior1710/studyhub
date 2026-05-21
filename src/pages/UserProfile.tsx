@@ -16,6 +16,8 @@ import {
 import { toast } from "sonner";
 import BadgeShelf from "@/components/gamification/BadgeShelf";
 import { useAuth } from "@/contexts/AuthContext";
+import ProBadge from "@/components/pro/ProBadge";
+import { useProStatus } from "@/hooks/useProStatus";
 
 interface UserProfile {
   id: string;
