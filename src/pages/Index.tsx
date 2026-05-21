@@ -133,7 +133,7 @@ const Index = () => {
               </Button>
             </div>
             <p className="mt-5 text-center text-sm text-muted-foreground">
-              Post a homework question and get worked-out answers from real students — usually within a few hours, sometimes a day. Free, no AI fluff.
+              Post a homework question and get worked-out answers from real students — usually within a few hours, sometimes a day.
             </p>
           </HeroGeometric>
         </header>
@@ -260,7 +260,7 @@ const Index = () => {
                 className={`text-muted-foreground max-w-2xl mx-auto ${featuresVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
                 style={{ animationDelay: "100ms" }}
               >
-                Built around one job: turn the homework problem you're stuck on into a clear answer — fast, free, and from real students who get it.
+                Built around one job: turn the homework problem you're stuck on into a clear answer — from real students who get it.
               </p>
             </div>
 
@@ -274,7 +274,7 @@ const Index = () => {
                 },
                 {
                   icon: Zap,
-                  title: "Real answers, not bots",
+                  title: "Answered by real students",
                   description:
                     "Your question lands in front of students studying the same thing. Most get a first reply the same day — sometimes within an hour, sometimes longer if it's niche.",
                 },
@@ -501,7 +501,7 @@ const Index = () => {
               className={`text-muted-foreground mb-8 max-w-md mx-auto ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: "150ms" }}
             >
-              Free, fast, and full of students who've already solved what you're stuck on.
+              Join a community of students who've already solved what you're stuck on.
             </p>
 
             <div
@@ -510,7 +510,7 @@ const Index = () => {
             >
               <Button size="lg" onClick={() => navigate(user ? "/questions" : "/auth")} className="gap-2 btn-bounce hover-glow">
                 <MessageSquare className="h-4 w-4" />
-                {user ? "Ask a question" : "Ask your first question — free"}
+                {user ? "Ask a question" : "Ask your first question"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button size="lg" variant="ghost" onClick={() => navigate("/questions")} className="gap-2">
