@@ -333,7 +333,7 @@ const Index = () => {
             <div className="space-y-6">
               {[
                 { step: "1", text: "Post your homework question — type it, paste it, or snap a photo. Takes 30 seconds." },
-                { step: "2", text: "Students studying the same subject jump in with worked-out answers, usually within minutes." },
+                { step: "2", text: "Students studying the same subject jump in with worked-out answers — usually the same day, sometimes faster, sometimes longer." },
                 { step: "3", text: "Mark the answer that helped, save it, and turn it into flashcards so it sticks for the exam 🚀" },
               ].map((item, index) => (
                 <div
