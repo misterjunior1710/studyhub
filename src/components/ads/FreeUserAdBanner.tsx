@@ -11,11 +11,9 @@ const ADS = [
   { id: "playful", src: "/ads/ad-playful.mp4", label: "Playful" },
 ];
 
-// Only show a fullscreen ad at most once every 12 hours per browser.
-const SHOWN_KEY = "studyhub.adBanner.lastShownAt";
-const COOLDOWN_HOURS = 12;
-// Small delay before the ad appears so it doesn't interrupt the first paint.
-const APPEAR_DELAY_MS = 4000;
+// Show a fullscreen ad once every N clicks anywhere on the site.
+const CLICK_KEY = "studyhub.adBanner.clickCount";
+const CLICKS_PER_AD = 55;
 
 /**
  * Fullscreen self-promo ad shown ONLY to signed-in free (non-Pro) users.
