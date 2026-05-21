@@ -211,7 +211,7 @@ const Index = () => {
                     Stuck on a question? Post it.
                   </h2>
                   <p className="mt-4 text-white/70 max-w-md text-sm sm:text-base">
-                    Snap a photo, type it out, or paste the problem. Students from your grade jump in with worked-out answers — usually within minutes.
+                    Snap a photo, type it out, or paste the problem. Students from your grade jump in with worked-out answers — typically within a few hours, depending on the subject and how active the community is.
                   </p>
                   <div className="mt-6">
                     <Button onClick={() => navigate(user ? "/questions" : "/auth")} className="gap-2 btn-bounce hover-glow">
