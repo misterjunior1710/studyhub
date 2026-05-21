@@ -138,13 +138,23 @@ const Tasks = () => {
         </div>
 
         {/* Tabs */}
+        {!isPro && (
+          <Card className="p-3 mb-4 border-primary/30 bg-primary/5 flex items-center justify-between gap-3 flex-wrap">
+            <p className="text-sm">
+              <Crown className="inline h-4 w-4 text-primary mr-1 -mt-0.5" />
+              Free plan: <strong>{activeCount}/{FREE_TASK_LIMIT}</strong> active tasks. Pro unlocks unlimited tasks + Kanban & Calendar views.
+            </p>
+            <Button asChild size="sm" variant="default"><Link to="/pricing">Upgrade to Pro</Link></Button>
+          </Card>
+        )}
+
         <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
           <TabsList className="grid grid-cols-3 sm:grid-cols-6 w-full sm:w-auto">
             <TabsTrigger value="today">Today</TabsTrigger>
             <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
             <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="kanban">Kanban</TabsTrigger>
-            <TabsTrigger value="calendar">Calendar</TabsTrigger>
+            <TabsTrigger value="kanban" className="gap-1">Kanban{!isPro && <Lock className="h-3 w-3" aria-label="Pro feature" />}</TabsTrigger>
+            <TabsTrigger value="calendar" className="gap-1">Calendar{!isPro && <Lock className="h-3 w-3" aria-label="Pro feature" />}</TabsTrigger>
             <TabsTrigger value="completed">Done</TabsTrigger>
           </TabsList>
 
@@ -181,7 +191,7 @@ const Tasks = () => {
           </TabsContent>
 
           <TabsContent value="kanban" className="mt-4">
-            {loading ? <ListSkeleton /> : (
+            {!isPro ? <ProTabLock label="Kanban board" /> : loading ? <ListSkeleton /> : (
               <TasksKanban
                 tasks={filtered}
                 onEdit={openEdit}
@@ -198,7 +208,7 @@ const Tasks = () => {
           </TabsContent>
 
           <TabsContent value="calendar" className="mt-4">
-            {loading ? <ListSkeleton /> : <TasksCalendar tasks={filtered} onEdit={openEdit} />}
+            {!isPro ? <ProTabLock label="Calendar view" /> : loading ? <ListSkeleton /> : <TasksCalendar tasks={filtered} onEdit={openEdit} />}
           </TabsContent>
 
           <TabsContent value="completed" className="mt-4 space-y-2">
