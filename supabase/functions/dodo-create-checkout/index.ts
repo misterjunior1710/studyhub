@@ -42,7 +42,19 @@ Deno.serve(async (req) => {
     const origin = String(body?.origin ?? "").replace(/\/$/, "");
 
     if (!PLAN_LINKS[plan]) return json({ error: "Invalid plan" }, 400);
-    if (!origin || !/^https?:\/\//.test(origin)) return json({ error: "Invalid origin" }, 400);
+
+    // Strict origin allowlist to prevent open-redirect / subscription-fraud abuse
+    const ALLOWED_ORIGINS = new Set([
+      "https://studyhub.world",
+      "https://www.studyhub.world",
+      "https://studyhubstudentportal.lovable.app",
+    ]);
+    let parsedOrigin = "";
+    try { parsedOrigin = new URL(origin).origin; } catch { /* noop */ }
+    const isLovablePreview = /^https:\/\/[a-z0-9-]+\.lovable\.app$/i.test(parsedOrigin);
+    if (!parsedOrigin || (!ALLOWED_ORIGINS.has(parsedOrigin) && !isLovablePreview)) {
+      return json({ error: "Invalid origin" }, 400);
+    }
 
     // Rate limit
     const { data: rl } = await supabase.rpc("check_rate_limit", {

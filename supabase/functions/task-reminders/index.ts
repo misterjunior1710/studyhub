@@ -38,6 +38,13 @@ Deno.serve(async (req) => {
     return json(405, { error: "Method not allowed" });
   }
 
+  // Require shared secret so only the cron / authorized callers can trigger reminders
+  const cronSecret = Deno.env.get("INTERNAL_PUSH_SECRET");
+  const callerSecret = req.headers.get("x-cron-secret");
+  if (!cronSecret || callerSecret !== cronSecret) {
+    return json(401, { error: "Unauthorized" });
+  }
+
   const startedAt = Date.now();
   const nowIso = new Date().toISOString();
 
