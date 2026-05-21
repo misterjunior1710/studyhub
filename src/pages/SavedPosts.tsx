@@ -137,30 +137,35 @@ const SavedPosts = () => {
             </Button>
           </div>
         ) : (
-          <div className="grid gap-6">
-            {posts.map(post => (
-              <article key={post.id}>
-                <StudyPost 
-                  id={post.id} 
-                  title={post.title} 
-                  content={post.content} 
-                  author={post.profiles?.username ?? "Anonymous"} 
-                  authorId={post.user_id} 
-                  upvotes={post.upvotes} 
-                  downvotes={post.downvotes} 
-                  comments={Array.isArray(post.comments) ? post.comments.length : 0} 
-                  subject={post.subject} 
-                  grade={post.grade} 
-                  stream={post.stream} 
-                  country={post.country} 
-                  timeAgo={getTimeAgo(post.created_at)} 
+          <VirtualList
+            items={posts}
+            estimateSize={340}
+            overscan={2}
+            gap={24}
+            getKey={(p) => p.id}
+            renderItem={(post) => (
+              <article>
+                <StudyPost
+                  id={post.id}
+                  title={post.title}
+                  content={post.content}
+                  author={post.profiles?.username ?? "Anonymous"}
+                  authorId={post.user_id}
+                  upvotes={post.upvotes}
+                  downvotes={post.downvotes}
+                  comments={Array.isArray(post.comments) ? post.comments.length : 0}
+                  subject={post.subject}
+                  grade={post.grade}
+                  stream={post.stream}
+                  country={post.country}
+                  timeAgo={getTimeAgo(post.created_at)}
                   fileUrl={post.file_url ?? undefined}
                   postType={post.post_type}
-                  onVoteChange={loadSavedPosts} 
+                  onVoteChange={loadSavedPosts}
                 />
               </article>
-            ))}
-          </div>
+            )}
+          />
         )}
       </main>
       <Footer />
