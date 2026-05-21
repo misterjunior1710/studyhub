@@ -32,6 +32,8 @@ import ReportPostDialog from "./ReportPostDialog";
 import EditPostDialog from "./EditPostDialog";
 import EditUpdatePostDialog from "./EditUpdatePostDialog";
 import { createPostFileSignedUrl } from "@/lib/storage";
+import ProBadge from "@/components/pro/ProBadge";
+import { useProStatus } from "@/hooks/useProStatus";
 
 // Helper to get capitalized category with emoji
 const getCategoryDisplay = (category: string): string => {
@@ -436,13 +438,14 @@ const StudyPost = memo(({
             <p className="text-sm text-muted-foreground">
               Posted by {authorId ? (
                 <span 
-                  className="hover:underline cursor-pointer text-primary" 
+                  className="hover:underline cursor-pointer text-primary inline-flex items-center gap-1" 
                   onClick={navigateToAuthor}
                   role="link"
                   tabIndex={0}
                   onKeyDown={(e) => e.key === 'Enter' && navigateToAuthor(e as unknown as React.MouseEvent)}
                 >
                   u/{author}
+                  <AuthorProBadge userId={authorId} />
                 </span>
               ) : (
                 <span>u/{author}</span>
