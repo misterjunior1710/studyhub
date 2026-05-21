@@ -205,6 +205,20 @@ const Footer = () => {
                 />
               </a>
               <a
+                href="https://www.aidirectori.es"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="AI Directories Badge"
+              >
+                <img
+                  src="https://cdn.aidirectori.es/ai-tools/badges/dark-mode.png"
+                  alt="AI Directories Badge"
+                  width={171}
+                  height={54}
+                  loading="lazy"
+                />
+              </a>
+              <a
                 href="https://bowora.com/?via=83i1vjmq"
                 target="_blank"
                 rel="noopener noreferrer"
