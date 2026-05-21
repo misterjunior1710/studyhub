@@ -175,7 +175,7 @@ const Index = () => {
               </Button>
             </div>
             <p className="mt-4 text-center text-xs sm:text-sm text-muted-foreground">
-              Free forever · No credit card · Students 13+
+              Freemium · Students 13+
             </p>
             <p className="mt-3 text-center text-sm text-muted-foreground max-w-xl mx-auto">
               Unlike Chegg, answers aren't locked behind a paywall. Unlike Reddit, it's students only. Unlike a chatbot, real people explain the why.
