@@ -77,11 +77,12 @@ const PLANS: Plan[] = [
     tagline: "Unlock your full academic potential",
     price: "$4.99",
     cadence: "/month",
-    cta: "Upgrade to Pro",
+    cta: "Start 7-day free trial",
     badge: "Most Popular",
     icon: Crown,
     popular: true,
     features: [
+      { label: "7-day free trial — cancel anytime", included: true },
       { label: "Enhanced Nova AI Assistant", included: true },
       { label: "Enhanced AI generations", included: true },
       { label: "Advanced flashcards, quizzes & mind maps", included: true },
@@ -99,12 +100,13 @@ const PLANS: Plan[] = [
     tagline: "Best value — save 33% annually",
     price: "$39.99",
     cadence: "/year",
-    cta: "Get Yearly Pro",
+    cta: "Start 7-day free trial",
     badge: "Best Value",
     highlight: "Save 33%",
     icon: Trophy,
     bestValue: true,
     features: [
+      { label: "7-day free trial — cancel anytime", included: true },
       { label: "Everything in Pro Monthly", included: true },
       { label: "Save 33% vs monthly billing", included: true },
       { label: "Locked-in yearly pricing", included: true },
@@ -113,7 +115,7 @@ const PLANS: Plan[] = [
       { label: "Pro badge on profile", included: true },
       { label: "Ad-free, distraction-free study mode", included: true },
       { label: "Unlimited tasks + Kanban & Calendar views", included: true },
-      { label: "Cancel anytime", included: true },
+      { label: "Cancel anytime before trial ends — no charge", included: true },
     ],
   },
 ];
@@ -156,8 +158,12 @@ const TRUST_POINTS = [
 
 const FAQ_ITEMS = [
   {
+    q: "How does the 7-day free trial work?",
+    a: "When you start StudyHub™ Pro (monthly or yearly), you get full Pro access free for 7 days. You won't be charged during the trial. If you don't cancel before the 7 days end, your selected plan (monthly or yearly) automatically begins billing. You can cancel anytime from your account settings.",
+  },
+  {
     q: "Can I cancel anytime?",
-    a: "Yes. You can cancel your StudyHub™ Pro subscription at any time from your account settings. You'll keep Pro access until the end of your current billing period.",
+    a: "Yes. Cancel anytime from your account settings. If you cancel during your 7-day free trial, you won't be charged at all. After billing starts, you keep Pro access until the end of your current billing period.",
   },
   {
     q: "Is checkout secure?",
@@ -294,8 +300,8 @@ const Pricing = () => {
                 </span>
               </h1>
               <p className="mt-5 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-                Start free and upgrade when you're ready. StudyHub™ Pro gives you enhanced AI,
-                advanced study tools, and premium collaboration — all designed for students.
+                Start with a <strong className="text-foreground">7-day free trial</strong> of StudyHub™ Pro —
+                cancel anytime before it ends and you won't be charged. Pick monthly or yearly billing afterwards.
               </p>
 
               {/* Hero CTAs */}
@@ -311,7 +317,7 @@ const Pricing = () => {
                   ) : (
                     <Crown className="mr-2 h-4 w-4" />
                   )}
-                  Try Pro
+                  Start 7-day free trial
                 </Button>
                 <Button
                   size="lg"
