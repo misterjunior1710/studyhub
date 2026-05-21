@@ -267,4 +267,17 @@ const ListSkeleton = () => (
   </div>
 );
 
+const ProTabLock = ({ label }: { label: string }) => (
+  <Card className="p-8 text-center">
+    <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary mb-3">
+      <Crown className="h-6 w-6" />
+    </div>
+    <h3 className="text-lg font-semibold mb-1">{label} is a Pro feature</h3>
+    <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">
+      Unlock {label.toLowerCase()}, unlimited tasks, premium themes, an ad-free study mode and more.
+    </p>
+    <Button asChild><Link to="/pricing"><Crown className="h-4 w-4 mr-1" /> Upgrade to Pro</Link></Button>
+  </Card>
+);
+
 export default Tasks;
