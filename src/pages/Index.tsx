@@ -242,7 +242,7 @@ const Index = () => {
             <p
               className={`text-center text-muted-foreground text-sm sm:text-base ${trustVisible ? "animate-soft-in" : "opacity-0"}`}
             >
-              Most homework questions get a first answer in under 10 minutes — from students across 16+ countries 🌍
+              A growing community of students across 16+ countries 🌍 — most questions get a first answer the same day, though busy subjects can take longer.
             </p>
           </div>
         </section>
