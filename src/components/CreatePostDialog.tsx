@@ -286,7 +286,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
               )}
             </div>
             {filePreview && (
-              <img src={filePreview} alt="Preview of your uploaded image" className="mt-2 max-h-40 rounded-md" />
+              <img src={filePreview} alt="Preview of your uploaded image" loading="lazy" decoding="async" className="mt-2 max-h-40 rounded-md" />
             )}
           </div>
 

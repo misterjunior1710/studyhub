@@ -431,6 +431,8 @@ const GroupChat = () => {
                 <img 
                   src={filePreview} 
                   alt="Preview of selected file" 
+                  loading="lazy"
+                  decoding="async"
                   className="h-12 w-12 object-cover rounded"
                 />
               ) : (
