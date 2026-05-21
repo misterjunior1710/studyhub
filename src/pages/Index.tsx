@@ -120,7 +120,7 @@ const Index = () => {
                 className="gap-2 text-base px-8 py-6 btn-bounce hover-glow"
               >
                 <MessageSquare className="h-4 w-4" />
-                {user ? "Ask your question" : "Ask now."}
+                {user ? "Ask your question" : "Ask now"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
