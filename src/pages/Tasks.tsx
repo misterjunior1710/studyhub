@@ -103,17 +103,17 @@ const Tasks = () => {
       <SEOHead title="Tasks · StudyHub" description="Plan assignments, exams, study sessions, and habits in one productivity workspace." />
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-6 max-w-4xl">
-        <div className="flex items-center justify-between mb-6 gap-3">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold">Productivity</h1>
-            <p className="text-sm text-muted-foreground mt-1">Plan it, schedule it, ship it.</p>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <AiAssistantSheet tasks={tasks} />
-            <Button onClick={openCreate}>
-              <Plus className="h-4 w-4 mr-1" /> New task
-            </Button>
-          </div>
+        {/* Primary actions — at the top for easy access */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4">
+          <Button onClick={openCreate} className="sm:order-2 sm:ml-auto">
+            <Plus className="h-4 w-4 mr-1" /> New task
+          </Button>
+          <AiAssistantSheet tasks={tasks} />
+        </div>
+
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold">Productivity</h1>
+          <p className="text-sm text-muted-foreground mt-1">Plan it, schedule it, ship it.</p>
         </div>
 
         {/* Dashboard cards */}
@@ -147,6 +147,15 @@ const Tasks = () => {
               ))}
             </SelectContent>
           </Select>
+          <Button
+            variant={hideCompleted ? "secondary" : "outline"}
+            onClick={toggleHideCompleted}
+            aria-pressed={hideCompleted}
+            className="sm:w-auto"
+          >
+            {hideCompleted ? <EyeOff className="h-4 w-4 mr-1" /> : <Eye className="h-4 w-4 mr-1" />}
+            {hideCompleted ? "Completed hidden" : "Hide completed"}
+          </Button>
         </div>
 
         {/* Tabs */}
