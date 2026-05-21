@@ -33,17 +33,29 @@ const Tasks = () => {
   const [editing, setEditing] = useState<Task | null>(null);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<TaskCategory | "all">("all");
+  const [hideCompleted, setHideCompleted] = useState<boolean>(() => {
+    try { return localStorage.getItem("studyhub_tasks_hide_completed") === "1"; } catch { return false; }
+  });
   const [tab, setTab] = useState<"today" | "upcoming" | "all" | "completed" | "kanban" | "calendar">("today");
+
+  const toggleHideCompleted = () => {
+    setHideCompleted((prev) => {
+      const next = !prev;
+      try { localStorage.setItem("studyhub_tasks_hide_completed", next ? "1" : "0"); } catch {}
+      return next;
+    });
+  };
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return tasks.filter((t) => {
+      if (hideCompleted && t.status === "completed") return false;
       if (categoryFilter !== "all" && t.category !== categoryFilter) return false;
       if (q && !t.title.toLowerCase().includes(q) && !(t.notes ?? "").toLowerCase().includes(q)
         && !t.tags.some((tag) => tag.includes(q))) return false;
       return true;
     });
-  }, [tasks, search, categoryFilter]);
+  }, [tasks, search, categoryFilter, hideCompleted]);
 
   const buckets = useMemo(() => {
     const overdue: Task[] = [], today: Task[] = [], upcoming: Task[] = [], noDate: Task[] = [], done: Task[] = [];
