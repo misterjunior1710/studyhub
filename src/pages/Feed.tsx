@@ -168,7 +168,7 @@ const Feed = () => {
               />
             </nav>
 
-            <section ref={postsRef}>
+            <section>
               <PullToRefresh onRefresh={invalidatePosts}>
                 {loading ? (
                   <PostSkeletonList count={4} />
@@ -183,13 +183,14 @@ const Feed = () => {
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {posts.map((post, index) => (
-                      <article 
-                        key={post.id}
-                        className={postsVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}
-                        style={{ animationDelay: `${Math.min(index * 100, 400)}ms` }}
-                      >
+                  <VirtualList
+                    items={posts}
+                    estimateSize={340}
+                    overscan={2}
+                    gap={16}
+                    getKey={(p) => p.id}
+                    renderItem={(post) => (
+                      <article>
                         <StudyPost
                           id={post.id}
                           title={post.title}
@@ -209,8 +210,8 @@ const Feed = () => {
                           onVoteChange={invalidatePosts}
                         />
                       </article>
-                    ))}
-                  </div>
+                    )}
+                  />
                 )}
               </PullToRefresh>
             </section>
