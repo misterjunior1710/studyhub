@@ -314,49 +314,53 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
                 {
-                  icon: MessageSquare,
-                  title: "Post it in 30 seconds",
-                  description:
-                    "Type the question, snap a photo of your worksheet, or paste it in. Tag the subject and grade — done.",
+                  icon: Brain,
+                  title: "Stop cramming the night before exams",
+                  description: "Flashcards, quizzes, mind maps & Pomodoro — all inside Study Mode.",
                 },
                 {
-                  icon: Zap,
-                  title: "Answers in minutes",
-                  description:
-                    "Your question lands in front of students studying the same thing right now. Most get a first reply in under 10 minutes.",
+                  icon: Sparkles,
+                  title: "Get unstuck in one message",
+                  description: "Nova AI explains the why, not just the answer — built right in.",
                 },
                 {
-                  icon: CheckCircle2,
-                  title: "Worked-out, not copied",
-                  description:
-                    "Real students show their steps so you actually understand it — and verified answers get marked so you know what to trust.",
-                },
-                {
-                  icon: Rss,
-                  title: "A feed tuned to your syllabus",
-                  description:
-                    "Browse questions and explanations from your grade and subjects — chances are, someone already asked yours.",
+                  icon: Calendar,
+                  title: "Never miss another deadline",
+                  description: "Tasks + calendar with smart reminders so homework doesn't sneak up on you.",
                 },
                 {
                   icon: Users,
-                  title: "Study squads for tough topics",
-                  description:
-                    "Stuck on a whole unit, not just one question? Drop into a group chat with classmates tackling the same thing.",
+                  title: "Find your people, not random strangers",
+                  description: "Study Squads matched by grade, subject, and curriculum.",
                 },
                 {
-                  icon: Brain,
-                  title: "Tools to lock the answer in",
-                  description:
-                    "Turn any answered question into flashcards, summaries, or a quick quiz — so it sticks for the exam, not just tonight.",
+                  icon: Trophy,
+                  title: "Actually want to study",
+                  description: "XP, missions, and a leaderboard that make showing up addictive.",
+                },
+                {
+                  icon: MessageSquare,
+                  title: "Ask without the awkward",
+                  description: "Post anonymously. Verified answers from real students get flagged so you know what to trust.",
+                },
+                {
+                  icon: Bookmark,
+                  title: "One place for every note",
+                  description: "Saved posts, notes, and mind maps — all searchable, all in your pocket.",
+                },
+                {
+                  icon: BookOpen,
+                  title: "Built for your curriculum",
+                  description: "CBSE, IGCSE, IB, AP, A-Levels, GCSE, State Boards and more — out of the box.",
                 },
               ].map((feature, index) => (
                 <div
                   key={feature.title}
                   className={`p-6 rounded-xl bg-card border border-border hover-lift ${featuresVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
-                  style={{ animationDelay: `${200 + index * 100}ms` }}
+                  style={{ animationDelay: `${200 + index * 80}ms` }}
                 >
                   <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center mb-4">
                     <feature.icon className="h-6 w-6 text-primary" />
