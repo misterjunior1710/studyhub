@@ -274,9 +274,9 @@ const Index = () => {
                 },
                 {
                   icon: Zap,
-                  title: "Answers in minutes",
+                  title: "Real answers, not bots",
                   description:
-                    "Your question lands in front of students studying the same thing right now. Most get a first reply in under 10 minutes.",
+                    "Your question lands in front of students studying the same thing. Most get a first reply the same day — sometimes within an hour, sometimes longer if it's niche.",
                 },
                 {
                   icon: CheckCircle2,
