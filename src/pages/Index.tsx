@@ -63,12 +63,38 @@ const Index = () => {
     document.body.appendChild(s);
   }, []);
 
+  const faqItems = useMemo(
+    () => [
+      {
+        question: "Is StudyHub really free?",
+        answer:
+          "Yes — the core community, Nova AI basics, study tools (flashcards, quizzes, mind maps, Pomodoro), and Study Squads are free forever. Optional Pro unlocks heavier AI usage and advanced tools. No credit card required to sign up.",
+      },
+      {
+        question: "Is my data private?",
+        answer:
+          "Posts can be anonymous, profiles aren't exposed to non-logged-in visitors, and we never sell your data. Sign-in with Google only uses your basic profile (email, name, picture) — we don't touch Gmail, Drive, or contacts. Full details in our Privacy Policy.",
+      },
+      {
+        question: "What grade levels is StudyHub for?",
+        answer:
+          "Grade 9 through Grade 12, Undergraduate and Postgraduate, plus adult learners and working professionals. Strict 13+ age policy — verified at sign-up.",
+      },
+      {
+        question: "How is this different from Reddit, Discord, or Khan Academy?",
+        answer:
+          "Students only (verified 13+, no random strangers). Content is tied to your actual curriculum — CBSE, IB, IGCSE, AP, A-Levels, and more. Nova AI is built in for instant help that explains the why. And XP, missions, and leaderboards keep studying from feeling like a chore.",
+      },
+    ],
+    [],
+  );
+
   const structuredData = useMemo(
     () => ({
       "@context": "https://schema.org",
-      "@graph": [getOrganizationSchema(), getCommunitySchema()],
+      "@graph": [getOrganizationSchema(), getCommunitySchema(), getFAQSchema(faqItems)],
     }),
-    [],
+    [faqItems],
   );
 
   const [featuresRef, featuresVisible] = useScrollReveal<HTMLDivElement>();
