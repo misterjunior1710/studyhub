@@ -143,6 +143,12 @@ const GroupChatMessage = ({ message, isOwn, getTimeAgo }: GroupChatMessageProps)
   );
 };
 
+const AuthorProBadge = ({ userId }: { userId: string }) => {
+  const isPro = useProStatus(userId);
+  if (!isPro) return null;
+  return <ProBadge />;
+};
+
 const extractGroupChatFilePath = (url: string): string | null => {
   const marker = "/group-chat-files/";
   const idx = url.indexOf(marker);
