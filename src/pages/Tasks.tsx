@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Plus, Search, ListChecks, AlertCircle, CheckCircle2, Clock, TrendingUp, Lock, Crown, Eye, EyeOff } from "lucide-react";
+import { Plus, Search, ListChecks, AlertCircle, CheckCircle2, Clock, TrendingUp, Lock, Crown, Eye, EyeOff, GripVertical, X, Info } from "lucide-react";
 import { isPast, isToday } from "date-fns";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
