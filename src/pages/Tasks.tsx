@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Plus, Search, ListChecks, AlertCircle, CheckCircle2, Clock, TrendingUp, Lock, Crown } from "lucide-react";
+import { Plus, Search, ListChecks, AlertCircle, CheckCircle2, Clock, TrendingUp, Lock, Crown, Eye, EyeOff } from "lucide-react";
 import { isPast, isToday } from "date-fns";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -33,17 +33,29 @@ const Tasks = () => {
   const [editing, setEditing] = useState<Task | null>(null);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<TaskCategory | "all">("all");
+  const [hideCompleted, setHideCompleted] = useState<boolean>(() => {
+    try { return localStorage.getItem("studyhub_tasks_hide_completed") === "1"; } catch { return false; }
+  });
   const [tab, setTab] = useState<"today" | "upcoming" | "all" | "completed" | "kanban" | "calendar">("today");
+
+  const toggleHideCompleted = () => {
+    setHideCompleted((prev) => {
+      const next = !prev;
+      try { localStorage.setItem("studyhub_tasks_hide_completed", next ? "1" : "0"); } catch {}
+      return next;
+    });
+  };
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return tasks.filter((t) => {
+      if (hideCompleted && t.status === "completed") return false;
       if (categoryFilter !== "all" && t.category !== categoryFilter) return false;
       if (q && !t.title.toLowerCase().includes(q) && !(t.notes ?? "").toLowerCase().includes(q)
         && !t.tags.some((tag) => tag.includes(q))) return false;
       return true;
     });
-  }, [tasks, search, categoryFilter]);
+  }, [tasks, search, categoryFilter, hideCompleted]);
 
   const buckets = useMemo(() => {
     const overdue: Task[] = [], today: Task[] = [], upcoming: Task[] = [], noDate: Task[] = [], done: Task[] = [];
@@ -91,17 +103,17 @@ const Tasks = () => {
       <SEOHead title="Tasks · StudyHub" description="Plan assignments, exams, study sessions, and habits in one productivity workspace." />
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-6 max-w-4xl">
-        <div className="flex items-center justify-between mb-6 gap-3">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold">Productivity</h1>
-            <p className="text-sm text-muted-foreground mt-1">Plan it, schedule it, ship it.</p>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <AiAssistantSheet tasks={tasks} />
-            <Button onClick={openCreate}>
-              <Plus className="h-4 w-4 mr-1" /> New task
-            </Button>
-          </div>
+        {/* Primary actions — at the top for easy access */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4">
+          <Button onClick={openCreate} className="sm:order-2 sm:ml-auto">
+            <Plus className="h-4 w-4 mr-1" /> New task
+          </Button>
+          <AiAssistantSheet tasks={tasks} />
+        </div>
+
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold">Productivity</h1>
+          <p className="text-sm text-muted-foreground mt-1">Plan it, schedule it, ship it.</p>
         </div>
 
         {/* Dashboard cards */}
@@ -135,6 +147,15 @@ const Tasks = () => {
               ))}
             </SelectContent>
           </Select>
+          <Button
+            variant={hideCompleted ? "secondary" : "outline"}
+            onClick={toggleHideCompleted}
+            aria-pressed={hideCompleted}
+            className="sm:w-auto"
+          >
+            {hideCompleted ? <EyeOff className="h-4 w-4 mr-1" /> : <Eye className="h-4 w-4 mr-1" />}
+            {hideCompleted ? "Completed hidden" : "Hide completed"}
+          </Button>
         </div>
 
         {/* Tabs */}
