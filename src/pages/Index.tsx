@@ -120,7 +120,7 @@ const Index = () => {
                 className="gap-2 text-base px-8 py-6 btn-bounce hover-glow"
               >
                 <MessageSquare className="h-4 w-4" />
-                {user ? "Ask your question" : "Ask your first question"}
+                {user ? "Ask your question" : "Ask now."}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
@@ -133,7 +133,7 @@ const Index = () => {
               </Button>
             </div>
             <p className="mt-5 text-center text-sm text-muted-foreground">
-              Post a homework question and get worked-out answers from real students — usually within a few hours, sometimes a day.
+              Get your homework questions answered in minutes — by real students, for free.
             </p>
           </HeroGeometric>
         </header>
@@ -211,10 +211,14 @@ const Index = () => {
                     Stuck on a question? Post it.
                   </h2>
                   <p className="mt-4 text-white/70 max-w-md text-sm sm:text-base">
-                    Snap a photo, type it out, or paste the problem. Students from your grade jump in with worked-out answers — typically within a few hours, depending on the subject and how active the community is.
+                    Snap a photo, type it out, or paste the problem. Students from your grade jump in with worked-out
+                    answers — usually within minutes.
                   </p>
                   <div className="mt-6">
-                    <Button onClick={() => navigate(user ? "/questions" : "/auth")} className="gap-2 btn-bounce hover-glow">
+                    <Button
+                      onClick={() => navigate(user ? "/questions" : "/auth")}
+                      className="gap-2 btn-bounce hover-glow"
+                    >
                       <MessageSquare className="h-4 w-4" />
                       {user ? "Post a question" : "Ask your first question"}
                       <ArrowRight className="h-4 w-4" />
@@ -242,7 +246,7 @@ const Index = () => {
             <p
               className={`text-center text-muted-foreground text-sm sm:text-base ${trustVisible ? "animate-soft-in" : "opacity-0"}`}
             >
-              A growing community of students across 16+ countries 🌍 — most questions get a first answer the same day, though busy subjects can take longer.
+              Most homework questions get a first answer in under 10 minutes — from students across 16+ countries 🌍
             </p>
           </div>
         </section>
@@ -260,7 +264,8 @@ const Index = () => {
                 className={`text-muted-foreground max-w-2xl mx-auto ${featuresVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
                 style={{ animationDelay: "100ms" }}
               >
-                Built around one job: turn the homework problem you're stuck on into a clear answer — from real students who get it.
+                Built around one job: turn the homework problem you're stuck on into a clear answer — fast, free, and
+                from real students who get it.
               </p>
             </div>
 
@@ -274,9 +279,9 @@ const Index = () => {
                 },
                 {
                   icon: Zap,
-                  title: "Answered by real students",
+                  title: "Answers in minutes",
                   description:
-                    "Your question lands in front of students studying the same thing. Most get a first reply the same day — sometimes within an hour, sometimes longer if it's niche.",
+                    "Your question lands in front of students studying the same thing right now. Most get a first reply in under 10 minutes.",
                 },
                 {
                   icon: CheckCircle2,
@@ -332,9 +337,18 @@ const Index = () => {
 
             <div className="space-y-6">
               {[
-                { step: "1", text: "Post your homework question — type it, paste it, or snap a photo. Takes 30 seconds." },
-                { step: "2", text: "Students studying the same subject jump in with worked-out answers — usually the same day, sometimes faster, sometimes longer." },
-                { step: "3", text: "Mark the answer that helped, save it, and turn it into flashcards so it sticks for the exam 🚀" },
+                {
+                  step: "1",
+                  text: "Post your homework question — type it, paste it, or snap a photo. Takes 30 seconds.",
+                },
+                {
+                  step: "2",
+                  text: "Students studying the same subject jump in with worked-out answers, usually within minutes.",
+                },
+                {
+                  step: "3",
+                  text: "Mark the answer that helped, save it, and turn it into flashcards so it sticks for the exam 🚀",
+                },
               ].map((item, index) => (
                 <div
                   key={item.step}
@@ -501,16 +515,20 @@ const Index = () => {
               className={`text-muted-foreground mb-8 max-w-md mx-auto ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: "150ms" }}
             >
-              Join a community of students who've already solved what you're stuck on.
+              Free, fast, and full of students who've already solved what you're stuck on.
             </p>
 
             <div
               className={`flex flex-col sm:flex-row gap-3 justify-center ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: "200ms" }}
             >
-              <Button size="lg" onClick={() => navigate(user ? "/questions" : "/auth")} className="gap-2 btn-bounce hover-glow">
+              <Button
+                size="lg"
+                onClick={() => navigate(user ? "/questions" : "/auth")}
+                className="gap-2 btn-bounce hover-glow"
+              >
                 <MessageSquare className="h-4 w-4" />
-                {user ? "Ask a question" : "Ask your first question"}
+                {user ? "Ask a question" : "Ask your first question — free"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button size="lg" variant="ghost" onClick={() => navigate("/questions")} className="gap-2">
