@@ -9,13 +9,19 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1 space-y-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <StudyHubLogo className="h-10 w-10 sm:h-11 sm:w-11 transition-transform group-hover:scale-105" />
               <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 StudyHub™
               </h3>
+              <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                Freemium
+              </span>
             </div>
             <p className="text-sm text-muted-foreground">Study Smarter, Ace Everything 🎯</p>
+            <p className="text-xs text-muted-foreground">
+              Free forever core features · Optional <Link to="/pricing" className="underline hover:text-primary">Pro upgrade</Link> · Multiple AI models built in
+            </p>
           </div>
 
           {/* Quick Links */}
