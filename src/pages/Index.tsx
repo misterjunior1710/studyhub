@@ -538,6 +538,16 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Elfsight Google Reviews */}
+        <section className="py-16 sm:py-20 bg-background border-t border-border/30">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-2">What students say</h2>
+            <p className="text-muted-foreground mb-8 max-w-md mx-auto">Real reviews from the community.</p>
+            <script src="https://elfsightcdn.com/platform.js" async></script>
+            <div className="elfsight-app-33b59178-5e2c-4977-bd5b-3589fea8d755" data-elfsight-app-lazy></div>
+          </div>
+        </section>
+
         <Footer />
         <CookieConsent />
       </div>
