@@ -37,6 +37,14 @@ const Tasks = () => {
     try { return localStorage.getItem("studyhub_tasks_hide_completed") === "1"; } catch { return false; }
   });
   const [tab, setTab] = useState<"today" | "upcoming" | "all" | "completed" | "kanban" | "calendar">("today");
+  const [kanbanTipDismissed, setKanbanTipDismissed] = useState<boolean>(() => {
+    try { return localStorage.getItem("studyhub_kanban_tip_dismissed") === "1"; } catch { return false; }
+  });
+
+  const dismissKanbanTip = () => {
+    setKanbanTipDismissed(true);
+    try { localStorage.setItem("studyhub_kanban_tip_dismissed", "1"); } catch {}
+  };
 
   const toggleHideCompleted = () => {
     setHideCompleted((prev) => {
