@@ -42,6 +42,8 @@ const GroupChatMessage = ({ message, isOwn, getTimeAgo }: GroupChatMessageProps)
         <img
           src={signedFileUrl ?? message.file_url}
           alt={`Image shared by ${username}`}
+          loading="lazy"
+          decoding="async"
           className="mt-2 max-w-full sm:max-w-xs md:max-w-sm rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
           onClick={() => window.open(signedFileUrl ?? message.file_url!, "_blank")}
         />
