@@ -1,5 +1,5 @@
-import { ReactNode, useRef, useEffect, CSSProperties } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { ReactNode, useRef } from "react";
+import { useWindowVirtualizer } from "@tanstack/react-virtual";
 
 interface VirtualListProps<T> {
   items: T[];
@@ -9,15 +9,17 @@ interface VirtualListProps<T> {
   gap?: number;
   getKey?: (item: T, index: number) => string | number;
   className?: string;
-  style?: CSSProperties;
 }
 
 /**
- * Window-based virtual list. Keeps ~overscan*2 + visible items in the DOM
- * (typically <= 12) and recycles nodes as the user scrolls.
+ * Window-based virtual list. Keeps only a small slice of items in the DOM
+ * (visible + overscan, typically <= 12) and recycles nodes as the user scrolls.
+ * Uses the page's natural window scroll, so it composes with sticky navbars
+ * and existing layout without nested scroll containers.
  *
- * Avoids memory leaks via proper cleanup of ResizeObserver in useVirtualizer
- * and a stable `getKey` to prevent unnecessary React re-mounts.
+ * Memory-leak safe: useWindowVirtualizer cleans up its scroll + resize
+ * listeners on unmount. A stable `getKey` keeps React from re-mounting
+ * recycled rows, preventing accidental observer/event leaks in children.
  */
 function VirtualList<T>({
   items,
@@ -27,62 +29,43 @@ function VirtualList<T>({
   gap = 16,
   getKey,
   className,
-  style,
 }: VirtualListProps<T>) {
   const parentRef = useRef<HTMLDivElement | null>(null);
 
-  const rowVirtualizer = useVirtualizer({
+  const virtualizer = useWindowVirtualizer({
     count: items.length,
-    getScrollElement: () => (typeof window !== "undefined" ? (document.scrollingElement as HTMLElement) : null),
     estimateSize: () => estimateSize,
     overscan,
     gap,
     getItemKey: getKey ? (index) => getKey(items[index], index) : undefined,
-    measureElement:
-      typeof window !== "undefined" && "ResizeObserver" in window
-        ? (el) => el?.getBoundingClientRect().height ?? estimateSize
-        : undefined,
+    scrollMargin: parentRef.current?.offsetTop ?? 0,
   });
 
-  // Recompute offset when the list mounts at a different scroll position
-  useEffect(() => {
-    rowVirtualizer.measure();
-  }, [items.length, rowVirtualizer]);
-
-  const virtualItems = rowVirtualizer.getVirtualItems();
-  const offsetTop = parentRef.current?.getBoundingClientRect().top
-    ? window.scrollY + (parentRef.current?.getBoundingClientRect().top ?? 0)
-    : 0;
+  const virtualItems = virtualizer.getVirtualItems();
+  const totalSize = virtualizer.getTotalSize();
 
   return (
     <div
       ref={parentRef}
       className={className}
-      style={{
-        position: "relative",
-        height: rowVirtualizer.getTotalSize(),
-        width: "100%",
-        ...style,
-      }}
+      style={{ position: "relative", width: "100%", height: totalSize }}
     >
       {virtualItems.map((vi) => (
         <div
           key={vi.key}
           data-index={vi.index}
-          ref={rowVirtualizer.measureElement}
+          ref={virtualizer.measureElement}
           style={{
             position: "absolute",
             top: 0,
             left: 0,
             width: "100%",
-            transform: `translateY(${vi.start}px)`,
+            transform: `translateY(${vi.start - (parentRef.current?.offsetTop ?? 0)}px)`,
           }}
         >
           {renderItem(items[vi.index], vi.index)}
         </div>
       ))}
-      {/* offsetTop reference kept to silence unused warnings in some build modes */}
-      <span style={{ display: "none" }} aria-hidden>{offsetTop}</span>
     </div>
   );
 }
