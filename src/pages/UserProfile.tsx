@@ -241,7 +241,10 @@ const UserProfile = () => {
             </Avatar>
             
             <div className="text-center md:text-left text-white">
-              <h1 className="text-3xl font-bold mb-2">{profile.username || "Anonymous"}</h1>
+              <h1 className="text-3xl font-bold mb-2 inline-flex items-center gap-2">
+                {profile.username || "Anonymous"}
+                <ProfileProBadge userId={profile.id} />
+              </h1>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-white/80">
                 {profile.country && (
                   <span className="flex items-center gap-1">
