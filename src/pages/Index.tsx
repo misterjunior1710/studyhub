@@ -587,12 +587,115 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Why StudyHub vs alternatives */}
+        <section className="py-16 sm:py-24 bg-muted/20 border-y border-border">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="text-center mb-10">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+                Why StudyHub over Discord, Reddit, or Khan Academy?
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Other places have people. Other places have lessons. Only StudyHub has both — built only for students.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              {[
+                {
+                  name: "StudyHub",
+                  highlight: true,
+                  rows: [
+                    { ok: true, text: "Students only (verified 13+)" },
+                    { ok: true, text: "Real students explain the why" },
+                    { ok: true, text: "Nova AI built in" },
+                    { ok: true, text: "XP, missions & Study Squads" },
+                    { ok: true, text: "Matched to your curriculum" },
+                  ],
+                },
+                {
+                  name: "Discord / Reddit",
+                  highlight: false,
+                  rows: [
+                    { ok: false, text: "Anyone, anywhere" },
+                    { ok: false, text: "Random strangers, mixed quality" },
+                    { ok: false, text: "No AI built in" },
+                    { ok: false, text: "Generic chat, no motivation system" },
+                    { ok: false, text: "Not tied to your syllabus" },
+                  ],
+                },
+                {
+                  name: "Khan Academy",
+                  highlight: false,
+                  rows: [
+                    { ok: false, text: "Pre-recorded lessons only" },
+                    { ok: false, text: "No live community to ask" },
+                    { ok: false, text: "No personalized AI tutor" },
+                    { ok: false, text: "No gamification for students" },
+                    { ok: true, text: "Strong on core lessons" },
+                  ],
+                },
+              ].map((col) => (
+                <div
+                  key={col.name}
+                  className={`rounded-xl border p-6 ${
+                    col.highlight
+                      ? "border-primary/50 bg-card shadow-lg shadow-primary/10"
+                      : "border-border bg-card/60"
+                  }`}
+                >
+                  <h3 className={`font-semibold text-lg mb-4 ${col.highlight ? "text-primary" : ""}`}>
+                    {col.name}
+                  </h3>
+                  <ul className="space-y-3">
+                    {col.rows.map((row, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm">
+                        {row.ok ? (
+                          <Check className="h-4 w-4 mt-0.5 text-success flex-shrink-0" aria-hidden="true" />
+                        ) : (
+                          <X className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" aria-hidden="true" />
+                        )}
+                        <span className={row.ok ? "text-foreground" : "text-muted-foreground"}>{row.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Elfsight Google Reviews */}
         <section className="py-16 sm:py-20 bg-background border-t border-border/30">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl sm:text-2xl font-semibold mb-2">What students say</h2>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">Real reviews from the community.</p>
             <div className="elfsight-app-33b59178-5e2c-4977-bd5b-3589fea8d755" data-elfsight-app-lazy></div>
+          </div>
+        </section>
+
+        {/* FAQ — kills top objections */}
+        <section className="py-16 sm:py-20 border-t border-border">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <div className="text-center mb-10">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">Frequently asked questions</h2>
+              <p className="text-muted-foreground">Everything new students ask before signing up.</p>
+            </div>
+            <Accordion type="single" collapsible className="space-y-3">
+              {faqItems.map((item, i) => (
+                <AccordionItem
+                  key={i}
+                  value={`faq-${i}`}
+                  className="bg-card border border-border rounded-lg px-4"
+                >
+                  <AccordionTrigger className="text-left font-medium py-4 hover:no-underline">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground pb-4">
+                    {item.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </section>
 
