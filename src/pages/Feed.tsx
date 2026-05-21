@@ -7,6 +7,7 @@ import StudyPost from "@/components/StudyPost";
 import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { PostSkeletonList } from "@/components/PostSkeleton";
 import PullToRefresh from "@/components/PullToRefresh";
+import VirtualList from "@/components/VirtualList";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TrendingUp, Clock, Star, Sparkles, Search } from "lucide-react";
@@ -14,7 +15,6 @@ import { usePosts, getTimeAgo } from "@/hooks/usePosts";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOnboarding } from "@/contexts/OnboardingContext";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
 import MissionsSidebar from "@/components/gamification/MissionsSidebar";
 import FreeUserAdBanner from "@/components/ads/FreeUserAdBanner";
 
@@ -63,7 +63,7 @@ const Feed = () => {
     setSelectedStream(null);
   }, []);
 
-  const [postsRef, postsVisible] = useScrollReveal<HTMLDivElement>();
+  
 
   const breadcrumbData = getBreadcrumbSchema([
     { name: "Home", url: "https://studyhub.world/" },
@@ -168,7 +168,7 @@ const Feed = () => {
               />
             </nav>
 
-            <section ref={postsRef}>
+            <section>
               <PullToRefresh onRefresh={invalidatePosts}>
                 {loading ? (
                   <PostSkeletonList count={4} />
@@ -183,13 +183,14 @@ const Feed = () => {
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {posts.map((post, index) => (
-                      <article 
-                        key={post.id}
-                        className={postsVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}
-                        style={{ animationDelay: `${Math.min(index * 100, 400)}ms` }}
-                      >
+                  <VirtualList
+                    items={posts}
+                    estimateSize={340}
+                    overscan={2}
+                    gap={16}
+                    getKey={(p) => p.id}
+                    renderItem={(post) => (
+                      <article>
                         <StudyPost
                           id={post.id}
                           title={post.title}
@@ -209,8 +210,8 @@ const Feed = () => {
                           onVoteChange={invalidatePosts}
                         />
                       </article>
-                    ))}
-                  </div>
+                    )}
+                  />
                 )}
               </PullToRefresh>
             </section>

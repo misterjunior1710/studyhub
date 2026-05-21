@@ -46,6 +46,7 @@
     "@splinetool/runtime": "^1.12.94",
     "@supabase/supabase-js": "^2.86.0",
     "@tanstack/react-query": "^5.83.0",
+    "@tanstack/react-virtual": "^3.13.25",
     "@tiptap/extension-code-block-lowlight": "^3.14.0",
     "@tiptap/extension-link": "^3.14.0",
     "@tiptap/extension-mention": "^3.14.0",
