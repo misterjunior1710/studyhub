@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -46,6 +46,20 @@ const Index = () => {
   const completedCount = tasks.filter((t) => t.completed).length;
   const totalCount = tasks.length;
   const showContinueSetup = !!user && !isOnboardingComplete && totalCount > 0;
+
+  useEffect(() => {
+    const id = "elfsight-platform-script";
+    if (document.getElementById(id)) {
+      // @ts-ignore
+      window.eapps?.AppsManager?.initAll?.();
+      return;
+    }
+    const s = document.createElement("script");
+    s.id = id;
+    s.src = "https://elfsightcdn.com/platform.js";
+    s.async = true;
+    document.body.appendChild(s);
+  }, []);
 
   const structuredData = useMemo(
     () => ({
@@ -543,7 +557,6 @@ const Index = () => {
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl sm:text-2xl font-semibold mb-2">What students say</h2>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">Real reviews from the community.</p>
-            <script src="https://elfsightcdn.com/platform.js" async></script>
             <div className="elfsight-app-33b59178-5e2c-4977-bd5b-3589fea8d755" data-elfsight-app-lazy></div>
           </div>
         </section>
