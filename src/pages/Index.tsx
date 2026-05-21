@@ -133,7 +133,7 @@ const Index = () => {
               </Button>
             </div>
             <p className="mt-5 text-center text-sm text-muted-foreground">
-              Get your homework questions answered in minutes — by real students, for free.
+              Post a homework question and get worked-out answers from real students — usually within a few hours, sometimes a day. Free, no AI fluff.
             </p>
           </HeroGeometric>
         </header>
@@ -211,7 +211,7 @@ const Index = () => {
                     Stuck on a question? Post it.
                   </h2>
                   <p className="mt-4 text-white/70 max-w-md text-sm sm:text-base">
-                    Snap a photo, type it out, or paste the problem. Students from your grade jump in with worked-out answers — usually within minutes.
+                    Snap a photo, type it out, or paste the problem. Students from your grade jump in with worked-out answers — typically within a few hours, depending on the subject and how active the community is.
                   </p>
                   <div className="mt-6">
                     <Button onClick={() => navigate(user ? "/questions" : "/auth")} className="gap-2 btn-bounce hover-glow">
@@ -242,7 +242,7 @@ const Index = () => {
             <p
               className={`text-center text-muted-foreground text-sm sm:text-base ${trustVisible ? "animate-soft-in" : "opacity-0"}`}
             >
-              Most homework questions get a first answer in under 10 minutes — from students across 16+ countries 🌍
+              A growing community of students across 16+ countries 🌍 — most questions get a first answer the same day, though busy subjects can take longer.
             </p>
           </div>
         </section>
@@ -274,9 +274,9 @@ const Index = () => {
                 },
                 {
                   icon: Zap,
-                  title: "Answers in minutes",
+                  title: "Real answers, not bots",
                   description:
-                    "Your question lands in front of students studying the same thing right now. Most get a first reply in under 10 minutes.",
+                    "Your question lands in front of students studying the same thing. Most get a first reply the same day — sometimes within an hour, sometimes longer if it's niche.",
                 },
                 {
                   icon: CheckCircle2,
@@ -333,7 +333,7 @@ const Index = () => {
             <div className="space-y-6">
               {[
                 { step: "1", text: "Post your homework question — type it, paste it, or snap a photo. Takes 30 seconds." },
-                { step: "2", text: "Students studying the same subject jump in with worked-out answers, usually within minutes." },
+                { step: "2", text: "Students studying the same subject jump in with worked-out answers — usually the same day, sometimes faster, sometimes longer." },
                 { step: "3", text: "Mark the answer that helped, save it, and turn it into flashcards so it sticks for the exam 🚀" },
               ].map((item, index) => (
                 <div
