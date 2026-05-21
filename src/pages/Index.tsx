@@ -501,7 +501,7 @@ const Index = () => {
               className={`text-muted-foreground mb-8 max-w-md mx-auto ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: "150ms" }}
             >
-              Free, fast, and full of students who've already solved what you're stuck on.
+              Join a community of students who've already solved what you're stuck on.
             </p>
 
             <div
@@ -510,7 +510,7 @@ const Index = () => {
             >
               <Button size="lg" onClick={() => navigate(user ? "/questions" : "/auth")} className="gap-2 btn-bounce hover-glow">
                 <MessageSquare className="h-4 w-4" />
-                {user ? "Ask a question" : "Ask your first question — free"}
+                {user ? "Ask a question" : "Ask your first question"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button size="lg" variant="ghost" onClick={() => navigate("/questions")} className="gap-2">
