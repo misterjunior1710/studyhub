@@ -648,4 +648,11 @@ const StudyPost = memo(({
 
 StudyPost.displayName = "StudyPost";
 
+const AuthorProBadge = ({ userId }: { userId: string }) => {
+  const isPro = useProStatus(userId);
+  if (!isPro) return null;
+  return <ProBadge />;
+};
+
+
 export default StudyPost;
