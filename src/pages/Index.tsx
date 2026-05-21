@@ -125,7 +125,7 @@ const Index = () => {
             badge="StudyHub™"
             title1="Study Smarter."
             title2="Ace Everything."
-            description="Ask questions, share answers, and learn together. A student-powered academic community — with study tools built in."
+            description="A student-only community for homework, studying, and school life — no paywalls to read answers, no random strangers, and Nova AI built right in."
           >
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
@@ -146,8 +146,8 @@ const Index = () => {
                 See questions getting answered
               </Button>
             </div>
-            <p className="mt-5 text-center text-sm text-muted-foreground">
-              Get your homework questions answered in minutes — by real students, for free.
+            <p className="mt-5 text-center text-sm text-muted-foreground max-w-xl mx-auto">
+              Unlike Chegg, answers aren't locked behind a paywall. Unlike Reddit, it's students only. Unlike a chatbot, real people explain the why.
             </p>
           </HeroGeometric>
         </header>
