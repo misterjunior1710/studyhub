@@ -151,18 +151,18 @@ const Index = () => {
         <header className="relative">
           <HeroGeometric
             badge="StudyHub™"
-            title1="Study Smarter."
-            title2="Ace Everything."
-            description="A student-only community for homework, studying, and school life — no paywalls to read answers, no random strangers, and Nova AI built right in."
+            title1="Stop Studying Alone."
+            title2="Ace Everything with Your Squad."
+            description="The free, student-only hub where you ask questions, join study squads, and get unstuck fast — powered by Nova AI and built for every grade, subject, and curriculum."
           >
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
                 size="lg"
-                onClick={() => navigate(user ? "/questions" : "/auth")}
+                onClick={handleGetStarted}
                 className="gap-2 text-base px-8 py-6 btn-bounce hover-glow"
               >
-                <MessageSquare className="h-4 w-4" />
-                {user ? "Ask your question" : "Ask now"}
+                <Sparkles className="h-4 w-4" />
+                {user ? "Go to your feed" : "Join free in 30 seconds"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
@@ -174,7 +174,10 @@ const Index = () => {
                 See questions getting answered
               </Button>
             </div>
-            <p className="mt-5 text-center text-sm text-muted-foreground max-w-xl mx-auto">
+            <p className="mt-4 text-center text-xs sm:text-sm text-muted-foreground">
+              Free forever · No credit card · Students 13+
+            </p>
+            <p className="mt-3 text-center text-sm text-muted-foreground max-w-xl mx-auto">
               Unlike Chegg, answers aren't locked behind a paywall. Unlike Reddit, it's students only. Unlike a chatbot, real people explain the why.
             </p>
           </HeroGeometric>
