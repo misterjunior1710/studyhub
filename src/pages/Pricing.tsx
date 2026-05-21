@@ -77,11 +77,12 @@ const PLANS: Plan[] = [
     tagline: "Unlock your full academic potential",
     price: "$4.99",
     cadence: "/month",
-    cta: "Upgrade to Pro",
+    cta: "Start 7-day free trial",
     badge: "Most Popular",
     icon: Crown,
     popular: true,
     features: [
+      { label: "7-day free trial — cancel anytime", included: true },
       { label: "Enhanced Nova AI Assistant", included: true },
       { label: "Enhanced AI generations", included: true },
       { label: "Advanced flashcards, quizzes & mind maps", included: true },
