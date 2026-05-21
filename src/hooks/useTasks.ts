@@ -1,12 +1,16 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/hooks/useSubscription";
 import type { Task } from "@/lib/tasks";
 import { sortTasks, nextOccurrence } from "@/lib/tasks";
 import { toast } from "sonner";
 
+export const FREE_TASK_LIMIT = 25;
+
 export const useTasks = () => {
   const { user } = useAuth();
+  const { isPro } = useSubscription();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -57,6 +61,16 @@ export const useTasks = () => {
 
   const createTask = useCallback(async (input: Partial<Task> & { title: string }) => {
     if (!user) return null;
+    if (!isPro) {
+      const activeCount = tasks.filter((t) => t.status !== "completed" && t.status !== "archived").length;
+      if (activeCount >= FREE_TASK_LIMIT) {
+        toast.error(`Free plan limit reached (${FREE_TASK_LIMIT} active tasks)`, {
+          description: "Upgrade to StudyHub Pro for unlimited tasks.",
+          action: { label: "Upgrade", onClick: () => { window.location.href = "/pricing"; } },
+        });
+        return null;
+      }
+    }
     const { data, error } = await supabase.from("tasks").insert({
       user_id: user.id,
       title: input.title,
@@ -74,7 +88,7 @@ export const useTasks = () => {
     }
     toast.success("Task created");
     return data as Task;
-  }, [user]);
+  }, [user, isPro, tasks]);
 
   const updateTask = useCallback(async (id: string, patch: Partial<Task>) => {
     const { error } = await supabase.from("tasks").update(patch).eq("id", id);

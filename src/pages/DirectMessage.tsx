@@ -15,6 +15,8 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import MessageInput from "@/components/MessageInput";
 import { formatMessage } from "@/lib/formatMessage";
+import ProBadge from "@/components/pro/ProBadge";
+import { useProStatus } from "@/hooks/useProStatus";
 
 interface Message {
   id: string;
@@ -386,7 +388,10 @@ const DirectMessage = () => {
             </AvatarFallback>
           </Avatar>
           <div>
-            <p className="font-semibold">@{friend?.username || "Unknown"}</p>
+            <p className="font-semibold inline-flex items-center gap-1">
+              @{friend?.username || "Unknown"}
+              {friend?.id && <FriendProBadge userId={friend.id} />}
+            </p>
             <p className="text-xs text-muted-foreground">Direct Message</p>
           </div>
         </div>
@@ -632,6 +637,12 @@ const MessageBubble = ({ message, isSent }: { message: Message; isSent: boolean 
       </div>
     </div>
   );
+};
+
+const FriendProBadge = ({ userId }: { userId: string }) => {
+  const isPro = useProStatus(userId);
+  if (!isPro) return null;
+  return <ProBadge />;
 };
 
 export default DirectMessage;

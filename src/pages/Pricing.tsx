@@ -67,7 +67,7 @@ const PLANS: Plan[] = [
       { label: "Public groups & feed", included: true },
       { label: "Basic whiteboard access", included: true },
       { label: "Standard themes", included: true },
-      { label: "Priority support", included: false },
+      { label: "Ad-free, distraction-free study mode", included: false },
       { label: "Pro badge", included: false },
     ],
   },
@@ -88,8 +88,8 @@ const PLANS: Plan[] = [
       { label: "Collaborative whiteboards & docs", included: true },
       { label: "Premium themes", included: true },
       { label: "Pro badge on profile", included: true },
-      { label: "Priority support", included: true },
-      { label: "Advanced productivity tools", included: true },
+      { label: "Ad-free, distraction-free study mode", included: true },
+      { label: "Unlimited tasks + Kanban & Calendar views", included: true },
       { label: "All future Pro features included", included: true },
     ],
   },
@@ -111,8 +111,8 @@ const PLANS: Plan[] = [
       { label: "Early access to new Pro features", included: true },
       { label: "Premium yearly-only themes", included: true },
       { label: "Pro badge on profile", included: true },
-      { label: "Priority support", included: true },
-      { label: "Advanced productivity tools", included: true },
+      { label: "Ad-free, distraction-free study mode", included: true },
+      { label: "Unlimited tasks + Kanban & Calendar views", included: true },
       { label: "Cancel anytime", included: true },
     ],
   },
@@ -125,8 +125,9 @@ const COMPARISON_ROWS: { label: string; free: string | boolean; monthly: string 
   { label: "Collaborative whiteboards & docs", free: false, monthly: true, yearly: true },
   { label: "Premium themes", free: false, monthly: true, yearly: true },
   { label: "Pro badge on profile", free: false, monthly: true, yearly: true },
-  { label: "Priority support", free: false, monthly: true, yearly: true },
-  { label: "Advanced productivity tools", free: false, monthly: true, yearly: true },
+  { label: "Ad-free, distraction-free study mode", free: false, monthly: true, yearly: true },
+  { label: "Active tasks", free: "Up to 25", monthly: "Unlimited", yearly: "Unlimited" },
+  { label: "Kanban & Calendar task views", free: false, monthly: true, yearly: true },
   { label: "Save 33%", free: false, monthly: false, yearly: true },
 ];
 
@@ -172,7 +173,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What features are included in Pro?",
-    a: "Enhanced Nova AI access, advanced flashcards/quizzes/mind maps, collaborative whiteboards & docs, premium themes, a Pro badge, priority support, and all future Pro features as we ship them.",
+    a: "Enhanced Nova AI access, advanced flashcards/quizzes/mind maps, collaborative whiteboards & docs, premium themes, a Pro badge on your profile, an ad-free distraction-free study mode, unlimited tasks with Kanban & Calendar views, and all future Pro features as we ship them.",
   },
   {
     q: "What happens to my Free account if I upgrade?",
@@ -254,7 +255,7 @@ const Pricing = () => {
     <>
       <SEOHead
         title="StudyHub™ Pricing — Free & Pro Plans for Students"
-        description="Affordable StudyHub™ plans for students. Start free, or upgrade to Pro for enhanced Nova AI, advanced study tools, premium themes & priority support."
+        description="Affordable StudyHub™ plans for students. Start free, or upgrade to Pro for enhanced Nova AI, advanced study tools, premium themes & an ad-free study mode."
         canonical="https://studyhub.world/pricing"
       />
 

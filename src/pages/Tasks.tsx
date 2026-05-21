@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Plus, Search, ListChecks, AlertCircle, CheckCircle2, Clock, TrendingUp } from "lucide-react";
+import { Plus, Search, ListChecks, AlertCircle, CheckCircle2, Clock, TrendingUp, Lock, Crown } from "lucide-react";
 import { isPast, isToday } from "date-fns";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,8 +11,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTasks } from "@/hooks/useTasks";
+import { useTasks, FREE_TASK_LIMIT } from "@/hooks/useTasks";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/hooks/useSubscription";
 import { TaskRow } from "@/components/tasks/TaskRow";
 import { TaskEditorDialog } from "@/components/tasks/TaskEditorDialog";
 import { TasksKanban } from "@/components/tasks/TasksKanban";
@@ -23,7 +24,10 @@ import { Link } from "react-router-dom";
 
 const Tasks = () => {
   const { user } = useAuth();
+  const { isPro } = useSubscription();
   const { tasks, loading, createTask, updateTask, completeTask, reopenTask, archiveTask, deleteTask } = useTasks();
+  const activeCount = tasks.filter((t) => t.status !== "completed" && t.status !== "archived").length;
+  const overFreeLimit = !isPro && activeCount >= FREE_TASK_LIMIT;
 
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<Task | null>(null);
@@ -134,13 +138,23 @@ const Tasks = () => {
         </div>
 
         {/* Tabs */}
+        {!isPro && (
+          <Card className="p-3 mb-4 border-primary/30 bg-primary/5 flex items-center justify-between gap-3 flex-wrap">
+            <p className="text-sm">
+              <Crown className="inline h-4 w-4 text-primary mr-1 -mt-0.5" />
+              Free plan: <strong>{activeCount}/{FREE_TASK_LIMIT}</strong> active tasks. Pro unlocks unlimited tasks + Kanban & Calendar views.
+            </p>
+            <Button asChild size="sm" variant="default"><Link to="/pricing">Upgrade to Pro</Link></Button>
+          </Card>
+        )}
+
         <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
           <TabsList className="grid grid-cols-3 sm:grid-cols-6 w-full sm:w-auto">
             <TabsTrigger value="today">Today</TabsTrigger>
             <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
             <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="kanban">Kanban</TabsTrigger>
-            <TabsTrigger value="calendar">Calendar</TabsTrigger>
+            <TabsTrigger value="kanban" className="gap-1">Kanban{!isPro && <Lock className="h-3 w-3" aria-label="Pro feature" />}</TabsTrigger>
+            <TabsTrigger value="calendar" className="gap-1">Calendar{!isPro && <Lock className="h-3 w-3" aria-label="Pro feature" />}</TabsTrigger>
             <TabsTrigger value="completed">Done</TabsTrigger>
           </TabsList>
 
@@ -177,7 +191,7 @@ const Tasks = () => {
           </TabsContent>
 
           <TabsContent value="kanban" className="mt-4">
-            {loading ? <ListSkeleton /> : (
+            {!isPro ? <ProTabLock label="Kanban board" /> : loading ? <ListSkeleton /> : (
               <TasksKanban
                 tasks={filtered}
                 onEdit={openEdit}
@@ -194,7 +208,7 @@ const Tasks = () => {
           </TabsContent>
 
           <TabsContent value="calendar" className="mt-4">
-            {loading ? <ListSkeleton /> : <TasksCalendar tasks={filtered} onEdit={openEdit} />}
+            {!isPro ? <ProTabLock label="Calendar view" /> : loading ? <ListSkeleton /> : <TasksCalendar tasks={filtered} onEdit={openEdit} />}
           </TabsContent>
 
           <TabsContent value="completed" className="mt-4 space-y-2">
@@ -251,6 +265,19 @@ const ListSkeleton = () => (
   <div className="space-y-2">
     {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
   </div>
+);
+
+const ProTabLock = ({ label }: { label: string }) => (
+  <Card className="p-8 text-center">
+    <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary mb-3">
+      <Crown className="h-6 w-6" />
+    </div>
+    <h3 className="text-lg font-semibold mb-1">{label} is a Pro feature</h3>
+    <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">
+      Unlock {label.toLowerCase()}, unlimited tasks, premium themes, an ad-free study mode and more.
+    </p>
+    <Button asChild><Link to="/pricing"><Crown className="h-4 w-4 mr-1" /> Upgrade to Pro</Link></Button>
+  </Card>
 );
 
 export default Tasks;

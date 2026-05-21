@@ -16,6 +16,8 @@ import {
 import { toast } from "sonner";
 import BadgeShelf from "@/components/gamification/BadgeShelf";
 import { useAuth } from "@/contexts/AuthContext";
+import ProBadge from "@/components/pro/ProBadge";
+import { useProStatus } from "@/hooks/useProStatus";
 
 interface UserProfile {
   id: string;
@@ -239,7 +241,10 @@ const UserProfile = () => {
             </Avatar>
             
             <div className="text-center md:text-left text-white">
-              <h1 className="text-3xl font-bold mb-2">{profile.username || "Anonymous"}</h1>
+              <h1 className="text-3xl font-bold mb-2 inline-flex items-center gap-2">
+                {profile.username || "Anonymous"}
+                <ProfileProBadge userId={profile.id} />
+              </h1>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-white/80">
                 {profile.country && (
                   <span className="flex items-center gap-1">
@@ -347,6 +352,12 @@ const UserProfile = () => {
       <Footer />
     </div>
   );
+};
+
+const ProfileProBadge = ({ userId }: { userId: string }) => {
+  const isPro = useProStatus(userId);
+  if (!isPro) return null;
+  return <ProBadge variant="pill" className="text-sm" />;
 };
 
 export default UserProfile;

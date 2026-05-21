@@ -6,6 +6,8 @@ import { FileIcon, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatMessage } from "@/lib/formatMessage";
 import { supabase } from "@/integrations/supabase/client";
+import ProBadge from "@/components/pro/ProBadge";
+import { useProStatus } from "@/hooks/useProStatus";
 
 interface Message {
   id: string;
@@ -118,8 +120,9 @@ const GroupChatMessage = ({ message, isOwn, getTimeAgo }: GroupChatMessageProps)
           </Avatar>
           <div className="flex-1 min-w-0">
             <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-              <span className="font-semibold text-xs sm:text-sm">
+              <span className="font-semibold text-xs sm:text-sm inline-flex items-center gap-1">
                 {username}
+                <AuthorProBadge userId={message.user_id} />
               </span>
               <span className="text-[10px] sm:text-xs text-muted-foreground">
                 {getTimeAgo(message.created_at)}
@@ -138,6 +141,12 @@ const GroupChatMessage = ({ message, isOwn, getTimeAgo }: GroupChatMessageProps)
       </CardContent>
     </Card>
   );
+};
+
+const AuthorProBadge = ({ userId }: { userId: string }) => {
+  const isPro = useProStatus(userId);
+  if (!isPro) return null;
+  return <ProBadge />;
 };
 
 const extractGroupChatFilePath = (url: string): string | null => {
