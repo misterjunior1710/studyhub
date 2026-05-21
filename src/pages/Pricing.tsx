@@ -100,12 +100,13 @@ const PLANS: Plan[] = [
     tagline: "Best value — save 33% annually",
     price: "$39.99",
     cadence: "/year",
-    cta: "Get Yearly Pro",
+    cta: "Start 7-day free trial",
     badge: "Best Value",
     highlight: "Save 33%",
     icon: Trophy,
     bestValue: true,
     features: [
+      { label: "7-day free trial — cancel anytime", included: true },
       { label: "Everything in Pro Monthly", included: true },
       { label: "Save 33% vs monthly billing", included: true },
       { label: "Locked-in yearly pricing", included: true },
@@ -114,7 +115,7 @@ const PLANS: Plan[] = [
       { label: "Pro badge on profile", included: true },
       { label: "Ad-free, distraction-free study mode", included: true },
       { label: "Unlimited tasks + Kanban & Calendar views", included: true },
-      { label: "Cancel anytime", included: true },
+      { label: "Cancel anytime before trial ends — no charge", included: true },
     ],
   },
 ];
