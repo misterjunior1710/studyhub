@@ -260,7 +260,7 @@ const Index = () => {
                 className={`text-muted-foreground max-w-2xl mx-auto ${featuresVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
                 style={{ animationDelay: "100ms" }}
               >
-                Built around one job: turn the homework problem you're stuck on into a clear answer — fast, free, and from real students who get it.
+                Built around one job: turn the homework problem you're stuck on into a clear answer — from real students who get it.
               </p>
             </div>
 
