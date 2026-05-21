@@ -125,7 +125,7 @@ const Index = () => {
             badge="StudyHub™"
             title1="Study Smarter."
             title2="Ace Everything."
-            description="Ask questions, share answers, and learn together. A student-powered academic community — with study tools built in."
+            description="A student-only community for homework, studying, and school life — no paywalls to read answers, no random strangers, and Nova AI built right in."
           >
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
