@@ -317,7 +317,7 @@ const Pricing = () => {
                   ) : (
                     <Crown className="mr-2 h-4 w-4" />
                   )}
-                  Try Pro
+                  Start 7-day free trial
                 </Button>
                 <Button
                   size="lg"
