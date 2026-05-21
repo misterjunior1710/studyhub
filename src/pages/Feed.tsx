@@ -7,6 +7,7 @@ import StudyPost from "@/components/StudyPost";
 import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { PostSkeletonList } from "@/components/PostSkeleton";
 import PullToRefresh from "@/components/PullToRefresh";
+import VirtualList from "@/components/VirtualList";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TrendingUp, Clock, Star, Sparkles, Search } from "lucide-react";
@@ -14,7 +15,6 @@ import { usePosts, getTimeAgo } from "@/hooks/usePosts";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOnboarding } from "@/contexts/OnboardingContext";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
 import MissionsSidebar from "@/components/gamification/MissionsSidebar";
 import FreeUserAdBanner from "@/components/ads/FreeUserAdBanner";
 
