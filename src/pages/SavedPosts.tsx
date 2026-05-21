@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import StudyPost from "@/components/StudyPost";
 import SEOHead from "@/components/SEOHead";
+import VirtualList from "@/components/VirtualList";
 import { PostSkeletonList } from "@/components/PostSkeleton";
 import { Button } from "@/components/ui/button";
 import { Bookmark, ArrowLeft } from "lucide-react";
