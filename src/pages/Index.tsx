@@ -133,7 +133,7 @@ const Index = () => {
               </Button>
             </div>
             <p className="mt-5 text-center text-sm text-muted-foreground">
-              Get your homework questions answered in minutes — by real students, for free.
+              Post a homework question and get worked-out answers from real students — usually within a few hours, sometimes a day. Free, no AI fluff.
             </p>
           </HeroGeometric>
         </header>
