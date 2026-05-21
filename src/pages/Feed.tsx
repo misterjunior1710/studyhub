@@ -63,7 +63,7 @@ const Feed = () => {
     setSelectedStream(null);
   }, []);
 
-  const [postsRef, postsVisible] = useScrollReveal<HTMLDivElement>();
+  
 
   const breadcrumbData = getBreadcrumbSchema([
     { name: "Home", url: "https://studyhub.world/" },
