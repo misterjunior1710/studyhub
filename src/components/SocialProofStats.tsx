@@ -103,7 +103,7 @@ const SocialProofStats = memo(function SocialProofStats() {
                 Trusted since Nov 2025
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight leading-tight">
-                <span className="tabular-nums bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+                <span className="tabular-nums text-primary">
                   {formatValue(heroCount, "int")}+
                 </span>{" "}
                 <span className="text-foreground">searches served since Nov 2025</span>
