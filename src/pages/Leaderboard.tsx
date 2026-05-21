@@ -15,6 +15,8 @@ import { useLeaderboardPrivacy } from "@/hooks/useLeaderboardPrivacy";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGamification } from "@/contexts/GamificationContext";
 import { cn } from "@/lib/utils";
+import ProBadge from "@/components/pro/ProBadge";
+import { useProStatus } from "@/hooks/useProStatus";
 
 const LEAGUE_META: Record<string, { name: string; icon: string; color: string }> = {
   bronze:   { name: "Bronze",   icon: "🥉", color: "text-amber-700" },
@@ -107,8 +109,9 @@ const LeaderboardTable = ({ scope, period }: { scope: LeaderboardScope; period: 
               <AvatarFallback>{row.username?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="font-medium truncate text-sm">
+              <p className="font-medium truncate text-sm inline-flex items-center gap-1">
                 {row.username || "Anonymous"}
+                <RowProBadge userId={row.user_id} />
                 {isMe && <span className="text-xs text-primary ml-1">(you)</span>}
               </p>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">

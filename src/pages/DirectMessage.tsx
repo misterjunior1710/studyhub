@@ -639,4 +639,10 @@ const MessageBubble = ({ message, isSent }: { message: Message; isSent: boolean 
   );
 };
 
+const FriendProBadge = ({ userId }: { userId: string }) => {
+  const isPro = useProStatus(userId);
+  if (!isPro) return null;
+  return <ProBadge />;
+};
+
 export default DirectMessage;
