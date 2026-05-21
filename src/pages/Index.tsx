@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CookieConsent from "@/components/CookieConsent";
-import SEOHead, { StructuredData, getOrganizationSchema, getCommunitySchema } from "@/components/SEOHead";
+import SEOHead, { StructuredData, getOrganizationSchema, getCommunitySchema, getFAQSchema } from "@/components/SEOHead";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -61,12 +63,38 @@ const Index = () => {
     document.body.appendChild(s);
   }, []);
 
+  const faqItems = useMemo(
+    () => [
+      {
+        question: "Is StudyHub really free?",
+        answer:
+          "Yes — the core community, Nova AI basics, study tools (flashcards, quizzes, mind maps, Pomodoro), and Study Squads are free forever. Optional Pro unlocks heavier AI usage and advanced tools. No credit card required to sign up.",
+      },
+      {
+        question: "Is my data private?",
+        answer:
+          "Posts can be anonymous, profiles aren't exposed to non-logged-in visitors, and we never sell your data. Sign-in with Google only uses your basic profile (email, name, picture) — we don't touch Gmail, Drive, or contacts. Full details in our Privacy Policy.",
+      },
+      {
+        question: "What grade levels is StudyHub for?",
+        answer:
+          "Grade 9 through Grade 12, Undergraduate and Postgraduate, plus adult learners and working professionals. Strict 13+ age policy — verified at sign-up.",
+      },
+      {
+        question: "How is this different from Reddit, Discord, or Khan Academy?",
+        answer:
+          "Students only (verified 13+, no random strangers). Content is tied to your actual curriculum — CBSE, IB, IGCSE, AP, A-Levels, and more. Nova AI is built in for instant help that explains the why. And XP, missions, and leaderboards keep studying from feeling like a chore.",
+      },
+    ],
+    [],
+  );
+
   const structuredData = useMemo(
     () => ({
       "@context": "https://schema.org",
-      "@graph": [getOrganizationSchema(), getCommunitySchema()],
+      "@graph": [getOrganizationSchema(), getCommunitySchema(), getFAQSchema(faqItems)],
     }),
-    [],
+    [faqItems],
   );
 
   const [featuresRef, featuresVisible] = useScrollReveal<HTMLDivElement>();
@@ -123,18 +151,18 @@ const Index = () => {
         <header className="relative">
           <HeroGeometric
             badge="StudyHub™"
-            title1="Study Smarter."
-            title2="Ace Everything."
-            description="A student-only community for homework, studying, and school life — no paywalls to read answers, no random strangers, and Nova AI built right in."
+            title1="Stop Studying Alone."
+            title2="Ace Everything with Your Squad."
+            description="The free, student-only hub where you ask questions, join study squads, and get unstuck fast — powered by Nova AI and built for every grade, subject, and curriculum."
           >
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
                 size="lg"
-                onClick={() => navigate(user ? "/questions" : "/auth")}
+                onClick={handleGetStarted}
                 className="gap-2 text-base px-8 py-6 btn-bounce hover-glow"
               >
-                <MessageSquare className="h-4 w-4" />
-                {user ? "Ask your question" : "Ask now"}
+                <Sparkles className="h-4 w-4" />
+                {user ? "Go to your feed" : "Join free in 30 seconds"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
@@ -146,7 +174,10 @@ const Index = () => {
                 See questions getting answered
               </Button>
             </div>
-            <p className="mt-5 text-center text-sm text-muted-foreground max-w-xl mx-auto">
+            <p className="mt-4 text-center text-xs sm:text-sm text-muted-foreground">
+              Free forever · No credit card · Students 13+
+            </p>
+            <p className="mt-3 text-center text-sm text-muted-foreground max-w-xl mx-auto">
               Unlike Chegg, answers aren't locked behind a paywall. Unlike Reddit, it's students only. Unlike a chatbot, real people explain the why.
             </p>
           </HeroGeometric>
@@ -283,49 +314,53 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
                 {
-                  icon: MessageSquare,
-                  title: "Post it in 30 seconds",
-                  description:
-                    "Type the question, snap a photo of your worksheet, or paste it in. Tag the subject and grade — done.",
+                  icon: Brain,
+                  title: "Stop cramming the night before exams",
+                  description: "Flashcards, quizzes, mind maps & Pomodoro — all inside Study Mode.",
                 },
                 {
-                  icon: Zap,
-                  title: "Answers in minutes",
-                  description:
-                    "Your question lands in front of students studying the same thing right now. Most get a first reply in under 10 minutes.",
+                  icon: Sparkles,
+                  title: "Get unstuck in one message",
+                  description: "Nova AI explains the why, not just the answer — built right in.",
                 },
                 {
-                  icon: CheckCircle2,
-                  title: "Worked-out, not copied",
-                  description:
-                    "Real students show their steps so you actually understand it — and verified answers get marked so you know what to trust.",
-                },
-                {
-                  icon: Rss,
-                  title: "A feed tuned to your syllabus",
-                  description:
-                    "Browse questions and explanations from your grade and subjects — chances are, someone already asked yours.",
+                  icon: Calendar,
+                  title: "Never miss another deadline",
+                  description: "Tasks + calendar with smart reminders so homework doesn't sneak up on you.",
                 },
                 {
                   icon: Users,
-                  title: "Study squads for tough topics",
-                  description:
-                    "Stuck on a whole unit, not just one question? Drop into a group chat with classmates tackling the same thing.",
+                  title: "Find your people, not random strangers",
+                  description: "Study Squads matched by grade, subject, and curriculum.",
                 },
                 {
-                  icon: Brain,
-                  title: "Tools to lock the answer in",
-                  description:
-                    "Turn any answered question into flashcards, summaries, or a quick quiz — so it sticks for the exam, not just tonight.",
+                  icon: Trophy,
+                  title: "Actually want to study",
+                  description: "XP, missions, and a leaderboard that make showing up addictive.",
+                },
+                {
+                  icon: MessageSquare,
+                  title: "Ask without the awkward",
+                  description: "Post anonymously. Verified answers from real students get flagged so you know what to trust.",
+                },
+                {
+                  icon: Bookmark,
+                  title: "One place for every note",
+                  description: "Saved posts, notes, and mind maps — all searchable, all in your pocket.",
+                },
+                {
+                  icon: BookOpen,
+                  title: "Built for your curriculum",
+                  description: "CBSE, IGCSE, IB, AP, A-Levels, GCSE, State Boards and more — out of the box.",
                 },
               ].map((feature, index) => (
                 <div
                   key={feature.title}
                   className={`p-6 rounded-xl bg-card border border-border hover-lift ${featuresVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
-                  style={{ animationDelay: `${200 + index * 100}ms` }}
+                  style={{ animationDelay: `${200 + index * 80}ms` }}
                 >
                   <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center mb-4">
                     <feature.icon className="h-6 w-6 text-primary" />
@@ -552,12 +587,115 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Why StudyHub vs alternatives */}
+        <section className="py-16 sm:py-24 bg-muted/20 border-y border-border">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="text-center mb-10">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+                Why StudyHub over Discord, Reddit, or Khan Academy?
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Other places have people. Other places have lessons. Only StudyHub has both — built only for students.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              {[
+                {
+                  name: "StudyHub",
+                  highlight: true,
+                  rows: [
+                    { ok: true, text: "Students only (verified 13+)" },
+                    { ok: true, text: "Real students explain the why" },
+                    { ok: true, text: "Nova AI built in" },
+                    { ok: true, text: "XP, missions & Study Squads" },
+                    { ok: true, text: "Matched to your curriculum" },
+                  ],
+                },
+                {
+                  name: "Discord / Reddit",
+                  highlight: false,
+                  rows: [
+                    { ok: false, text: "Anyone, anywhere" },
+                    { ok: false, text: "Random strangers, mixed quality" },
+                    { ok: false, text: "No AI built in" },
+                    { ok: false, text: "Generic chat, no motivation system" },
+                    { ok: false, text: "Not tied to your syllabus" },
+                  ],
+                },
+                {
+                  name: "Khan Academy",
+                  highlight: false,
+                  rows: [
+                    { ok: false, text: "Pre-recorded lessons only" },
+                    { ok: false, text: "No live community to ask" },
+                    { ok: false, text: "No personalized AI tutor" },
+                    { ok: false, text: "No gamification for students" },
+                    { ok: true, text: "Strong on core lessons" },
+                  ],
+                },
+              ].map((col) => (
+                <div
+                  key={col.name}
+                  className={`rounded-xl border p-6 ${
+                    col.highlight
+                      ? "border-primary/50 bg-card shadow-lg shadow-primary/10"
+                      : "border-border bg-card/60"
+                  }`}
+                >
+                  <h3 className={`font-semibold text-lg mb-4 ${col.highlight ? "text-primary" : ""}`}>
+                    {col.name}
+                  </h3>
+                  <ul className="space-y-3">
+                    {col.rows.map((row, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm">
+                        {row.ok ? (
+                          <Check className="h-4 w-4 mt-0.5 text-success flex-shrink-0" aria-hidden="true" />
+                        ) : (
+                          <X className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" aria-hidden="true" />
+                        )}
+                        <span className={row.ok ? "text-foreground" : "text-muted-foreground"}>{row.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Elfsight Google Reviews */}
         <section className="py-16 sm:py-20 bg-background border-t border-border/30">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl sm:text-2xl font-semibold mb-2">What students say</h2>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">Real reviews from the community.</p>
             <div className="elfsight-app-33b59178-5e2c-4977-bd5b-3589fea8d755" data-elfsight-app-lazy></div>
+          </div>
+        </section>
+
+        {/* FAQ — kills top objections */}
+        <section className="py-16 sm:py-20 border-t border-border">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <div className="text-center mb-10">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">Frequently asked questions</h2>
+              <p className="text-muted-foreground">Everything new students ask before signing up.</p>
+            </div>
+            <Accordion type="single" collapsible className="space-y-3">
+              {faqItems.map((item, i) => (
+                <AccordionItem
+                  key={i}
+                  value={`faq-${i}`}
+                  className="bg-card border border-border rounded-lg px-4"
+                >
+                  <AccordionTrigger className="text-left font-medium py-4 hover:no-underline">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground pb-4">
+                    {item.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </section>
 
