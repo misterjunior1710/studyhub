@@ -11,11 +11,9 @@ const ADS = [
   { id: "playful", src: "/ads/ad-playful.mp4", label: "Playful" },
 ];
 
-// Only show a fullscreen ad at most once every 12 hours per browser.
-const SHOWN_KEY = "studyhub.adBanner.lastShownAt";
-const COOLDOWN_HOURS = 12;
-// Small delay before the ad appears so it doesn't interrupt the first paint.
-const APPEAR_DELAY_MS = 4000;
+// Show a fullscreen ad once every N clicks anywhere on the site.
+const CLICK_KEY = "studyhub.adBanner.clickCount";
+const CLICKS_PER_AD = 55;
 
 /**
  * Fullscreen self-promo ad shown ONLY to signed-in free (non-Pro) users.
@@ -36,23 +34,27 @@ const FreeUserAdBanner = () => {
   // Pick a random ad once per mount.
   const [ad] = useState(() => ADS[Math.floor(Math.random() * ADS.length)]);
 
-  // Decide whether to show the ad (respecting cooldown).
+  // Count clicks anywhere on the page; trigger the ad every CLICKS_PER_AD clicks.
   useEffect(() => {
     if (!user || loading || isPro) return;
-    let last = 0;
-    try {
-      last = Number(localStorage.getItem(SHOWN_KEY) || "0");
-    } catch { /* ignore */ }
-    const cooldownMs = COOLDOWN_HOURS * 3600 * 1000;
-    if (last && Date.now() - last < cooldownMs) return;
 
-    const t = setTimeout(() => {
-      setShouldShow(true);
+    const onClick = () => {
+      let count = 0;
       try {
-        localStorage.setItem(SHOWN_KEY, String(Date.now()));
+        count = Number(localStorage.getItem(CLICK_KEY) || "0");
       } catch { /* ignore */ }
-    }, APPEAR_DELAY_MS);
-    return () => clearTimeout(t);
+      count += 1;
+
+      if (count >= CLICKS_PER_AD) {
+        try { localStorage.setItem(CLICK_KEY, "0"); } catch { /* ignore */ }
+        setShouldShow(true);
+      } else {
+        try { localStorage.setItem(CLICK_KEY, String(count)); } catch { /* ignore */ }
+      }
+    };
+
+    window.addEventListener("click", onClick, { capture: true });
+    return () => window.removeEventListener("click", onClick, { capture: true } as any);
   }, [user, loading, isPro]);
 
   // Lock body scroll while the ad is open.
