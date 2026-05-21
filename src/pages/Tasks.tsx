@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Plus, Search, ListChecks, AlertCircle, CheckCircle2, Clock, TrendingUp } from "lucide-react";
+import { Plus, Search, ListChecks, AlertCircle, CheckCircle2, Clock, TrendingUp, Lock, Crown } from "lucide-react";
 import { isPast, isToday } from "date-fns";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,8 +11,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTasks } from "@/hooks/useTasks";
+import { useTasks, FREE_TASK_LIMIT } from "@/hooks/useTasks";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/hooks/useSubscription";
 import { TaskRow } from "@/components/tasks/TaskRow";
 import { TaskEditorDialog } from "@/components/tasks/TaskEditorDialog";
 import { TasksKanban } from "@/components/tasks/TasksKanban";
@@ -23,7 +24,10 @@ import { Link } from "react-router-dom";
 
 const Tasks = () => {
   const { user } = useAuth();
+  const { isPro } = useSubscription();
   const { tasks, loading, createTask, updateTask, completeTask, reopenTask, archiveTask, deleteTask } = useTasks();
+  const activeCount = tasks.filter((t) => t.status !== "completed" && t.status !== "archived").length;
+  const overFreeLimit = !isPro && activeCount >= FREE_TASK_LIMIT;
 
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<Task | null>(null);
