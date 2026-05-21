@@ -274,7 +274,7 @@ const Index = () => {
                 },
                 {
                   icon: Zap,
-                  title: "Real answers, not bots",
+                  title: "Answered by real students",
                   description:
                     "Your question lands in front of students studying the same thing. Most get a first reply the same day — sometimes within an hour, sometimes longer if it's niche.",
                 },
