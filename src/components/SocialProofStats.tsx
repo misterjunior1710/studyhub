@@ -100,13 +100,13 @@ const SocialProofStats = memo(function SocialProofStats() {
             <div>
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-medium text-primary mb-3">
                 <Sparkles className="h-3 w-3" aria-hidden="true" />
-                Trusted since Nov 2025
+                Trusted since Launch
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight leading-tight">
                 <span className="tabular-nums text-primary">
                   {formatValue(heroCount, "int")}+
                 </span>{" "}
-                <span className="text-foreground">searches served since Nov 2025</span>
+                <span className="text-foreground">searches served since Launch</span>
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 Real students finding StudyHub through Google — and the numbers are growing every day{" "}
