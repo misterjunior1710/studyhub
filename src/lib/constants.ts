@@ -36,7 +36,7 @@ export const STUDENT_SUBJECTS = [
 
 export const ADULT_SUBJECTS = [
   "General", "Career Advice", "Finance", "Technology",
-  "Business", "Personal Development", "Health & Wellness",
+  "Personal Development", "Health & Wellness",
   "Other"
 ];
 
