@@ -146,8 +146,8 @@ const Index = () => {
                 See questions getting answered
               </Button>
             </div>
-            <p className="mt-5 text-center text-sm text-muted-foreground">
-              Get your homework questions answered in minutes — by real students, for free.
+            <p className="mt-5 text-center text-sm text-muted-foreground max-w-xl mx-auto">
+              Unlike Chegg, answers aren't locked behind a paywall. Unlike Reddit, it's students only. Unlike a chatbot, real people explain the why.
             </p>
           </HeroGeometric>
         </header>
