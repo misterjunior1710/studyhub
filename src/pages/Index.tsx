@@ -147,7 +147,7 @@ const Index = () => {
             <button
               type="button"
               onClick={() => navigate("/profile-onboarding")}
-              className="w-full text-left rounded-xl border border-primary/30 bg-gradient-to-r from-primary/10 to-accent/10 p-4 flex items-center gap-3 hover:border-primary/50 transition-colors"
+              className="w-full text-left rounded-xl border border-primary/30 bg-card p-4 flex items-center gap-3 hover:border-primary/50 hover:bg-accent/40 transition-colors"
               aria-label={`Continue setup, ${completedCount} of ${totalCount} steps complete`}
             >
               <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
