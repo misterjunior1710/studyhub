@@ -158,8 +158,12 @@ const TRUST_POINTS = [
 
 const FAQ_ITEMS = [
   {
+    q: "How does the 7-day free trial work?",
+    a: "When you start StudyHub™ Pro (monthly or yearly), you get full Pro access free for 7 days. You won't be charged during the trial. If you don't cancel before the 7 days end, your selected plan (monthly or yearly) automatically begins billing. You can cancel anytime from your account settings.",
+  },
+  {
     q: "Can I cancel anytime?",
-    a: "Yes. You can cancel your StudyHub™ Pro subscription at any time from your account settings. You'll keep Pro access until the end of your current billing period.",
+    a: "Yes. Cancel anytime from your account settings. If you cancel during your 7-day free trial, you won't be charged at all. After billing starts, you keep Pro access until the end of your current billing period.",
   },
   {
     q: "Is checkout secure?",
