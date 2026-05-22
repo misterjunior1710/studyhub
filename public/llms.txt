@@ -15,7 +15,7 @@ StudyHub is a community-driven social platform for students aged 13+. It functio
 - [Whiteboards](/whiteboards): Real-time collaborative whiteboards.
 - [Study Tools](/study): Flashcards, quizzes, mind maps, and Pomodoro timer.
 - [AI Study Tools](/content-generator): Generate study content from trusted sources.
-- [Nova AI Assistant](/assistant): Conversational AI tutor for students.
+- [Nova AI Assistant](/assistant): Conversational AI study companion for students (not a paid tutor).
 - [Friends](/friends): Find and connect with other students.
 - [Groups](/groups): Browse and join study groups (Study Squads).
 - [Leaderboard](/leaderboard): Community ranking based on activity and achievements.
