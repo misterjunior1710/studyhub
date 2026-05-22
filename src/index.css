@@ -589,8 +589,10 @@ All colors MUST be HSL.
   gap: 1rem;
   align-items: center;
   padding-right: 1rem;
-  animation: marquee-scroll 50s linear infinite;
+  animation: marquee-scroll 25s linear infinite;
   will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 .marquee:hover .marquee-track { animation-play-state: paused; }
 
