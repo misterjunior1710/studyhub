@@ -20,7 +20,11 @@ const Footer = () => {
             </div>
             <p className="text-sm text-muted-foreground">Study Smarter, Ace Everything 🎯</p>
             <p className="text-xs text-muted-foreground">
-              Free forever core features · Optional <Link to="/pricing" className="underline hover:text-primary">Pro upgrade</Link> · Multiple AI models built in
+              Free forever core features · Optional{" "}
+              <Link to="/pricing" className="underline hover:text-primary">
+                Pro upgrade
+              </Link>{" "}
+              · Multiple AI models built in
             </p>
           </div>
 
@@ -242,6 +246,13 @@ const Footer = () => {
                       width={150}
                       loading="lazy"
                     />
+                    <a href="https://buildvoyage.com/products/studyhub-study-smarter-ace-everything?ref=badge">
+                      <img
+                        src="https://buildvoyage.com/images/featured_badge.png"
+                        alt="Featured on BuildVoyage"
+                        width="250"
+                      />
+                    </a>
                   </a>
                   <a
                     href="https://bowora.com/?via=83i1vjmq"
