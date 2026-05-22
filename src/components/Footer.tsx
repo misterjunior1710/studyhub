@@ -277,6 +277,14 @@ const Footer = () => {
                       height="48"
                     />
                   </a>
+                  <a href="https://findly.tools/studyhub?utm_source=studyhub" target="_blank" rel="noopener noreferrer">
+                    <img
+                      src="https://findly.tools/badges/findly-tools-badge-light.svg"
+                      alt="Featured on Findly.tools"
+                      width="175"
+                      height="55"
+                    />
+                  </a>
                   <a
                     href="https://bowora.com/?via=83i1vjmq"
                     target="_blank"
