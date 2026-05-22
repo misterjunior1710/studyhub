@@ -269,6 +269,14 @@ const Footer = () => {
                       height="48"
                     />
                   </a>
+                  <a href="https://www.scrolllaunch.com/products/studyhub?ref=badge" target="_blank" rel="noopener">
+                    <img
+                      src="https://www.scrolllaunch.com/api/badge/studyhub?variant=launched&theme=dark"
+                      alt="StudyHub™ — Featured on ScrollLaunch"
+                      width="220"
+                      height="48"
+                    />
+                  </a>
                   <a
                     href="https://bowora.com/?via=83i1vjmq"
                     target="_blank"
