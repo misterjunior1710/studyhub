@@ -254,6 +254,9 @@ const Footer = () => {
                       width="250"
                     />
                   </a>
+                  <a href="https://marketingdb.live" target="_blank" rel="noopener noreferrer nofollow sponsored">
+                    <img src="https://marketingdb.live/badge.svg" alt="Listed on MarketingDB" width="190" height="44" />
+                  </a>
                   <a
                     href="https://bowora.com/?via=83i1vjmq"
                     target="_blank"
