@@ -226,7 +226,7 @@ const Footer = () => {
                     aria-label="AI Directories Badge"
                   >
                     <img
-                      src="https://cdn.aidirectori.es/ai-tools/badges/dark-mode.png"
+                      src="https://cdn.aidirectori.es/ai-tools/badges/light-mode.png"
                       alt="AI Directories Badge"
                       width={171}
                       height={54}
