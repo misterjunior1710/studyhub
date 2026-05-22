@@ -575,7 +575,7 @@ All colors MUST be HSL.
 /* --- Marquee (infinite horizontal scroll) --- */
 @keyframes marquee-scroll {
   from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  to { transform: translateX(-100%); }
 }
 .marquee {
   display: flex;
