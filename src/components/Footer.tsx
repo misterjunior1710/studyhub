@@ -285,6 +285,14 @@ const Footer = () => {
                       height="55"
                     />
                   </a>
+                  <a href="https://launchpanda.dev/launches" target="_blank" rel="noopener">
+                    <img
+                      src="https://launchpanda.dev/images/badges/launchpanda-badge.svg"
+                      alt="Launched on LaunchPanda"
+                      width="260"
+                      height="64"
+                    />
+                  </a>
                   <a
                     href="https://bowora.com/?via=83i1vjmq"
                     target="_blank"
