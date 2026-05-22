@@ -572,6 +572,28 @@ All colors MUST be HSL.
   border-color: hsl(var(--primary) / 0.5);
 }
 
+/* --- Marquee (infinite horizontal scroll) --- */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee {
+  display: flex;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee-track {
+  display: flex;
+  flex-shrink: 0;
+  gap: 1rem;
+  align-items: center;
+  padding-right: 1rem;
+  animation: marquee-scroll 50s linear infinite;
+  will-change: transform;
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
 /* --- Reduced motion: disable decorative animations --- */
 @media (prefers-reduced-motion: reduce) {
   .nova-glow,
@@ -583,4 +605,6 @@ All colors MUST be HSL.
     transition: none !important;
   }
   .hover-lift:hover { transform: none; }
+  .marquee-track { animation: none !important; }
+  .marquee { mask-image: none; -webkit-mask-image: none; overflow-x: auto; }
 }
