@@ -51,13 +51,15 @@ const hideLoadingSkeleton = () => {
   }
 };
 
-const root = createRoot(document.getElementById("root")!);
-root.render(<App />);
+if (!purging) {
+  const root = createRoot(document.getElementById("root")!);
+  root.render(<App />);
 
-// Hide skeleton after React has rendered using double RAF for reliability
-requestAnimationFrame(() => {
-  requestAnimationFrame(hideLoadingSkeleton);
-});
+  // Hide skeleton after React has rendered using double RAF for reliability
+  requestAnimationFrame(() => {
+    requestAnimationFrame(hideLoadingSkeleton);
+  });
 
-// Detect new builds and prompt user to reload (non-blocking, deferred)
-initBuildVersionCheck();
+  // Detect new builds and prompt user to reload (non-blocking, deferred)
+  initBuildVersionCheck();
+}
