@@ -258,6 +258,18 @@ const Footer = () => {
                     <img src="https://marketingdb.live/badge.svg" alt="Listed on MarketingDB" width="190" height="44" />
                   </a>
                   <a
+                    href="https://www.foundrlist.com/product/studyhub?utm_source=badge&amp;utm_medium=embed"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    <img
+                      src="https://www.foundrlist.com/api/badge/studyhub"
+                      alt="Featured on FoundrList"
+                      width="150"
+                      height="48"
+                    />
+                  </a>
+                  <a
                     href="https://bowora.com/?via=83i1vjmq"
                     target="_blank"
                     rel="noopener noreferrer"
