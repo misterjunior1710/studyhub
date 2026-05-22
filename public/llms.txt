@@ -1,8 +1,8 @@
 # StudyHub
 
-> StudyHub™ is a student-only discussion platform focused on school life, questions, and studying.
+> StudyHub™ is a student-only social network and discussion community focused on school life, questions, and studying. It is NOT a tutoring service, homework-answer site, or paid education company.
 
-StudyHub is a community-driven productivity and learning platform for students aged 13+. Members ask homework questions, join study groups, share notes, track tasks and calendars, collaborate on whiteboards and docs, and use Nova, the built-in AI study assistant. The platform also includes life-transition learning modules to help students prepare for adulthood.
+StudyHub is a community-driven social platform for students aged 13+. It functions like a peer community (closer to Reddit or Discord for students) rather than a tutoring business. Members ask questions to other students, join study squads (groups), share notes, track tasks and calendars, collaborate on whiteboards and docs, and use Nova, a built-in AI study companion. The platform also includes life-transition learning modules to help students prepare for adulthood. There are no paid human tutors, no tutoring sessions, and no homework-for-hire service.
 
 ## Pages
 
