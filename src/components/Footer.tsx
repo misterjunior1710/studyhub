@@ -115,206 +115,237 @@ const Footer = () => {
             <div className="marquee" aria-label="Featured on">
               {[0, 1].map((dup) => (
                 <div className="marquee-track" key={dup} aria-hidden={dup === 1}>
-                  <a
-                    href="https://startuplibrary.net/startup/44b664fb-2a57-4610-8c3d-96f67a76375a"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors shrink-0"
-                    aria-label="Featured on StartupLibrary"
-                  >
-                    <img
-                      src="https://bsewdwaowjwuztpmnbyk.supabase.co/storage/v1/object/public/email-assets/sl-logo-badge.png"
-                      alt="StartupLibrary"
-                      className="w-6 h-6 rounded"
-                      loading="lazy"
-                    />
-                    <span>StartupLibrary</span>
-                  </a>
-                  <a
-                    href="https://twelve.tools"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0"
-                    aria-label="Featured on Twelve Tools"
-                  >
-                    <img
-                      src="https://twelve.tools/badge0-light.svg"
-                      alt="Featured on Twelve Tools"
-                      width={200}
-                      height={54}
-                      loading="lazy"
-                    />
-                  </a>
-                  <a
-                    href="https://turbo0.com/item/studyhub-tm"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0"
-                    aria-label="Listed on Turbo0"
-                  >
-                    <img
-                      src="https://img.turbo0.com/badge-listed-dark.svg"
-                      alt="Listed on Turbo0"
-                      style={{ height: 54, width: "auto" }}
-                      loading="lazy"
-                    />
-                  </a>
-                  <a
-                    href="https://wired.business"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0"
-                    aria-label="Featured on Wired Business"
-                  >
-                    <img
-                      src="https://wired.business/badge0-dark.svg"
-                      alt="Featured on Wired Business"
-                      width={200}
-                      height={54}
-                      loading="lazy"
-                    />
-                  </a>
-                  <a
-                    href="https://startupfa.me/s/studyhub?utm_source=www.studyhub.world"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0"
-                    aria-label="Featured on Startup Fame"
-                  >
-                    <img
-                      src="https://startupfa.me/badges/featured/dark-rounded.webp"
-                      alt="StudyHub - Featured on Startup Fame"
-                      width={171}
-                      height={54}
-                      loading="lazy"
-                    />
-                  </a>
-                  <a
-                    href="https://fazier.com/launches/www.studyhub.world"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0"
-                    aria-label="Featured on Fazier"
-                  >
-                    <img
-                      src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&theme=dark"
-                      width={120}
-                      alt="Fazier badge"
-                      loading="lazy"
-                    />
-                  </a>
-                  <a
-                    href="https://huzzler.so/products/YANKqlFcka/studyhub?utm_source=huzzler_product_website&utm_medium=badge&utm_campaign=free_listing"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0"
-                    aria-label="Featured on Huzzler"
-                  >
-                    <img
-                      alt="Huzzler Embed Badge"
-                      src="https://huzzler.so/assets/images/embeddable-badges/featured.png"
-                      width="159"
-                      height="55"
-                      loading="lazy"
-                    />
-                  </a>
-                  <a
-                    href="https://www.aidirectori.es"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0"
-                    aria-label="AI Directories Badge"
-                  >
-                    <img
-                      src="https://cdn.aidirectori.es/ai-tools/badges/light-mode.png"
-                      alt="AI Directories Badge"
-                      width={171}
-                      height={54}
-                      loading="lazy"
-                    />
-                  </a>
-                  <a
-                    href="https://ufind.best/products/studyhub-study-smarter-ace-everything?utm_source=ufind.best"
-                    target="_blank"
-                    rel="noopener"
-                    className="shrink-0"
-                    aria-label="Featured on ufind.best"
-                  >
-                    <img
-                      src="https://ufind.best/badges/ufind-best-badge-light.svg"
-                      alt="Featured on ufind.best"
-                      width={150}
-                      loading="lazy"
-                    />
-                  </a>
-                  <a href="https://buildvoyage.com/products/studyhub-study-smarter-ace-everything?ref=badge">
-                    <img
-                      src="https://buildvoyage.com/images/featured_badge.png"
-                      alt="Featured on BuildVoyage"
-                      width="250"
-                    />
-                  </a>
-                  <a href="https://marketingdb.live" target="_blank" rel="noopener noreferrer nofollow sponsored">
-                    <img src="https://marketingdb.live/badge.svg" alt="Listed on MarketingDB" width="190" height="44" />
-                  </a>
-                  <a
-                    href="https://www.foundrlist.com/product/studyhub?utm_source=badge&amp;utm_medium=embed"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    <img
-                      src="https://www.foundrlist.com/api/badge/studyhub"
-                      alt="Featured on FoundrList"
-                      width="150"
-                      height="48"
-                    />
-                  </a>
-                  <a href="https://www.scrolllaunch.com/products/studyhub?ref=badge" target="_blank" rel="noopener">
-                    <img
-                      src="https://www.scrolllaunch.com/api/badge/studyhub?variant=launched&theme=dark"
-                      alt="StudyHub™ — Featured on ScrollLaunch"
-                      width="220"
-                      height="48"
-                    />
-                  </a>
-                  <a href="https://findly.tools/studyhub?utm_source=studyhub" target="_blank" rel="noopener noreferrer">
-                    <img
-                      src="https://findly.tools/badges/findly-tools-badge-light.svg"
-                      alt="Featured on Findly.tools"
-                      width="175"
-                      height="55"
-                    />
-                  </a>
-                  <a href="https://launchpanda.dev/launches" target="_blank" rel="noopener">
-                    <img
-                      src="https://launchpanda.dev/images/badges/launchpanda-badge.svg"
-                      alt="Launched on LaunchPanda"
-                      width="260"
-                      height="64"
-                    />
-                  </a>
-                  <a
-                    href="https://bowora.com/?via=83i1vjmq"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Featured on Bowora"
-                    className="shrink-0"
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 10,
-                      width: 170,
-                      height: 50,
-                      backgroundColor: "#000",
-                      color: "#fff",
-                      fontFamily:
-                        "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                      padding: "8px 14px",
-                      borderRadius: 8,
-                      textDecoration: "none",
-                      border: "none",
-                    }}
-                  >
+                  {/* 1. Startup Fame — DR 82, well-known, highly cited */}
+
+  href="https://startupfa.me/s/studyhub?utm_source=www.studyhub.world"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="shrink-0"
+  aria-label="Featured on Startup Fame"
+>
+  <img
+    src="https://startupfa.me/badges/featured/dark-rounded.webp"
+    alt="StudyHub - Featured on Startup Fame"
+    width={171}
+    height={54}
+    loading="lazy"
+  />
+</a>
+
+{/* 2. Twelve Tools — DR 78, established curation platform */}
+
+  href="https://twelve.tools"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="shrink-0"
+  aria-label="Featured on Twelve Tools"
+>
+  <img
+    src="https://twelve.tools/badge0-light.svg"
+    alt="Featured on Twelve Tools"
+    width={200}
+    height={54}
+    loading="lazy"
+  />
+</a>
+
+{/* 3. Fazier — DR 79, active daily launch platform */}
+
+  href="https://fazier.com/launches/www.studyhub.world"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="shrink-0"
+  aria-label="Featured on Fazier"
+>
+  <img
+    src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&theme=dark"
+    width={120}
+    alt="Fazier badge"
+    loading="lazy"
+  />
+</a>
+
+{/* 4. Turbo0 */}
+
+  href="https://turbo0.com/item/studyhub-tm"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="shrink-0"
+  aria-label="Listed on Turbo0"
+>
+  <img
+    src="https://img.turbo0.com/badge-listed-dark.svg"
+    alt="Listed on Turbo0"
+    style={{ height: 54, width: "auto" }}
+    loading="lazy"
+  />
+</a>
+
+{/* 5. Huzzler */}
+
+  href="https://huzzler.so/products/YANKqlFcka/studyhub?utm_source=huzzler_product_website&utm_medium=badge&utm_campaign=free_listing"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="shrink-0"
+  aria-label="Featured on Huzzler"
+>
+  <img
+    alt="Huzzler Embed Badge"
+    src="https://huzzler.so/assets/images/embeddable-badges/featured.png"
+    width="159"
+    height="55"
+    loading="lazy"
+  />
+</a>
+
+{/* 6. Wired Business */}
+
+  href="https://wired.business"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="shrink-0"
+  aria-label="Featured on Wired Business"
+>
+  <img
+    src="https://wired.business/badge0-dark.svg"
+    alt="Featured on Wired Business"
+    width={200}
+    height={54}
+    loading="lazy"
+  />
+</a>
+
+{/* 7. StartupLibrary */}
+
+  href="https://startuplibrary.net/startup/44b664fb-2a57-4610-8c3d-96f67a76375a"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors shrink-0"
+  aria-label="Featured on StartupLibrary"
+>
+  <img
+    src="https://bsewdwaowjwuztpmnbyk.supabase.co/storage/v1/object/public/email-assets/sl-logo-badge.png"
+    alt="StartupLibrary"
+    className="w-6 h-6 rounded"
+    loading="lazy"
+  />
+  <span>StartupLibrary</span>
+</a>
+
+{/* 8. AI Directories */}
+
+  href="https://www.aidirectori.es"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="shrink-0"
+  aria-label="AI Directories Badge"
+>
+  <img
+    src="https://cdn.aidirectori.es/ai-tools/badges/light-mode.png"
+    alt="AI Directories Badge"
+    width={171}
+    height={54}
+    loading="lazy"
+  />
+</a>
+
+{/* 9. FoundrList */}
+
+  href="https://www.foundrlist.com/product/studyhub?utm_source=badge&amp;utm_medium=embed"
+  target="_blank"
+  rel="noopener"
+>
+  <img
+    src="https://www.foundrlist.com/api/badge/studyhub"
+    alt="Featured on FoundrList"
+    width="150"
+    height="48"
+  />
+</a>
+
+{/* 10. ScrollLaunch */}
+<a href="https://www.scrolllaunch.com/products/studyhub?ref=badge" target="_blank" rel="noopener">
+  <img
+    src="https://www.scrolllaunch.com/api/badge/studyhub?variant=launched&theme=dark"
+    alt="StudyHub™ — Featured on ScrollLaunch"
+    width="220"
+    height="48"
+  />
+</a>
+
+{/* 11. Findly.tools */}
+<a href="https://findly.tools/studyhub?utm_source=studyhub" target="_blank" rel="noopener noreferrer">
+  <img
+    src="https://findly.tools/badges/findly-tools-badge-light.svg"
+    alt="Featured on Findly.tools"
+    width="175"
+    height="55"
+  />
+</a>
+
+{/* 12. ufind.best */}
+
+  href="https://ufind.best/products/studyhub-study-smarter-ace-everything?utm_source=ufind.best"
+  target="_blank"
+  rel="noopener"
+  className="shrink-0"
+  aria-label="Featured on ufind.best"
+>
+  <img
+    src="https://ufind.best/badges/ufind-best-badge-light.svg"
+    alt="Featured on ufind.best"
+    width={150}
+    loading="lazy"
+  />
+</a>
+
+{/* 13. BuildVoyage */}
+<a href="https://buildvoyage.com/products/studyhub-study-smarter-ace-everything?ref=badge">
+  <img
+    src="https://buildvoyage.com/images/featured_badge.png"
+    alt="Featured on BuildVoyage"
+    width="250"
+  />
+</a>
+
+{/* 14. LaunchPanda */}
+<a href="https://launchpanda.dev/launches" target="_blank" rel="noopener">
+  <img
+    src="https://launchpanda.dev/images/badges/launchpanda-badge.svg"
+    alt="Launched on LaunchPanda"
+    width="260"
+    height="64"
+  />
+</a>
+
+{/* 15. MarketingDB */}
+<a href="https://marketingdb.live" target="_blank" rel="noopener noreferrer nofollow sponsored">
+  <img src="https://marketingdb.live/badge.svg" alt="Listed on MarketingDB" width="190" height="44" />
+</a>
+
+{/* 16. Bowora */}
+
+  href="https://bowora.com/?via=83i1vjmq"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Featured on Bowora"
+  className="shrink-0"
+  style={{
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 10,
+    width: 170,
+    height: 50,
+    backgroundColor: "#000",
+    color: "#fff",
+    fontFamily:
+      "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+    padding: "8px 14px",
+    borderRadius: 8,
+    textDecoration: "none",
+    border: "none",
+  }}
+></a>
                     <svg
                       width="35"
                       height="35"
