@@ -2,7 +2,7 @@ import { memo, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import CookieConsent from "@/components/CookieConsent";
+
 import SEOHead, { StructuredData, getOrganizationSchema, getCommunitySchema, getFAQSchema } from "@/components/SEOHead";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Check, X } from "lucide-react";
@@ -155,7 +155,7 @@ const Index = () => {
             title2="Ace Everything with Your Squad."
             description="The free, student-only hub where you ask questions, join study squads, and get unstuck fast — powered by Nova AI and built for every grade, subject, and curriculum."
           >
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <div className="flex justify-center">
               <Button
                 size="lg"
                 onClick={handleGetStarted}
@@ -164,14 +164,6 @@ const Index = () => {
                 <Sparkles className="h-4 w-4" />
                 {user ? "Go to your feed" : "Join free in 30 seconds"}
                 <ArrowRight className="h-4 w-4" />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => navigate("/questions")}
-                className="gap-2 text-base px-8 py-6 btn-bounce"
-              >
-                See questions getting answered
               </Button>
             </div>
             <p className="mt-4 text-center text-xs sm:text-sm text-muted-foreground">
@@ -568,7 +560,7 @@ const Index = () => {
             </p>
 
             <div
-              className={`flex flex-col sm:flex-row gap-3 justify-center ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
+              className={`flex justify-center ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: "200ms" }}
             >
               <Button
@@ -579,9 +571,6 @@ const Index = () => {
                 <MessageSquare className="h-4 w-4" />
                 {user ? "Ask a question" : "Ask your first question — free"}
                 <ArrowRight className="h-4 w-4" />
-              </Button>
-              <Button size="lg" variant="ghost" onClick={() => navigate("/questions")} className="gap-2">
-                See answered questions
               </Button>
             </div>
           </div>
@@ -700,7 +689,6 @@ const Index = () => {
         </section>
 
         <Footer />
-        <CookieConsent />
       </div>
     </ReactLenis>
   );
