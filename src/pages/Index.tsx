@@ -674,7 +674,7 @@ const Index = () => {
         </section>
 
         {/* Elfsight Google Reviews */}
-        <section className="py-16 sm:py-20 bg-background border-t border-border/30">
+        <section id="reviews" className="py-16 sm:py-20 bg-background border-t border-border/30">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl sm:text-2xl font-semibold mb-2">What students say</h2>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">Real reviews from the community.</p>
