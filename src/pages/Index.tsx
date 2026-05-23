@@ -585,11 +585,11 @@ const Index = () => {
             >
               <Button
                 size="lg"
-                onClick={() => navigate(user ? "/questions" : "/auth")}
+                onClick={handleGetStarted}
                 className="gap-2 btn-bounce hover-glow"
               >
-                <MessageSquare className="h-4 w-4" />
-                {user ? "Ask a question" : "Ask your first question — free"}
+                <Sparkles className="h-4 w-4" />
+                {user ? "Go to your feed" : "Join free in 30 seconds"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
