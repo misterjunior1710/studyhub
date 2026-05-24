@@ -151,16 +151,12 @@ const Index = () => {
         <header className="relative">
           <HeroGeometric
             badge="StudyHub™"
-            title1="Stop Studying Alone."
-            title2="Ace Everything with Your Squad."
+            title1="Study Smarter."
+            title2="Ace Everything."
             description="The free, student-only hub where you ask questions, join study squads, and get unstuck fast — powered by Nova AI and built for every grade, subject, and curriculum."
           >
             <div className="flex justify-center">
-              <Button
-                size="lg"
-                onClick={handleGetStarted}
-                className="gap-2 text-base px-8 py-6 btn-bounce hover-glow"
-              >
+              <Button size="lg" onClick={handleGetStarted} className="gap-2 text-base px-8 py-6 btn-bounce hover-glow">
                 <Sparkles className="h-4 w-4" />
                 {user ? "Go to your feed" : "Join free in 30 seconds"}
                 <ArrowRight className="h-4 w-4" />
@@ -189,18 +185,27 @@ const Index = () => {
                         <stop offset="50%" stopColor="transparent" />
                       </linearGradient>
                     </defs>
-                    <path fill="url(#halfStar)" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    <path fill="none" stroke="currentColor" strokeWidth="1" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    <path
+                      fill="url(#halfStar)"
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                    />
+                    <path
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                    />
                   </svg>
                 </span>
-                <span><strong className="text-foreground">4.5</strong> · Loved by students on Google Reviews</span>
+                <span>
+                  <strong className="text-foreground">4.5</strong> · Loved by students on Google Reviews
+                </span>
               </a>
             </div>
-            <p className="mt-3 text-center text-xs sm:text-sm text-muted-foreground">
-              Freemium · Students 13+
-            </p>
+            <p className="mt-3 text-center text-xs sm:text-sm text-muted-foreground">Freemium · Students 13+</p>
             <p className="mt-3 text-center text-sm text-muted-foreground max-w-xl mx-auto">
-              Unlike Chegg, answers aren't locked behind a paywall. Unlike Reddit, it's students only. Unlike a chatbot, real people explain the why.
+              Unlike Chegg, answers aren't locked behind a paywall. Unlike Reddit, it's students only. Unlike a chatbot,
+              real people explain the why.
             </p>
           </HeroGeometric>
         </header>
@@ -282,10 +287,7 @@ const Index = () => {
                     answers — usually within minutes.
                   </p>
                   <div className="mt-6">
-                    <Button
-                      onClick={handleGetStarted}
-                      className="gap-2 btn-bounce hover-glow"
-                    >
+                    <Button onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
                       <Sparkles className="h-4 w-4" />
                       {user ? "Go to your feed" : "Join free in 30 seconds"}
                       <ArrowRight className="h-4 w-4" />
@@ -366,7 +368,8 @@ const Index = () => {
                 {
                   icon: MessageSquare,
                   title: "Ask without the awkward",
-                  description: "Post anonymously. Verified answers from real students get flagged so you know what to trust.",
+                  description:
+                    "Post anonymously. Verified answers from real students get flagged so you know what to trust.",
                 },
                 {
                   icon: Bookmark,
@@ -593,11 +596,7 @@ const Index = () => {
               className={`flex justify-center ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: "200ms" }}
             >
-              <Button
-                size="lg"
-                onClick={handleGetStarted}
-                className="gap-2 btn-bounce hover-glow"
-              >
+              <Button size="lg" onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
                 <Sparkles className="h-4 w-4" />
                 {user ? "Go to your feed" : "Join free in 30 seconds"}
                 <ArrowRight className="h-4 w-4" />
@@ -657,14 +656,10 @@ const Index = () => {
                 <div
                   key={col.name}
                   className={`rounded-xl border p-6 ${
-                    col.highlight
-                      ? "border-primary/50 bg-card shadow-lg shadow-primary/10"
-                      : "border-border bg-card/60"
+                    col.highlight ? "border-primary/50 bg-card shadow-lg shadow-primary/10" : "border-border bg-card/60"
                   }`}
                 >
-                  <h3 className={`font-semibold text-lg mb-4 ${col.highlight ? "text-primary" : ""}`}>
-                    {col.name}
-                  </h3>
+                  <h3 className={`font-semibold text-lg mb-4 ${col.highlight ? "text-primary" : ""}`}>{col.name}</h3>
                   <ul className="space-y-3">
                     {col.rows.map((row, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm">
@@ -701,17 +696,11 @@ const Index = () => {
             </div>
             <Accordion type="single" collapsible className="space-y-3">
               {faqItems.map((item, i) => (
-                <AccordionItem
-                  key={i}
-                  value={`faq-${i}`}
-                  className="bg-card border border-border rounded-lg px-4"
-                >
+                <AccordionItem key={i} value={`faq-${i}`} className="bg-card border border-border rounded-lg px-4">
                   <AccordionTrigger className="text-left font-medium py-4 hover:no-underline">
                     {item.question}
                   </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground pb-4">
-                    {item.answer}
-                  </AccordionContent>
+                  <AccordionContent className="text-muted-foreground pb-4">{item.answer}</AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
