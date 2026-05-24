@@ -609,8 +609,8 @@ const Index = () => {
               ].map((col) => (
                 <div
                   key={col.name}
-                  className={`rounded-xl border p-6 ${
-                    col.highlight ? "border-primary/50 bg-card shadow-lg shadow-primary/10" : "border-border bg-card/60"
+                  className={`rounded-2xl border p-6 ${
+                    col.highlight ? "border-primary/40 bg-card shadow-sm shadow-primary/10" : "border-border/40 bg-card/60"
                   }`}
                 >
                   <h3 className={`font-semibold text-lg mb-4 ${col.highlight ? "text-primary" : ""}`}>{col.name}</h3>
@@ -632,17 +632,29 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Elfsight Google Reviews */}
-        <section id="reviews" className="py-16 sm:py-20 bg-background border-t border-border/30">
+        {/* Elfsight Google Reviews + closing CTA */}
+        <section id="reviews" className="py-20">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl sm:text-2xl font-semibold mb-2">What students say</h2>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">Real reviews from the community.</p>
             <div className="elfsight-app-33b59178-5e2c-4977-bd5b-3589fea8d755" data-elfsight-app-lazy></div>
+
+            <div className="mt-14 max-w-md mx-auto">
+              <p className="text-muted-foreground mb-5">
+                Free, fast, and full of students who've already solved what you're stuck on.
+              </p>
+              <Button size="lg" onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
+                <Sparkles className="h-4 w-4" />
+                {user ? "Go to your feed" : "Join free in 30 seconds"}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </section>
 
+
         {/* FAQ — kills top objections */}
-        <section className="py-16 sm:py-20 border-t border-border">
+        <section className="py-20 border-t border-border/40">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="text-center mb-10">
               <h2 className="text-2xl sm:text-3xl font-bold mb-3">Frequently asked questions</h2>
