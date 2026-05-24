@@ -4,7 +4,7 @@ import StudyHubLogo from "@/components/StudyHubLogo";
 
 const Footer = () => {
   return (
-    <footer className="border-t border-border bg-card/50 pb-16 md:pb-0">
+    <footer className="border-t border-border/40 bg-card/30 pb-16 md:pb-0">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* Brand */}
@@ -342,7 +342,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div className="mt-8 pt-6 border-t border-border/40 flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="text-sm text-muted-foreground text-center sm:text-left space-y-1">
             <p>© {new Date().getFullYear()} StudyHub™ — Study Smarter, Ace Everything. All rights reserved.</p>
             <p>

@@ -167,7 +167,7 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
-          ? "border-b border-border bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-[0_1px_0_0_hsl(var(--border)/0.6)]"
+          ? "border-b border-border/50 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60"
           : "border-b border-transparent bg-background/60 backdrop-blur",
       )}
     >
