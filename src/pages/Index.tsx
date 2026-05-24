@@ -271,10 +271,10 @@ const Index = () => {
         </section>
 
         {/* Interactive 3D Showcase */}
-        <section ref={showcaseRef} className="py-16 sm:py-24">
+        <section ref={showcaseRef} className="py-20">
           <div className="container mx-auto px-4 max-w-6xl">
             <Card
-              className={`w-full h-[500px] bg-black/[0.96] relative overflow-hidden border-border/50 transition-all duration-500 ease-out hover:shadow-2xl hover:-translate-y-1 ${showcaseVisible ? "animate-soft-in" : "opacity-0"}`}
+              className={`w-full h-[500px] bg-black/[0.96] relative overflow-hidden border-border/40 transition-all duration-500 ease-out ${showcaseVisible ? "animate-soft-in" : "opacity-0"}`}
             >
               <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="hsl(var(--primary))" />
               <div className="flex flex-col md:flex-row h-full">
@@ -286,13 +286,9 @@ const Index = () => {
                     Snap a photo, type it out, or paste the problem. Students from your grade jump in with worked-out
                     answers — usually within minutes.
                   </p>
-                  <div className="mt-6">
-                    <Button onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
-                      <Sparkles className="h-4 w-4" />
-                      {user ? "Go to your feed" : "Join free in 30 seconds"}
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <p className="mt-6 text-white/60 text-sm">
+                    Most homework questions get a first answer in under 10 minutes — from students across 16+ countries 🌍
+                  </p>
                 </div>
                 <div className="hidden md:block flex-1 relative min-h-[280px]">
                   {!isMobile && !skipHeavy3D && (
@@ -309,16 +305,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Trust Section */}
-        <section ref={trustRef} className="border-y border-border bg-muted/30">
-          <div className="container mx-auto px-4 py-8 sm:py-12">
-            <p
-              className={`text-center text-muted-foreground text-sm sm:text-base ${trustVisible ? "animate-soft-in" : "opacity-0"}`}
-            >
-              Most homework questions get a first answer in under 10 minutes — from students across 16+ countries 🌍
-            </p>
-          </div>
-        </section>
 
         {/* What is StudyHub Section */}
         <section ref={featuresRef} className="py-16 sm:py-24">
