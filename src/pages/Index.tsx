@@ -307,7 +307,7 @@ const Index = () => {
 
 
         {/* What is StudyHub Section */}
-        <section ref={featuresRef} className="py-16 sm:py-24">
+        <section ref={featuresRef} className="py-20">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center mb-12">
               <h2
