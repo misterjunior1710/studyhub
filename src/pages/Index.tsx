@@ -271,10 +271,10 @@ const Index = () => {
         </section>
 
         {/* Interactive 3D Showcase */}
-        <section ref={showcaseRef} className="py-16 sm:py-24">
+        <section ref={showcaseRef} className="py-20">
           <div className="container mx-auto px-4 max-w-6xl">
             <Card
-              className={`w-full h-[500px] bg-black/[0.96] relative overflow-hidden border-border/50 transition-all duration-500 ease-out hover:shadow-2xl hover:-translate-y-1 ${showcaseVisible ? "animate-soft-in" : "opacity-0"}`}
+              className={`w-full h-[500px] bg-black/[0.96] relative overflow-hidden border-border/40 transition-all duration-500 ease-out ${showcaseVisible ? "animate-soft-in" : "opacity-0"}`}
             >
               <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="hsl(var(--primary))" />
               <div className="flex flex-col md:flex-row h-full">
@@ -286,13 +286,9 @@ const Index = () => {
                     Snap a photo, type it out, or paste the problem. Students from your grade jump in with worked-out
                     answers — usually within minutes.
                   </p>
-                  <div className="mt-6">
-                    <Button onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
-                      <Sparkles className="h-4 w-4" />
-                      {user ? "Go to your feed" : "Join free in 30 seconds"}
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <p className="mt-6 text-white/60 text-sm">
+                    Most homework questions get a first answer in under 10 minutes — from students across 16+ countries 🌍
+                  </p>
                 </div>
                 <div className="hidden md:block flex-1 relative min-h-[280px]">
                   {!isMobile && !skipHeavy3D && (
@@ -309,19 +305,9 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Trust Section */}
-        <section ref={trustRef} className="border-y border-border bg-muted/30">
-          <div className="container mx-auto px-4 py-8 sm:py-12">
-            <p
-              className={`text-center text-muted-foreground text-sm sm:text-base ${trustVisible ? "animate-soft-in" : "opacity-0"}`}
-            >
-              Most homework questions get a first answer in under 10 minutes — from students across 16+ countries 🌍
-            </p>
-          </div>
-        </section>
 
         {/* What is StudyHub Section */}
-        <section ref={featuresRef} className="py-16 sm:py-24">
+        <section ref={featuresRef} className="py-20">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center mb-12">
               <h2
@@ -384,7 +370,7 @@ const Index = () => {
               ].map((feature, index) => (
                 <div
                   key={feature.title}
-                  className={`p-6 rounded-xl bg-card border border-border hover-lift ${featuresVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
+                  className={`p-6 rounded-2xl bg-card border border-border/40 hover-lift ${featuresVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
                   style={{ animationDelay: `${200 + index * 80}ms` }}
                 >
                   <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center mb-4">
@@ -399,7 +385,7 @@ const Index = () => {
         </section>
 
         {/* How It Works Section */}
-        <section ref={stepsRef} className="py-16 sm:py-24 bg-muted/30">
+        <section ref={stepsRef} className="py-20">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="text-center mb-12">
               <h2
@@ -441,7 +427,7 @@ const Index = () => {
           </div>
         </section>
         {/* Testimonials Section */}
-        <section ref={testimonialsRef} className="py-16 sm:py-24">
+        <section ref={testimonialsRef} className="py-20">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center mb-12">
               <h2
@@ -460,7 +446,7 @@ const Index = () => {
               className={`flex justify-center ${testimonialsVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: "200ms" }}
             >
-              <div className="bg-card border border-border rounded-xl p-8 max-w-xl w-full relative hover-lift">
+              <div className="bg-card border border-border/40 rounded-2xl p-8 max-w-xl w-full relative hover-lift">
                 <div
                   className="text-6xl leading-none text-primary/20 font-serif absolute top-4 left-6 select-none"
                   aria-hidden="true"
@@ -501,7 +487,7 @@ const Index = () => {
         </section>
 
         {/* Transparency / About Section — required for Google OAuth verification */}
-        <section ref={aboutRef} id="about" className="py-12 sm:py-16 bg-muted/20 border-y border-border">
+        <section ref={aboutRef} id="about" className="py-20">
           <div
             className={`container mx-auto px-4 max-w-3xl space-y-6 ${aboutVisible ? "animate-soft-in" : "opacity-0"}`}
           >
@@ -569,44 +555,12 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Final CTA Section */}
-        <section ref={ctaRef} className="py-16 sm:py-24">
-          <div className="container mx-auto px-4 text-center">
-            <div
-              className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-6 animate-float ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
-            >
-              <Sparkles className="h-8 w-8 text-primary" />
-            </div>
+        {/* Reserve ctaRef for the closing CTA inside reviews */}
+        <div ref={ctaRef} aria-hidden="true" />
 
-            <h2
-              className={`text-2xl sm:text-3xl font-bold mb-4 ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
-              style={{ animationDelay: "100ms" }}
-            >
-              Got a question due tonight? Post it now.
-            </h2>
-
-            <p
-              className={`text-muted-foreground mb-8 max-w-md mx-auto ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
-              style={{ animationDelay: "150ms" }}
-            >
-              Free, fast, and full of students who've already solved what you're stuck on.
-            </p>
-
-            <div
-              className={`flex justify-center ${ctaVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
-              style={{ animationDelay: "200ms" }}
-            >
-              <Button size="lg" onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
-                <Sparkles className="h-4 w-4" />
-                {user ? "Go to your feed" : "Join free in 30 seconds"}
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </section>
 
         {/* Why StudyHub vs alternatives */}
-        <section className="py-16 sm:py-24 bg-muted/20 border-y border-border">
+        <section className="py-20">
           <div className="container mx-auto px-4 max-w-5xl">
             <div className="text-center mb-10">
               <h2 className="text-2xl sm:text-3xl font-bold mb-3">
@@ -655,8 +609,8 @@ const Index = () => {
               ].map((col) => (
                 <div
                   key={col.name}
-                  className={`rounded-xl border p-6 ${
-                    col.highlight ? "border-primary/50 bg-card shadow-lg shadow-primary/10" : "border-border bg-card/60"
+                  className={`rounded-2xl border p-6 ${
+                    col.highlight ? "border-primary/40 bg-card shadow-sm shadow-primary/10" : "border-border/40 bg-card/60"
                   }`}
                 >
                   <h3 className={`font-semibold text-lg mb-4 ${col.highlight ? "text-primary" : ""}`}>{col.name}</h3>
@@ -678,17 +632,29 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Elfsight Google Reviews */}
-        <section id="reviews" className="py-16 sm:py-20 bg-background border-t border-border/30">
+        {/* Elfsight Google Reviews + closing CTA */}
+        <section id="reviews" className="py-20">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl sm:text-2xl font-semibold mb-2">What students say</h2>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">Real reviews from the community.</p>
             <div className="elfsight-app-33b59178-5e2c-4977-bd5b-3589fea8d755" data-elfsight-app-lazy></div>
+
+            <div className="mt-14 max-w-md mx-auto">
+              <p className="text-muted-foreground mb-5">
+                Free, fast, and full of students who've already solved what you're stuck on.
+              </p>
+              <Button size="lg" onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
+                <Sparkles className="h-4 w-4" />
+                {user ? "Go to your feed" : "Join free in 30 seconds"}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </section>
 
+
         {/* FAQ — kills top objections */}
-        <section className="py-16 sm:py-20 border-t border-border">
+        <section className="py-20 border-t border-border/40">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="text-center mb-10">
               <h2 className="text-2xl sm:text-3xl font-bold mb-3">Frequently asked questions</h2>
