@@ -279,7 +279,7 @@ const Index = () => {
               <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="hsl(var(--primary))" />
               <div className="flex flex-col md:flex-row h-full">
                 <div className="flex-1 p-8 sm:p-10 relative z-10 flex flex-col justify-center">
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
+                  <h2 className="keep-gradient text-3xl sm:text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
                     Stuck on a question? Post it.
                   </h2>
                   <p className="mt-4 text-white/70 max-w-md text-sm sm:text-base">

@@ -610,3 +610,29 @@ All colors MUST be HSL.
   .marquee-track { animation: none !important; }
   .marquee { mask-image: none; -webkit-mask-image: none; overflow-x: auto; }
 }
+
+/* --- Light mode: flatten gradients for a calmer surface ---
+   Keep gradients exclusively in dark mode. In light mode, swap
+   gradient text for solid foreground and gradient backgrounds
+   for a soft accent wash so nothing renders washed-out or invisible. */
+html:not(.dark) .bg-clip-text.text-transparent:not(.keep-gradient),
+html:not(.dark) [class*="bg-clip-text"].text-transparent:not(.keep-gradient) {
+  background-image: none !important;
+  -webkit-text-fill-color: hsl(var(--foreground)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+
+/* Neutralize decorative gradient backgrounds in light mode.
+   Skips elements that opt out with the .keep-gradient class
+   (e.g. the dark Spline showcase card which intentionally stays dark). */
+html:not(.dark) [class*="bg-gradient-"]:not(.keep-gradient):not(.bg-clip-text) {
+  background-image: none !important;
+  background-color: hsl(var(--accent));
+}
+
+/* Brand-colored circular icon wells stay readable */
+html:not(.dark) [class*="from-primary"][class*="bg-gradient-"]:not(.keep-gradient) {
+  background-color: hsl(var(--primary));
+}
+
