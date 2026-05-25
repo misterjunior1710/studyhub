@@ -448,9 +448,19 @@ const Pricing = () => {
                     </div>
 
                     <div className="mt-6 flex items-end gap-1.5">
+                      {plan.id === "pro_yearly" && (
+                        <span className="mb-1.5 mr-1 text-base text-muted-foreground line-through opacity-70">
+                          $59.88
+                        </span>
+                      )}
                       <span className="text-4xl sm:text-5xl font-bold tracking-tight">{plan.price}</span>
                       <span className="mb-1.5 text-sm text-muted-foreground">{plan.cadence}</span>
                     </div>
+                    {plan.id === "pro_yearly" && (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Just <span className="font-semibold text-foreground">$3.33/month</span>, billed annually
+                      </p>
+                    )}
                     {plan.highlight && (
                       <div className="mt-2">
                         <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
@@ -482,6 +492,17 @@ const Pricing = () => {
                         plan.cta
                       )}
                     </Button>
+
+                    {isPro && (
+                      <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground text-center">
+                        No charge for 7 days. Then{" "}
+                        <span className="text-foreground font-medium">
+                          {plan.price}
+                          {plan.cadence}
+                        </span>
+                        , auto-renews until canceled. Cancel anytime in Settings.
+                      </p>
+                    )}
 
                     <ul className="mt-6 space-y-3">
                       {plan.features.map((f, i) => (
