@@ -368,6 +368,29 @@ const Pricing = () => {
                   </span>
                 </button>
               </div>
+
+              {/* Anchor / decoy contrast under toggle */}
+              <p className="mt-3 text-xs text-muted-foreground">
+                {cycle === "yearly" ? (
+                  <>
+                    <span className="line-through opacity-70">$59.88/yr</span>{" "}
+                    <span className="text-foreground font-semibold">$39.99/yr</span> — that's just{" "}
+                    <span className="text-foreground font-semibold">$3.33/month</span>, billed annually. You save ~$20 vs paying monthly.
+                  </>
+                ) : (
+                  <>
+                    Switch to{" "}
+                    <button
+                      type="button"
+                      onClick={() => setCycle("yearly")}
+                      className="underline underline-offset-2 hover:text-foreground font-medium"
+                    >
+                      yearly
+                    </button>{" "}
+                    and pay just <span className="text-foreground font-semibold">$3.33/month</span> — save ~$20/year.
+                  </>
+                )}
+              </p>
             </div>
           </div>
         </section>
