@@ -197,25 +197,33 @@ export const PromptInputBox = React.forwardRef<HTMLDivElement, PromptInputBoxPro
           {/* File chip */}
           {files.length > 0 && !isRecording && (
             <div className="flex flex-wrap gap-2 p-2 pb-0">
-              {files.map((file) => (
-                <div key={file.name} className="relative group">
-                  {previews[file.name] && (
-                    <img
-                      src={previews[file.name]}
-                      alt={file.name}
-                      className="w-16 h-16 rounded-xl object-cover border border-border"
-                    />
-                  )}
-                  <button
-                    type="button"
-                    onClick={removeFile}
-                    aria-label="Remove attachment"
-                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-background border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
+              {files.map((file) => {
+                const isImage = file.type.startsWith("image/");
+                return (
+                  <div key={file.name} className="relative group">
+                    {isImage && previews[file.name] ? (
+                      <img
+                        src={previews[file.name]}
+                        alt={file.name}
+                        className="w-16 h-16 rounded-xl object-cover border border-border"
+                      />
+                    ) : (
+                      <div className="w-40 h-16 rounded-xl border border-border bg-muted/50 flex items-center gap-2 px-2">
+                        <FileText className="h-5 w-5 text-primary shrink-0" />
+                        <span className="text-xs truncate" title={file.name}>{file.name}</span>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeFile(file.name)}
+                      aria-label={`Remove ${file.name}`}
+                      className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-background border border-border flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
 
