@@ -106,9 +106,19 @@ Deno.serve(async (req) => {
   try { body = await req.json(); } catch { return json(400, { error: "Invalid JSON" }); }
 
   const schema = z.object({
-    message: z.string().trim().min(1).max(4000),
+    message: z.string().trim().min(1).max(200_000),
     route: z.string().max(200).optional(),
     thread_id: z.string().uuid().optional().nullable(),
+    images: z
+      .array(
+        z.object({
+          name: z.string().max(200).optional(),
+          mime_type: z.string().max(100).optional(),
+          data_url: z.string().startsWith("data:").max(8_000_000),
+        }),
+      )
+      .max(5)
+      .optional(),
   });
   const parsed = schema.safeParse(body);
   if (!parsed.success) return json(400, { error: "Invalid input", details: parsed.error.flatten() });
