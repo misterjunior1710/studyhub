@@ -287,7 +287,8 @@ const Index = () => {
                     answers — usually within minutes.
                   </p>
                   <p className="mt-6 text-white/60 text-sm">
-                    Most homework questions get a first answer in under 10 minutes — from students across 16+ countries 🌍
+                    Most homework questions get a first answer in under 10 minutes — from students across 16+ countries
+                    🌍
                   </p>
                 </div>
                 <div className="hidden md:block flex-1 relative min-h-[280px]">
@@ -304,7 +305,6 @@ const Index = () => {
             </Card>
           </div>
         </section>
-
 
         {/* What is StudyHub Section */}
         <section ref={featuresRef} className="py-20">
@@ -558,16 +558,14 @@ const Index = () => {
         {/* Reserve ctaRef for the closing CTA inside reviews */}
         <div ref={ctaRef} aria-hidden="true" />
 
-
         {/* Why StudyHub vs alternatives */}
         <section className="py-20">
           <div className="container mx-auto px-4 max-w-5xl">
             <div className="text-center mb-10">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-3">
-                Why StudyHub over Discord, Reddit, or Khan Academy?
-              </h2>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">StudyHub vs Alternatives</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Other places have people. Other places have lessons. Only StudyHub has both — built only for students.
+                Other places have people. Other places have lessons. Only StudyHub has both — built only for students;
+                in one app.
               </p>
             </div>
 
@@ -588,29 +586,31 @@ const Index = () => {
                   name: "Discord / Reddit",
                   highlight: false,
                   rows: [
-                    { ok: false, text: "Anyone, anywhere" },
-                    { ok: false, text: "Random strangers, mixed quality" },
-                    { ok: false, text: "No AI built in" },
-                    { ok: false, text: "Generic chat, no motivation system" },
-                    { ok: false, text: "Not tied to your syllabus" },
+                    { ok: true, text: "Large open communities" },
+                    { ok: true, text: "General-purpose discussions" },
+                    { ok: false, text: "Limited built-in academic AI tools" },
+                    { ok: false, text: "Not designed specifically for structured studying" },
+                    { ok: false, text: "No syllabus-based organization system" },
                   ],
                 },
                 {
                   name: "Khan Academy",
                   highlight: false,
                   rows: [
-                    { ok: false, text: "Pre-recorded lessons only" },
-                    { ok: false, text: "No live community to ask" },
-                    { ok: false, text: "No personalized AI tutor" },
-                    { ok: false, text: "No gamification for students" },
-                    { ok: true, text: "Strong on core lessons" },
+                    { ok: true, text: "Excellent structured educational lessons" },
+                    { ok: true, text: "Strong foundation for core subjects" },
+                    { ok: false, text: "Limited student collaboration features" },
+                    { ok: false, text: "No integrated campus productivity system" },
+                    { ok: false, text: "Less focused on personalized study organization" },
                   ],
                 },
               ].map((col) => (
                 <div
                   key={col.name}
                   className={`rounded-2xl border p-6 ${
-                    col.highlight ? "border-primary/40 bg-card shadow-sm shadow-primary/10" : "border-border/40 bg-card/60"
+                    col.highlight
+                      ? "border-primary/40 bg-card shadow-sm shadow-primary/10"
+                      : "border-border/40 bg-card/60"
                   }`}
                 >
                   <h3 className={`font-semibold text-lg mb-4 ${col.highlight ? "text-primary" : ""}`}>{col.name}</h3>
@@ -651,7 +651,6 @@ const Index = () => {
             </div>
           </div>
         </section>
-
 
         {/* FAQ — kills top objections */}
         <section className="py-20 border-t border-border/40">
