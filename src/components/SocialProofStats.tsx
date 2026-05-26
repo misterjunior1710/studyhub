@@ -5,10 +5,17 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 // Real metrics from Google Search Console since launch (29 November 2025)
 const METRICS = [
-  { key: "impressions", label: "Total impressions", value: 8340, suffix: "", icon: Eye, format: "compact" as const },
+  { key: "impressions", label: "Total impressions", value: 8570, suffix: "", icon: Eye, format: "compact" as const },
   { key: "clicks", label: "Total clicks", value: 197, suffix: "", icon: MousePointerClick, format: "int" as const },
   { key: "ctr", label: "Average CTR", value: 2.4, suffix: "%", icon: Percent, format: "decimal" as const },
-  { key: "position", label: "Avg. search position", value: 11.1, suffix: "", icon: TrendingUp, format: "decimal" as const },
+  {
+    key: "position",
+    label: "Avg. search position",
+    value: 11.1,
+    suffix: "",
+    icon: TrendingUp,
+    format: "decimal" as const,
+  },
 ];
 
 function formatValue(value: number, format: "compact" | "int" | "decimal") {
@@ -91,8 +98,14 @@ const SocialProofStats = memo(function SocialProofStats() {
         }`}
       >
         {/* decorative glow */}
-        <div className="pointer-events-none absolute -top-24 -right-24 w-64 h-64 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
-        <div className="pointer-events-none absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-accent/10 blur-3xl" aria-hidden="true" />
+        <div
+          className="pointer-events-none absolute -top-24 -right-24 w-64 h-64 rounded-full bg-primary/10 blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-accent/10 blur-3xl"
+          aria-hidden="true"
+        />
 
         <div className="relative flex flex-col gap-6">
           {/* Hero proof line */}
@@ -103,9 +116,7 @@ const SocialProofStats = memo(function SocialProofStats() {
                 Trusted since Launch
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight leading-tight">
-                <span className="tabular-nums text-primary">
-                  {formatValue(heroCount, "int")}+
-                </span>{" "}
+                <span className="tabular-nums text-primary">{formatValue(heroCount, "int")}+</span>{" "}
                 <span className="text-foreground">searches served since Launch</span>
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
