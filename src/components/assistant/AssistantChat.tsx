@@ -64,6 +64,14 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
         for (const err of extracted.errors) {
           toast.error(`Couldn't read ${err.name}`, { description: err.reason });
         }
+        if (images.length > 0) {
+          toast.info(
+            images.length === 1
+              ? "Heads up: free users get 2 image uploads per day."
+              : `Heads up: this uses ${images.length} of your 2 daily free image uploads.`,
+            { description: "Upgrade to Pro for unlimited image uploads." },
+          );
+        }
         const fileNames = files.map((f) => f.name);
         const chip = `📎 ${fileNames.join(", ")}`;
         userMessage = userMessage ? `${userMessage}\n\n${chip}` : chip;

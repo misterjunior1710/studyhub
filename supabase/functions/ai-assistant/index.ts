@@ -128,6 +128,24 @@ Deno.serve(async (req) => {
   const images = parsed.data.images ?? [];
   let threadId: string | null = parsed.data.thread_id ?? null;
 
+  // Image uploads: free users limited to 2 per day, counted per image. Pro: unlimited.
+  for (let i = 0; i < images.length; i++) {
+    const imgQuota = await consumeQuota({ userId, bucket: "nova_image_upload", freeLimit: 2 });
+    if (!imgQuota.allowed) {
+      return new Response(
+        JSON.stringify({
+          error: "pro_required",
+          code: "daily_limit_reached",
+          message: "You've used today's 2 free image uploads. Upgrade to StudyHub Pro for unlimited image uploads.",
+          bucket: "nova_image_upload",
+          limit: imgQuota.limit,
+          upgrade_url: "/pricing",
+        }),
+        { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+  }
+
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
 
   // Ensure thread exists (and belongs to user).
