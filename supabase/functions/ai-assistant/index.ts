@@ -125,6 +125,7 @@ Deno.serve(async (req) => {
 
   const message = parsed.data.message;
   const route = parsed.data.route ?? "/";
+  const images = parsed.data.images ?? [];
   let threadId: string | null = parsed.data.thread_id ?? null;
 
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
