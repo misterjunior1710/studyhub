@@ -283,12 +283,12 @@ const Index = () => {
                     Stuck on a question? Post it.
                   </h2>
                   <p className="mt-4 text-white/70 max-w-md text-sm sm:text-base">
-                    Snap a photo, type it out, or paste the problem. Students from your grade jump in with worked-out
-                    answers — usually within minutes.
+                    Snap a photo, type it out, or post the problem. Students from your grade jump in with worked-out
+                    answers — usually in no time!
                   </p>
                   <p className="mt-6 text-white/60 text-sm">
-                    Most homework questions get a first answer in under 10 minutes — from students across 16+ countries
-                    🌍
+                    Most homework questions get a first answer from a few minutes to days — from students across 16+
+                    countries 🌍
                   </p>
                 </div>
                 <div className="hidden md:block flex-1 relative min-h-[280px]">
@@ -391,7 +391,7 @@ const Index = () => {
               <h2
                 className={`text-2xl sm:text-3xl font-bold mb-4 ${stepsVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
               >
-                From "I'm stuck" to "got it" in 3 steps
+                From "I'm stuck" to " I got it" in 3 steps
               </h2>
             </div>
 
@@ -403,11 +403,11 @@ const Index = () => {
                 },
                 {
                   step: "2",
-                  text: "Students studying the same subject jump in with worked-out answers, usually within minutes.",
+                  text: "Colaborate with students studying the same subject who jump in with worked-out answers, within minutes to hours.",
                 },
                 {
                   step: "3",
-                  text: "Mark the answer that helped, save it, and turn it into flashcards so it sticks for the exam 🚀",
+                  text: "Mark the answer that helped, save it, and turn it into flashcards, mind maps, quizes, and more; so that it sticks for the exam 🚀",
                 },
               ].map((item, index) => (
                 <div
