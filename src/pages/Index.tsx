@@ -583,7 +583,7 @@ const Index = () => {
                   ],
                 },
                 {
-                  name: "Discord / Reddit",
+                  name: "Others",
                   highlight: false,
                   rows: [
                     { ok: true, text: "Large open communities" },
@@ -591,18 +591,14 @@ const Index = () => {
                     { ok: false, text: "Limited built-in academic AI tools" },
                     { ok: false, text: "Not designed specifically for structured studying" },
                     { ok: false, text: "No syllabus-based organization system" },
-                  ],
-                },
-                {
-                  name: "Khan Academy",
-                  highlight: false,
-                  rows: [
                     { ok: true, text: "Excellent structured educational lessons" },
                     { ok: true, text: "Strong foundation for core subjects" },
                     { ok: false, text: "Limited student collaboration features" },
                     { ok: false, text: "No integrated campus productivity system" },
                     { ok: false, text: "Less focused on personalized study organization" },
                   ],
+                },
+                
                 },
               ].map((col) => (
                 <div
