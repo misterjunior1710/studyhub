@@ -49,15 +49,37 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
 
   const sentInitialRef = useRef(false);
 
-  const send = useCallback(async (text: string) => {
-    if (!text.trim() || sending) return;
+  const send = useCallback(async (text: string, files?: File[]) => {
+    if ((!text.trim() && (!files || files.length === 0)) || sending) return;
     if (!user) { toast.error("Sign in to chat with the assistant"); return; }
+
+    let userMessage = text.trim();
+    let messageForAI = text.trim();
+    let images: AttachmentImage[] = [];
+
+    if (files && files.length > 0) {
+      try {
+        const extracted = await extractFiles(files);
+        images = extracted.images;
+        for (const err of extracted.errors) {
+          toast.error(`Couldn't read ${err.name}`, { description: err.reason });
+        }
+        const fileNames = files.map((f) => f.name);
+        const chip = `📎 ${fileNames.join(", ")}`;
+        userMessage = userMessage ? `${userMessage}\n\n${chip}` : chip;
+        messageForAI = (messageForAI || "Please review the attached study material.") + buildAttachmentsPrompt(extracted.texts);
+      } catch (e: any) {
+        console.error("[extractFiles]", e);
+        toast.error("Couldn't read attachments", { description: e?.message ?? "Try again." });
+        return;
+      }
+    }
 
     const optimistic: AssistantMessage = {
       id: `tmp-${Date.now()}`,
       thread_id: threadId ?? "new",
       role: "user",
-      content: text,
+      content: userMessage || text,
       created_at: new Date().toISOString(),
     };
     setMessages((prev) => [...prev, optimistic]);
@@ -66,7 +88,12 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
 
     try {
       const { data, error } = await supabase.functions.invoke("ai-assistant", {
-        body: { message: text, thread_id: threadId, route: location.pathname },
+        body: {
+          message: messageForAI || text,
+          thread_id: threadId,
+          route: location.pathname,
+          images: images.map((i) => ({ name: i.name, mime_type: i.mimeType, data_url: i.dataUrl })),
+        },
       });
       if (error) throw error;
       const newThreadId = data?.thread_id as string | undefined;
