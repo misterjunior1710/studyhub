@@ -268,13 +268,13 @@ export const PromptInputBox = React.forwardRef<HTMLDivElement, PromptInputBoxPro
                         type="button"
                         onClick={() => fileRef.current?.click()}
                         disabled={isLoading || isRecording}
-                        aria-label="Attach image"
+                        aria-label={`Attach files (${ACCEPTED_EXT_LABEL})`}
                         className="h-8 w-8 inline-flex items-center justify-center rounded-full text-muted-foreground hover:bg-accent hover:text-foreground transition-colors disabled:opacity-50"
                       >
                         <Paperclip className="h-4 w-4" />
                       </button>
                     </TooltipTrigger>
-                    <TooltipContent>Attach image</TooltipContent>
+                    <TooltipContent>Attach files · {ACCEPTED_EXT_LABEL}</TooltipContent>
                   </Tooltip>
                 </>
               )}
