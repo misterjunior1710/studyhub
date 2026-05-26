@@ -62,7 +62,7 @@ Style rules:
 
 ${PLATFORM_MAP}`;
 
-async function callAI(messages: Array<{ role: string; content: string }>) {
+async function callAI(messages: Array<{ role: string; content: unknown }>) {
   const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
