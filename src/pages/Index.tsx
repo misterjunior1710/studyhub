@@ -81,7 +81,7 @@ const Index = () => {
           "Grade 9 through Grade 12, Undergraduate and Postgraduate, plus adult learners and working professionals. Strict 13+ age policy — verified at sign-up.",
       },
       {
-        question: "How is this different from Reddit, Discord, or Khan Academy?",
+        question: "How is this different from other platforms?",
         answer:
           "Students only (verified 13+, no random strangers). Content is tied to your actual curriculum — CBSE, IB, IGCSE, AP, A-Levels, and more. Nova AI is built in for instant help that explains the why. And XP, missions, and leaderboards keep studying from feeling like a chore.",
       },
@@ -583,26 +583,18 @@ const Index = () => {
                   ],
                 },
                 {
-                  name: "Discord / Reddit",
+                  name: "Others",
                   highlight: false,
                   rows: [
-                    { ok: true, text: "Large open communities" },
-                    { ok: true, text: "General-purpose discussions" },
                     { ok: false, text: "Limited built-in academic AI tools" },
                     { ok: false, text: "Not designed specifically for structured studying" },
                     { ok: false, text: "No syllabus-based organization system" },
-                  ],
-                },
-                {
-                  name: "Khan Academy",
-                  highlight: false,
-                  rows: [
-                    { ok: true, text: "Excellent structured educational lessons" },
-                    { ok: true, text: "Strong foundation for core subjects" },
                     { ok: false, text: "Limited student collaboration features" },
                     { ok: false, text: "No integrated campus productivity system" },
                     { ok: false, text: "Less focused on personalized study organization" },
                   ],
+                },
+                
                 },
               ].map((col) => (
                 <div
