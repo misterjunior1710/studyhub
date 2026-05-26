@@ -594,8 +594,6 @@ const Index = () => {
                     { ok: false, text: "Less focused on personalized study organization" },
                   ],
                 },
-                
-                },
               ].map((col) => (
                 <div
                   key={col.name}
