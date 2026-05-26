@@ -204,13 +204,14 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
       <div className={cn("border-t border-border p-3 bg-background/60 backdrop-blur", compact && "pb-3")}>
         <div className="max-w-3xl mx-auto">
           <PromptInputBox
-            onSend={(message) => {
-              if (!message.trim()) return;
+            onSend={(message, files) => {
+              if (!message.trim() && (!files || files.length === 0)) return;
               setInput("");
-              void send(message);
+              void send(message, files);
             }}
             isLoading={sending}
-            placeholder="Ask Nova anything… (Enter to send, Shift+Enter for new line)"
+            allowAttachments
+            placeholder="Ask Nova anything… attach PDF, DOCX, PPTX, TXT, or images"
           />
         </div>
       </div>
