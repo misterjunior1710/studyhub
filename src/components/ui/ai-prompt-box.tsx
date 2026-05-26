@@ -253,11 +253,12 @@ export const PromptInputBox = React.forwardRef<HTMLDivElement, PromptInputBoxPro
                   <input
                     ref={fileRef}
                     type="file"
-                    accept="image/*"
+                    multiple
+                    accept={ACCEPTED_MIME}
                     className="hidden"
                     onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) processFile(f);
+                      const list = Array.from(e.target.files ?? []);
+                      if (list.length) processFiles(list);
                       e.target.value = "";
                     }}
                   />
