@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { renderAssistantMarkdown } from "@/lib/assistantMarkdown";
 import { useAssistantMessages, type AssistantMessage } from "@/hooks/useAssistant";
 import { cn } from "@/lib/utils";
+import { extractFiles, buildAttachmentsPrompt, type AttachmentImage } from "@/lib/extractFileContent";
 
 const SUGGESTIONS = [
   "Where can I see my tasks?",
