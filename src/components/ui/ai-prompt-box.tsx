@@ -1,6 +1,7 @@
 import React from "react";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import { ArrowUp, Square, X, StopCircle, Mic, Paperclip, Globe, BrainCog } from "lucide-react";
+import { ArrowUp, Square, X, StopCircle, Mic, Paperclip, Globe, BrainCog, FileText } from "lucide-react";
+import { ACCEPTED_MIME, ACCEPTED_EXT_LABEL, MAX_FILE_BYTES } from "@/lib/extractFileContent";
 import { cn } from "@/lib/utils";
 
 /**
