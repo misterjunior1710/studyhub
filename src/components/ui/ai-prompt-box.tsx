@@ -173,8 +173,8 @@ export const PromptInputBox = React.forwardRef<HTMLDivElement, PromptInputBoxPro
 
     const onDrop = (e: React.DragEvent) => {
       e.preventDefault();
-      const f = Array.from(e.dataTransfer.files).find((x) => x.type.startsWith("image/"));
-      if (f) processFile(f);
+      const dropped = Array.from(e.dataTransfer.files);
+      if (dropped.length) processFiles(dropped);
     };
 
     const hasContent = input.trim().length > 0 || files.length > 0;
