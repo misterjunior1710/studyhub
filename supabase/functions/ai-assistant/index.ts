@@ -175,11 +175,22 @@ Deno.serve(async (req) => {
     ctxLines.push("Active tasks: none.");
   }
 
+  // Build current user content: multimodal if images attached, plain text otherwise.
+  const userContent: unknown = images.length > 0
+    ? [
+        { type: "text", text: message },
+        ...images.map((img) => ({
+          type: "image_url",
+          image_url: { url: img.data_url },
+        })),
+      ]
+    : message;
+
   const messages = [
     { role: "system", content: SYSTEM_PROMPT },
     { role: "system", content: `User context:\n${ctxLines.join("\n")}` },
     ...(history ?? []).map((h: any) => ({ role: h.role, content: h.content })),
-    { role: "user", content: message },
+    { role: "user", content: userContent },
   ];
 
   let reply = "";
