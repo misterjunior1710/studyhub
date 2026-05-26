@@ -1,6 +1,7 @@
 import React from "react";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import { ArrowUp, Square, X, StopCircle, Mic, Paperclip, Globe, BrainCog } from "lucide-react";
+import { ArrowUp, Square, X, StopCircle, Mic, Paperclip, Globe, BrainCog, FileText } from "lucide-react";
+import { ACCEPTED_MIME, ACCEPTED_EXT_LABEL, MAX_FILE_BYTES } from "@/lib/extractFileContent";
 import { cn } from "@/lib/utils";
 
 /**
@@ -121,17 +122,34 @@ export const PromptInputBox = React.forwardRef<HTMLDivElement, PromptInputBoxPro
       taRef.current.style.height = `${Math.min(taRef.current.scrollHeight, maxHeight)}px`;
     }, [input, maxHeight]);
 
-    const processFile = (file: File) => {
-      if (!file.type.startsWith("image/") || file.size > 10 * 1024 * 1024) return;
-      setFiles([file]);
-      const reader = new FileReader();
-      reader.onload = (e) => setPreviews({ [file.name]: e.target?.result as string });
-      reader.readAsDataURL(file);
+    const processFiles = (incoming: File[]) => {
+      const next: File[] = [...files];
+      const nextPreviews: Record<string, string> = { ...previews };
+      for (const file of incoming) {
+        if (file.size > MAX_FILE_BYTES) continue;
+        if (next.find((f) => f.name === file.name && f.size === file.size)) continue;
+        next.push(file);
+        if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const url = e.target?.result as string;
+            setPreviews((p) => ({ ...p, [file.name]: url }));
+          };
+          reader.readAsDataURL(file);
+        }
+        if (next.length >= 5) break;
+      }
+      setFiles(next);
+      setPreviews(nextPreviews);
     };
 
-    const removeFile = () => {
-      setFiles([]);
-      setPreviews({});
+    const removeFile = (name: string) => {
+      setFiles((prev) => prev.filter((f) => f.name !== name));
+      setPreviews((prev) => {
+        const copy = { ...prev };
+        delete copy[name];
+        return copy;
+      });
     };
 
     const submit = () => {
@@ -155,8 +173,8 @@ export const PromptInputBox = React.forwardRef<HTMLDivElement, PromptInputBoxPro
 
     const onDrop = (e: React.DragEvent) => {
       e.preventDefault();
-      const f = Array.from(e.dataTransfer.files).find((x) => x.type.startsWith("image/"));
-      if (f) processFile(f);
+      const dropped = Array.from(e.dataTransfer.files);
+      if (dropped.length) processFiles(dropped);
     };
 
     const hasContent = input.trim().length > 0 || files.length > 0;
@@ -179,25 +197,33 @@ export const PromptInputBox = React.forwardRef<HTMLDivElement, PromptInputBoxPro
           {/* File chip */}
           {files.length > 0 && !isRecording && (
             <div className="flex flex-wrap gap-2 p-2 pb-0">
-              {files.map((file) => (
-                <div key={file.name} className="relative group">
-                  {previews[file.name] && (
-                    <img
-                      src={previews[file.name]}
-                      alt={file.name}
-                      className="w-16 h-16 rounded-xl object-cover border border-border"
-                    />
-                  )}
-                  <button
-                    type="button"
-                    onClick={removeFile}
-                    aria-label="Remove attachment"
-                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-background border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
+              {files.map((file) => {
+                const isImage = file.type.startsWith("image/");
+                return (
+                  <div key={file.name} className="relative group">
+                    {isImage && previews[file.name] ? (
+                      <img
+                        src={previews[file.name]}
+                        alt={file.name}
+                        className="w-16 h-16 rounded-xl object-cover border border-border"
+                      />
+                    ) : (
+                      <div className="w-40 h-16 rounded-xl border border-border bg-muted/50 flex items-center gap-2 px-2">
+                        <FileText className="h-5 w-5 text-primary shrink-0" />
+                        <span className="text-xs truncate" title={file.name}>{file.name}</span>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeFile(file.name)}
+                      aria-label={`Remove ${file.name}`}
+                      className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-background border border-border flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
 
@@ -227,11 +253,12 @@ export const PromptInputBox = React.forwardRef<HTMLDivElement, PromptInputBoxPro
                   <input
                     ref={fileRef}
                     type="file"
-                    accept="image/*"
+                    multiple
+                    accept={ACCEPTED_MIME}
                     className="hidden"
                     onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) processFile(f);
+                      const list = Array.from(e.target.files ?? []);
+                      if (list.length) processFiles(list);
                       e.target.value = "";
                     }}
                   />
@@ -241,13 +268,13 @@ export const PromptInputBox = React.forwardRef<HTMLDivElement, PromptInputBoxPro
                         type="button"
                         onClick={() => fileRef.current?.click()}
                         disabled={isLoading || isRecording}
-                        aria-label="Attach image"
+                        aria-label={`Attach files (${ACCEPTED_EXT_LABEL})`}
                         className="h-8 w-8 inline-flex items-center justify-center rounded-full text-muted-foreground hover:bg-accent hover:text-foreground transition-colors disabled:opacity-50"
                       >
                         <Paperclip className="h-4 w-4" />
                       </button>
                     </TooltipTrigger>
-                    <TooltipContent>Attach image</TooltipContent>
+                    <TooltipContent>Attach files · {ACCEPTED_EXT_LABEL}</TooltipContent>
                   </Tooltip>
                 </>
               )}

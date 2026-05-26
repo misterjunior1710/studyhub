@@ -62,7 +62,7 @@ Style rules:
 
 ${PLATFORM_MAP}`;
 
-async function callAI(messages: Array<{ role: string; content: string }>) {
+async function callAI(messages: Array<{ role: string; content: unknown }>) {
   const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
@@ -106,15 +106,26 @@ Deno.serve(async (req) => {
   try { body = await req.json(); } catch { return json(400, { error: "Invalid JSON" }); }
 
   const schema = z.object({
-    message: z.string().trim().min(1).max(4000),
+    message: z.string().trim().min(1).max(200_000),
     route: z.string().max(200).optional(),
     thread_id: z.string().uuid().optional().nullable(),
+    images: z
+      .array(
+        z.object({
+          name: z.string().max(200).optional(),
+          mime_type: z.string().max(100).optional(),
+          data_url: z.string().startsWith("data:").max(8_000_000),
+        }),
+      )
+      .max(5)
+      .optional(),
   });
   const parsed = schema.safeParse(body);
   if (!parsed.success) return json(400, { error: "Invalid input", details: parsed.error.flatten() });
 
   const message = parsed.data.message;
   const route = parsed.data.route ?? "/";
+  const images = parsed.data.images ?? [];
   let threadId: string | null = parsed.data.thread_id ?? null;
 
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
@@ -164,11 +175,22 @@ Deno.serve(async (req) => {
     ctxLines.push("Active tasks: none.");
   }
 
+  // Build current user content: multimodal if images attached, plain text otherwise.
+  const userContent: unknown = images.length > 0
+    ? [
+        { type: "text", text: message },
+        ...images.map((img) => ({
+          type: "image_url",
+          image_url: { url: img.data_url },
+        })),
+      ]
+    : message;
+
   const messages = [
     { role: "system", content: SYSTEM_PROMPT },
     { role: "system", content: `User context:\n${ctxLines.join("\n")}` },
     ...(history ?? []).map((h: any) => ({ role: h.role, content: h.content })),
-    { role: "user", content: message },
+    { role: "user", content: userContent },
   ];
 
   let reply = "";
