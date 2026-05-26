@@ -122,17 +122,34 @@ export const PromptInputBox = React.forwardRef<HTMLDivElement, PromptInputBoxPro
       taRef.current.style.height = `${Math.min(taRef.current.scrollHeight, maxHeight)}px`;
     }, [input, maxHeight]);
 
-    const processFile = (file: File) => {
-      if (!file.type.startsWith("image/") || file.size > 10 * 1024 * 1024) return;
-      setFiles([file]);
-      const reader = new FileReader();
-      reader.onload = (e) => setPreviews({ [file.name]: e.target?.result as string });
-      reader.readAsDataURL(file);
+    const processFiles = (incoming: File[]) => {
+      const next: File[] = [...files];
+      const nextPreviews: Record<string, string> = { ...previews };
+      for (const file of incoming) {
+        if (file.size > MAX_FILE_BYTES) continue;
+        if (next.find((f) => f.name === file.name && f.size === file.size)) continue;
+        next.push(file);
+        if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const url = e.target?.result as string;
+            setPreviews((p) => ({ ...p, [file.name]: url }));
+          };
+          reader.readAsDataURL(file);
+        }
+        if (next.length >= 5) break;
+      }
+      setFiles(next);
+      setPreviews(nextPreviews);
     };
 
-    const removeFile = () => {
-      setFiles([]);
-      setPreviews({});
+    const removeFile = (name: string) => {
+      setFiles((prev) => prev.filter((f) => f.name !== name));
+      setPreviews((prev) => {
+        const copy = { ...prev };
+        delete copy[name];
+        return copy;
+      });
     };
 
     const submit = () => {
