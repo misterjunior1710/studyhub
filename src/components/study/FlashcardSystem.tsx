@@ -119,7 +119,10 @@ export function FlashcardSystem() {
       setNewCard({ front: "", back: "" });
       toast.success("Card added!");
     },
-    onError: () => toast.error("Failed to add card"),
+    onError: (err: unknown) => {
+      const msg = err instanceof Error ? err.message : "Please try again.";
+      toast.error("Couldn't add card", { description: msg });
+    },
   });
 
   const reviewCardMutation = useMutation({
