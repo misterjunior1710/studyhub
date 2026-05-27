@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, Sparkles, Mail, Sun as Sunburst, Users, Brain, Trophy } from "lucide-react";
+import { Loader2, Sparkles, Mail, Sun as Sunburst, Users, Brain, Trophy, ArrowLeft } from "lucide-react";
 import { z } from "zod";
 import AgeVerificationDialog from "@/components/AgeVerificationDialog";
 import EmailVerificationDialog from "@/components/EmailVerificationDialog";
@@ -329,6 +329,16 @@ const Auth = () => {
         {/* Form panel */}
         <section className="flex items-center justify-center p-4 sm:p-8 bg-background">
           <article className="w-full max-w-md">
+            {/* Back to home */}
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to home
+            </button>
+
             {/* Mobile brand */}
             <div className="lg:hidden text-center mb-6">
               <StudyHubLogo className="h-14 w-14 mx-auto mb-2 drop-shadow-lg" />
