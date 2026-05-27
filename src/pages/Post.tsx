@@ -44,6 +44,7 @@ interface Post {
   upvotes: number;
   downvotes: number;
   created_at: string;
+  post_type?: string;
   profiles?: {
     username: string;
   };
@@ -410,9 +411,19 @@ const Post = () => {
       />
       <Navbar />
       <div className="container mx-auto px-4 py-6 max-w-4xl">
-        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
+        <Button
+          variant="ghost"
+          onClick={() => {
+            if (window.history.length > 1 && document.referrer && document.referrer.includes(window.location.host)) {
+              navigate(-1);
+            } else {
+              navigate(post?.post_type === "doubt" ? "/questions" : "/feed");
+            }
+          }}
+          className="mb-4"
+        >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Feed
+          {post?.post_type === "doubt" ? "Back to Questions" : "Back to Feed"}
         </Button>
 
         <div ref={postRef}>
