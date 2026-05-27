@@ -97,7 +97,10 @@ export function FlashcardSystem() {
       setNewDeck({ title: "", description: "", is_public: false });
       toast.success("Deck created!");
     },
-    onError: () => toast.error("Failed to create deck"),
+    onError: (err: unknown) => {
+      const msg = err instanceof Error ? err.message : "Please try again.";
+      toast.error("Couldn't create deck", { description: msg });
+    },
   });
 
   const createCardMutation = useMutation({
@@ -116,7 +119,10 @@ export function FlashcardSystem() {
       setNewCard({ front: "", back: "" });
       toast.success("Card added!");
     },
-    onError: () => toast.error("Failed to add card"),
+    onError: (err: unknown) => {
+      const msg = err instanceof Error ? err.message : "Please try again.";
+      toast.error("Couldn't add card", { description: msg });
+    },
   });
 
   const reviewCardMutation = useMutation({
