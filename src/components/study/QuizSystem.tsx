@@ -10,9 +10,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Play, Trash2, CheckCircle, XCircle, ClipboardList, Trophy } from "lucide-react";
+import { Plus, Play, Trash2, CheckCircle, XCircle, ClipboardList, Trophy, Info } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+function formatQuizError(err: unknown, fallback: string): string {
+  const msg = err instanceof Error ? err.message : String(err ?? "");
+  if (/permission|denied|not allowed|rls/i.test(msg)) {
+    return "Permission issue — please refresh and make sure you're signed in.";
+  }
+  if (/jwt|auth|session/i.test(msg)) return "You appear to be signed out. Please sign in again.";
+  return msg || fallback;
+}
 
 interface Quiz {
   id: string;
