@@ -70,6 +70,17 @@ export function FlashcardSystem() {
     enabled: !!user,
   });
 
+  const formatDeckError = (err: unknown) => {
+    const message = err instanceof Error ? err.message : "Please try again.";
+    if (message.toLowerCase().includes("permission denied")) {
+      return "Deck creation was blocked by a permissions issue. Please refresh and try again.";
+    }
+    if (message.toLowerCase().includes("row-level security")) {
+      return "Please make sure you're signed in, then try creating the deck again.";
+    }
+    return message;
+  };
+
   const { data: cards = [], isLoading: cardsLoading } = useQuery({
     queryKey: ["flashcards", selectedDeck?.id],
     queryFn: async () => {
@@ -110,8 +121,7 @@ export function FlashcardSystem() {
       toast.success("Deck created!");
     },
     onError: (err: unknown) => {
-      const msg = err instanceof Error ? err.message : "Please try again.";
-      toast.error("Couldn't create deck", { description: msg });
+      toast.error("Couldn't create deck", { description: formatDeckError(err) });
     },
   });
 
