@@ -131,6 +131,9 @@ export function QuizSystem() {
       setNewQuestion({ question: "", question_type: "multiple_choice", options: ["", "", "", ""], correct_answer: "", explanation: "" });
       toast.success("Question added!");
     },
+    onError: (err: unknown) => {
+      toast.error("Couldn't add question", { description: formatQuizError(err, "Please try again.") });
+    },
   });
 
   const saveAttemptMutation = useMutation({
