@@ -9,9 +9,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Play, Edit2, Trash2, RotateCcw, Check, X, Layers } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Plus, Play, Edit2, Trash2, Check, X, Layers, Info } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+
+const SUPPORTED_TOPIC_EXAMPLES = [
+  "Computer Science",
+  "Mathematics",
+  "Biology",
+  "Chemistry",
+  "Physics",
+  "English",
+  "History",
+  "Geography",
+];
 
 interface Deck {
   id: string;
