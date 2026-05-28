@@ -10,9 +10,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Play, Trash2, CheckCircle, XCircle, ClipboardList, Trophy } from "lucide-react";
+import { Plus, Play, Trash2, CheckCircle, XCircle, ClipboardList, Trophy, Info } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+function formatQuizError(err: unknown, fallback: string): string {
+  const msg = err instanceof Error ? err.message : String(err ?? "");
+  if (/permission|denied|not allowed|rls/i.test(msg)) {
+    return "Permission issue — please refresh and make sure you're signed in.";
+  }
+  if (/jwt|auth|session/i.test(msg)) return "You appear to be signed out. Please sign in again.";
+  return msg || fallback;
+}
 
 interface Quiz {
   id: string;
@@ -97,6 +107,9 @@ export function QuizSystem() {
       setNewQuiz({ title: "", description: "", subject: "", is_public: false });
       toast.success("Quiz created!");
     },
+    onError: (err: unknown) => {
+      toast.error("Couldn't create quiz", { description: formatQuizError(err, "Please try again.") });
+    },
   });
 
   const addQuestionMutation = useMutation({
@@ -117,6 +130,9 @@ export function QuizSystem() {
       setAddQuestionOpen(false);
       setNewQuestion({ question: "", question_type: "multiple_choice", options: ["", "", "", ""], correct_answer: "", explanation: "" });
       toast.success("Question added!");
+    },
+    onError: (err: unknown) => {
+      toast.error("Couldn't add question", { description: formatQuizError(err, "Please try again.") });
     },
   });
 
@@ -396,24 +412,35 @@ export function QuizSystem() {
               <DialogTitle>Create New Quiz</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertDescription className="text-xs">
+                  Quizzes work for any subject — Computer Science, Math, Biology, Languages, History, etc.
+                  Step 1: name your quiz. Step 2: add questions (multiple choice, true/false, or fill-in-the-blank).
+                  Only the title is required.
+                </AlertDescription>
+              </Alert>
               <div>
                 <Label>Title</Label>
-                <Input value={newQuiz.title} onChange={e => setNewQuiz(p => ({ ...p, title: e.target.value }))} placeholder="Chapter 1 Review" />
+                <Input value={newQuiz.title} onChange={e => setNewQuiz(p => ({ ...p, title: e.target.value }))} placeholder="e.g. Data Structures – Chapter 3" />
               </div>
               <div>
                 <Label>Subject (optional)</Label>
-                <Input value={newQuiz.subject} onChange={e => setNewQuiz(p => ({ ...p, subject: e.target.value }))} placeholder="Biology" />
+                <Input value={newQuiz.subject} onChange={e => setNewQuiz(p => ({ ...p, subject: e.target.value }))} placeholder="e.g. Computer Science" />
               </div>
               <div>
                 <Label>Description (optional)</Label>
-                <Textarea value={newQuiz.description} onChange={e => setNewQuiz(p => ({ ...p, description: e.target.value }))} />
+                <Textarea value={newQuiz.description} onChange={e => setNewQuiz(p => ({ ...p, description: e.target.value }))} placeholder="What this quiz covers..." />
               </div>
               <div className="flex items-center gap-2">
                 <Switch checked={newQuiz.is_public} onCheckedChange={v => setNewQuiz(p => ({ ...p, is_public: v }))} />
                 <Label>Make quiz public</Label>
               </div>
-              <Button onClick={() => createQuizMutation.mutate()} disabled={!newQuiz.title}>
-                Create Quiz
+              <Button
+                onClick={() => createQuizMutation.mutate()}
+                disabled={!newQuiz.title.trim() || createQuizMutation.isPending}
+              >
+                {createQuizMutation.isPending ? "Creating..." : "Create Quiz"}
               </Button>
             </div>
           </DialogContent>
