@@ -412,24 +412,35 @@ export function QuizSystem() {
               <DialogTitle>Create New Quiz</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertDescription className="text-xs">
+                  Quizzes work for any subject — Computer Science, Math, Biology, Languages, History, etc.
+                  Step 1: name your quiz. Step 2: add questions (multiple choice, true/false, or fill-in-the-blank).
+                  Only the title is required.
+                </AlertDescription>
+              </Alert>
               <div>
                 <Label>Title</Label>
-                <Input value={newQuiz.title} onChange={e => setNewQuiz(p => ({ ...p, title: e.target.value }))} placeholder="Chapter 1 Review" />
+                <Input value={newQuiz.title} onChange={e => setNewQuiz(p => ({ ...p, title: e.target.value }))} placeholder="e.g. Data Structures – Chapter 3" />
               </div>
               <div>
                 <Label>Subject (optional)</Label>
-                <Input value={newQuiz.subject} onChange={e => setNewQuiz(p => ({ ...p, subject: e.target.value }))} placeholder="Biology" />
+                <Input value={newQuiz.subject} onChange={e => setNewQuiz(p => ({ ...p, subject: e.target.value }))} placeholder="e.g. Computer Science" />
               </div>
               <div>
                 <Label>Description (optional)</Label>
-                <Textarea value={newQuiz.description} onChange={e => setNewQuiz(p => ({ ...p, description: e.target.value }))} />
+                <Textarea value={newQuiz.description} onChange={e => setNewQuiz(p => ({ ...p, description: e.target.value }))} placeholder="What this quiz covers..." />
               </div>
               <div className="flex items-center gap-2">
                 <Switch checked={newQuiz.is_public} onCheckedChange={v => setNewQuiz(p => ({ ...p, is_public: v }))} />
                 <Label>Make quiz public</Label>
               </div>
-              <Button onClick={() => createQuizMutation.mutate()} disabled={!newQuiz.title}>
-                Create Quiz
+              <Button
+                onClick={() => createQuizMutation.mutate()}
+                disabled={!newQuiz.title.trim() || createQuizMutation.isPending}
+              >
+                {createQuizMutation.isPending ? "Creating..." : "Create Quiz"}
               </Button>
             </div>
           </DialogContent>
