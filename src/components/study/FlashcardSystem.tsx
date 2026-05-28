@@ -425,10 +425,10 @@ export function FlashcardSystem() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <h3 className="text-lg font-semibold">Flashcard Decks</h3>
-          <p className="text-sm text-muted-foreground">Create and review flashcards with spaced repetition</p>
+          <p className="text-sm text-muted-foreground">Create decks for any school topic, then add your own cards for spaced repetition.</p>
         </div>
         <Dialog open={createDeckOpen} onOpenChange={setCreateDeckOpen}>
           <DialogTrigger asChild>
@@ -439,20 +439,30 @@ export function FlashcardSystem() {
               <DialogTitle>Create New Deck</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
+              <Alert className="bg-muted/50">
+                <Info className="h-4 w-4" />
+                <AlertTitle>Any study topic is supported</AlertTitle>
+                <AlertDescription>
+                  Start with a subject like Computer Science, Mathematics, or Biology. After the deck is created, open it and add cards with your own questions and answers.
+                </AlertDescription>
+              </Alert>
               <div>
                 <Label>Title</Label>
-                <Input value={newDeck.title} onChange={e => setNewDeck(p => ({ ...p, title: e.target.value }))} placeholder="Biology Chapter 1" />
+                <Input value={newDeck.title} onChange={e => setNewDeck(p => ({ ...p, title: e.target.value }))} placeholder="Computer Science" />
               </div>
               <div>
                 <Label>Description (optional)</Label>
-                <Textarea value={newDeck.description} onChange={e => setNewDeck(p => ({ ...p, description: e.target.value }))} placeholder="Cell structure and function" />
+                <Textarea value={newDeck.description} onChange={e => setNewDeck(p => ({ ...p, description: e.target.value }))} placeholder="Data structures, algorithms, or exam revision notes" />
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Popular examples: {SUPPORTED_TOPIC_EXAMPLES.join(", ")}. Custom topics work too.
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <Switch checked={newDeck.is_public} onCheckedChange={v => setNewDeck(p => ({ ...p, is_public: v }))} />
                 <Label>Make deck public</Label>
               </div>
-              <Button onClick={() => createDeckMutation.mutate()} disabled={!newDeck.title}>
-                Create Deck
+              <Button onClick={() => createDeckMutation.mutate()} disabled={!newDeck.title.trim() || createDeckMutation.isPending}>
+                {createDeckMutation.isPending ? "Creating..." : "Create Deck"}
               </Button>
             </div>
           </DialogContent>
