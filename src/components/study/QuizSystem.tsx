@@ -107,6 +107,9 @@ export function QuizSystem() {
       setNewQuiz({ title: "", description: "", subject: "", is_public: false });
       toast.success("Quiz created!");
     },
+    onError: (err: unknown) => {
+      toast.error("Couldn't create quiz", { description: formatQuizError(err, "Please try again.") });
+    },
   });
 
   const addQuestionMutation = useMutation({
