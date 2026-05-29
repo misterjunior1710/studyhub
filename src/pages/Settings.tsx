@@ -682,6 +682,21 @@ const Settings = () => {
 
             {/* Notifications Tab */}
             <TabsContent value="notifications" className="space-y-6">
+              <Card variant="gradient">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Volume2 className="h-5 w-5 text-primary" />
+                    Sound Effects
+                  </CardTitle>
+                  <CardDescription>
+                    Turn UI sounds on or off for a quieter study session
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <SoundEffectsToggle />
+                </CardContent>
+              </Card>
+
               <PushNotificationCard />
               <Card variant="gradient">
                 <CardHeader>
@@ -709,9 +724,6 @@ const Settings = () => {
                       />
                     </div>
                   ))}
-
-                  {/* Sound effects toggle (gamification) */}
-                  <SoundEffectsToggle />
                 </CardContent>
               </Card>
 
