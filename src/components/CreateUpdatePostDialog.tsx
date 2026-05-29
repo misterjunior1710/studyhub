@@ -74,7 +74,7 @@ const CreateUpdatePostDialog = ({ onPostCreated }: CreateUpdatePostDialogProps) 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-gradient-to-r from-accent to-accent hover:opacity-90">
+        <Button variant="gradient">
           <Plus className="h-4 w-4 mr-2" /> Post Update
         </Button>
       </DialogTrigger>
