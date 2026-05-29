@@ -23,7 +23,7 @@ interface SoundManagerState {
 const state: SoundManagerState = {
   ctx: null,
   initialized: false,
-  enabled: true,
+  enabled: false,
   hapticsEnabled: true,
   lastPlayed: null,
   lastPlayedAt: 0,
