@@ -1,4 +1,4 @@
-import { Volume2 } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useGamification } from "@/contexts/GamificationContext";
 
@@ -8,11 +8,15 @@ const SoundEffectsToggle = () => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <Volume2 className="h-5 w-5 text-muted-foreground" />
+        {soundEnabled ? (
+          <Volume2 className="h-5 w-5 text-primary" />
+        ) : (
+          <VolumeX className="h-5 w-5 text-muted-foreground" />
+        )}
         <div>
           <p className="font-medium">Sound Effects</p>
           <p className="text-sm text-muted-foreground">
-            Coin pops, goal completion chimes, and streak milestone sounds
+            Toggle clicks, coin pops, and completion chimes
           </p>
         </div>
       </div>

@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ALTER COLUMN sound_enabled SET DEFAULT false;

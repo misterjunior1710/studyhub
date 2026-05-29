@@ -49,7 +49,7 @@ const defaultState: GamificationState = {
   totalCoinsEarned: 0,
   streakDays: 0,
   goals: [],
-  soundEnabled: true,
+  soundEnabled: false,
   loading: true,
   totalXp: 0,
   weeklyXp: 0,
@@ -149,7 +149,7 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
 
       const newCoins = wallet?.coins ?? 0;
       const newStreak = profile?.streak_days ?? 0;
-      const soundOn = profile?.sound_enabled ?? true;
+      const soundOn = profile?.sound_enabled ?? false;
       const totalXp = xp?.total_xp ?? 0;
       const weeklyXp = xp?.weekly_xp ?? 0;
       const levelInfo = computeLevel(totalXp);
