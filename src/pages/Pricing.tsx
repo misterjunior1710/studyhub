@@ -512,11 +512,11 @@ const Pricing = () => {
                               <Check className="h-3 w-3" strokeWidth={3} />
                             </span>
                           ) : (
-                            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-muted/40 text-muted-foreground/50">
                               <X className="h-3 w-3" />
                             </span>
                           )}
-                          <span className={cn(f.included ? "text-foreground/90" : "text-muted-foreground line-through")}>
+                          <span className={cn(f.included ? "text-foreground/90" : "text-muted-foreground/60")}>
                             {f.label}
                           </span>
                         </li>
