@@ -432,6 +432,37 @@ All colors MUST be HSL.
   }
 }
 
+/* ── Calm mode ─────────────────────────────────────────────
+   Opt-in via Settings. Tones the UI down for users who find
+   the default motion and hover effects visually busy. */
+.calm-mode .cursor-highlight-circle {
+  display: none !important;
+}
+
+.calm-mode .hover-scale,
+.calm-mode .hover-scale:hover {
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Neutralise decorative looping/parallax animations but keep
+   functional motion (accordion, dialog enter/exit) intact. */
+.calm-mode .animate-float,
+.calm-mode .animate-pulse-slow,
+.calm-mode .animate-shimmer,
+.calm-mode .animate-gradient,
+.calm-mode .animate-confetti-fall,
+.calm-mode .party-mode,
+.calm-mode [class*="animate-blob"] {
+  animation: none !important;
+}
+
+/* Soften scale/translate on hover globally without removing
+   focus-visible rings or color transitions. */
+.calm-mode *:hover {
+  transform: none !important;
+}
+
 /* Skip link — visible only on keyboard focus (WCAG 2.4.1) */
 .skip-to-main {
   position: absolute;

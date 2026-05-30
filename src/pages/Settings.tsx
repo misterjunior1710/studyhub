@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
 import SoundEffectsToggle from "@/components/gamification/SoundEffectsToggle";
+import CalmModeToggle from "@/components/CalmModeToggle";
 import PushNotificationCard from "@/components/PushNotificationCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -696,6 +697,23 @@ const Settings = () => {
                   <SoundEffectsToggle />
                 </CardContent>
               </Card>
+
+              <Card variant="gradient">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-primary" />
+                    Calm Mode
+                  </CardTitle>
+                  <CardDescription>
+                    Reduce hover effects, decorative animations, and the cursor highlight
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <CalmModeToggle />
+                </CardContent>
+              </Card>
+
+
 
               <PushNotificationCard />
               <Card variant="gradient">
