@@ -436,7 +436,7 @@ const Pricing = () => {
                           "flex h-10 w-10 items-center justify-center rounded-xl",
                           isPro
                             ? "bg-gradient-to-br from-primary/20 to-accent/20 text-primary"
-                            : "bg-muted text-foreground/80",
+                            : "bg-gradient-to-br from-primary/15 to-accent/15 text-primary",
                         )}
                       >
                         <Icon className="h-5 w-5" />
@@ -512,11 +512,11 @@ const Pricing = () => {
                               <Check className="h-3 w-3" strokeWidth={3} />
                             </span>
                           ) : (
-                            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-muted/40 text-muted-foreground/50">
                               <X className="h-3 w-3" />
                             </span>
                           )}
-                          <span className={cn(f.included ? "text-foreground/90" : "text-muted-foreground line-through")}>
+                          <span className={cn(f.included ? "text-foreground/90" : "text-muted-foreground/60")}>
                             {f.label}
                           </span>
                         </li>

@@ -303,7 +303,9 @@ const Auth = () => {
           <div aria-hidden="true" className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-accent/40 blur-3xl" />
 
           <div className="relative z-10 flex items-center gap-3">
-            <StudyHubLogo className="h-10 w-10 drop-shadow-lg" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/25 to-accent/25 border border-primary/10">
+              <StudyHubLogo className="h-6 w-6" />
+            </div>
             <span className="text-xl font-bold tracking-tight">StudyHub™</span>
           </div>
 
@@ -341,7 +343,9 @@ const Auth = () => {
 
             {/* Mobile brand */}
             <div className="lg:hidden text-center mb-6">
-              <StudyHubLogo className="h-14 w-14 mx-auto mb-2 drop-shadow-lg" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/25 to-accent/25 border border-primary/10 mx-auto mb-2">
+                <StudyHubLogo className="h-8 w-8" />
+              </div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">StudyHub™</h1>
               <p className="text-sm text-muted-foreground">Your study crew is waiting 📚</p>
             </div>
