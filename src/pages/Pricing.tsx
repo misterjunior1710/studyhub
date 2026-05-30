@@ -436,7 +436,7 @@ const Pricing = () => {
                           "flex h-10 w-10 items-center justify-center rounded-xl",
                           isPro
                             ? "bg-gradient-to-br from-primary/20 to-accent/20 text-primary"
-                            : "bg-muted text-foreground/80",
+                            : "bg-gradient-to-br from-primary/15 to-accent/15 text-primary",
                         )}
                       >
                         <Icon className="h-5 w-5" />
