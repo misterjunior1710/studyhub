@@ -179,10 +179,12 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
             <button
               type="button"
               onClick={handleLogoClickWithNav}
-              className="flex items-center gap-2 rounded-lg px-1.5 py-1 transition-all hover:bg-accent/10 hover:scale-[1.02] active:scale-95"
+              className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-all hover:bg-accent/10 hover:scale-[1.02] active:scale-95"
               aria-label="StudyHub home"
             >
-              <StudyHubLogo className="h-8 w-8 sm:h-9 sm:w-9" />
+              <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-gradient-to-br from-primary/25 to-accent/25 border border-primary/10">
+                <StudyHubLogo className="h-5 w-5 sm:h-6 sm:w-6" />
+              </div>
               <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 StudyHub™
               </h1>
