@@ -2,10 +2,14 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { initBuildVersionCheck } from "./lib/buildVersionCheck";
+import { initCalmMode } from "./lib/calmMode";
 import {
   runForceFreshBootIfNeeded,
   installAutoReloadOnSWUpdate,
 } from "./lib/forceFreshBoot";
+
+// Apply persisted calm-mode class before React renders to avoid flicker.
+initCalmMode();
 
 // One-time forced cache purge for legacy clients still showing an old build.
 // If this triggers, the page reloads and the rest of this module never runs.
