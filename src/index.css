@@ -463,6 +463,35 @@ All colors MUST be HSL.
   transform: none !important;
 }
 
+/* Additional decorative animations defined later in this file.
+   Kept separate from Radix/shadcn functional motion (accordion,
+   dialog, popover, sheet) which remains intact. */
+.calm-mode .nova-glow,
+.calm-mode .nova-dot,
+.calm-mode .success-pop,
+.calm-mode .animate-soft-in,
+.calm-mode .animate-stagger > *,
+.calm-mode .marquee-track {
+  animation: none !important;
+}
+
+.calm-mode .animate-stagger > * {
+  opacity: 1 !important;
+}
+
+.calm-mode .marquee {
+  mask-image: none;
+  -webkit-mask-image: none;
+  overflow-x: auto;
+}
+
+.calm-mode .hover-lift {
+  transition: box-shadow 200ms ease !important;
+}
+.calm-mode .hover-lift:hover {
+  transform: none !important;
+}
+
 /* Skip link — visible only on keyboard focus (WCAG 2.4.1) */
 .skip-to-main {
   position: absolute;
