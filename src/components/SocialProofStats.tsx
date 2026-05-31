@@ -1,11 +1,11 @@
-71import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Eye, MousePointerClick, Percent, TrendingUp, Sparkles } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 // Real metrics from Google Search Console since launch (29 November 2025)
 const METRICS = [
-  { key: "impressions", label: "Total impressions", value: 8710, suffix: "", icon: Eye, format: "compact" as const },
+  { key: "impressions", label: "Total impressions", value: 8680, suffix: "", icon: Eye, format: "compact" as const },
   { key: "clicks", label: "Total clicks", value: 209, suffix: "", icon: MousePointerClick, format: "int" as const },
   { key: "ctr", label: "Average CTR", value: 2.4, suffix: "%", icon: Percent, format: "decimal" as const },
   {
@@ -84,7 +84,7 @@ const StatCell = memo(function StatCell({
 
 const SocialProofStats = memo(function SocialProofStats() {
   const [ref, visible] = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
-  const heroCount = useCountUp(8710, visible);
+  const heroCount = useCountUp(8680, visible);
 
   return (
     <section
