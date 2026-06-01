@@ -16,7 +16,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import MissionsSidebar from "@/components/gamification/MissionsSidebar";
-import FreeUserAdBanner from "@/components/ads/FreeUserAdBanner";
+import PremiumPromoBanner from "@/components/pro/PremiumPromoBanner";
 
 const Feed = () => {
   const [sortBy, setSortBy] = useState<"hot" | "new" | "top">("hot");
