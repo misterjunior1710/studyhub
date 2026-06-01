@@ -89,7 +89,11 @@ const Assistant = () => {
               ))}
             </div>
           </ScrollArea>
+          <div className="p-3 border-t border-border">
+            <PremiumPromoBanner surface="nova" />
+          </div>
         </aside>
+
 
         {/* Chat area */}
         <div className="flex-1 flex flex-col min-w-0">
