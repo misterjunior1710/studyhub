@@ -119,7 +119,7 @@ const Feed = () => {
               onStreamChange={setSelectedStream}
               onClearAll={handleClearFilters}
             />
-            {user && <FreeUserAdBanner />}
+            {user && <PremiumPromoBanner surface="feed" />}
             {user && <MissionsSidebar />}
           </aside>
           
