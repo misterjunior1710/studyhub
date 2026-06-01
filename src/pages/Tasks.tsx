@@ -21,6 +21,7 @@ import { TasksCalendar } from "@/components/tasks/TasksCalendar";
 import { AiAssistantSheet } from "@/components/tasks/AiAssistantSheet";
 import { CATEGORY_META, type Task, type TaskCategory, type TaskStatus } from "@/lib/tasks";
 import { Link } from "react-router-dom";
+import PremiumPromoBanner from "@/components/pro/PremiumPromoBanner";
 
 const Tasks = () => {
   const { user } = useAuth();
