@@ -137,6 +137,7 @@ const App = () => (
       <AuthProvider>
         <GamificationProvider>
         <OnboardingProvider>
+        <PremiumMomentProvider>
           <ThemeInitializer>
             <TooltipProvider>
               <CursorHighlighter />
