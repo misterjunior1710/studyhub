@@ -9,6 +9,7 @@ import { useAssistantThreads } from "@/hooks/useAssistant";
 import { cn } from "@/lib/utils";
 import SEOHead from "@/components/SEOHead";
 import Navbar from "@/components/Navbar";
+import PremiumPromoBanner from "@/components/pro/PremiumPromoBanner";
 
 const Assistant = () => {
   const { user } = useAuth();
@@ -88,7 +89,11 @@ const Assistant = () => {
               ))}
             </div>
           </ScrollArea>
+          <div className="p-3 border-t border-border">
+            <PremiumPromoBanner surface="nova" />
+          </div>
         </aside>
+
 
         {/* Chat area */}
         <div className="flex-1 flex flex-col min-w-0">

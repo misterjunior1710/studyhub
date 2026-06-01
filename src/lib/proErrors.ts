@@ -62,6 +62,21 @@ export async function handlePremiumError(
     ? `${opts?.feature ? opts.feature + " — " : ""}You've used today's free allowance. Upgrade to Pro for unlimited access.`
     : `${opts?.feature ?? "This"} is part of StudyHub Pro. Upgrade to unlock it.`;
 
+  // Fire a natural-moment dialog (throttled per 24h) for the limit case so
+  // the user gets the bigger celebratory upsell once a day, plus a toast
+  // every time so they can dismiss and keep working.
+  if (typeof window !== "undefined") {
+    try {
+      window.dispatchEvent(
+        new CustomEvent("studyhub:premium-moment", {
+          detail: isCap ? "nova_limit_reached" : "feature_locked",
+        }),
+      );
+    } catch {
+      /* ignore */
+    }
+  }
+
   toast.error(title, {
     description,
     action: {
@@ -74,3 +89,4 @@ export async function handlePremiumError(
   });
   return true;
 }
+

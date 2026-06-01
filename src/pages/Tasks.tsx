@@ -21,6 +21,7 @@ import { TasksCalendar } from "@/components/tasks/TasksCalendar";
 import { AiAssistantSheet } from "@/components/tasks/AiAssistantSheet";
 import { CATEGORY_META, type Task, type TaskCategory, type TaskStatus } from "@/lib/tasks";
 import { Link } from "react-router-dom";
+import PremiumPromoBanner from "@/components/pro/PremiumPromoBanner";
 
 const Tasks = () => {
   const { user } = useAuth();
@@ -123,6 +124,8 @@ const Tasks = () => {
           <h1 className="text-2xl sm:text-3xl font-bold">Productivity</h1>
           <p className="text-sm text-muted-foreground mt-1">Plan it, schedule it, ship it.</p>
         </div>
+
+        <PremiumPromoBanner surface="planner" className="mb-6" />
 
         {/* Dashboard cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
