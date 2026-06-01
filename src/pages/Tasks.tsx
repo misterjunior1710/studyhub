@@ -125,6 +125,8 @@ const Tasks = () => {
           <p className="text-sm text-muted-foreground mt-1">Plan it, schedule it, ship it.</p>
         </div>
 
+        <PremiumPromoBanner surface="planner" className="mb-6" />
+
         {/* Dashboard cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
           <DashCard icon={<AlertCircle className="h-4 w-4 text-red-500" />} value={buckets.overdue.length} label="Overdue" />
