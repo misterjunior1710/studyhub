@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
+import PremiumPromoBanner from "@/components/pro/PremiumPromoBanner";
 import Footer from "@/components/Footer";
 import SEOHead, { StructuredData, getBreadcrumbSchema } from "@/components/SEOHead";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
