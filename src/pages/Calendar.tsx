@@ -54,6 +54,7 @@ const Calendar = () => {
             View and join study sessions, workshops, and office hours
           </p>
         </header>
+        <PremiumPromoBanner surface="calendar" className="mb-6" />
         <div className="space-y-6 opacity-0 animate-reveal-up" style={{ animationDelay: "200ms" }}>
           {userId && (
             <>
