@@ -223,6 +223,7 @@ const App = () => (
               </BrowserRouter>
             </TooltipProvider>
           </ThemeInitializer>
+        </PremiumMomentProvider>
         </OnboardingProvider>
         </GamificationProvider>
       </AuthProvider>
