@@ -169,6 +169,9 @@ const Groups = () => {
           </div>
         </header>
 
+        <PremiumPromoBanner surface="groups" className="mb-6" />
+
+
         <Tabs defaultValue="my-groups" className="w-full">
           <TabsList className="mb-6">
             <TabsTrigger value="my-groups">My Groups</TabsTrigger>
