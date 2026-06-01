@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import EventCalendar from "@/components/calendar/EventCalendar";
 import GoogleCalendarSettings from "@/components/calendar/GoogleCalendarSettings";
+import PremiumPromoBanner from "@/components/pro/PremiumPromoBanner";
 import { Loader2 } from "lucide-react";
 
 const Calendar = () => {
