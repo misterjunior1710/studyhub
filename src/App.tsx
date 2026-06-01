@@ -16,6 +16,7 @@ import CursorHighlighter from "@/components/CursorHighlighter";
 import LevelUpDialog from "@/components/gamification/LevelUpDialog";
 import BadgeUnlockToast from "@/components/gamification/BadgeUnlockToast";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { PremiumMomentProvider } from "@/components/pro/PremiumMomentDialog";
 
 import { lazy, Suspense } from "react";
 import BottomNav from "@/components/BottomNav";
