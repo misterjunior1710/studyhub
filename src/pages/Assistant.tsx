@@ -9,6 +9,7 @@ import { useAssistantThreads } from "@/hooks/useAssistant";
 import { cn } from "@/lib/utils";
 import SEOHead from "@/components/SEOHead";
 import Navbar from "@/components/Navbar";
+import PremiumPromoBanner from "@/components/pro/PremiumPromoBanner";
 
 const Assistant = () => {
   const { user } = useAuth();
