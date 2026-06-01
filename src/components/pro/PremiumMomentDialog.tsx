@@ -96,15 +96,15 @@ export const PremiumMomentProvider = ({ children }: { children: ReactNode }) => 
 
   // Window-event bridge so non-React code can trigger a moment:
   //   window.dispatchEvent(new CustomEvent("studyhub:premium-moment", { detail: "nova_limit_reached" }))
-  useState(() => {
-    if (typeof window === "undefined") return 0;
+  useEffect(() => {
     const handler = (e: Event) => {
       const detail = (e as CustomEvent).detail as PremiumMoment | undefined;
       if (detail) trigger(detail);
     };
     window.addEventListener("studyhub:premium-moment", handler as EventListener);
-    return 0;
-  });
+    return () => window.removeEventListener("studyhub:premium-moment", handler as EventListener);
+  }, [trigger]);
+
 
   const value = useMemo(() => ({ trigger }), [trigger]);
 
