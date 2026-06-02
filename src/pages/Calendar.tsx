@@ -60,6 +60,7 @@ const Calendar = () => {
           {userId && (
             <>
               <EventCalendar ref={calendarRef} userId={userId} />
+              <SmartAcademicImport userId={userId} onImported={() => calendarRef.current?.refresh()} />
               <GoogleCalendarSettings userId={userId} onSyncComplete={() => calendarRef.current?.refresh()} />
             </>
           )}
