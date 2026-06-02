@@ -20,18 +20,38 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 
 // List of allowed email domains (popular providers + educational)
-const allowedDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "live.com", "icloud.com", "protonmail.com", "aol.com", "mail.com", "zoho.com", "edu", "ac.in", "edu.in", "ac.uk", "edu.au", "edu.sg"];
+const allowedDomains = [
+  "gmail.com",
+  "yahoo.com",
+  "outlook.com",
+  "hotmail.com",
+  "live.com",
+  "icloud.com",
+  "protonmail.com",
+  "aol.com",
+  "mail.com",
+  "zoho.com",
+  "edu",
+  "ac.in",
+  "edu.in",
+  "ac.uk",
+  "edu.au",
+  "edu.sg",
+];
 const isValidEmailDomain = (email: string): boolean => {
   const domain = email.split("@")[1]?.toLowerCase();
   if (!domain) return false;
 
   // Check if domain matches any allowed domain or ends with educational TLDs
-  return allowedDomains.some(allowed => domain === allowed || domain.endsWith(`.${allowed}`));
+  return allowedDomains.some((allowed) => domain === allowed || domain.endsWith(`.${allowed}`));
 };
 const emailSchema = z.string().email("That email doesn't look right — double-check it!").refine(isValidEmailDomain, {
-  message: "Use a real email (Gmail, Yahoo, Outlook, school email, etc.) — we need to verify it!"
+  message: "Use a real email (Gmail, Yahoo, Outlook, school email, etc.) — we need to verify it!",
 });
-const passwordSchema = z.string().min(6, "Your password needs at least 6 characters — make it strong!").max(72, "Whoa, that's too long! Keep it under 72 characters");
+const passwordSchema = z
+  .string()
+  .min(6, "Your password needs at least 6 characters — make it strong!")
+  .max(72, "Whoa, that's too long! Keep it under 72 characters");
 const Auth = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -54,14 +74,57 @@ const Auth = () => {
   const [activeTab, setActiveTab] = useState("login");
   const tabsRef = useRef<HTMLDivElement>(null);
   const { detectedCountry } = useCountryDetect();
-  const countries = ["United States", "United Kingdom", "India", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Switzerland", "Belgium", "Austria", "Other"];
+  const countries = [
+    "United States",
+    "United Kingdom",
+    "India",
+    "Canada",
+    "Australia",
+    "Germany",
+    "France",
+    "Spain",
+    "Italy",
+    "Netherlands",
+    "Sweden",
+    "Poland",
+    "Switzerland",
+    "Belgium",
+    "Austria",
+    "Other",
+  ];
   const isAdult = grade === "Adult (18+)" || grade === "Working Professional";
-  const grades = ["Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Undergraduate", "Postgraduate", "Adult (18+)", "Working Professional"];
-  const streams = isAdult 
-    ? ["Not Applicable", "Self-Learning", "Professional Development", "Other"] 
-    : country 
-      ? getStreamsForCountry(country) 
-      : ["CBSE", "IGCSE", "IB", "AP", "A-Levels", "GCSE", "State Board", "Cambridge", "Edexcel", "German Abitur", "French Baccalauréat", "Dutch VWO", "Other"];
+  const grades = [
+    "Grade 6",
+    "Grade 7",
+    "Grade 8",
+    "Grade 9",
+    "Grade 10",
+    "Grade 11",
+    "Grade 12",
+    "Undergraduate",
+    "Postgraduate",
+    "Adult (18+)",
+    "Working Professional",
+  ];
+  const streams = isAdult
+    ? ["Not Applicable", "Self-Learning", "Professional Development", "Other"]
+    : country
+      ? getStreamsForCountry(country)
+      : [
+          "CBSE",
+          "IGCSE",
+          "IB",
+          "AP",
+          "A-Levels",
+          "GCSE",
+          "State Board",
+          "Cambridge",
+          "Edexcel",
+          "German Abitur",
+          "French Baccalauréat",
+          "Dutch VWO",
+          "Other",
+        ];
   const handleGradeChange = (value: string) => {
     const isNewAdult = value === "Adult (18+)" || value === "Working Professional";
     const wasAdult = grade === "Adult (18+)" || grade === "Working Professional";
@@ -102,11 +165,7 @@ const Auth = () => {
 
   useEffect(() => {
     // Check if user is already logged in
-    supabase.auth.getSession().then(({
-      data: {
-        session
-      }
-    }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         navigate("/");
       }
@@ -134,9 +193,7 @@ const Auth = () => {
     }
     setLoading(true);
     try {
-      const {
-        error
-      } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -145,9 +202,9 @@ const Auth = () => {
             username,
             country,
             grade,
-            stream
-          }
-        }
+            stream,
+          },
+        },
       });
       if (error) throw error;
       setVerificationEmail(email);
@@ -175,11 +232,9 @@ const Auth = () => {
     }
     setLoading(true);
     try {
-      const {
-        error
-      } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
-        password
+        password,
       });
       if (error) throw error;
       toast.success("You're back! Time to hit the books 📚");
@@ -194,24 +249,24 @@ const Auth = () => {
       setLoading(false);
     }
   };
-  
+
   const handleResendVerification = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const emailResult = emailSchema.safeParse(resendEmail);
     if (!emailResult.success) {
       toast.error(emailResult.error.errors[0].message);
       return;
     }
-    
+
     setResendLoading(true);
     try {
       const { error } = await supabase.auth.resend({
-        type: 'signup',
+        type: "signup",
         email: resendEmail,
         options: {
-          emailRedirectTo: `${window.location.origin}/`
-        }
+          emailRedirectTo: `${window.location.origin}/`,
+        },
       });
       if (error) throw error;
       toast.success("Email sent! Check your inbox — and peek in spam just in case 👀");
@@ -223,7 +278,7 @@ const Auth = () => {
       setResendLoading(false);
     }
   };
-  
+
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
     const emailResult = emailSchema.safeParse(magicEmail);
@@ -275,24 +330,24 @@ const Auth = () => {
       toast.error(error.message || "Apple sign-in hit a snag. Try again?");
     }
   };
-  return <main className="min-h-screen flex flex-col">
+  return (
+    <main className="min-h-screen flex flex-col">
       <SEOHead
         title="StudyHub™ — Study Smarter, Ace Everything"
-        description="Join thousands of students. Sign up free, ask questions, join study groups, and ace your exams. No credit card needed — ever."
+        description="Join thousands of students. Sign up free, ask questions, join study groups, and ace your exams."
         canonical="https://studyhub.world/auth"
       />
-      
+
       {/* SEO Content Section */}
       <header className="sr-only">
         <h1>Sign In to StudyHub — Your Study Crew Awaits</h1>
         <p>
-          Join StudyHub — the place where students help students ace their exams. 
-          Create your free account or sign in to ask questions, join study squads, 
-          earn XP, and connect with learners worldwide. From Grade 6 to postgrad, 
+          Join StudyHub — the place where students help students ace their exams. Create your free account or sign in to
+          ask questions, join study squads, earn XP, and connect with learners worldwide. From Grades 9 to postgrad,
           we've got your back.
         </p>
       </header>
-      
+
       <div className="flex-1 grid lg:grid-cols-2 min-h-[calc(100vh-4rem)]">
         {/* Brand panel */}
         <aside className="relative hidden lg:flex flex-col justify-between overflow-hidden p-12 bg-gradient-to-br from-primary via-primary/80 to-accent text-primary-foreground">
@@ -300,7 +355,10 @@ const Auth = () => {
           <div aria-hidden="true" className="absolute -top-24 -right-24 opacity-20">
             <Sunburst className="h-[28rem] w-[28rem] animate-spin-slow" strokeWidth={1} />
           </div>
-          <div aria-hidden="true" className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-accent/40 blur-3xl" />
+          <div
+            aria-hidden="true"
+            className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-accent/40 blur-3xl"
+          />
 
           <div className="relative z-10 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/25 to-accent/25 border border-primary/10">
@@ -310,22 +368,24 @@ const Auth = () => {
           </div>
 
           <div className="relative z-10 space-y-6 max-w-md">
-            <h2 className="text-4xl xl:text-5xl font-bold leading-tight">
-              Your study crew, your AI tutor, your wins.
-            </h2>
+            <h2 className="text-4xl xl:text-5xl font-bold leading-tight">Your study crew, your AI tutor, your wins.</h2>
             <p className="text-lg text-primary-foreground/85">
               Ask questions, join Study Squads, generate notes with Nova, and ace every exam — all in one place.
             </p>
             <ul className="space-y-3 text-sm text-primary-foreground/90">
-              <li className="flex items-center gap-3"><Users className="h-5 w-5 shrink-0" /> Real students. Real answers. Verified by teachers.</li>
-              <li className="flex items-center gap-3"><Brain className="h-5 w-5 shrink-0" /> Nova AI generates notes, quizzes, and flashcards instantly.</li>
-              <li className="flex items-center gap-3"><Trophy className="h-5 w-5 shrink-0" /> Earn XP, climb leaderboards, stay motivated.</li>
+              <li className="flex items-center gap-3">
+                <Users className="h-5 w-5 shrink-0" /> Real students. Real answers. Verified by teachers.
+              </li>
+              <li className="flex items-center gap-3">
+                <Brain className="h-5 w-5 shrink-0" /> Nova AI generates notes, quizzes, and flashcards instantly.
+              </li>
+              <li className="flex items-center gap-3">
+                <Trophy className="h-5 w-5 shrink-0" /> Earn XP, climb leaderboards, stay motivated.
+              </li>
             </ul>
           </div>
 
-          <p className="relative z-10 text-xs text-primary-foreground/70">
-            Free forever for students. No credit card. Ever.
-          </p>
+          <p className="relative z-10 text-xs text-primary-foreground/70">Start studying now with StudyHub!</p>
         </aside>
 
         {/* Form panel */}
@@ -346,348 +406,447 @@ const Auth = () => {
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/25 to-accent/25 border border-primary/10 mx-auto mb-2">
                 <StudyHubLogo className="h-8 w-8" />
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">StudyHub™</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                StudyHub™
+              </h1>
               <p className="text-sm text-muted-foreground">Your study crew is waiting 📚</p>
             </div>
 
-          <Card className="animate-fade-in shadow-xl border-primary/10 bg-card/80 backdrop-blur-xl">
-            <CardHeader className="text-center hidden lg:block">
-              <CardTitle className="text-2xl font-bold">Welcome to StudyHub</CardTitle>
-              <CardDescription>Log in or create a free account to get started</CardDescription>
-            </CardHeader>
-          <CardContent>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" ref={tabsRef}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Log In</TabsTrigger>
-                <TabsTrigger value="signup">Join Free</TabsTrigger>
-            </TabsList>
+            <Card className="animate-fade-in shadow-xl border-primary/10 bg-card/80 backdrop-blur-xl">
+              <CardHeader className="text-center hidden lg:block">
+                <CardTitle className="text-2xl font-bold">Welcome to StudyHub</CardTitle>
+                <CardDescription>Log in or create a free account to get started</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" ref={tabsRef}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="login">Log In</TabsTrigger>
+                    <TabsTrigger value="signup">Join Free</TabsTrigger>
+                  </TabsList>
 
-            <TabsContent value="login">
-              <form onSubmit={handleEmailSignIn} className="space-y-4">
-                <div className="space-y-2">
-                   <Label htmlFor="login-email">Email</Label>
-                  <Input id="login-email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="next" placeholder="you@school.edu" value={email} onChange={e => setEmail(e.target.value)} required className="h-11" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
-                  <Input id="login-password" type="password" autoComplete="current-password" enterKeyHint="go" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required className="h-11" />
-                </div>
-                <p className="text-xs text-muted-foreground flex items-center gap-1.5" aria-live="polite">
-                  <span aria-hidden="true">🔒</span> Your data is private and never shared.
-                </p>
-                <Button type="submit" className="w-full btn-bounce" disabled={loading}>
-                   {loading ? <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Logging you in...
-                    </> : "Log In & Study"}
-                </Button>
+                  <TabsContent value="login">
+                    <form onSubmit={handleEmailSignIn} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="login-email">Email</Label>
+                        <Input
+                          id="login-email"
+                          type="email"
+                          inputMode="email"
+                          autoComplete="email"
+                          autoCapitalize="none"
+                          autoCorrect="off"
+                          spellCheck={false}
+                          enterKeyHint="next"
+                          placeholder="you@school.edu"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                          className="h-11"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="login-password">Password</Label>
+                        <Input
+                          id="login-password"
+                          type="password"
+                          autoComplete="current-password"
+                          enterKeyHint="go"
+                          placeholder="••••••••"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                          className="h-11"
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1.5" aria-live="polite">
+                        <span aria-hidden="true">🔒</span> Your data is private and never shared.
+                      </p>
+                      <Button type="submit" className="w-full btn-bounce" disabled={loading}>
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Logging you in...
+                          </>
+                        ) : (
+                          "Log In & Study"
+                        )}
+                      </Button>
 
-                <div className="relative my-4">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-border" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                     <span className="bg-card px-2 text-muted-foreground">or use</span>
-                  </div>
-                </div>
+                      <div className="relative my-4">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t border-border" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-card px-2 text-muted-foreground">or use</span>
+                        </div>
+                      </div>
 
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  className="w-full gap-2 btn-bounce" 
-                  onClick={handleGoogleSignIn}
-                >
-                  <svg className="h-4 w-4" viewBox="0 0 24 24">
-                    <path
-                      fill="currentColor"
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    />
-                    <path
-                      fill="currentColor"
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                    />
-                    <path
-                      fill="currentColor"
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                    />
-                    <path
-                      fill="currentColor"
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                    />
-                  </svg>
-                  Continue with Google
-                </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full gap-2 btn-bounce"
+                        onClick={handleGoogleSignIn}
+                      >
+                        <svg className="h-4 w-4" viewBox="0 0 24 24">
+                          <path
+                            fill="currentColor"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                          />
+                          <path
+                            fill="currentColor"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                          />
+                          <path
+                            fill="currentColor"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                          />
+                          <path
+                            fill="currentColor"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                          />
+                        </svg>
+                        Continue with Google
+                      </Button>
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full gap-2 btn-bounce"
-                  onClick={handleAppleSignIn}
-                >
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M16.365 1.43c0 1.14-.46 2.23-1.21 3.04-.81.87-2.13 1.55-3.21 1.46-.13-1.11.42-2.27 1.16-3.06.83-.87 2.24-1.52 3.26-1.44zM20.5 17.32c-.55 1.27-1.21 2.53-2.26 3.62-.94.97-2.06 2.06-3.51 2.06-1.41 0-1.86-.86-3.74-.86-1.88 0-2.39.84-3.74.89-1.4.05-2.46-1.05-3.42-2.02C1.91 18.99.16 14.65 2.06 11.7c.94-1.46 2.62-2.39 4.43-2.42 1.36-.03 2.65.92 3.49.92.83 0 2.4-1.13 4.04-.96.69.03 2.62.28 3.86 2.09-.1.07-2.31 1.36-2.29 4.04.03 3.21 2.81 4.27 2.91 4.31-.02.07-.45 1.55-1.49 3.13z"/>
-                  </svg>
-                  Continue with Apple
-                </Button>
-              </form>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full gap-2 btn-bounce"
+                        onClick={handleAppleSignIn}
+                      >
+                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M16.365 1.43c0 1.14-.46 2.23-1.21 3.04-.81.87-2.13 1.55-3.21 1.46-.13-1.11.42-2.27 1.16-3.06.83-.87 2.24-1.52 3.26-1.44zM20.5 17.32c-.55 1.27-1.21 2.53-2.26 3.62-.94.97-2.06 2.06-3.51 2.06-1.41 0-1.86-.86-3.74-.86-1.88 0-2.39.84-3.74.89-1.4.05-2.46-1.05-3.42-2.02C1.91 18.99.16 14.65 2.06 11.7c.94-1.46 2.62-2.39 4.43-2.42 1.36-.03 2.65.92 3.49.92.83 0 2.4-1.13 4.04-.96.69.03 2.62.28 3.86 2.09-.1.07-2.31 1.36-2.29 4.04.03 3.21 2.81 4.27 2.91 4.31-.02.07-.45 1.55-1.49 3.13z" />
+                        </svg>
+                        Continue with Apple
+                      </Button>
+                    </form>
 
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-border" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">or</span>
-                </div>
-              </div>
+                    <div className="relative my-4">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-border" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-card px-2 text-muted-foreground">or</span>
+                      </div>
+                    </div>
 
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-border" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">or magic link</span>
-                </div>
-              </div>
+                    <div className="relative my-4">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-border" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-card px-2 text-muted-foreground">or magic link</span>
+                      </div>
+                    </div>
 
-              {magicSent ? (
-                <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 text-center space-y-2 animate-fade-in">
-                  <Mail className="h-6 w-6 mx-auto text-primary" />
-                  <p className="text-sm font-medium">Check your email ✨</p>
-                  <p className="text-xs text-muted-foreground">
-                    We sent a secure sign-in link to <span className="font-medium">{magicEmail}</span>. Click it to log in — no password needed.
-                  </p>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => { setMagicSent(false); setMagicEmail(""); }}
-                  >
-                    Use a different email
-                  </Button>
-                </div>
-              ) : (
-                <form onSubmit={handleMagicLink} className="space-y-3">
-                  <p className="text-xs text-muted-foreground text-center">
-                    No password? No problem. We'll email you a secure link to sign in or sign up.
-                  </p>
-                  <Input
-                    type="email"
-                    placeholder="you@school.edu"
-                    value={magicEmail}
-                    onChange={e => setMagicEmail(e.target.value)}
-                    required
-                    aria-label="Email for magic link"
-                  />
-                  <Button type="submit" variant="outline" className="w-full gap-2" disabled={magicLoading}>
-                    {magicLoading ? (
-                      <><Loader2 className="h-4 w-4 animate-spin" /> Sending link...</>
+                    {magicSent ? (
+                      <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 text-center space-y-2 animate-fade-in">
+                        <Mail className="h-6 w-6 mx-auto text-primary" />
+                        <p className="text-sm font-medium">Check your email ✨</p>
+                        <p className="text-xs text-muted-foreground">
+                          We sent a secure sign-in link to <span className="font-medium">{magicEmail}</span>. Click it
+                          to log in — no password needed.
+                        </p>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setMagicSent(false);
+                            setMagicEmail("");
+                          }}
+                        >
+                          Use a different email
+                        </Button>
+                      </div>
                     ) : (
-                      <><Mail className="h-4 w-4" /> Email me a magic link</>
+                      <form onSubmit={handleMagicLink} className="space-y-3">
+                        <p className="text-xs text-muted-foreground text-center">
+                          No password? No problem. We'll email you a secure link to sign in or sign up.
+                        </p>
+                        <Input
+                          type="email"
+                          placeholder="you@school.edu"
+                          value={magicEmail}
+                          onChange={(e) => setMagicEmail(e.target.value)}
+                          required
+                          aria-label="Email for magic link"
+                        />
+                        <Button type="submit" variant="outline" className="w-full gap-2" disabled={magicLoading}>
+                          {magicLoading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" /> Sending link...
+                            </>
+                          ) : (
+                            <>
+                              <Mail className="h-4 w-4" /> Email me a magic link
+                            </>
+                          )}
+                        </Button>
+                      </form>
                     )}
-                  </Button>
-                </form>
-              )}
 
-              {!showResendForm ? (
-                <Button 
-                  variant="ghost" 
-                  className="w-full text-sm mt-2" 
-                  onClick={() => setShowResendForm(true)}
-                >
-                  Didn't get the verification email? Tap here
-                </Button>
-              ) : (
-                <form onSubmit={handleResendVerification} className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border animate-fade-in">
-                   <p className="text-sm text-muted-foreground">
-                    Enter your email and we'll fire off another verification link ✉️
-                  </p>
-                  <Input 
-                    type="email" 
-                    placeholder="you@example.com" 
-                    value={resendEmail} 
-                    onChange={e => setResendEmail(e.target.value)} 
-                    required 
-                  />
-                  <div className="flex gap-2">
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => {
-                        setShowResendForm(false);
-                        setResendEmail("");
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                    <Button 
-                      type="submit" 
-                      size="sm"
-                      className="flex-1"
-                      disabled={resendLoading}
-                    >
-                       {resendLoading ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        "Resend Link"
-                      )}
-                    </Button>
-                  </div>
-                </form>
-              )}
-            </TabsContent>
+                    {!showResendForm ? (
+                      <Button variant="ghost" className="w-full text-sm mt-2" onClick={() => setShowResendForm(true)}>
+                        Didn't get the verification email? Tap here
+                      </Button>
+                    ) : (
+                      <form
+                        onSubmit={handleResendVerification}
+                        className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border animate-fade-in"
+                      >
+                        <p className="text-sm text-muted-foreground">
+                          Enter your email and we'll fire off another verification link ✉️
+                        </p>
+                        <Input
+                          type="email"
+                          placeholder="you@example.com"
+                          value={resendEmail}
+                          onChange={(e) => setResendEmail(e.target.value)}
+                          required
+                        />
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setShowResendForm(false);
+                              setResendEmail("");
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                          <Button type="submit" size="sm" className="flex-1" disabled={resendLoading}>
+                            {resendLoading ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Sending...
+                              </>
+                            ) : (
+                              "Resend Link"
+                            )}
+                          </Button>
+                        </div>
+                      </form>
+                    )}
+                  </TabsContent>
 
-            <TabsContent value="signup">
-              <form onSubmit={handleEmailSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-username">Pick a Username</Label>
-                  <Input id="signup-username" type="text" autoComplete="username" enterKeyHint="next" placeholder="studyking99" value={username} onChange={e => setUsername(e.target.value)} required className="h-11" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input id="signup-email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="next" placeholder="you@school.edu" value={email} onChange={e => setEmail(e.target.value)} required className="h-11" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Create a Password</Label>
-                  <Input id="signup-password" type="password" autoComplete="new-password" enterKeyHint="next" placeholder="min 6 characters" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} className="h-11" />
-                </div>
+                  <TabsContent value="signup">
+                    <form onSubmit={handleEmailSignUp} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-username">Pick a Username</Label>
+                        <Input
+                          id="signup-username"
+                          type="text"
+                          autoComplete="username"
+                          enterKeyHint="next"
+                          placeholder="studyking99"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          required
+                          className="h-11"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-email">Email</Label>
+                        <Input
+                          id="signup-email"
+                          type="email"
+                          inputMode="email"
+                          autoComplete="email"
+                          autoCapitalize="none"
+                          autoCorrect="off"
+                          spellCheck={false}
+                          enterKeyHint="next"
+                          placeholder="you@school.edu"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                          className="h-11"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-password">Create a Password</Label>
+                        <Input
+                          id="signup-password"
+                          type="password"
+                          autoComplete="new-password"
+                          enterKeyHint="next"
+                          placeholder="min 6 characters"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                          minLength={6}
+                          className="h-11"
+                        />
+                      </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-country">Where are you?</Label>
-                    <Select value={country} onValueChange={setCountry} required>
-                      <SelectTrigger id="signup-country">
-                        <SelectValue placeholder="Select country" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {countries.map(c => <SelectItem key={c} value={c}>
-                            {c}
-                          </SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="signup-country">Where are you?</Label>
+                          <Select value={country} onValueChange={setCountry} required>
+                            <SelectTrigger id="signup-country">
+                              <SelectValue placeholder="Select country" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {countries.map((c) => (
+                                <SelectItem key={c} value={c}>
+                                  {c}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                   <div className="space-y-2">
-                    <Label htmlFor="signup-grade">What grade?</Label>
-                    <Select value={grade} onValueChange={handleGradeChange} required>
-                      <SelectTrigger id="signup-grade">
-                        <SelectValue placeholder="Select grade" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {grades.map(g => <SelectItem key={g} value={g}>
-                            {g}
-                          </SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="signup-grade">What grade?</Label>
+                          <Select value={grade} onValueChange={handleGradeChange} required>
+                            <SelectTrigger id="signup-grade">
+                              <SelectValue placeholder="Select grade" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {grades.map((g) => (
+                                <SelectItem key={g} value={g}>
+                                  {g}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
 
-                 <div className="space-y-2">
-                  <Label htmlFor="signup-stream">Curriculum / Board</Label>
-                  <Select value={stream} onValueChange={setStream} required>
-                    <SelectTrigger id="signup-stream">
-                      <SelectValue placeholder="Select stream" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {streams.map(s => <SelectItem key={s} value={s}>
-                          {s}
-                        </SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-stream">Curriculum / Board</Label>
+                        <Select value={stream} onValueChange={setStream} required>
+                          <SelectTrigger id="signup-stream">
+                            <SelectValue placeholder="Select stream" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {streams.map((s) => (
+                              <SelectItem key={s} value={s}>
+                                {s}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                <Button type="submit" className="w-full btn-bounce" disabled={loading}>
-                 {loading ? <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                       Setting things up...
-                    </> : "Join StudyHub — It's Free 🚀"}
-                </Button>
+                      <Button type="submit" className="w-full btn-bounce" disabled={loading}>
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Setting things up...
+                          </>
+                        ) : (
+                          "Join StudyHub — It starts Free 🚀"
+                        )}
+                      </Button>
 
-                <div className="relative my-4">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-border" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">or use</span>
-                  </div>
-                </div>
+                      <div className="relative my-4">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t border-border" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-card px-2 text-muted-foreground">or use</span>
+                        </div>
+                      </div>
 
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  className="w-full gap-2 btn-bounce" 
-                  onClick={handleGoogleSignIn}
-                >
-                  <svg className="h-4 w-4" viewBox="0 0 24 24">
-                    <path
-                      fill="currentColor"
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    />
-                    <path
-                      fill="currentColor"
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                    />
-                    <path
-                      fill="currentColor"
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                    />
-                    <path
-                      fill="currentColor"
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                    />
-                  </svg>
-                  Continue with Google
-                </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full gap-2 btn-bounce"
+                        onClick={handleGoogleSignIn}
+                      >
+                        <svg className="h-4 w-4" viewBox="0 0 24 24">
+                          <path
+                            fill="currentColor"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                          />
+                          <path
+                            fill="currentColor"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                          />
+                          <path
+                            fill="currentColor"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                          />
+                          <path
+                            fill="currentColor"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                          />
+                        </svg>
+                        Continue with Google
+                      </Button>
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full gap-2 btn-bounce"
-                  onClick={handleAppleSignIn}
-                >
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M16.365 1.43c0 1.14-.46 2.23-1.21 3.04-.81.87-2.13 1.55-3.21 1.46-.13-1.11.42-2.27 1.16-3.06.83-.87 2.24-1.52 3.26-1.44zM20.5 17.32c-.55 1.27-1.21 2.53-2.26 3.62-.94.97-2.06 2.06-3.51 2.06-1.41 0-1.86-.86-3.74-.86-1.88 0-2.39.84-3.74.89-1.4.05-2.46-1.05-3.42-2.02C1.91 18.99.16 14.65 2.06 11.7c.94-1.46 2.62-2.39 4.43-2.42 1.36-.03 2.65.92 3.49.92.83 0 2.4-1.13 4.04-.96.69.03 2.62.28 3.86 2.09-.1.07-2.31 1.36-2.29 4.04.03 3.21 2.81 4.27 2.91 4.31-.02.07-.45 1.55-1.49 3.13z"/>
-                  </svg>
-                  Continue with Apple
-                </Button>
-              </form>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full gap-2 btn-bounce"
+                        onClick={handleAppleSignIn}
+                      >
+                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M16.365 1.43c0 1.14-.46 2.23-1.21 3.04-.81.87-2.13 1.55-3.21 1.46-.13-1.11.42-2.27 1.16-3.06.83-.87 2.24-1.52 3.26-1.44zM20.5 17.32c-.55 1.27-1.21 2.53-2.26 3.62-.94.97-2.06 2.06-3.51 2.06-1.41 0-1.86-.86-3.74-.86-1.88 0-2.39.84-3.74.89-1.4.05-2.46-1.05-3.42-2.02C1.91 18.99.16 14.65 2.06 11.7c.94-1.46 2.62-2.39 4.43-2.42 1.36-.03 2.65.92 3.49.92.83 0 2.4-1.13 4.04-.96.69.03 2.62.28 3.86 2.09-.1.07-2.31 1.36-2.29 4.04.03 3.21 2.81 4.27 2.91 4.31-.02.07-.45 1.55-1.49 3.13z" />
+                        </svg>
+                        Continue with Apple
+                      </Button>
+                    </form>
 
-              <p className="text-center text-xs text-muted-foreground mt-4">
-                By joining, you agree to our{" "}
-                <Link to="/terms" className="text-primary hover:underline">Terms</Link>
-                {" "}&{" "}
-                <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
+                    <p className="text-center text-xs text-muted-foreground mt-4">
+                      By joining, you agree to our{" "}
+                      <Link to="/terms" className="text-primary hover:underline">
+                        Terms
+                      </Link>{" "}
+                      &{" "}
+                      <Link to="/privacy" className="text-primary hover:underline">
+                        Privacy Policy
+                      </Link>
+                      .
+                    </p>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+
+            {/* Additional SEO content below card */}
+            <aside className="mt-6 text-center text-sm text-muted-foreground">
+              <p className="mb-3">
+                Curious?{" "}
+                <Link to="/" className="text-primary hover:underline font-medium">
+                  See what students are asking
+                </Link>{" "}
+                or explore our{" "}
+                <Link to="/content-generator" className="text-primary hover:underline font-medium">
+                  AI study tools
+                </Link>
+                .
               </p>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
-        
-          {/* Additional SEO content below card */}
-          <aside className="mt-6 text-center text-sm text-muted-foreground">
-            <p className="mb-3">
-              Curious? <Link to="/" className="text-primary hover:underline font-medium">See what students are asking</Link> or explore our <Link to="/content-generator" className="text-primary hover:underline font-medium">AI study tools</Link>.
-            </p>
-            <p>
-              Need help? Visit our <Link to="/support" className="text-primary hover:underline">Support page</Link>.
-            </p>
-          </aside>
-        </article>
+              <p>
+                Need help? Visit our{" "}
+                <Link to="/support" className="text-primary hover:underline">
+                  Support page
+                </Link>
+                .
+              </p>
+            </aside>
+          </article>
         </section>
       </div>
       <Footer />
-      <AgeVerificationDialog open={showAgeVerification} onConfirm={handleAgeVerificationConfirm} onCancel={handleAgeVerificationCancel} />
-      <EmailVerificationDialog 
-        open={showEmailVerification} 
-        email={verificationEmail} 
+      <AgeVerificationDialog
+        open={showAgeVerification}
+        onConfirm={handleAgeVerificationConfirm}
+        onCancel={handleAgeVerificationCancel}
+      />
+      <EmailVerificationDialog
+        open={showEmailVerification}
+        email={verificationEmail}
         onGoToLogin={() => {
           setShowEmailVerification(false);
           setActiveTab("login");
-        }} 
+        }}
       />
-    </main>;
+    </main>
+  );
 };
 export default Auth;
