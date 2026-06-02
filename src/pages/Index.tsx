@@ -204,8 +204,8 @@ const Index = () => {
             </div>
             <p className="mt-3 text-center text-xs sm:text-sm text-muted-foreground">Freemium · Students 13+</p>
             <p className="mt-3 text-center text-sm text-muted-foreground max-w-xl mx-auto">
-              Unlike Chegg, answers aren't locked behind a paywall. Unlike Reddit, it's students only. Unlike a chatbot,
-              real people explain the why.
+              Get help from students who understand your curriculum. Learn the reasoning behind answers, not just the
+              final result.
             </p>
           </HeroGeometric>
         </header>
