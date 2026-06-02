@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import EventCalendar from "@/components/calendar/EventCalendar";
 import GoogleCalendarSettings from "@/components/calendar/GoogleCalendarSettings";
+import SmartAcademicImport from "@/components/calendar/SmartAcademicImport";
 import PremiumPromoBanner from "@/components/pro/PremiumPromoBanner";
 import { Loader2 } from "lucide-react";
 
@@ -59,6 +60,7 @@ const Calendar = () => {
           {userId && (
             <>
               <EventCalendar ref={calendarRef} userId={userId} />
+              <SmartAcademicImport userId={userId} onImported={() => calendarRef.current?.refresh()} />
               <GoogleCalendarSettings userId={userId} onSyncComplete={() => calendarRef.current?.refresh()} />
             </>
           )}
