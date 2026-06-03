@@ -32,6 +32,7 @@ const skipHeavyBg = shouldSkipHeavyVisuals();
 // Eager load critical pages
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import ProfileOnboarding from "./pages/ProfileOnboarding";
 import ProfileOnboardingGuard from "@/components/ProfileOnboardingGuard";
 
@@ -166,6 +167,7 @@ const App = () => (
                           <Route path="/" element={<Index />} />
                           <Route path="/feed" element={<Feed />} />
                           <Route path="/auth" element={<Auth />} />
+                          <Route path="/reset-password" element={<ResetPassword />} />
                           <Route path="/profile-onboarding" element={<ProfileOnboarding />} />
                           <Route path="/post/:id" element={<Post />} />
                         <Route path="/questions" element={<Questions />} />
