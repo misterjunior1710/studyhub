@@ -48,16 +48,19 @@ Deno.serve(async (req) => {
 
     await supabase.from("academic_imports").update({ status: "processing" }).eq("id", importId);
 
-    // Download file
-    const { data: fileData, error: dlErr } = await supabase.storage
+    // Download file using service role (we've already verified ownership above)
+    const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const { data: fileData, error: dlErr } = await adminClient.storage
       .from("academic-imports").download(filePath);
     if (dlErr || !fileData) {
-      await supabase.from("academic_imports").update({ status: "failed", error: "Could not read file" }).eq("id", importId);
-      return json({ error: "Could not read file" }, 500);
+      const msg = dlErr?.message ? `Could not read file: ${dlErr.message}` : "Could not read file";
+      console.error("Storage download failed", { filePath, dlErr });
+      await supabase.from("academic_imports").update({ status: "failed", error: msg }).eq("id", importId);
+      return json({ error: msg }, 500);
     }
 
     const arrayBuf = await fileData.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuf)));
+    const base64 = bytesToBase64(new Uint8Array(arrayBuf));
     const mime = imp.mime_type || fileData.type || "application/octet-stream";
     const dataUrl = `data:${mime};base64,${base64}`;
 
