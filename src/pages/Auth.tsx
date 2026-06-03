@@ -467,6 +467,9 @@ const Auth = () => {
                           Forgot Password?
                         </button>
                       </div>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1.5" aria-live="polite">
+                        <span aria-hidden="true">🔒</span> Your data is private and never shared.
+                      </p>
                       <Button type="submit" className="w-full btn-bounce" disabled={loading}>
                         {loading ? (
                           <>
