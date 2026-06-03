@@ -9,6 +9,16 @@ const corsHeaders = {
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = "";
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
 
 const SYSTEM_PROMPT = `You are an academic schedule parser. Extract every class, exam, assignment deadline, and event from the provided file.
 For each event return: title, type (one of: class, exam, assignment, event), date (YYYY-MM-DD), start_time (HH:MM 24h, optional), end_time (HH:MM 24h, optional), location (optional), description (optional).
