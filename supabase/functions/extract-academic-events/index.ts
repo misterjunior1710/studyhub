@@ -9,6 +9,16 @@ const corsHeaders = {
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = "";
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
 
 const SYSTEM_PROMPT = `You are an academic schedule parser. Extract every class, exam, assignment deadline, and event from the provided file.
 For each event return: title, type (one of: class, exam, assignment, event), date (YYYY-MM-DD), start_time (HH:MM 24h, optional), end_time (HH:MM 24h, optional), location (optional), description (optional).
@@ -38,16 +48,19 @@ Deno.serve(async (req) => {
 
     await supabase.from("academic_imports").update({ status: "processing" }).eq("id", importId);
 
-    // Download file
-    const { data: fileData, error: dlErr } = await supabase.storage
+    // Download file using service role (we've already verified ownership above)
+    const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const { data: fileData, error: dlErr } = await adminClient.storage
       .from("academic-imports").download(filePath);
     if (dlErr || !fileData) {
-      await supabase.from("academic_imports").update({ status: "failed", error: "Could not read file" }).eq("id", importId);
-      return json({ error: "Could not read file" }, 500);
+      const msg = dlErr?.message ? `Could not read file: ${dlErr.message}` : "Could not read file";
+      console.error("Storage download failed", { filePath, dlErr });
+      await supabase.from("academic_imports").update({ status: "failed", error: msg }).eq("id", importId);
+      return json({ error: msg }, 500);
     }
 
     const arrayBuf = await fileData.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuf)));
+    const base64 = bytesToBase64(new Uint8Array(arrayBuf));
     const mime = imp.mime_type || fileData.type || "application/octet-stream";
     const dataUrl = `data:${mime};base64,${base64}`;
 
