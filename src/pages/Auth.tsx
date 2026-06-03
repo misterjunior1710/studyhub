@@ -458,9 +458,15 @@ const Auth = () => {
                           className="h-11"
                         />
                       </div>
-                      <p className="text-xs text-muted-foreground flex items-center gap-1.5" aria-live="polite">
-                        <span aria-hidden="true">🔒</span> Your data is private and never shared.
-                      </p>
+                      <div className="flex items-center justify-end">
+                        <button
+                          type="button"
+                          onClick={() => navigate("/reset-password")}
+                          className="text-xs text-primary hover:text-primary/80 hover:underline transition-colors"
+                        >
+                          Forgot Password?
+                        </button>
+                      </div>
                       <Button type="submit" className="w-full btn-bounce" disabled={loading}>
                         {loading ? (
                           <>
