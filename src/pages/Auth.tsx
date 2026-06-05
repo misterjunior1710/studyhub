@@ -198,7 +198,7 @@ const Auth = () => {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/feed`,
           data: {
             username,
             country,
@@ -267,7 +267,7 @@ const Auth = () => {
         type: "signup",
         email: resendEmail,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/feed`,
         },
       });
       if (error) throw error;
@@ -293,7 +293,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOtp({
         email: magicEmail,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/feed`,
           shouldCreateUser: true,
         },
       });
