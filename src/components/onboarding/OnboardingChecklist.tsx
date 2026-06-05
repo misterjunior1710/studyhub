@@ -100,6 +100,11 @@ const OnboardingChecklist = () => {
 
   const taskActions: Record<string, () => void> = {
     profile: () => navigate("/settings"),
+    customize: () => {
+      try { localStorage.setItem("studyhub_visited_settings", "true"); } catch {}
+      completeTask("customize");
+      navigate("/settings");
+    },
     browse: () => {
       try { localStorage.setItem("studyhub_browsed_feed", "true"); } catch {}
       completeTask("browse");
@@ -114,6 +119,7 @@ const OnboardingChecklist = () => {
       }, 50);
     },
   };
+
 
   // Use absolute positioning when user has moved it; otherwise default top-right.
   const positionedStyle: React.CSSProperties = pos

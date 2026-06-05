@@ -270,41 +270,8 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Interactive 3D Showcase */}
-        <section ref={showcaseRef} className="py-20">
-          <div className="container mx-auto px-4 max-w-6xl">
-            <Card
-              className={`w-full h-[500px] bg-black/[0.96] relative overflow-hidden border-border/40 transition-all duration-500 ease-out ${showcaseVisible ? "animate-soft-in" : "opacity-0"}`}
-            >
-              <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="hsl(var(--primary))" />
-              <div className="flex flex-col md:flex-row h-full">
-                <div className="flex-1 p-8 sm:p-10 relative z-10 flex flex-col justify-center">
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
-                    Stuck on a question? Post it.
-                  </h2>
-                  <p className="mt-4 text-white/70 max-w-md text-sm sm:text-base">
-                    Snap a photo, type it out, or post the problem. Students from your grade jump in with worked-out
-                    answers — usually in no time!
-                  </p>
-                  <p className="mt-6 text-white/60 text-sm">
-                    Most homework questions get a first answer from a few minutes to days — from students across 16+
-                    countries 🌍
-                  </p>
-                </div>
-                <div className="hidden md:block flex-1 relative min-h-[280px]">
-                  {!isMobile && !skipHeavy3D && (
-                    <Suspense fallback={<div className="w-full h-full" aria-hidden />}>
-                      <SplineScene
-                        scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                        className="w-full h-full"
-                      />
-                    </Suspense>
-                  )}
-                </div>
-              </div>
-            </Card>
-          </div>
-        </section>
+
+
 
         {/* What is StudyHub Section */}
         <section ref={featuresRef} className="py-20">
@@ -384,48 +351,8 @@ const Index = () => {
           </div>
         </section>
 
-        {/* How It Works Section */}
-        <section ref={stepsRef} className="py-20">
-          <div className="container mx-auto px-4 max-w-3xl">
-            <div className="text-center mb-12">
-              <h2
-                className={`text-2xl sm:text-3xl font-bold mb-4 ${stepsVisible ? "opacity-0 animate-hero-fade-up" : "opacity-0"}`}
-              >
-                From "I'm stuck" to " I got it" in 3 steps
-              </h2>
-            </div>
 
-            <div className="space-y-6">
-              {[
-                {
-                  step: "1",
-                  text: "Post your homework question — type it, paste it, or snap a photo. Takes 30 seconds.",
-                },
-                {
-                  step: "2",
-                  text: "Colaborate with students studying the same subject who jump in with worked-out answers, within minutes to hours.",
-                },
-                {
-                  step: "3",
-                  text: "Mark the answer that helped, save it, and turn it into flashcards, mind maps, quizes, and more; so that it sticks for the exam 🚀",
-                },
-              ].map((item, index) => (
-                <div
-                  key={item.step}
-                  className={`flex items-start gap-4 ${stepsVisible ? "opacity-0 animate-reveal-up" : "opacity-0"}`}
-                  style={{ animationDelay: `${100 + index * 100}ms` }}
-                >
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center transition-transform duration-200 hover:scale-110">
-                    <CheckCircle2 className="h-5 w-5 text-white" />
-                  </div>
-                  <div className="pt-2">
-                    <p className="text-foreground">{item.text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+
         {/* Testimonials Section */}
         <section ref={testimonialsRef} className="py-20">
           <div className="container mx-auto px-4 max-w-4xl">

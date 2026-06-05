@@ -200,8 +200,10 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
                     type="button"
                     onClick={() => navigate("/feed")}
                     className={cn(
-                      "inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
-                      isActive("/feed") && "text-primary bg-accent/40",
+                      "inline-flex h-9 items-center gap-1.5 rounded-md px-3.5 text-sm font-semibold transition-all border",
+                      isActive("/feed")
+                        ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                        : "border-border/60 bg-card/40 hover:bg-accent hover:text-accent-foreground hover:border-primary/40",
                     )}
                   >
                     <Rss className="h-4 w-4" />
@@ -213,14 +215,17 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
                     type="button"
                     onClick={() => navigate("/questions")}
                     className={cn(
-                      "inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
-                      isActive("/questions") && "text-primary bg-accent/40",
+                      "inline-flex h-9 items-center gap-1.5 rounded-md px-3.5 text-sm font-semibold transition-all border",
+                      isActive("/questions")
+                        ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                        : "border-border/60 bg-card/40 hover:bg-accent hover:text-accent-foreground hover:border-primary/40",
                     )}
                   >
                     <HelpCircle className="h-4 w-4" />
                     Questions
                   </button>
                 </NavigationMenuItem>
+
                 {renderMegaMenu("Study", studyLinks)}
                 {renderMegaMenu("Plan", planLinks)}
                 {renderMegaMenu("Community", communityLinks)}

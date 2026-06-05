@@ -167,10 +167,11 @@ const Auth = () => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate("/");
+        navigate("/feed");
       }
     });
   }, [navigate]);
+
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!country || !grade || !stream) {
@@ -197,7 +198,7 @@ const Auth = () => {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/feed`,
           data: {
             username,
             country,
@@ -238,7 +239,8 @@ const Auth = () => {
       });
       if (error) throw error;
       toast.success("You're back! Time to hit the books 📚");
-      navigate("/");
+      navigate("/feed");
+
     } catch (error: any) {
       if (error.message?.includes("Email not confirmed")) {
         toast.error("You haven't verified your email yet! Check your inbox for the confirmation link.");
@@ -265,7 +267,7 @@ const Auth = () => {
         type: "signup",
         email: resendEmail,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/feed`,
         },
       });
       if (error) throw error;
@@ -291,7 +293,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOtp({
         email: magicEmail,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/feed`,
           shouldCreateUser: true,
         },
       });
@@ -308,11 +310,11 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: `${window.location.origin}/feed`,
       });
       if (result.error) throw result.error;
       if (result.redirected) return;
-      navigate("/");
+      navigate("/feed");
     } catch (error: any) {
       toast.error(error.message || "Google sign-in hit a snag. Try again?");
     }
@@ -321,15 +323,16 @@ const Auth = () => {
   const handleAppleSignIn = async () => {
     try {
       const result = await lovable.auth.signInWithOAuth("apple", {
-        redirect_uri: window.location.origin,
+        redirect_uri: `${window.location.origin}/feed`,
       });
       if (result.error) throw result.error;
       if (result.redirected) return;
-      navigate("/");
+      navigate("/feed");
     } catch (error: any) {
       toast.error(error.message || "Apple sign-in hit a snag. Try again?");
     }
   };
+
   return (
     <main className="min-h-screen flex flex-col">
       <SEOHead

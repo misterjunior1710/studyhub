@@ -25,11 +25,13 @@ const OnboardingContext = createContext<OnboardingContextType | null>(null);
 
 const ONBOARDING_TASKS: Omit<OnboardingTask, "completed">[] = [
   { id: "profile", label: "Complete your profile" },
+  { id: "customize", label: "Customize your experience in Settings" },
   { id: "browse", label: "Browse the study feed" },
   { id: "group", label: "Join or create a study group" },
   { id: "friend", label: "Add a friend" },
   { id: "post", label: "Create your first post" },
 ];
+
 
 export function OnboardingProvider({ children }: { children: ReactNode }) {
   const { user, profileData, username } = useAuth();
@@ -84,6 +86,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
       ]);
 
       const profileComplete = !!(username && profileData.country && profileData.grade && profileData.stream);
+      const customized = completedTaskIds.includes("customize") || localStorage.getItem("studyhub_visited_settings") === "true";
       const browsedFeed = completedTaskIds.includes("browse") || localStorage.getItem("studyhub_browsed_feed") === "true";
       const joinedGroup = (groupMember.count || 0) > 0;
       const addedFriend = (hasFriend.count || 0) > 0;
@@ -91,11 +94,13 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
       const updatedTasks: OnboardingTask[] = [
         { id: "profile", label: "Complete your profile", completed: profileComplete },
+        { id: "customize", label: "Customize your experience in Settings", completed: customized },
         { id: "browse", label: "Browse the study feed", completed: browsedFeed },
         { id: "group", label: "Join or create a study group", completed: joinedGroup },
         { id: "friend", label: "Add a friend", completed: addedFriend },
         { id: "post", label: "Create your first post", completed: createdPost },
       ];
+
 
       setTasks(updatedTasks);
 
@@ -177,10 +182,14 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         return updated;
       });
 
-      // Special handling for browse task
+      // Special handling for browse / customize tasks
       if (taskId === "browse") {
         localStorage.setItem("studyhub_browsed_feed", "true");
       }
+      if (taskId === "customize") {
+        localStorage.setItem("studyhub_visited_settings", "true");
+      }
+
     },
     [user, isOnboardingComplete]
   );
