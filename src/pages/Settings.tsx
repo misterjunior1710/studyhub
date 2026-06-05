@@ -44,6 +44,8 @@ import AdminModerationPanel from "@/components/AdminModerationPanel";
 import BanAppealDialog from "@/components/BanAppealDialog";
 import { applyThemeColor } from "@/hooks/useThemePersistence";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useOnboarding } from "@/contexts/OnboardingContext";
+
 
 interface ProfileData {
   username: string;
@@ -98,6 +100,14 @@ const themeColors = [...premiumThemes, ...calmThemes];
 const Settings = () => {
   const navigate = useNavigate();
   const { isPro } = useSubscription();
+  const { completeTask, isOnboardingComplete } = useOnboarding();
+
+  useEffect(() => {
+    if (isOnboardingComplete) return;
+    try { localStorage.setItem("studyhub_visited_settings", "true"); } catch {}
+    completeTask("customize");
+  }, [isOnboardingComplete, completeTask]);
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
