@@ -335,10 +335,27 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
             <div className="space-y-2">
               <Upload className="h-8 w-8 mx-auto text-muted-foreground" aria-hidden="true" />
               <p className="text-sm font-medium">Drop a file here, or click to browse</p>
-              <p className="text-xs text-muted-foreground">PDF, PNG, JPG, JPEG, WEBP · up to 15MB</p>
+              <p className="text-xs text-muted-foreground">
+                {isPro ? "PDF, PNG, JPG, JPEG, WEBP · up to 15MB" : "PDF · up to 15MB"}
+              </p>
             </div>
           )}
         </div>
+
+        {!isPro && (
+          <div className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs">
+            <Crown className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="flex-1">
+              <p className="font-medium">Image uploads are a Pro feature</p>
+              <p className="text-muted-foreground">
+                Free accounts can import PDFs. Upgrade to scan photos of timetables, posters, and screenshots.
+              </p>
+            </div>
+            <Button asChild size="sm" variant="outline" className="shrink-0">
+              <Link to="/pricing">Upgrade</Link>
+            </Button>
+          </div>
+        )}
 
         <div className="pt-2">
           <div className="flex items-center gap-2 mb-2">
