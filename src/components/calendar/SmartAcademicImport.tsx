@@ -493,8 +493,32 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
                     onChange={(e) => updateEvent(i, { description: e.target.value })}
                     placeholder="Notes (optional)"
                   />
+                  {(issues.length > 0 || isDup) && (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {isDup && (
+                        <Badge variant="outline" className="text-[10px] gap-1 border-amber-500/50 text-amber-600 dark:text-amber-400">
+                          <AlertTriangle className="h-3 w-3" /> Possible duplicate
+                        </Badge>
+                      )}
+                      {issues.map((iss, k) => (
+                        <Badge
+                          key={k}
+                          variant="outline"
+                          className={cn(
+                            "text-[10px] gap-1",
+                            iss.level === "error"
+                              ? "border-destructive/60 text-destructive"
+                              : "border-amber-500/50 text-amber-600 dark:text-amber-400",
+                          )}
+                        >
+                          <AlertTriangle className="h-3 w-3" /> {iss.message}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              ))
+                );
+              })
             )}
           </div>
 
