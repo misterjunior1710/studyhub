@@ -82,6 +82,7 @@ interface Props {
 }
 
 const SmartAcademicImport = ({ userId, onImported }: Props) => {
+  const { isPro } = useSubscription();
   const [dragging, setDragging] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [phase, setPhase] = useState<"idle" | "uploading" | "processing">("idle");
@@ -92,6 +93,8 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
   const [history, setHistory] = useState<ImportRow[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const accepted = isPro ? ACCEPTED_PRO : ACCEPTED_FREE;
 
   const loadHistory = useCallback(async () => {
     setLoadingHistory(true);
@@ -111,8 +114,13 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
     const file = Array.from(files)[0];
     if (!file) return;
     if (file.size > MAX_BYTES) { toast.error("File exceeds 15MB"); return; }
-    const ok = /\.(pdf|png|jpe?g|webp)$/i.test(file.name);
-    if (!ok) { toast.error("Only PDF, PNG, JPG, JPEG, WEBP are supported"); return; }
+    const isImage = IMAGE_RE.test(file.name);
+    const isPdf = PDF_RE.test(file.name);
+    if (!isImage && !isPdf) { toast.error("Only PDF, PNG, JPG, JPEG, WEBP are supported"); return; }
+    if (isImage && !isPro) {
+      toast.error("Image uploads are a Pro feature — upload a PDF or upgrade to Pro.");
+      return;
+    }
 
     setPhase("uploading");
     setUploadProgress(10);
