@@ -431,7 +431,31 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
             })}
           </div>
 
+          {events.length > 0 && (errorCount > 0 || warningCount > 0) && (
+            <div className={cn(
+              "flex items-start gap-2 rounded-md border px-3 py-2 text-xs",
+              errorCount > 0
+                ? "border-destructive/40 bg-destructive/10 text-destructive"
+                : "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-400",
+            )}>
+              <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" aria-hidden="true" />
+              <div>
+                <p className="font-medium">
+                  {errorCount > 0
+                    ? `${errorCount} event${errorCount > 1 ? "s" : ""} need${errorCount === 1 ? "s" : ""} attention`
+                    : `${warningCount} warning${warningCount > 1 ? "s" : ""}`}
+                </p>
+                <p className="opacity-80">
+                  {errorCount > 0
+                    ? "Fix the highlighted issues below before importing."
+                    : "You can import, but please review the highlighted entries."}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="space-y-3 max-h-[55vh] overflow-y-auto pr-1">
+
             {events.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-6">
                 No events. Add one manually or close and try a clearer file.
