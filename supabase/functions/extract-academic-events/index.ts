@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { isPro } from "../_shared/pro.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -45,6 +46,23 @@ Deno.serve(async (req) => {
     const { data: imp, error: impErr } = await supabase
       .from("academic_imports").select("*").eq("id", importId).eq("user_id", user.id).single();
     if (impErr || !imp) return json({ error: "Import not found" }, 404);
+
+    // Pro gate: image uploads are Pro-only. PDFs are allowed for all users.
+    const incomingMime = (imp.mime_type || "").toLowerCase();
+    if (incomingMime.startsWith("image/")) {
+      const pro = await isPro(user.id);
+      if (!pro) {
+        await supabase.from("academic_imports")
+          .update({ status: "failed", error: "Image uploads require Pro" })
+          .eq("id", importId);
+        return json({
+          error: "pro_required",
+          code: "pro_required",
+          message: "Image scanning is a Pro feature. Upload a PDF or upgrade to Pro.",
+          upgrade_url: "/pricing",
+        }, 402);
+      }
+    }
 
     await supabase.from("academic_imports").update({ status: "processing" }).eq("id", importId);
 

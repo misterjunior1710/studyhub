@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,10 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   Upload, FileText, Loader2, Sparkles, Trash2, Plus, Check, X,
   Calendar as CalendarIcon, BookOpen, ClipboardList, GraduationCap, History,
+  AlertTriangle, Crown,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useSubscription } from "@/hooks/useSubscription";
 
 type EventType = "class" | "exam" | "assignment" | "event";
 
@@ -37,8 +40,34 @@ interface ImportRow {
   error: string | null;
 }
 
-const ACCEPTED = ".pdf,.png,.jpg,.jpeg,.webp";
+const ACCEPTED_PRO = ".pdf,.png,.jpg,.jpeg,.webp";
+const ACCEPTED_FREE = ".pdf";
 const MAX_BYTES = 15 * 1024 * 1024;
+const IMAGE_RE = /\.(png|jpe?g|webp)$/i;
+const PDF_RE = /\.pdf$/i;
+
+type EventIssue = { level: "error" | "warning"; message: string };
+
+const validateEvent = (e: ExtractedEvent): EventIssue[] => {
+  const issues: EventIssue[] = [];
+  if (!e.title?.trim()) issues.push({ level: "error", message: "Title is required" });
+  if (!e.date) issues.push({ level: "error", message: "Date is required" });
+  else if (isNaN(new Date(e.date).getTime())) issues.push({ level: "error", message: "Invalid date" });
+  if (e.start_time && !/^\d{2}:\d{2}$/.test(e.start_time)) issues.push({ level: "error", message: "Start time must be HH:MM" });
+  if (e.end_time && !/^\d{2}:\d{2}$/.test(e.end_time)) issues.push({ level: "error", message: "End time must be HH:MM" });
+  if (e.start_time && e.end_time && e.end_time <= e.start_time) {
+    issues.push({ level: "error", message: "End time must be after start" });
+  }
+  if (e.date && !isNaN(new Date(e.date).getTime())) {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const d = new Date(e.date);
+    if (d < today) issues.push({ level: "warning", message: "Date is in the past" });
+  }
+  if ((e.type === "class" || e.type === "event") && !e.start_time) {
+    issues.push({ level: "warning", message: "No start time set — will default to 09:00" });
+  }
+  return issues;
+};
 
 const TYPE_META: Record<EventType, { label: string; icon: any; color: string }> = {
   class:      { label: "Class",      icon: BookOpen,       color: "bg-blue-500/15 text-blue-500" },
@@ -53,6 +82,7 @@ interface Props {
 }
 
 const SmartAcademicImport = ({ userId, onImported }: Props) => {
+  const { isPro } = useSubscription();
   const [dragging, setDragging] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [phase, setPhase] = useState<"idle" | "uploading" | "processing">("idle");
@@ -63,6 +93,8 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
   const [history, setHistory] = useState<ImportRow[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const accepted = isPro ? ACCEPTED_PRO : ACCEPTED_FREE;
 
   const loadHistory = useCallback(async () => {
     setLoadingHistory(true);
@@ -82,8 +114,13 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
     const file = Array.from(files)[0];
     if (!file) return;
     if (file.size > MAX_BYTES) { toast.error("File exceeds 15MB"); return; }
-    const ok = /\.(pdf|png|jpe?g|webp)$/i.test(file.name);
-    if (!ok) { toast.error("Only PDF, PNG, JPG, JPEG, WEBP are supported"); return; }
+    const isImage = IMAGE_RE.test(file.name);
+    const isPdf = PDF_RE.test(file.name);
+    if (!isImage && !isPdf) { toast.error("Only PDF, PNG, JPG, JPEG, WEBP are supported"); return; }
+    if (isImage && !isPro) {
+      toast.error("Image uploads are a Pro feature — upload a PDF or upgrade to Pro.");
+      return;
+    }
 
     setPhase("uploading");
     setUploadProgress(10);
@@ -166,6 +203,21 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
     title: "", type: "class", date: format(new Date(), "yyyy-MM-dd"),
     start_time: "", end_time: "", location: "", description: "",
   }]);
+
+  const validations = useMemo(() => events.map(validateEvent), [events]);
+  const dupIndexes = useMemo(() => {
+    const seen = new Map<string, number>();
+    const dups = new Set<number>();
+    events.forEach((e, i) => {
+      const key = `${e.title.trim().toLowerCase()}|${e.date}|${e.start_time || ""}`;
+      if (!e.title.trim() || !e.date) return;
+      if (seen.has(key)) { dups.add(i); dups.add(seen.get(key)!); }
+      else seen.set(key, i);
+    });
+    return dups;
+  }, [events]);
+  const errorCount = validations.filter((v) => v.some((i) => i.level === "error")).length;
+  const warningCount = validations.filter((v) => v.some((i) => i.level === "warning")).length + dupIndexes.size;
 
   const counts = {
     class: events.filter((e) => e.type === "class").length,
@@ -278,7 +330,7 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
           <input
             ref={inputRef}
             type="file"
-            accept={ACCEPTED}
+            accept={accepted}
             className="hidden"
             onChange={(e) => e.target.files && handleFiles(e.target.files)}
           />
@@ -298,10 +350,27 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
             <div className="space-y-2">
               <Upload className="h-8 w-8 mx-auto text-muted-foreground" aria-hidden="true" />
               <p className="text-sm font-medium">Drop a file here, or click to browse</p>
-              <p className="text-xs text-muted-foreground">PDF, PNG, JPG, JPEG, WEBP · up to 15MB</p>
+              <p className="text-xs text-muted-foreground">
+                {isPro ? "PDF, PNG, JPG, JPEG, WEBP · up to 15MB" : "PDF · up to 15MB"}
+              </p>
             </div>
           )}
         </div>
+
+        {!isPro && (
+          <div className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs">
+            <Crown className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="flex-1">
+              <p className="font-medium">Image uploads are a Pro feature</p>
+              <p className="text-muted-foreground">
+                Free accounts can import PDFs. Upgrade to scan photos of timetables, posters, and screenshots.
+              </p>
+            </div>
+            <Button asChild size="sm" variant="outline" className="shrink-0">
+              <Link to="/pricing">Upgrade</Link>
+            </Button>
+          </div>
+        )}
 
         <div className="pt-2">
           <div className="flex items-center gap-2 mb-2">
@@ -362,14 +431,46 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
             })}
           </div>
 
+          {events.length > 0 && (errorCount > 0 || warningCount > 0) && (
+            <div className={cn(
+              "flex items-start gap-2 rounded-md border px-3 py-2 text-xs",
+              errorCount > 0
+                ? "border-destructive/40 bg-destructive/10 text-destructive"
+                : "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-400",
+            )}>
+              <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" aria-hidden="true" />
+              <div>
+                <p className="font-medium">
+                  {errorCount > 0
+                    ? `${errorCount} event${errorCount > 1 ? "s" : ""} need${errorCount === 1 ? "s" : ""} attention`
+                    : `${warningCount} warning${warningCount > 1 ? "s" : ""}`}
+                </p>
+                <p className="opacity-80">
+                  {errorCount > 0
+                    ? "Fix the highlighted issues below before importing."
+                    : "You can import, but please review the highlighted entries."}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="space-y-3 max-h-[55vh] overflow-y-auto pr-1">
+
             {events.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-6">
                 No events. Add one manually or close and try a clearer file.
               </p>
             ) : (
-              events.map((ev, i) => (
-                <div key={i} className="rounded-md border p-3 space-y-2 bg-card">
+              events.map((ev, i) => {
+                const issues = validations[i] || [];
+                const isDup = dupIndexes.has(i);
+                const hasError = issues.some((x) => x.level === "error");
+                return (
+                <div key={i} className={cn(
+                  "rounded-md border p-3 space-y-2 bg-card",
+                  hasError && "border-destructive/60",
+                  !hasError && (issues.length > 0 || isDup) && "border-amber-500/60",
+                )}>
                   <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
                     <Input
                       value={ev.title}
@@ -416,8 +517,32 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
                     onChange={(e) => updateEvent(i, { description: e.target.value })}
                     placeholder="Notes (optional)"
                   />
+                  {(issues.length > 0 || isDup) && (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {isDup && (
+                        <Badge variant="outline" className="text-[10px] gap-1 border-amber-500/50 text-amber-600 dark:text-amber-400">
+                          <AlertTriangle className="h-3 w-3" /> Possible duplicate
+                        </Badge>
+                      )}
+                      {issues.map((iss, k) => (
+                        <Badge
+                          key={k}
+                          variant="outline"
+                          className={cn(
+                            "text-[10px] gap-1",
+                            iss.level === "error"
+                              ? "border-destructive/60 text-destructive"
+                              : "border-amber-500/50 text-amber-600 dark:text-amber-400",
+                          )}
+                        >
+                          <AlertTriangle className="h-3 w-3" /> {iss.message}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              ))
+                );
+              })
             )}
           </div>
 
@@ -429,7 +554,11 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
               <Button variant="ghost" onClick={() => setReviewOpen(false)} disabled={importing}>
                 <X className="h-4 w-4 mr-1" /> Cancel
               </Button>
-              <Button onClick={confirmImport} disabled={importing || events.length === 0}>
+              <Button
+                onClick={confirmImport}
+                disabled={importing || events.length === 0 || errorCount > 0}
+                title={errorCount > 0 ? "Fix validation errors before importing" : undefined}
+              >
                 {importing ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Check className="h-4 w-4 mr-1" />}
                 Import {events.length || ""}
               </Button>
