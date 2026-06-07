@@ -315,7 +315,7 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
           <input
             ref={inputRef}
             type="file"
-            accept={ACCEPTED}
+            accept={accepted}
             className="hidden"
             onChange={(e) => e.target.files && handleFiles(e.target.files)}
           />
