@@ -40,8 +40,34 @@ interface ImportRow {
   error: string | null;
 }
 
-const ACCEPTED = ".pdf,.png,.jpg,.jpeg,.webp";
+const ACCEPTED_PRO = ".pdf,.png,.jpg,.jpeg,.webp";
+const ACCEPTED_FREE = ".pdf";
 const MAX_BYTES = 15 * 1024 * 1024;
+const IMAGE_RE = /\.(png|jpe?g|webp)$/i;
+const PDF_RE = /\.pdf$/i;
+
+type EventIssue = { level: "error" | "warning"; message: string };
+
+const validateEvent = (e: ExtractedEvent): EventIssue[] => {
+  const issues: EventIssue[] = [];
+  if (!e.title?.trim()) issues.push({ level: "error", message: "Title is required" });
+  if (!e.date) issues.push({ level: "error", message: "Date is required" });
+  else if (isNaN(new Date(e.date).getTime())) issues.push({ level: "error", message: "Invalid date" });
+  if (e.start_time && !/^\d{2}:\d{2}$/.test(e.start_time)) issues.push({ level: "error", message: "Start time must be HH:MM" });
+  if (e.end_time && !/^\d{2}:\d{2}$/.test(e.end_time)) issues.push({ level: "error", message: "End time must be HH:MM" });
+  if (e.start_time && e.end_time && e.end_time <= e.start_time) {
+    issues.push({ level: "error", message: "End time must be after start" });
+  }
+  if (e.date && !isNaN(new Date(e.date).getTime())) {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const d = new Date(e.date);
+    if (d < today) issues.push({ level: "warning", message: "Date is in the past" });
+  }
+  if ((e.type === "class" || e.type === "event") && !e.start_time) {
+    issues.push({ level: "warning", message: "No start time set — will default to 09:00" });
+  }
+  return issues;
+};
 
 const TYPE_META: Record<EventType, { label: string; icon: any; color: string }> = {
   class:      { label: "Class",      icon: BookOpen,       color: "bg-blue-500/15 text-blue-500" },
