@@ -554,7 +554,11 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
               <Button variant="ghost" onClick={() => setReviewOpen(false)} disabled={importing}>
                 <X className="h-4 w-4 mr-1" /> Cancel
               </Button>
-              <Button onClick={confirmImport} disabled={importing || events.length === 0}>
+              <Button
+                onClick={confirmImport}
+                disabled={importing || events.length === 0 || errorCount > 0}
+                title={errorCount > 0 ? "Fix validation errors before importing" : undefined}
+              >
                 {importing ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Check className="h-4 w-4 mr-1" />}
                 Import {events.length || ""}
               </Button>
