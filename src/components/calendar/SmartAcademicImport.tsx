@@ -204,6 +204,21 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
     start_time: "", end_time: "", location: "", description: "",
   }]);
 
+  const validations = useMemo(() => events.map(validateEvent), [events]);
+  const dupIndexes = useMemo(() => {
+    const seen = new Map<string, number>();
+    const dups = new Set<number>();
+    events.forEach((e, i) => {
+      const key = `${e.title.trim().toLowerCase()}|${e.date}|${e.start_time || ""}`;
+      if (!e.title.trim() || !e.date) return;
+      if (seen.has(key)) { dups.add(i); dups.add(seen.get(key)!); }
+      else seen.set(key, i);
+    });
+    return dups;
+  }, [events]);
+  const errorCount = validations.filter((v) => v.some((i) => i.level === "error")).length;
+  const warningCount = validations.filter((v) => v.some((i) => i.level === "warning")).length + dupIndexes.size;
+
   const counts = {
     class: events.filter((e) => e.type === "class").length,
     exam: events.filter((e) => e.type === "exam").length,
