@@ -437,8 +437,16 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
                 No events. Add one manually or close and try a clearer file.
               </p>
             ) : (
-              events.map((ev, i) => (
-                <div key={i} className="rounded-md border p-3 space-y-2 bg-card">
+              events.map((ev, i) => {
+                const issues = validations[i] || [];
+                const isDup = dupIndexes.has(i);
+                const hasError = issues.some((x) => x.level === "error");
+                return (
+                <div key={i} className={cn(
+                  "rounded-md border p-3 space-y-2 bg-card",
+                  hasError && "border-destructive/60",
+                  !hasError && (issues.length > 0 || isDup) && "border-amber-500/60",
+                )}>
                   <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
                     <Input
                       value={ev.title}
