@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
 import SoundEffectsToggle from "@/components/gamification/SoundEffectsToggle";
 import CalmModeToggle from "@/components/CalmModeToggle";
+import CursorHighlightToggle from "@/components/CursorHighlightToggle";
 import PushNotificationCard from "@/components/PushNotificationCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
