@@ -185,8 +185,8 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
               <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-gradient-to-br from-primary/25 to-accent/25 border border-primary/10">
                 <StudyHubLogo className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
-              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                StudyHub™
+              <h1 className="text-lg sm:text-xl font-bold text-foreground">
+                StudyHub<span className="text-primary">™</span>
               </h1>
             </button>
           </div>
