@@ -1,12 +1,23 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+  isCursorHighlightEnabled,
+  subscribeCursorHighlight,
+} from "@/lib/cursorHighlight";
 
 const CursorHighlighter = () => {
+  const [enabled, setEnabled] = useState(true);
   const circleRef = useRef<HTMLDivElement>(null);
   const pos = useRef({ x: 0, y: 0 });
   const target = useRef({ x: 0, y: 0 });
   const raf = useRef<number>(0);
 
   useEffect(() => {
+    setEnabled(isCursorHighlightEnabled());
+    return subscribeCursorHighlight(setEnabled);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
     const circle = circleRef.current;
     if (!circle) return;
 
@@ -40,7 +51,9 @@ const CursorHighlighter = () => {
       document.removeEventListener("mouseleave", onLeave);
       cancelAnimationFrame(raf.current);
     };
-  }, []);
+  }, [enabled]);
+
+  if (!enabled) return null;
 
   return (
     <div

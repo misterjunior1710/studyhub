@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import SEOHead from "@/components/SEOHead";
 import SoundEffectsToggle from "@/components/gamification/SoundEffectsToggle";
 import CalmModeToggle from "@/components/CalmModeToggle";
+import CursorHighlightToggle from "@/components/CursorHighlightToggle";
 import PushNotificationCard from "@/components/PushNotificationCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +38,7 @@ import {
   Loader2, User, MapPin, GraduationCap, BookOpen, Save, ArrowLeft, 
   Camera, Bell, Shield, Globe, Filter, Lock, Eye, EyeOff, MessageSquare,
   Users, FileText, Megaphone, BarChart3, Smartphone, Monitor, Tablet,
-  Download, Trash2, RefreshCw, Clock, Target, Timer, Palette, LogOut, AlertTriangle, Ban, Sparkles, Volume2
+  Download, Trash2, RefreshCw, Clock, Target, Timer, Palette, LogOut, AlertTriangle, Ban, Sparkles, Volume2, MousePointer2
 } from "lucide-react";
 import { toast } from "sonner";
 import AdminModerationPanel from "@/components/AdminModerationPanel";
@@ -683,6 +684,21 @@ const Settings = () => {
                       </div>
                     </div>
                   ))}
+                </CardContent>
+              </Card>
+
+              <Card variant="gradient">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MousePointer2 className="h-5 w-5 text-primary" />
+                    Cursor Highlight
+                  </CardTitle>
+                  <CardDescription>
+                    Control the pointer-following circle effect
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <CursorHighlightToggle />
                 </CardContent>
               </Card>
 
