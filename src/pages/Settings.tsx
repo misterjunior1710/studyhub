@@ -38,7 +38,7 @@ import {
   Loader2, User, MapPin, GraduationCap, BookOpen, Save, ArrowLeft, 
   Camera, Bell, Shield, Globe, Filter, Lock, Eye, EyeOff, MessageSquare,
   Users, FileText, Megaphone, BarChart3, Smartphone, Monitor, Tablet,
-  Download, Trash2, RefreshCw, Clock, Target, Timer, Palette, LogOut, AlertTriangle, Ban, Sparkles, Volume2
+  Download, Trash2, RefreshCw, Clock, Target, Timer, Palette, LogOut, AlertTriangle, Ban, Sparkles, Volume2, MousePointer2
 } from "lucide-react";
 import { toast } from "sonner";
 import AdminModerationPanel from "@/components/AdminModerationPanel";
