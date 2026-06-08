@@ -687,6 +687,21 @@ const Settings = () => {
                 </CardContent>
               </Card>
 
+              <Card variant="gradient">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MousePointer2 className="h-5 w-5 text-primary" />
+                    Cursor Highlight
+                  </CardTitle>
+                  <CardDescription>
+                    Control the pointer-following circle effect
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <CursorHighlightToggle />
+                </CardContent>
+              </Card>
+
               <Button onClick={handleSaveProfile} disabled={saving} variant="gradient" className="w-full">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}Save Theme
               </Button>
