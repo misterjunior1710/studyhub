@@ -19,9 +19,30 @@ interface OnboardingContextType {
   dismissChecklist: () => void;
   dismissCelebration: () => void;
   isOnboardingComplete: boolean;
+  snoozeOnboarding: () => void;
 }
 
 const OnboardingContext = createContext<OnboardingContextType | null>(null);
+
+const SNOOZE_KEY = "studyhub_onboarding_snooze_until";
+const SNOOZE_HOURS = 4;
+
+const getSnoozeUntil = (): number | null => {
+  try {
+    const raw = localStorage.getItem(SNOOZE_KEY);
+    if (!raw) return null;
+    const ts = parseInt(raw, 10);
+    if (Number.isNaN(ts)) return null;
+    return ts;
+  } catch {
+    return null;
+  }
+};
+
+const isSnoozed = (): boolean => {
+  const until = getSnoozeUntil();
+  return !!until && until > Date.now();
+};
 
 const ONBOARDING_TASKS: Omit<OnboardingTask, "completed">[] = [
   { id: "profile", label: "Complete your profile" },
