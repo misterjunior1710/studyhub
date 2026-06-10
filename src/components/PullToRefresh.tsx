@@ -11,66 +11,96 @@ interface PullToRefreshProps {
 const PULL_THRESHOLD = 80;
 const MAX_PULL = 150;
 const RESISTANCE = 2.5;
+const ACTIVATION_DISTANCE = 20; // finger must move this far down before we hijack scroll
 
 const PullToRefresh = ({ children, onRefresh, disabled = false }: PullToRefreshProps) => {
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
   const startYRef = useRef<number>(0);
-  const isPullingRef = useRef(false);
+  const startXRef = useRef<number>(0);
+  const isTrackingRef = useRef(false); // candidate gesture
+  const isPullingRef = useRef(false); // committed pull
+  const pullDistanceRef = useRef(0);
 
   useEffect(() => {
     setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
   }, []);
 
+  const updatePullDistance = useCallback((d: number) => {
+    pullDistanceRef.current = d;
+    setPullDistance(d);
+  }, []);
+
   const handleTouchStart = useCallback((e: TouchEvent) => {
     if (disabled || isRefreshing) return;
-    
+
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    if (scrollTop <= 0) {
+    if (scrollTop <= 0 && e.touches.length === 1) {
       startYRef.current = e.touches[0].clientY;
-      isPullingRef.current = true;
+      startXRef.current = e.touches[0].clientX;
+      isTrackingRef.current = true;
+      isPullingRef.current = false;
     }
   }, [disabled, isRefreshing]);
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (!isPullingRef.current || disabled || isRefreshing) return;
-    
-    const currentY = e.touches[0].clientY;
-    const diff = currentY - startYRef.current;
-    
-    if (diff > 0) {
-      // Apply resistance for natural feel
-      const distance = Math.min(diff / RESISTANCE, MAX_PULL);
-      setPullDistance(distance);
-      
-      if (distance > 10) {
-        e.preventDefault();
-      }
+    if (!isTrackingRef.current || disabled || isRefreshing) return;
+
+    // Bail if user has scrolled away from top (normal scroll, not a pull)
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    if (scrollTop > 0) {
+      isTrackingRef.current = false;
+      isPullingRef.current = false;
+      if (pullDistanceRef.current !== 0) updatePullDistance(0);
+      return;
     }
-  }, [disabled, isRefreshing]);
+
+    const currentY = e.touches[0].clientY;
+    const currentX = e.touches[0].clientX;
+    const diffY = currentY - startYRef.current;
+    const diffX = currentX - startXRef.current;
+
+    // If gesture is horizontal or upward, abandon (let native scroll handle it)
+    if (!isPullingRef.current) {
+      if (diffY < 0 || Math.abs(diffX) > Math.abs(diffY)) {
+        isTrackingRef.current = false;
+        return;
+      }
+      if (diffY < ACTIVATION_DISTANCE) return; // wait until clearly a pull
+      isPullingRef.current = true;
+    }
+
+    if (diffY > 0) {
+      const distance = Math.min((diffY - ACTIVATION_DISTANCE) / RESISTANCE, MAX_PULL);
+      updatePullDistance(Math.max(0, distance));
+      if (e.cancelable) e.preventDefault();
+    }
+  }, [disabled, isRefreshing, updatePullDistance]);
 
   const handleTouchEnd = useCallback(async () => {
-    if (!isPullingRef.current) return;
-    
+    const wasPulling = isPullingRef.current;
+    isTrackingRef.current = false;
     isPullingRef.current = false;
-    
-    if (pullDistance >= PULL_THRESHOLD && !isRefreshing) {
+
+    if (!wasPulling) return;
+
+    if (pullDistanceRef.current >= PULL_THRESHOLD && !isRefreshing) {
       setIsRefreshing(true);
-      setPullDistance(PULL_THRESHOLD);
-      
+      updatePullDistance(PULL_THRESHOLD);
+
       try {
         await onRefresh();
       } finally {
         setIsRefreshing(false);
-        setPullDistance(0);
+        updatePullDistance(0);
       }
     } else {
-      setPullDistance(0);
+      updatePullDistance(0);
     }
-  }, [pullDistance, isRefreshing, onRefresh]);
+  }, [isRefreshing, onRefresh, updatePullDistance]);
 
   useEffect(() => {
     if (!isTouchDevice) return;
