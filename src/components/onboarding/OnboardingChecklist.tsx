@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Check, ChevronDown, ChevronUp, Sparkles, X, GripVertical } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Sparkles, X, GripVertical, Clock } from "lucide-react";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { cn } from "@/lib/utils";
 
