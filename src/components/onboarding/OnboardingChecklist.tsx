@@ -234,6 +234,14 @@ const OnboardingChecklist = () => {
                 </li>
               ))}
             </ul>
+            <button
+              type="button"
+              onClick={snoozeOnboarding}
+              className="mt-3 flex items-center justify-center gap-1 w-full text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Clock className="h-3 w-3" aria-hidden="true" />
+              Remind me later (4h)
+            </button>
           </CardContent>
         )}
       </Card>
