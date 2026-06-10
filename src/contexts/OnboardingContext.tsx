@@ -224,6 +224,13 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     setShowChecklist(false);
   }, []);
 
+  const snoozeOnboarding = useCallback(() => {
+    const until = Date.now() + SNOOZE_HOURS * 60 * 60 * 1000;
+    try { localStorage.setItem(SNOOZE_KEY, String(until)); } catch {}
+    setShowWelcome(false);
+    setShowChecklist(false);
+  }, []);
+
   const dismissCelebration = useCallback(() => {
     setShowCelebration(false);
     setIsOnboardingComplete(true);
