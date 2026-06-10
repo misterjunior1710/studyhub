@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Check, ChevronDown, ChevronUp, Sparkles, X, GripVertical } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Sparkles, X, GripVertical, Clock } from "lucide-react";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { cn } from "@/lib/utils";
 
@@ -29,7 +29,7 @@ const clampPos = (p: Pos, w: number, h: number): Pos => ({
 
 const OnboardingChecklist = () => {
   const navigate = useNavigate();
-  const { showChecklist, tasks, dismissChecklist, isOnboardingComplete, completeTask } = useOnboarding();
+  const { showChecklist, tasks, dismissChecklist, snoozeOnboarding, isOnboardingComplete, completeTask } = useOnboarding();
 
   // Default to collapsed so it never blocks underlying buttons.
   const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -234,6 +234,14 @@ const OnboardingChecklist = () => {
                 </li>
               ))}
             </ul>
+            <button
+              type="button"
+              onClick={snoozeOnboarding}
+              className="mt-3 flex items-center justify-center gap-1 w-full text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Clock className="h-3 w-3" aria-hidden="true" />
+              Remind me later (4h)
+            </button>
           </CardContent>
         )}
       </Card>

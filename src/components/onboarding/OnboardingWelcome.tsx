@@ -2,13 +2,13 @@ import { memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { MessageCircleQuestion, ArrowRight } from "lucide-react";
+import { MessageCircleQuestion, ArrowRight, Clock } from "lucide-react";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { useAuth } from "@/contexts/AuthContext";
 
 const OnboardingWelcome = () => {
   const navigate = useNavigate();
-  const { showWelcome, dismissWelcome } = useOnboarding();
+  const { showWelcome, dismissWelcome, snoozeOnboarding } = useOnboarding();
   const { username } = useAuth();
 
   const handleAsk = () => {
@@ -63,6 +63,15 @@ const OnboardingWelcome = () => {
               className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               I'll explore first
+            </button>
+
+            <button
+              type="button"
+              onClick={snoozeOnboarding}
+              className="mt-2 flex items-center justify-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Clock className="h-3 w-3" aria-hidden="true" />
+              Remind me later (4h)
             </button>
           </div>
         </div>
