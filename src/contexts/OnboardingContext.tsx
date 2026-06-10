@@ -249,6 +249,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         dismissWelcome,
         completeTask,
         dismissChecklist,
+        snoozeOnboarding,
         dismissCelebration,
         isOnboardingComplete,
       }}
