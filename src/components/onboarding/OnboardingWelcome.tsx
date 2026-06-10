@@ -2,13 +2,13 @@ import { memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { MessageCircleQuestion, ArrowRight } from "lucide-react";
+import { MessageCircleQuestion, ArrowRight, Clock } from "lucide-react";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { useAuth } from "@/contexts/AuthContext";
 
 const OnboardingWelcome = () => {
   const navigate = useNavigate();
-  const { showWelcome, dismissWelcome } = useOnboarding();
+  const { showWelcome, dismissWelcome, snoozeOnboarding } = useOnboarding();
   const { username } = useAuth();
 
   const handleAsk = () => {
