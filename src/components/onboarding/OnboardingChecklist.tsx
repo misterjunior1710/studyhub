@@ -29,7 +29,7 @@ const clampPos = (p: Pos, w: number, h: number): Pos => ({
 
 const OnboardingChecklist = () => {
   const navigate = useNavigate();
-  const { showChecklist, tasks, dismissChecklist, isOnboardingComplete, completeTask } = useOnboarding();
+  const { showChecklist, tasks, dismissChecklist, snoozeOnboarding, isOnboardingComplete, completeTask } = useOnboarding();
 
   // Default to collapsed so it never blocks underlying buttons.
   const [isCollapsed, setIsCollapsed] = useState(() => {
