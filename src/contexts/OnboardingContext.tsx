@@ -135,11 +135,16 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         setShowWelcome(false);
         setShowChecklist(false);
       } else {
-        const hasSeenWelcome = localStorage.getItem("studyhub_onboarding_seen") === "true";
-        if (!hasSeenWelcome) {
-          setShowWelcome(true);
+        if (isSnoozed()) {
+          setShowWelcome(false);
+          setShowChecklist(false);
         } else {
-          setShowChecklist(true);
+          const hasSeenWelcome = localStorage.getItem("studyhub_onboarding_seen") === "true";
+          if (!hasSeenWelcome) {
+            setShowWelcome(true);
+          } else {
+            setShowChecklist(true);
+          }
         }
       }
 
