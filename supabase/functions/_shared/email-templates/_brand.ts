@@ -4,7 +4,7 @@
 export const BRAND = {
   name: 'StudyHub',
   url: 'https://studyhub.world',
-  logoUrl: 'https://i.ibb.co/rKYZq3k4/Study-Hub.png',
+  logoUrl: 'https://studyhub.world/__l5e/assets-v1/0983d52c-9a1f-4019-b374-cbbee08fe527/studyhub-logo.png',
   tagline: 'Your study squad, all in one place.',
   supportEmail: 'studyhub.community.web@gmail.com',
   primary: 'hsl(243, 75%, 58%)',
