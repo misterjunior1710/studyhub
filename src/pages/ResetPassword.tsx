@@ -77,7 +77,16 @@ const ResetPassword = () => {
       setMode("success");
       toast.success("Password updated! You're all set. 🔐");
     } catch (error: any) {
-      toast.error(error.message || "Couldn't update password. Try again!");
+      const msg = error.message?.toLowerCase?.() || "";
+      if (msg.includes("token") || msg.includes("expired") || msg.includes("session") || msg.includes("not authenticated")) {
+        toast.error("Link expired — request a new one", {
+          description: "This reset link is no longer valid. Please request a fresh link below.",
+          duration: 6000,
+        });
+        setMode("request");
+      } else {
+        toast.error(error.message || "Couldn't update password. Try again!");
+      }
     } finally {
       setLoading(false);
     }
