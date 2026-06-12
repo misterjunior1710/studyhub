@@ -23,6 +23,20 @@ const ResetPassword = () => {
     const hash = window.location.hash;
     if (hash.includes("type=recovery") || hash.includes("access_token")) {
       setMode("update");
+
+      // Give Supabase time to process the recovery hash, then verify a session was established
+      const timer = setTimeout(async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          toast.error("Link expired — request a new one", {
+            description: "This reset link is no longer valid. Please request a fresh link below.",
+            duration: 6000,
+          });
+          setMode("request");
+        }
+      }, 1200);
+
+      return () => clearTimeout(timer);
     }
   }, []);
 
