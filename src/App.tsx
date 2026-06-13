@@ -68,6 +68,8 @@ const Transitions = lazy(() => import("./pages/Transitions"));
 const TransitionModule = lazy(() => import("./pages/TransitionModule"));
 const TransitionResources = lazy(() => import("./pages/TransitionResources"));
 const Pricing = lazy(() => import("./pages/Pricing"));
+const StudyGuides = lazy(() => import("./pages/StudyGuides"));
+const StudyGuideDetail = lazy(() => import("./pages/StudyGuideDetail"));
 const Refund = lazy(() => import("./pages/Refund"));
 const SuccessBasic = lazy(() => import("./pages/SuccessBasic"));
 const SuccessPro = lazy(() => import("./pages/SuccessPro"));
@@ -206,6 +208,8 @@ const App = () => (
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/support" element={<Support />} />
                         <Route path="/pricing" element={<Pricing />} />
+                        <Route path="/study-guides" element={<StudyGuides />} />
+                        <Route path="/study-guides/:slug" element={<StudyGuideDetail />} />
                         <Route path="/refund" element={<Refund />} />
                         <Route path="/success/basic" element={<SuccessBasic />} />
                         <Route path="/success/pro" element={<SuccessPro />} />
