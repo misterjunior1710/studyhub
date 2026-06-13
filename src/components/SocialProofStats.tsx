@@ -5,8 +5,8 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 // Real metrics from Google Search Console since launch (29 November 2025)
 const METRICS = [
-  { key: "impressions", label: "Total impressions", value: 1050, suffix: "", icon: Eye, format: "compact" as const },
-  { key: "clicks", label: "Total clicks", value: 240, suffix: "", icon: MousePointerClick, format: "int" as const },
+  { key: "impressions", label: "Total impressions", value: 1090, suffix: "", icon: Eye, format: "compact" as const },
+  { key: "clicks", label: "Total clicks", value: 249, suffix: "", icon: MousePointerClick, format: "int" as const },
   { key: "ctr", label: "Average CTR", value: 2.3, suffix: "%", icon: Percent, format: "decimal" as const },
   {
     key: "position",
@@ -84,7 +84,7 @@ const StatCell = memo(function StatCell({
 
 const SocialProofStats = memo(function SocialProofStats() {
   const [ref, visible] = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
-  const heroCount = useCountUp(1050, visible);
+  const heroCount = useCountUp(1090, visible);
 
   return (
     <section
