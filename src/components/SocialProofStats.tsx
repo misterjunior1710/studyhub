@@ -11,7 +11,7 @@ const METRICS = [
   {
     key: "position",
     label: "Avg. search position",
-    value: 10.9,
+    value: 10.7,
     suffix: "",
     icon: TrendingUp,
     format: "decimal" as const,
@@ -84,7 +84,7 @@ const StatCell = memo(function StatCell({
 
 const SocialProofStats = memo(function SocialProofStats() {
   const [ref, visible] = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
-  const heroCount = useCountUp(1090, visible);
+  const heroCount = useCountUp(1100, visible);
 
   return (
     <section
