@@ -20,6 +20,8 @@ const StudyHubLogo = ({ className, original = false, title = "StudyHub logo" }: 
       <img
         src={logoUrl}
         alt={title}
+        width={512}
+        height={512}
         className={cn("object-contain shrink-0", className)}
       />
     );
