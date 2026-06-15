@@ -5,8 +5,8 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 // Real metrics from Google Search Console since launch (29 November 2025)
 const METRICS = [
-  { key: "impressions", label: "Total impressions", value: 11000, suffix: "", icon: Eye, format: "compact" as const },
-  { key: "clicks", label: "Total clicks", value: 252, suffix: "", icon: MousePointerClick, format: "int" as const },
+  { key: "impressions", label: "Total impressions", value: 11100, suffix: "", icon: Eye, format: "compact" as const },
+  { key: "clicks", label: "Total clicks", value: 253, suffix: "", icon: MousePointerClick, format: "int" as const },
   { key: "ctr", label: "Average CTR", value: 2.3, suffix: "%", icon: Percent, format: "decimal" as const },
   {
     key: "position",
