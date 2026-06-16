@@ -84,7 +84,7 @@ const StatCell = memo(function StatCell({
 
 const SocialProofStats = memo(function SocialProofStats() {
   const [ref, visible] = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
-  const heroCount = useCountUp(11100, visible);
+  const heroCount = useCountUp(11200, visible);
 
   return (
     <section
