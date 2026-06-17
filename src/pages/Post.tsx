@@ -407,6 +407,7 @@ const Post = () => {
       <SEOHead
         title={post.title}
         description={`${post.subject} question on StudyHub`}
+        type="article"
         noIndex={true}
       />
       <Navbar />
