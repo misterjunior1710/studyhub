@@ -68,11 +68,14 @@ Deno.serve(async (req) => {
 
     // Download file using service role (we've already verified ownership above)
     const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    // SECURITY: Use the authoritative file_path from the validated DB record,
+    // NOT the client-supplied filePath, to prevent reading other users' files.
+    const authoritativePath = imp.file_path as string;
     const { data: fileData, error: dlErr } = await adminClient.storage
-      .from("academic-imports").download(filePath);
+      .from("academic-imports").download(authoritativePath);
     if (dlErr || !fileData) {
       const msg = dlErr?.message ? `Could not read file: ${dlErr.message}` : "Could not read file";
-      console.error("Storage download failed", { filePath, dlErr });
+      console.error("Storage download failed", { filePath: authoritativePath, dlErr });
       await supabase.from("academic_imports").update({ status: "failed", error: msg }).eq("id", importId);
       return json({ error: msg }, 500);
     }
