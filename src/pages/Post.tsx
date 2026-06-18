@@ -402,6 +402,30 @@ const Post = () => {
   if (!post) return null;
 
   const netVotes = post.upvotes - post.downvotes;
+  const postUrl = `https://studyhub.world/post/${id}`;
+  const articleBody = post.content.replace(/<[^>]*>/g, "").trim();
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": post.post_type === "doubt" ? "Question" : "Article",
+    headline: post.title,
+    articleBody: post.post_type === "doubt" ? undefined : articleBody,
+    text: post.post_type === "doubt" ? articleBody : undefined,
+    author: {
+      "@type": "Person",
+      name: post.profiles?.username ?? "StudyHub User",
+    },
+    datePublished: post.created_at,
+    url: postUrl,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": postUrl,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "StudyHub",
+      url: "https://studyhub.world",
+    },
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -409,8 +433,10 @@ const Post = () => {
         title={post.title}
         description={`${post.subject} question on StudyHub`}
         type="article"
+        canonical={postUrl}
         noIndex={true}
       />
+      <StructuredData data={articleSchema} />
       <Navbar />
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         <Button
