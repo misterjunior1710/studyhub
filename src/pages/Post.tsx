@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { sharePost } from "@/lib/share";
 import Navbar from "@/components/Navbar";
-import SEOHead from "@/components/SEOHead";
+import SEOHead, { StructuredData } from "@/components/SEOHead";
+
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
