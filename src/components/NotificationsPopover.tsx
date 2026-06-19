@@ -152,7 +152,7 @@ const NotificationsPopover = () => {
         <ScrollArea className="h-[300px]">
           {notifications.length === 0 ? (
             <div className="text-center py-8 px-4">
-              <Bell className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" aria-hidden="true" />
+              <Bell className="h-8 w-8 mx-auto mb-2 text-muted-foreground" aria-hidden="true" />
               <p className="text-sm font-medium">You're all caught up</p>
               <p className="text-xs text-muted-foreground mt-1">
                 New activity will show up here.

@@ -20,13 +20,13 @@ import { useProStatus } from "@/hooks/useProStatus";
 
 const LEAGUE_META: Record<string, { name: string; icon: string; color: string }> = {
   bronze:   { name: "Bronze",   icon: "🥉", color: "text-amber-700" },
-  silver:   { name: "Silver",   icon: "🥈", color: "text-slate-400" },
+  silver:   { name: "Silver",   icon: "🥈", color: "text-slate-500" },
   gold:     { name: "Gold",     icon: "🥇", color: "text-yellow-500" },
   platinum: { name: "Platinum", icon: "💎", color: "text-cyan-400" },
   diamond:  { name: "Diamond",  icon: "💠", color: "text-blue-400" },
 };
 
-const RANK_STYLES = ["text-amber-500", "text-slate-400", "text-orange-700"];
+const RANK_STYLES = ["text-amber-500", "text-slate-500", "text-orange-700"];
 
 const LeaderboardTable = ({ scope, period }: { scope: LeaderboardScope; period: LeaderboardPeriod }) => {
   const { user } = useAuth();
