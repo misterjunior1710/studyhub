@@ -7,7 +7,7 @@ import { Trophy, ChevronRight, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
-const RANK_STYLES = ["text-amber-500", "text-slate-400", "text-orange-700"];
+const RANK_STYLES = ["text-amber-500", "text-slate-500", "text-orange-700"];
 
 const LeaderboardPreview = () => {
   const navigate = useNavigate();

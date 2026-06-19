@@ -133,7 +133,7 @@ const SocialProofStats = memo(function SocialProofStats() {
             ))}
           </div>
 
-          <p className="text-[11px] text-muted-foreground/80">
+          <p className="text-[11px] text-muted-foreground">
             Source: Google Search Console · since launch on 29 November 2025
           </p>
         </div>

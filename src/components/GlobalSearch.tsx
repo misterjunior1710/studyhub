@@ -373,7 +373,7 @@ const GlobalSearch = ({ open, onOpenChange }: GlobalSearchProps) => {
                 >
                   <Icon className="h-4 w-4 text-muted-foreground" />
                   <span>{p.label}</span>
-                  <span className="ml-auto text-[10px] text-muted-foreground/70">{p.path}</span>
+                  <span className="ml-auto text-[10px] text-muted-foreground">{p.path}</span>
                 </CommandItem>
               );
             })}
