@@ -151,8 +151,8 @@ const Index = () => {
         <header className="relative">
           <HeroGeometric
             badge="StudyHub™"
-            title1="Study Smarter."
-            title2="Ace Everything."
+            title1="StudyHub"
+            title2="Student-Only Discussion Platform"
             description="The free, student-only hub where you ask questions, join study squads, and get unstuck fast — powered by Nova AI and built for every grade, subject, and curriculum."
           >
             <div className="flex justify-center">
