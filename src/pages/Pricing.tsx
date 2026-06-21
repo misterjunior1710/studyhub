@@ -294,9 +294,9 @@ const Pricing = () => {
                 Simple, student-friendly pricing
               </Badge>
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.05]">
-                StudyHub Pro Pricing: Unlock Your{" "}
+                Unlock your full{" "}
                 <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
-                  Academic Potential
+                  academic potential
                 </span>
               </h1>
               <p className="mt-5 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
