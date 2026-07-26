@@ -31,7 +31,8 @@ export const FloatingAssistant = () => {
         size="icon"
         aria-label="Open Nova"
         className={cn(
-          "fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40",
+          "fixed right-4 md:right-6 z-40",
+          "bottom-[calc(4rem+1rem+env(safe-area-inset-bottom,0px))] md:bottom-6",
           "h-12 w-12 rounded-full nova-glow tap-press",
           "bg-primary text-primary-foreground hover:scale-105 transition-transform"
         )}

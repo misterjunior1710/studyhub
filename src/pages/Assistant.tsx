@@ -36,13 +36,13 @@ const Assistant = () => {
         description="Chat with Nova, your AI-powered academic companion. Get instant help with studying, navigation, and productivity."
       />
       <Navbar />
-      <div className="h-[calc(100vh-4rem)] flex bg-background">
+      <div className="h-[calc(100dvh-4rem-4rem)] md:h-[calc(100dvh-4rem)] flex bg-background" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
         {/* Sidebar */}
         <aside
           className={cn(
             "border-r border-border bg-card flex-col w-72 shrink-0",
             "md:flex",
-            showSidebar ? "flex absolute inset-y-0 left-0 z-30 mt-16 h-[calc(100vh-4rem)]" : "hidden"
+            showSidebar ? "flex absolute inset-y-0 left-0 z-30 mt-16 h-[calc(100dvh-4rem-4rem)] md:h-[calc(100dvh-4rem)]" : "hidden"
           )}
           aria-label="Conversation history"
         >
