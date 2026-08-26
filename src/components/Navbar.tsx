@@ -165,7 +165,7 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
   return (
     <nav
       className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300",
+        "sticky top-0 z-50 w-full transition-all duration-300 pt-[env(safe-area-inset-top)]",
         scrolled
           ? "border-b border-border/50 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60"
           : "border-b border-transparent bg-background/60 backdrop-blur",

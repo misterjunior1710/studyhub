@@ -202,6 +202,9 @@ All colors MUST be HSL.
     /* Smooth scrolling */
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+    /* iOS/WebView safe areas: keep content clear of rounded corners in landscape */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 
   /* Let the site-wide animated gradient show through on top of the base bg */
