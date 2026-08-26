@@ -1,4 +1,4 @@
-import { memo, useMemo, useEffect } from "react";
+import { memo, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -576,7 +576,7 @@ const Index = () => {
         </section>
 
         {/* Elfsight Google Reviews + closing CTA */}
-        <section id="reviews" className="py-20">
+        <section id="reviews" ref={reviewsRef} className="py-20">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl sm:text-2xl font-semibold mb-2">What students say</h2>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">Real reviews from the community.</p>
