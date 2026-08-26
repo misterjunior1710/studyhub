@@ -40,25 +40,33 @@ function VirtualListImpl<T>({
     const el = parentRef.current;
     if (!el) return;
 
+    let raf = 0;
     const measure = () => {
       const rect = el.getBoundingClientRect();
       const next = rect.top + window.scrollY;
       setOffsetTop((prev) => (Math.abs(prev - next) > 0.5 ? next : prev));
     };
 
+    // Defer measurement out of the ResizeObserver callback to avoid the
+    // "ResizeObserver loop completed with undelivered notifications" warning.
+    const scheduleMeasure = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(measure);
+    };
+
     measure();
 
-    const ro = new ResizeObserver(measure);
+    const ro = new ResizeObserver(scheduleMeasure);
     ro.observe(el);
     if (el.parentElement) ro.observe(el.parentElement);
 
-    window.addEventListener("resize", measure, { passive: true });
+    window.addEventListener("resize", scheduleMeasure, { passive: true });
     // One more pass after fonts/images load (layout shift safety net).
-    const raf = requestAnimationFrame(measure);
+    scheduleMeasure();
 
     return () => {
       ro.disconnect();
-      window.removeEventListener("resize", measure);
+      window.removeEventListener("resize", scheduleMeasure);
       cancelAnimationFrame(raf);
     };
   }, []);

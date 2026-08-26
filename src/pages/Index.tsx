@@ -1,4 +1,4 @@
-import { memo, useMemo, useEffect } from "react";
+import { memo, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -49,19 +49,45 @@ const Index = () => {
   const totalCount = tasks.length;
   const showContinueSetup = !!user && !isOnboardingComplete && totalCount > 0;
 
+  // Load the Elfsight reviews platform only when the reviews section is close
+  // to the viewport — it pulls a large locale bundle we don't want on first paint.
+  const reviewsRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    const id = "elfsight-platform-script";
-    if (document.getElementById(id)) {
-      // @ts-ignore
-      window.eapps?.AppsManager?.initAll?.();
+    const el = reviewsRef.current;
+    if (!el) return;
+
+    const load = () => {
+      const id = "elfsight-platform-script";
+      if (document.getElementById(id)) {
+        // @ts-ignore - platform global injected by Elfsight
+        window.eapps?.AppsManager?.initAll?.();
+        return;
+      }
+      const s = document.createElement("script");
+      s.id = id;
+      s.src = "https://elfsightcdn.com/platform.js";
+      s.async = true;
+      document.body.appendChild(s);
+    };
+
+    if (typeof IntersectionObserver === "undefined") {
+      load();
       return;
     }
-    const s = document.createElement("script");
-    s.id = id;
-    s.src = "https://elfsightcdn.com/platform.js";
-    s.async = true;
-    document.body.appendChild(s);
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          load();
+        }
+      },
+      { rootMargin: "400px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
+
 
   const faqItems = useMemo(
     () => [
@@ -550,7 +576,7 @@ const Index = () => {
         </section>
 
         {/* Elfsight Google Reviews + closing CTA */}
-        <section id="reviews" className="py-20">
+        <section id="reviews" ref={reviewsRef} className="py-20">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl sm:text-2xl font-semibold mb-2">What students say</h2>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">Real reviews from the community.</p>
