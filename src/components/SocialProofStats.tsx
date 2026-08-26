@@ -84,7 +84,8 @@ const StatCell = memo(function StatCell({
 
 const SocialProofStats = memo(function SocialProofStats() {
   const [ref, visible] = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
-  const heroCount = useCountUp(12000, visible);
+  const heroCount = useCountUp(37600, visible);
+
 
   return (
     <section
@@ -134,7 +135,7 @@ const SocialProofStats = memo(function SocialProofStats() {
           </div>
 
           <p className="text-[11px] text-muted-foreground">
-            Source: Google Search Console · since launch on 29 November 2025
+            Source: Google Search Console · last updated August 2026
           </p>
         </div>
       </Card>
