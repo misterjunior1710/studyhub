@@ -3,15 +3,15 @@ import { Card } from "@/components/ui/card";
 import { Eye, MousePointerClick, Percent, TrendingUp, Sparkles } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
-// Real metrics from Google Search Console since launch (29 November 2025)
+// Real metrics from Google Search Console (last updated August 2026)
 const METRICS = [
-  { key: "impressions", label: "Total impressions", value: 12000, suffix: "", icon: Eye, format: "compact" as const },
-  { key: "clicks", label: "Total clicks", value: 312, suffix: "", icon: MousePointerClick, format: "int" as const },
-  { key: "ctr", label: "Average CTR", value: 2.3, suffix: "%", icon: Percent, format: "decimal" as const },
+  { key: "impressions", label: "Total impressions", value: 37600, suffix: "", icon: Eye, format: "compact" as const },
+  { key: "clicks", label: "Total clicks", value: 1070, suffix: "", icon: MousePointerClick, format: "compact" as const },
+  { key: "ctr", label: "Average CTR", value: 2.9, suffix: "%", icon: Percent, format: "decimal" as const },
   {
     key: "position",
     label: "Avg. search position",
-    value: 10.6,
+    value: 8.5,
     suffix: "",
     icon: TrendingUp,
     format: "decimal" as const,
@@ -84,7 +84,8 @@ const StatCell = memo(function StatCell({
 
 const SocialProofStats = memo(function SocialProofStats() {
   const [ref, visible] = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
-  const heroCount = useCountUp(12000, visible);
+  const heroCount = useCountUp(37600, visible);
+
 
   return (
     <section
@@ -116,7 +117,7 @@ const SocialProofStats = memo(function SocialProofStats() {
                 Trusted since Launch
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight leading-tight">
-                <span className="tabular-nums text-primary">{formatValue(heroCount, "int")}+</span>{" "}
+                <span className="tabular-nums text-primary">{formatValue(heroCount, "compact")}+</span>{" "}
                 <span className="text-foreground">searches served since Launch</span>
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
@@ -134,7 +135,7 @@ const SocialProofStats = memo(function SocialProofStats() {
           </div>
 
           <p className="text-[11px] text-muted-foreground">
-            Source: Google Search Console · since launch on 29 November 2025
+            Source: Google Search Console · last updated August 2026
           </p>
         </div>
       </Card>
