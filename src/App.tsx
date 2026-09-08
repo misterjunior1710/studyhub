@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import OfflineBanner from "@/components/OfflineBanner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { useThemePersistence } from "@/hooks/useThemePersistence";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
@@ -215,6 +215,15 @@ const App = () => (
                         <Route path="/success/pro" element={<SuccessPro />} />
                         <Route path="/success/pro/yearly" element={<SuccessProYearly />} />
                         <Route path="/admin/audit" element={<AdminAudit />} />
+                        {/* Legacy / alias paths kept alive so old links and bookmarks don't 404 */}
+                        <Route path="/study-tools" element={<Navigate to="/study" replace />} />
+                        <Route path="/studytools" element={<Navigate to="/study" replace />} />
+                        <Route path="/study-mode" element={<Navigate to="/study" replace />} />
+                        <Route path="/home" element={<Navigate to="/feed" replace />} />
+                        <Route path="/login" element={<Navigate to="/auth" replace />} />
+                        <Route path="/signup" element={<Navigate to="/auth" replace />} />
+                        <Route path="/leaderboards" element={<Navigate to="/leaderboard" replace />} />
+                        <Route path="/notifications" element={<Navigate to="/updates" replace />} />
                           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                           <Route path="*" element={<NotFound />} />
                         </Routes>
