@@ -31,6 +31,7 @@ interface WhiteboardItem {
 
 const Whiteboards = () => {
   const navigate = useNavigate();
+  const { isPro } = useSubscription();
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [whiteboards, setWhiteboards] = useState<WhiteboardItem[]>([]);
