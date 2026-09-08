@@ -31,6 +31,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [quietMode, setQuietMode] = useState(false);
+  const [confirmAdult, setConfirmAdult] = useState(false);
   const { completeTask } = useOnboarding();
 
   const subjects = getSubjectsForGrade(grade);
@@ -120,6 +121,12 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     // Quick client-side link check
     if (containsLinks(title) || containsLinks(content)) {
       toast.error("No links allowed in posts — keep it original! Remove any URLs and try again.");
+      return;
+    }
+
+    // Safeguard: an 18+ tag hides the post from students, so never apply it silently
+    if (isAdultGrade(grade) && !confirmAdult) {
+      toast.error("Confirm the 18+ audience tag below, or pick a school/college level.");
       return;
     }
 
