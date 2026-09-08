@@ -124,11 +124,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       return;
     }
 
-    // Safeguard: an 18+ tag hides the post from students, so never apply it silently
-    if (isAdultGrade(grade) && !confirmAdult) {
-      toast.error("Confirm the 18+ audience tag below, or pick a school/college level.");
-      return;
-    }
 
     setLoading(true);
 
@@ -188,6 +183,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         file_url: fileUrl,
         is_anonymous: isAnonymous,
         quiet_mode: quietMode,
+        is_mature: confirmAdult,
       });
 
       if (error) {
