@@ -16,6 +16,8 @@ import { toast } from "sonner";
 import Whiteboard from "@/components/collaborative/Whiteboard";
 import ShareWhiteboardDialog from "@/components/collaborative/ShareWhiteboardDialog";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import ProFeatureTag from "@/components/pro/ProFeatureTag";
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface WhiteboardItem {
   id: string;
