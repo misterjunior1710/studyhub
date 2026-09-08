@@ -214,7 +214,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
           Create Post
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90dvh] overflow-y-auto" style={{ paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))" }}>
         <DialogHeader>
          <DialogTitle>Create a Post</DialogTitle>
           <DialogDescription>
@@ -397,7 +397,10 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
             </div>
           </div>
 
-          <div className="flex gap-2 justify-end">
+          <div
+            className="flex gap-2 justify-end sticky bottom-0 bg-popover pt-3 mt-6 border-t"
+            style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
+          >
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
