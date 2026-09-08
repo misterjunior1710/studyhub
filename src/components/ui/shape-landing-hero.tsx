@@ -83,7 +83,7 @@ function HeroGeometric({
   };
 
   return (
-    <div className="relative min-h-[80vh] w-full flex items-center justify-center overflow-hidden bg-background">
+    <div className="relative min-h-[62vh] w-full flex items-center justify-center py-14 sm:py-20 overflow-hidden bg-background">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.05] via-transparent to-accent/[0.05] blur-3xl" />
 
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
