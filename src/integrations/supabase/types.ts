@@ -1718,6 +1718,7 @@ export type Database = {
           is_anonymous: boolean | null
           is_flagged: boolean | null
           is_hidden: boolean | null
+          is_mature: boolean
           mentions: string[] | null
           post_type: string
           quiet_mode: boolean | null
@@ -1744,6 +1745,7 @@ export type Database = {
           is_anonymous?: boolean | null
           is_flagged?: boolean | null
           is_hidden?: boolean | null
+          is_mature?: boolean
           mentions?: string[] | null
           post_type?: string
           quiet_mode?: boolean | null
@@ -1770,6 +1772,7 @@ export type Database = {
           is_anonymous?: boolean | null
           is_flagged?: boolean | null
           is_hidden?: boolean | null
+          is_mature?: boolean
           mentions?: string[] | null
           post_type?: string
           quiet_mode?: boolean | null
