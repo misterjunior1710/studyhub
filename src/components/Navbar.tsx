@@ -1,7 +1,7 @@
 import {
   LogOut, Settings, UserPlus, Timer, LifeBuoy, Sparkles, Megaphone, Bookmark,
   Sun, Moon, Download, Calendar, Palette, Rss, NotebookPen, Trophy, ListChecks,
-  Users, HelpCircle, Search, Target, Compass, type LucideIcon,
+  Users, HelpCircle, Search, Target, Compass, UserRound, type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useTheme } from "next-themes";
 import { useEasterEggs } from "./EasterEggs";
+import { useGamification } from "@/contexts/GamificationContext";
 import StudyHubLogo from "@/components/StudyHubLogo";
 import GlobalSearch from "@/components/GlobalSearch";
 import { cn } from "@/lib/utils";
@@ -92,6 +93,7 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
   const { theme, setTheme } = useTheme();
   const { handleLogoClick } = useEasterEggs();
   const { user, username, profileData, isAdmin, profileLoading, signOut } = useAuth();
+  const { level, levelInfo, totalXp } = useGamification();
   const [searchOpen, setSearchOpen] = useState(false);
   const scrolled = useScroll(8);
 
@@ -348,7 +350,32 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
+                    <div className="px-2 py-2">
+                      <div className="rounded-md bg-muted/50 px-3 py-2">
+                        <div className="flex items-center justify-between text-xs font-medium">
+                          <span>Level {level}</span>
+                          <span className="text-muted-foreground">{totalXp.toLocaleString()} XP</span>
+                        </div>
+                        {levelInfo?.progress !== undefined && (
+                          <div className="mt-1.5 h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-primary transition-all"
+                              style={{ width: `${Math.min(100, Math.max(0, Math.round(levelInfo.progress * 100)))}%` }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <DropdownMenuSeparator />
                     <div className="py-1">
+                      <DropdownMenuItem onClick={() => navigate(`/user/${user.id}`)}>
+                        <UserRound className="mr-2 h-4 w-4" />
+                        <span>My Profile</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/missions")}>
+                        <Target className="mr-2 h-4 w-4" />
+                        <span>Missions & XP</span>
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={toggleTheme} className="hidden md:flex">
                         {theme === "dark" ? (
                           <><Sun className="mr-2 h-4 w-4" /><span>Light Mode</span></>
