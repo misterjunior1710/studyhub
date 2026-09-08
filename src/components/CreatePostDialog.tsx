@@ -398,8 +398,8 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
           </div>
 
           <div
-            className="flex gap-2 justify-end sticky bottom-0 bg-popover pt-3 -mx-6 px-6 border-t"
-            style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))", marginBottom: "calc(-1.5rem - env(safe-area-inset-bottom, 0px))" }}
+            className="flex gap-2 justify-end sticky bottom-0 bg-popover pt-3 mt-6 border-t"
+            style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
           >
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
