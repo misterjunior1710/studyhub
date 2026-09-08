@@ -49,7 +49,7 @@ const EditPostDialog = ({
   const [grade, setGrade] = useState(currentGrade);
   const [stream, setStream] = useState(currentStream);
   const [country, setCountry] = useState(currentCountry);
-  const [confirmAdult, setConfirmAdult] = useState(isAdultGrade(currentGrade));
+  const [isMature, setIsMature] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -59,9 +59,14 @@ const EditPostDialog = ({
       setGrade(currentGrade);
       setStream(currentStream);
       setCountry(currentCountry);
-      setConfirmAdult(isAdultGrade(currentGrade));
+      supabase
+        .from("posts")
+        .select("is_mature")
+        .eq("id", postId)
+        .maybeSingle()
+        .then(({ data }) => setIsMature(Boolean((data as { is_mature?: boolean } | null)?.is_mature)));
     }
-  }, [open, currentTitle, currentContent, currentSubject, currentGrade, currentStream, currentCountry]);
+  }, [open, postId, currentTitle, currentContent, currentSubject, currentGrade, currentStream, currentCountry]);
 
   // Check for links in text
   const containsLinks = (text: string): boolean => {
