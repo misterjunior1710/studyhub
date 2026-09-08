@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
@@ -65,6 +66,7 @@ const ENGAGEMENT_CHECK_INTERVAL = 300; // Check every 5 minutes
 const StudyMode = () => {
   const navigate = useNavigate();
   const { user, isLoading: authLoading } = useAuth();
+  const { recordEngagement } = useOnboarding();
   const queryClient = useQueryClient();
   
   const [focusDuration, setFocusDuration] = useState(DEFAULT_FOCUS_DURATION);
