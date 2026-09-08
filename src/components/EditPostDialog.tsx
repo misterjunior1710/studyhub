@@ -74,8 +74,6 @@ const EditPostDialog = ({
     return urlPattern.test(text);
   };
 
-  const adultSelected = isAdultGrade(grade);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -89,10 +87,7 @@ const EditPostDialog = ({
       return;
     }
 
-    if (adultSelected && !confirmAdult) {
-      toast.error("Confirm the 18+ audience tag, or pick a different level.");
-      return;
-    }
+
 
     setLoading(true);
 
