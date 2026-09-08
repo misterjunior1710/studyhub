@@ -496,28 +496,11 @@ const Post = () => {
                   {new Date(post.created_at).toLocaleDateString()}
                 </p>
 
-                {/* Content - truncated for logged out users */}
-                {user ? (
-                  <div 
-                    className="prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
-                  />
-                ) : (
-                  <div className="space-y-3">
-                    <p className="text-foreground leading-relaxed">
-                      {truncateContent(post.content)}
-                    </p>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => navigate("/auth")}
-                      className="gap-2"
-                    >
-                      <LogIn className="h-4 w-4" />
-                      Sign in to read full post
-                    </Button>
-                  </div>
-                )}
+                {/* Content - publicly readable */}
+                <div
+                  className="prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
+                />
 
                 <div className="flex flex-wrap items-center gap-1 sm:gap-2 pt-4 border-t">
                   <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3" onClick={handleShare}>
