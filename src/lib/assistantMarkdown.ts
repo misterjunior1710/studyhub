@@ -48,9 +48,21 @@ export function renderAssistantMarkdown(input: string): string {
 
   // Paragraphs (split by blank lines, skip already-block content)
   s = s.split(/\n{2,}/).map((para) => {
-    if (/^<(h\d|ul|pre|ol|blockquote)/.test(para.trim())) return para;
-    return `<p>${para.replace(/\n/g, "<br>")}</p>`;
+    const t = para.trim();
+    if (!t) return "";
+    if (/^<(h\d|ul|pre|ol|blockquote)/.test(t)) return t;
+    // Split mixed blocks so lists never end up nested inside a paragraph.
+    return t
+      .split(/(<(?:ul|ol)>[\s\S]*?<\/(?:ul|ol)>)/g)
+      .map((chunk) => {
+        const c = chunk.trim().replace(/^(?:<br>)+|(?:<br>)+$/g, "");
+        if (!c) return "";
+        if (/^<(ul|ol)>/.test(c)) return c;
+        return `<p>${c.replace(/\n/g, "<br>")}</p>`;
+      })
+      .join("");
   }).join("");
+
 
   return sanitizeHtml(s);
 }
