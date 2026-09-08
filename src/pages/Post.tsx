@@ -24,15 +24,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-// Helper to truncate content for logged out users
-const truncateContent = (html: string, maxLength: number = 200): string => {
-  const textOnly = html.replace(/<[^>]*>/g, '');
-  if (textOnly.length <= maxLength) return html;
-  const truncatedText = textOnly.substring(0, maxLength);
-  const lastSpace = truncatedText.lastIndexOf(' ');
-  const breakPoint = lastSpace > maxLength * 0.7 ? lastSpace : maxLength;
-  return textOnly.substring(0, breakPoint) + '...';
-};
 
 interface Post {
   id: string;
