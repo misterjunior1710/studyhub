@@ -626,23 +626,11 @@ const Post = () => {
                   </CardContent>
                 </Card>
               ))}
+              {comments.length === 0 && (
+                <p className="text-muted-foreground">No comments yet.</p>
+              )}
             </div>
-          </div>
-        ) : (
-          <Card className="mt-6">
-            <CardContent className="py-8 text-center">
-              <Lock className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">Sign in to view comments</h3>
-              <p className="text-muted-foreground mb-4">
-                Join the discussion by signing in to your account
-              </p>
-              <Button onClick={() => navigate("/auth")} className="gap-2">
-                <LogIn className="h-4 w-4" />
-                Sign In
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+        </div>
       </div>
     </div>
   );
