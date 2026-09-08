@@ -13,6 +13,7 @@ interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
   profileLoading: boolean;
+  profileFetched: boolean;
   isAdmin: boolean;
   username: string;
   profileData: {
@@ -40,6 +41,7 @@ const defaultAuthContext: AuthContextType = {
   session: null,
   isLoading: true,
   profileLoading: false,
+  profileFetched: false,
   isAdmin: false,
   username: "",
   profileData: {},
@@ -67,6 +69,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
+  const [profileFetched, setProfileFetched] = useState(false);
   const [profileData, setProfileData] = useState<AuthContextType["profileData"]>({});
   const [showSessionExpired, setShowSessionExpired] = useState(false);
   
@@ -151,6 +154,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsAdmin(false);
     } finally {
       setProfileLoading(false);
+      setProfileFetched(true);
     }
   }, []);
 
@@ -283,6 +287,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setUsername("");
           setProfileData({});
           setIsAdmin(false);
+          setProfileFetched(true);
         }
 
         // Handle token refresh errors
@@ -297,6 +302,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (error) {
         console.error("Error getting session:", error);
         setIsLoading(false);
+        setProfileFetched(true);
         return;
       }
 
@@ -307,6 +313,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (currentSession?.user) {
         fetchUserProfile(currentSession.user.id);
         lastActivityRef.current = Date.now();
+      } else {
+        setProfileFetched(true);
       }
     });
 
@@ -347,6 +355,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         session,
         isLoading,
         profileLoading,
+        profileFetched,
         isAdmin,
         username,
         profileData,

@@ -106,7 +106,7 @@ const ProfileOnboarding = () => {
           .maybeSingle();
 
         if (profile?.username && profile?.country && profile?.grade && profile?.stream) {
-          navigate("/", { replace: true });
+          navigate("/feed", { replace: true });
           return;
         }
 
