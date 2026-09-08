@@ -43,7 +43,7 @@ export const FloatingAssistant = () => {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
           side="right"
-          className="p-0 w-full sm:max-w-md md:max-w-lg flex flex-col gap-0 glass-panel"
+          className="p-0 w-full sm:max-w-md md:max-w-lg flex flex-col gap-0 glass-panel overflow-hidden min-w-0"
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-2">
