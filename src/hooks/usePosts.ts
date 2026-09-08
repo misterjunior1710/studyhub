@@ -15,6 +15,7 @@ interface Post {
   share_count: number;
   created_at: string;
   file_url: string | null;
+  is_mature?: boolean;
   user_id: string;
   profiles?: {
     username: string;
@@ -71,9 +72,10 @@ const fetchPosts = async ({
     query = query.eq("stream", selectedStream);
   }
 
-  // Hide Adult (18+) content from non-adult users
+  // Hide only posts explicitly flagged as mature content. The author's own
+  // profile level (e.g. "Adult (18+)") must never suppress ordinary posts.
   if (!isAdmin && userGrade !== "Adult (18+)") {
-    query = query.neq("grade", "Adult (18+)");
+    query = query.eq("is_mature", false);
   }
 
   // Always fetch by created_at to get a stable, complete result set, then

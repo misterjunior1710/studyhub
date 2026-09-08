@@ -49,7 +49,7 @@ const EditPostDialog = ({
   const [grade, setGrade] = useState(currentGrade);
   const [stream, setStream] = useState(currentStream);
   const [country, setCountry] = useState(currentCountry);
-  const [confirmAdult, setConfirmAdult] = useState(isAdultGrade(currentGrade));
+  const [isMature, setIsMature] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -59,17 +59,20 @@ const EditPostDialog = ({
       setGrade(currentGrade);
       setStream(currentStream);
       setCountry(currentCountry);
-      setConfirmAdult(isAdultGrade(currentGrade));
+      supabase
+        .from("posts")
+        .select("is_mature")
+        .eq("id", postId)
+        .maybeSingle()
+        .then(({ data }) => setIsMature(Boolean((data as { is_mature?: boolean } | null)?.is_mature)));
     }
-  }, [open, currentTitle, currentContent, currentSubject, currentGrade, currentStream, currentCountry]);
+  }, [open, postId, currentTitle, currentContent, currentSubject, currentGrade, currentStream, currentCountry]);
 
   // Check for links in text
   const containsLinks = (text: string): boolean => {
     const urlPattern = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|([a-zA-Z0-9-]+\.(com|org|net|edu|gov|io|co|xyz|info|biz|tv|me|app|dev)[^\s]*)/gi;
     return urlPattern.test(text);
   };
-
-  const adultSelected = isAdultGrade(grade);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,10 +87,7 @@ const EditPostDialog = ({
       return;
     }
 
-    if (adultSelected && !confirmAdult) {
-      toast.error("Confirm the 18+ audience tag, or pick a different level.");
-      return;
-    }
+
 
     setLoading(true);
 
@@ -123,8 +123,9 @@ const EditPostDialog = ({
         }
       }
 
-      const updates: Record<string, string> = {
+      const updates: Record<string, string | boolean> = {
         updated_at: new Date().toISOString(),
+        is_mature: isMature,
       };
 
       if (canEditContent) {
@@ -205,7 +206,6 @@ const EditPostDialog = ({
                   setGrade(value);
                   if (isAdultGrade(value) !== isAdultGrade(grade)) {
                     setStream("");
-                    setConfirmAdult(false);
                   }
                 }}
               >
@@ -247,25 +247,24 @@ const EditPostDialog = ({
             </div>
           </div>
 
-          {adultSelected && (
-            <label className="flex items-start gap-3 rounded-md border border-warning/40 bg-warning/10 p-3 text-sm">
-              <input
-                type="checkbox"
-                className="mt-1"
-                checked={confirmAdult}
-                onChange={(e) => setConfirmAdult(e.target.checked)}
-              />
-              <span className="flex-1">
-                <span className="flex items-center gap-2 font-medium">
-                  <AlertTriangle className="h-4 w-4" aria-hidden="true" />
-                  This post will be tagged {grade}
-                </span>
-                <span className="text-muted-foreground">
-                  Posts tagged 18+ are hidden from students. Only keep this if the post really is for adult learners.
-                </span>
+          <label className="flex items-start gap-3 rounded-md border border-warning/40 bg-warning/10 p-3 text-sm">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={isMature}
+              onChange={(e) => setIsMature(e.target.checked)}
+            />
+            <span className="flex-1">
+              <span className="flex items-center gap-2 font-medium">
+                <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+                This post contains mature (18+) content
               </span>
-            </label>
-          )}
+              <span className="text-muted-foreground">
+                Only tick this if the post itself isn't suitable for students — it will be hidden from them. The level tag above doesn't hide anything.
+              </span>
+            </span>
+          </label>
+
 
           <div className="flex gap-2 justify-end">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
