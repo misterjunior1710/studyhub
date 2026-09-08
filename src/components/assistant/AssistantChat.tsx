@@ -126,7 +126,7 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
       setSending(false);
       requestAnimationFrame(() => textareaRef.current?.focus());
     }
-  }, [sending, user, threadId, location.pathname, setMessages, refresh, onThreadCreated, onAfterSend]);
+  }, [sending, user, threadId, location.pathname, setMessages, refresh, onThreadCreated, onAfterSend, recordEngagement]);
 
   // Auto-send initial prompt passed via navigation state (e.g. from Content Generator)
   useEffect(() => {
