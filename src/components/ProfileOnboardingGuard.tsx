@@ -11,7 +11,7 @@ const EXEMPT_PATHS = ["/auth", "/profile-onboarding", "/privacy", "/terms", "/su
 const ProfileOnboardingGuard = ({ children }: ProfileOnboardingGuardProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, session, isLoading: authLoading, profileLoading, username, profileData } = useAuth();
+  const { user, session, isLoading: authLoading, profileLoading, profileFetched, username, profileData } = useAuth();
 
   const isExemptPath = EXEMPT_PATHS.some((p) => location.pathname.startsWith(p));
 
@@ -24,14 +24,16 @@ const ProfileOnboardingGuard = ({ children }: ProfileOnboardingGuardProps) => {
 
   useEffect(() => {
     if (isExemptPath) return;
-    if (authLoading || profileLoading) return;
+    if (authLoading || profileLoading || !profileFetched) return;
     if (!session || !user) return;
     if (!isComplete) {
       navigate("/profile-onboarding", { replace: true });
     }
-  }, [isExemptPath, authLoading, profileLoading, session, user, isComplete, navigate]);
+  }, [isExemptPath, authLoading, profileLoading, profileFetched, session, user, isComplete, navigate]);
 
-  if (authLoading || (session && profileLoading && !username)) return null;
+  if (authLoading) return null;
+  // Wait for the real profile before deciding anything on a hard page load.
+  if (session && !profileFetched) return <>{children}</>;
   if (isExemptPath || !session || isComplete) return <>{children}</>;
   return null;
 };
