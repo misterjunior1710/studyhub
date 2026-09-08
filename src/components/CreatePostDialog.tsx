@@ -31,6 +31,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [quietMode, setQuietMode] = useState(false);
+  const [confirmAdult, setConfirmAdult] = useState(false);
   const { completeTask } = useOnboarding();
 
   const subjects = getSubjectsForGrade(grade);
@@ -120,6 +121,12 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     // Quick client-side link check
     if (containsLinks(title) || containsLinks(content)) {
       toast.error("No links allowed in posts — keep it original! Remove any URLs and try again.");
+      return;
+    }
+
+    // Safeguard: an 18+ tag hides the post from students, so never apply it silently
+    if (isAdultGrade(grade) && !confirmAdult) {
+      toast.error("Confirm the 18+ audience tag below, or pick a school/college level.");
       return;
     }
 
@@ -317,6 +324,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
                   setSubject("");
                 }
                 setGrade(value);
+                setConfirmAdult(false);
               }} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Select grade" />
@@ -361,8 +369,29 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
                   ))}
                 </SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">
+                Filled in from your profile — change it if it's wrong.
+              </p>
             </div>
           </div>
+
+          {isAdultGrade(grade) && (
+            <label className="flex items-start gap-3 rounded-md border border-warning/40 bg-warning/10 p-3 text-sm">
+              <input
+                type="checkbox"
+                className="mt-1"
+                checked={confirmAdult}
+                onChange={(e) => setConfirmAdult(e.target.checked)}
+              />
+              <span className="flex-1">
+                <span className="block font-medium">This post will be tagged “{grade}”</span>
+                <span className="text-muted-foreground">
+                  Posts tagged 18+ are hidden from students. Tick to confirm, or choose your school/college level above.
+                </span>
+              </span>
+            </label>
+          )}
+
 
           {/* Privacy & Notification Options */}
           <div className="space-y-4 pt-2 border-t">

@@ -1,11 +1,13 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ALL_GRADES, COUNTRIES, getStreamsForGrade, getSubjectsForGrade, isAdultGrade } from "@/lib/constants";
 
 const RichTextEditor = lazy(() => import("./RichTextEditor"));
 
@@ -13,22 +15,53 @@ interface EditPostDialogProps {
   postId: string;
   currentTitle: string;
   currentContent: string;
+  currentSubject?: string;
+  currentGrade?: string;
+  currentStream?: string;
+  currentCountry?: string;
+  /** Moderators/admins may correct tags on posts they do not own */
+  canModerate?: boolean;
+  /** Author can edit the text; moderators can only correct tags */
+  canEditContent?: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onPostUpdated?: () => void;
 }
 
-const EditPostDialog = ({ 
-  postId, 
-  currentTitle, 
-  currentContent, 
-  open, 
-  onOpenChange, 
-  onPostUpdated 
+const EditPostDialog = ({
+  postId,
+  currentTitle,
+  currentContent,
+  currentSubject = "",
+  currentGrade = "",
+  currentStream = "",
+  currentCountry = "",
+  canModerate = false,
+  canEditContent = true,
+  open,
+  onOpenChange,
+  onPostUpdated,
 }: EditPostDialogProps) => {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState(currentTitle);
   const [content, setContent] = useState(currentContent);
+  const [subject, setSubject] = useState(currentSubject);
+  const [grade, setGrade] = useState(currentGrade);
+  const [stream, setStream] = useState(currentStream);
+  const [country, setCountry] = useState(currentCountry);
+  const [confirmAdult, setConfirmAdult] = useState(isAdultGrade(currentGrade));
+
+  useEffect(() => {
+    if (open) {
+      setTitle(currentTitle);
+      setContent(currentContent);
+      setSubject(currentSubject);
+      setGrade(currentGrade);
+      setStream(currentStream);
+      setCountry(currentCountry);
+      setConfirmAdult(isAdultGrade(currentGrade));
+    }
+  }, [open, currentTitle, currentContent, currentSubject, currentGrade, currentStream, currentCountry]);
 
   // Check for links in text
   const containsLinks = (text: string): boolean => {
@@ -36,17 +69,23 @@ const EditPostDialog = ({
     return urlPattern.test(text);
   };
 
+  const adultSelected = isAdultGrade(grade);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!title.trim() || !content.trim()) {
+
+    if (canEditContent && (!title.trim() || !content.trim())) {
       toast.error("Title and content are required");
       return;
     }
 
-    // Quick client-side link check
-    if (containsLinks(title) || containsLinks(content)) {
+    if (canEditContent && (containsLinks(title) || containsLinks(content))) {
       toast.error("Links are not allowed in posts. Please remove any URLs.");
+      return;
+    }
+
+    if (adultSelected && !confirmAdult) {
+      toast.error("Confirm the 18+ audience tag, or pick a different level.");
       return;
     }
 
@@ -54,43 +93,55 @@ const EditPostDialog = ({
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         toast.error("You must be logged in to edit a post");
         return;
       }
 
-      // Content moderation check
-      toast.info("Checking content...");
-      const moderationResponse = await supabase.functions.invoke('moderate-content', {
-        body: { title, content, userId: user.id }
-      });
+      if (canEditContent) {
+        // Content moderation check
+        toast.info("Checking content...");
+        const moderationResponse = await supabase.functions.invoke('moderate-content', {
+          body: { title, content, userId: user.id }
+        });
 
-      if (moderationResponse.error) {
-        console.error("Moderation error:", moderationResponse.error);
-        // Continue anyway if moderation fails
-      } else if (moderationResponse.data) {
-        if (moderationResponse.data.isBanned) {
-          toast.error("Your account has been suspended. You cannot edit posts.");
-          setLoading(false);
-          return;
-        }
-        if (!moderationResponse.data.isAppropriate) {
-          toast.error(moderationResponse.data.reason || "Content not allowed");
-          setLoading(false);
-          return;
+        if (moderationResponse.error) {
+          console.error("Moderation error:", moderationResponse.error);
+          // Continue anyway if moderation fails
+        } else if (moderationResponse.data) {
+          if (moderationResponse.data.isBanned) {
+            toast.error("Your account has been suspended. You cannot edit posts.");
+            setLoading(false);
+            return;
+          }
+          if (!moderationResponse.data.isAppropriate) {
+            toast.error(moderationResponse.data.reason || "Content not allowed");
+            setLoading(false);
+            return;
+          }
         }
       }
 
-      const { error } = await supabase
-        .from("posts")
-        .update({
-          title: title.trim(),
-          content: content.trim(),
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", postId)
-        .eq("user_id", user.id);
+      const updates: Record<string, string> = {
+        updated_at: new Date().toISOString(),
+      };
+
+      if (canEditContent) {
+        updates.title = title.trim();
+        updates.content = content.trim();
+      }
+      if (subject) updates.subject = subject;
+      if (grade) updates.grade = grade;
+      if (stream) updates.stream = stream;
+      if (country) updates.country = country;
+
+      let query = supabase.from("posts").update(updates).eq("id", postId);
+      if (!canModerate) {
+        query = query.eq("user_id", user.id);
+      }
+
+      const { error } = await query;
 
       if (error) {
         console.error("Post update error:", error);
@@ -111,33 +162,110 @@ const EditPostDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Post</DialogTitle>
+          <DialogTitle>{canEditContent ? "Edit Post" : "Fix Post Tags"}</DialogTitle>
           <DialogDescription>
-            Make changes to your post
+            {canEditContent
+              ? "Make changes to your post or correct its tags"
+              : "Correct the level, curriculum, subject or country tags on this post"}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="edit-title">Title</Label>
-            <Input
-              id="edit-title"
-              placeholder="What's your question or topic?"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
+          {canEditContent && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="edit-title">Title</Label>
+                <Input
+                  id="edit-title"
+                  placeholder="What's your question or topic?"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-content">Content</Label>
+                <Suspense fallback={<div className="min-h-[200px] rounded-md border bg-muted/20 animate-pulse" aria-label="Loading editor" />}>
+                  <RichTextEditor
+                    content={content}
+                    onChange={setContent}
+                    placeholder="Provide details, context, or your thoughts..."
+                  />
+                </Suspense>
+              </div>
+            </>
+          )}
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="edit-grade">Level</Label>
+              <Select
+                value={grade}
+                onValueChange={(value) => {
+                  setGrade(value);
+                  if (isAdultGrade(value) !== isAdultGrade(grade)) {
+                    setStream("");
+                    setConfirmAdult(false);
+                  }
+                }}
+              >
+                <SelectTrigger id="edit-grade"><SelectValue placeholder="Select level" /></SelectTrigger>
+                <SelectContent>
+                  {ALL_GRADES.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-country">Country</Label>
+              <Select value={country} onValueChange={setCountry}>
+                <SelectTrigger id="edit-country"><SelectValue placeholder="Select country" /></SelectTrigger>
+                <SelectContent>
+                  {COUNTRIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-stream">Curriculum</Label>
+              <Select value={stream} onValueChange={setStream}>
+                <SelectTrigger id="edit-stream"><SelectValue placeholder="Select curriculum" /></SelectTrigger>
+                <SelectContent>
+                  {getStreamsForGrade(grade).map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-subject">Subject</Label>
+              <Select value={subject} onValueChange={setSubject}>
+                <SelectTrigger id="edit-subject"><SelectValue placeholder="Select subject" /></SelectTrigger>
+                <SelectContent>
+                  {getSubjectsForGrade(grade).map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="edit-content">Content</Label>
-            <Suspense fallback={<div className="min-h-[200px] rounded-md border bg-muted/20 animate-pulse" aria-label="Loading editor" />}>
-              <RichTextEditor
-                content={content}
-                onChange={setContent}
-                placeholder="Provide details, context, or your thoughts..."
+          {adultSelected && (
+            <label className="flex items-start gap-3 rounded-md border border-warning/40 bg-warning/10 p-3 text-sm">
+              <input
+                type="checkbox"
+                className="mt-1"
+                checked={confirmAdult}
+                onChange={(e) => setConfirmAdult(e.target.checked)}
               />
-            </Suspense>
-          </div>
+              <span className="flex-1">
+                <span className="flex items-center gap-2 font-medium">
+                  <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+                  This post will be tagged {grade}
+                </span>
+                <span className="text-muted-foreground">
+                  Posts tagged 18+ are hidden from students. Only keep this if the post really is for adult learners.
+                </span>
+              </span>
+            </label>
+          )}
 
           <div className="flex gap-2 justify-end">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

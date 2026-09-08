@@ -516,8 +516,8 @@ const StudyPost = memo(({
                 )}
                 {isBookmarked ? "Saved" : "Save"}
               </Button>
-              {/* Edit button for regular posts (author only) */}
-              {isAuthor && !isUpdatePost && (
+              {/* Edit for authors; moderators can correct wrong tags */}
+              {(isAuthor || isAdmin) && !isUpdatePost && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -525,7 +525,7 @@ const StudyPost = memo(({
                   onClick={() => setShowEditDialog(true)}
                 >
                   <Pencil className="h-4 w-4" aria-hidden="true" />
-                  Edit
+                  {isAuthor ? "Edit" : "Fix tags"}
                 </Button>
               )}
               {/* Edit button for update posts (admin only) */}
@@ -626,6 +626,12 @@ const StudyPost = memo(({
         postId={id}
         currentTitle={title}
         currentContent={content}
+        currentSubject={subject}
+        currentGrade={grade}
+        currentStream={stream}
+        currentCountry={country}
+        canModerate={isAdmin && !isAuthor}
+        canEditContent={isAuthor}
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
         onPostUpdated={onVoteChange}
