@@ -1,5 +1,5 @@
 import { memo, useMemo, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -92,7 +92,7 @@ const Index = () => {
   const faqItems = useMemo(
     () => [
       {
-        question: "Is StudyHub really free?",
+        question: "Is StudyHub free to use?",
         answer:
           "Yes — the core community, Nova AI basics, study tools (flashcards, quizzes, mind maps, Pomodoro), and Study Squads are free forever. Optional Pro unlocks heavier AI usage and advanced tools. No credit card required to sign up.",
       },
@@ -179,7 +179,7 @@ const Index = () => {
             badge="StudyHub™"
             title1="Study Smarter."
             title2="Ace Everything."
-            description="The free, student-only hub where you ask questions, join study squads, and get unstuck fast — powered by Nova AI and built for every grade, subject, and curriculum."
+            description="The student-only hub where you ask questions, join study squads, and get unstuck fast — free to join, with optional Pro features. Powered by Nova AI and built for every grade, subject, and curriculum."
           >
             <div className="flex justify-center">
               <Button size="lg" onClick={handleGetStarted} className="gap-2 text-base px-8 py-6 btn-bounce hover-glow">
@@ -228,7 +228,11 @@ const Index = () => {
                 </span>
               </a>
             </div>
-            <p className="mt-3 text-center text-xs sm:text-sm text-muted-foreground">Freemium · Students 13+</p>
+            <p className="mt-3 text-center text-xs sm:text-sm text-muted-foreground">
+              Free to join · Optional{" "}
+              <Link to="/pricing" className="underline underline-offset-2 hover:text-primary">Pro features</Link>{" "}
+              · Students 13+
+            </p>
             <p className="mt-3 text-center text-sm text-muted-foreground max-w-xl mx-auto">
               Get help from students who understand your curriculum. Learn the reasoning behind answers, not just the
               final result.
@@ -584,7 +588,7 @@ const Index = () => {
 
             <div className="mt-14 max-w-md mx-auto">
               <p className="text-muted-foreground mb-5">
-                Free, fast, and full of students who've already solved what you're stuck on.
+                Free to join, fast, and full of students who've already solved what you're stuck on.
               </p>
               <Button size="lg" onClick={handleGetStarted} className="gap-2 btn-bounce hover-glow">
                 <Sparkles className="h-4 w-4" />

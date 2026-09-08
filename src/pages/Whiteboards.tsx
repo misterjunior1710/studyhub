@@ -16,6 +16,8 @@ import { toast } from "sonner";
 import Whiteboard from "@/components/collaborative/Whiteboard";
 import ShareWhiteboardDialog from "@/components/collaborative/ShareWhiteboardDialog";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import ProFeatureTag from "@/components/pro/ProFeatureTag";
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface WhiteboardItem {
   id: string;
@@ -29,6 +31,7 @@ interface WhiteboardItem {
 
 const Whiteboards = () => {
   const navigate = useNavigate();
+  const { isPro } = useSubscription();
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [whiteboards, setWhiteboards] = useState<WhiteboardItem[]>([]);
@@ -223,6 +226,7 @@ const Whiteboards = () => {
                     <Plus className="h-4 w-4 mr-1" />
                   )}
                   New Whiteboard
+                  {!isPro && <ProFeatureTag feature="Collaborative whiteboards" variant="icon" className="ml-2 bg-primary-foreground/20 text-primary-foreground" />}
                 </Button>
               </div>
             </div>

@@ -300,9 +300,59 @@ const Pricing = () => {
                 </span>
               </h1>
               <p className="mt-5 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-                Start with a <strong className="text-foreground">7-day free trial</strong> of StudyHub™ Pro —
-                cancel anytime before it ends and you won't be charged. Pick monthly or yearly billing afterwards.
+                StudyHub is <strong className="text-foreground">free to join and free to keep using</strong> — no card
+                needed. Pro is optional and adds heavier AI usage plus advanced study tools.
               </p>
+
+              {/* Free vs Pro at a glance */}
+              <div className="mt-7 grid gap-4 sm:grid-cols-2 text-left">
+                <Card className="p-5 border-border/70">
+                  <h2 className="flex items-center gap-2 text-base font-semibold">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    Always free
+                  </h2>
+                  <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                    {[
+                      "Questions, feed, comments & Study Squads",
+                      "Nova AI basics — 3 messages a day",
+                      "Flashcards, quizzes, mind maps & Pomodoro",
+                      "Up to 25 active tasks + notes and calendar",
+                      "Standard themes and basic whiteboard access",
+                    ].map((item) => (
+                      <li key={item} className="flex gap-2">
+                        <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" aria-hidden />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+                <Card className="p-5 border-primary/40 bg-primary/5">
+                  <h2 className="flex items-center gap-2 text-base font-semibold">
+                    <Crown className="h-4 w-4 text-primary" />
+                    Only with Pro
+                  </h2>
+                  <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                    {[
+                      "Enhanced Nova AI and AI generations",
+                      "Advanced flashcards, quizzes & mind maps",
+                      "Collaborative whiteboards & docs",
+                      "Image uploads for schedule and photo scanning",
+                      "Unlimited tasks + Kanban & Calendar views",
+                      "Premium themes, Pro badge, ad-free study mode",
+                    ].map((item) => (
+                      <li key={item} className="flex gap-2">
+                        <Crown className="h-4 w-4 text-primary shrink-0 mt-0.5" aria-hidden />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Anything marked with a <strong className="text-foreground">Pro</strong> tag in the app is on this
+                    list. Start with a 7-day free trial — cancel before it ends and you won't be charged.
+                  </p>
+                </Card>
+              </div>
+
 
               {/* Hero CTAs */}
               <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">

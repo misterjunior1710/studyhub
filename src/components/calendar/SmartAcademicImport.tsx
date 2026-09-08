@@ -17,6 +17,7 @@ import {
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import ProFeatureTag from "@/components/pro/ProFeatureTag";
 import { useSubscription } from "@/hooks/useSubscription";
 
 type EventType = "class" | "exam" | "assignment" | "event";
@@ -361,7 +362,7 @@ const SmartAcademicImport = ({ userId, onImported }: Props) => {
           <div className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs">
             <Crown className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" aria-hidden="true" />
             <div className="flex-1">
-              <p className="font-medium">Image uploads are a Pro feature</p>
+              <p className="font-medium flex items-center gap-1.5">Image uploads <ProFeatureTag feature="Image uploads" /></p>
               <p className="text-muted-foreground">
                 Free accounts can import PDFs. Upgrade to scan photos of timetables, posters, and screenshots.
               </p>
