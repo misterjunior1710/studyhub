@@ -67,6 +67,12 @@ const resourceLinks: LinkItem[] = [
   { title: "Support", href: "/support", icon: LifeBuoy },
 ];
 
+// Routes that need an account — guests get an explained sign-in page instead of a bare redirect.
+const AUTH_ONLY_PATHS = new Set([
+  "/assistant", "/notes", "/whiteboards", "/tasks", "/calendar", "/missions",
+  "/friends", "/saved", "/study", "/content-generator",
+]);
+
 function useScroll(threshold: number) {
   const [scrolled, setScrolled] = useState(false);
   const onScroll = useCallback(() => {
@@ -101,6 +107,16 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
   }, []);
 
   const isActive = (path: string) => location.pathname === path;
+
+  // Guests clicking an account-only feature land on the auth page with an explanation
+  // and are returned to the feature once they're signed in.
+  const go = (path: string) => {
+    if (!user && AUTH_ONLY_PATHS.has(path)) {
+      navigate(`/auth?next=${encodeURIComponent(path)}`);
+      return;
+    }
+    navigate(path);
+  };
   const groupActive = (items: LinkItem[]) => items.some((i) => isActive(i.href));
 
   const handleSignOut = async () => {
@@ -135,7 +151,7 @@ const Navbar = ({ onPostCreated }: NavbarProps) => {
                 <NavigationMenuLink asChild>
                   <button
                     type="button"
-                    onClick={() => navigate(item.href)}
+                    onClick={() => go(item.href)}
                     className={cn(
                       "group flex w-full items-start gap-3 rounded-md p-3 text-left transition-colors hover:bg-accent/60 focus:bg-accent/60 focus:outline-none",
                       active && "bg-accent/40",
