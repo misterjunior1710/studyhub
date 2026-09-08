@@ -554,11 +554,11 @@ const Post = () => {
         </Card>
         </div>
 
-        {/* Comments section - only for logged in users */}
-        {user ? (
-          <div ref={commentsRef} className="mt-6 space-y-4">
-            <h2 className="text-xl font-semibold">Comments ({comments.length})</h2>
+        {/* Comments section - readable by everyone, writable when signed in */}
+        <div ref={commentsRef} className="mt-6 space-y-4">
+          <h2 className="text-xl font-semibold">Comments ({comments.length})</h2>
 
+          {user ? (
             <form onSubmit={handleComment} className="space-y-2">
               <Textarea
                 placeholder="What are your thoughts?"
@@ -571,6 +571,20 @@ const Post = () => {
                 Comment
               </Button>
             </form>
+          ) : (
+            <Card>
+              <CardContent className="py-6 text-center">
+                <Lock className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+                <p className="text-muted-foreground mb-4">
+                  Sign in to join the discussion and reply to this post.
+                </p>
+                <Button onClick={() => navigate("/auth")} className="gap-2">
+                  <LogIn className="h-4 w-4" />
+                  Sign In
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
             <div className="space-y-3">
               {comments.map((comment) => (
