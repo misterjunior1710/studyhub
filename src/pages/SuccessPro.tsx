@@ -79,12 +79,12 @@ const SuccessPro = () => {
             <Card className="mt-12 rounded-2xl border-primary/40 bg-card/80 backdrop-blur p-6 sm:p-8 text-left shadow-[0_0_0_1px_hsl(var(--primary)/0.2),0_20px_60px_-30px_hsl(var(--primary)/0.5)]">
               <h2 className="text-lg font-semibold tracking-tight">Your Pro perks</h2>
               <ul className="mt-4 grid gap-3 sm:grid-cols-2 text-sm text-foreground/90">
-                <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary shrink-0" /> Enhanced Nova AI Assistant</li>
-                <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary shrink-0" /> Advanced flashcards, quizzes & mind maps</li>
-                <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary shrink-0" /> Collaborative whiteboards & docs</li>
+                <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary shrink-0" /> Unlimited Nova AI messages + AI image uploads</li>
+                <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary shrink-0" /> Unlimited AI-generated flashcards, quizzes & mind maps</li>
+                <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary shrink-0" /> Unlimited collaborative whiteboards & docs</li>
                 <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary shrink-0" /> Premium themes & Pro badge</li>
                 <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary shrink-0" /> Ad-free, distraction-free study mode</li>
-                <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary shrink-0" /> Unlimited tasks + Kanban & Calendar views</li>
+                <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary shrink-0" /> Unlimited active tasks + Kanban & Calendar views</li>
                 <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary shrink-0" /> All future Pro features included</li>
               </ul>
 

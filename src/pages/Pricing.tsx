@@ -83,14 +83,15 @@ const PLANS: Plan[] = [
     popular: true,
     features: [
       { label: "7-day free trial — cancel anytime", included: true },
-      { label: "Enhanced Nova AI Assistant", included: true },
-      { label: "Enhanced AI generations", included: true },
-      { label: "Advanced flashcards, quizzes & mind maps", included: true },
-      { label: "Collaborative whiteboards & docs", included: true },
+      { label: "Unlimited Nova AI messages", included: true },
+      { label: "Unlimited AI image uploads in Nova chat", included: true },
+      { label: "Unlimited AI study tool uses (content, writing, task assist)", included: true },
+      { label: "Unlimited AI-generated flashcards, quizzes & mind maps", included: true },
+      { label: "Unlimited collaborative whiteboards & docs", included: true },
       { label: "Premium themes", included: true },
       { label: "Pro badge on profile", included: true },
       { label: "Ad-free, distraction-free study mode", included: true },
-      { label: "Unlimited tasks + Kanban & Calendar views", included: true },
+      { label: "Unlimited active tasks + Kanban & Calendar views", included: true },
       { label: "All future Pro features included", included: true },
     ],
   },
@@ -109,22 +110,25 @@ const PLANS: Plan[] = [
       { label: "7-day free trial — cancel anytime", included: true },
       { label: "Everything in Pro Monthly", included: true },
       { label: "Save 33% vs monthly billing", included: true },
-      { label: "Locked-in yearly pricing", included: true },
-      { label: "Early access to new Pro features", included: true },
-      { label: "Premium yearly-only themes", included: true },
+      { label: "Unlimited Nova AI messages & AI image uploads", included: true },
+      { label: "Unlimited AI study tool uses (content, writing, task assist)", included: true },
+      { label: "Unlimited AI-generated flashcards, quizzes & mind maps", included: true },
+      { label: "Unlimited collaborative whiteboards & docs", included: true },
+      { label: "Premium themes + yearly-only themes", included: true },
       { label: "Pro badge on profile", included: true },
       { label: "Ad-free, distraction-free study mode", included: true },
-      { label: "Unlimited tasks + Kanban & Calendar views", included: true },
+      { label: "Unlimited active tasks + Kanban & Calendar views", included: true },
       { label: "Cancel anytime before trial ends — no charge", included: true },
     ],
   },
 ];
 
 const COMPARISON_ROWS: { label: string; free: string | boolean; monthly: string | boolean; yearly: string | boolean }[] = [
-  { label: "Nova AI messages", free: "3 / day", monthly: "Enhanced", yearly: "Enhanced" },
-  { label: "AI study tool generations", free: "Limited", monthly: "Enhanced", yearly: "Enhanced" },
-  { label: "Flashcards, quizzes, mind maps", free: "Basic", monthly: "Advanced", yearly: "Advanced" },
-  { label: "Collaborative whiteboards & docs", free: false, monthly: true, yearly: true },
+  { label: "Nova AI messages", free: "3 / day", monthly: "Unlimited", yearly: "Unlimited" },
+  { label: "AI image uploads in Nova chat", free: "2 / day", monthly: "Unlimited", yearly: "Unlimited" },
+  { label: "AI study tool uses (content, writing, task assist)", free: "2 / day each", monthly: "Unlimited", yearly: "Unlimited" },
+  { label: "Flashcards, quizzes, mind maps", free: "Basic", monthly: "Unlimited + AI generation", yearly: "Unlimited + AI generation" },
+  { label: "Collaborative whiteboards & docs", free: false, monthly: "Unlimited", yearly: "Unlimited" },
   { label: "Premium themes", free: false, monthly: true, yearly: true },
   { label: "Pro badge on profile", free: false, monthly: true, yearly: true },
   { label: "Ad-free, distraction-free study mode", free: false, monthly: true, yearly: true },
@@ -179,7 +183,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What features are included in Pro?",
-    a: "Enhanced Nova AI access, advanced flashcards/quizzes/mind maps, collaborative whiteboards & docs, premium themes, a Pro badge on your profile, an ad-free distraction-free study mode, unlimited tasks with Kanban & Calendar views, and all future Pro features as we ship them.",
+    a: "Unlimited Nova AI messages and AI image uploads, unlimited AI study tool uses (content generator, writing assist, task assist), unlimited AI-generated flashcards/quizzes/mind maps, unlimited collaborative whiteboards & docs, premium themes, a Pro badge on your profile, an ad-free distraction-free study mode, unlimited active tasks with Kanban & Calendar views, and all future Pro features as we ship them.",
   },
   {
     q: "What happens to my Free account if I upgrade?",
@@ -314,8 +318,9 @@ const Pricing = () => {
                   <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
                     {[
                       "Questions, feed, comments & Study Squads",
-                      "Nova AI basics — 3 messages a day",
+                      "Nova AI — 3 messages/day + 2 image uploads/day",
                       "Flashcards, quizzes, mind maps & Pomodoro",
+                      "AI study tools — 2 uses/day each",
                       "Up to 25 active tasks + notes and calendar",
                       "Standard themes and basic whiteboard access",
                     ].map((item) => (
@@ -333,10 +338,10 @@ const Pricing = () => {
                   </h2>
                   <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
                     {[
-                      "Enhanced Nova AI and AI generations",
-                      "Advanced flashcards, quizzes & mind maps",
-                      "Collaborative whiteboards & docs",
-                      "Image uploads for schedule and photo scanning",
+                      "Unlimited Nova AI messages + AI image uploads",
+                      "Unlimited AI study tool uses (content, writing, task assist)",
+                      "Unlimited AI-generated flashcards, quizzes & mind maps",
+                      "Unlimited collaborative whiteboards & docs",
                       "Unlimited tasks + Kanban & Calendar views",
                       "Premium themes, Pro badge, ad-free study mode",
                     ].map((item) => (
