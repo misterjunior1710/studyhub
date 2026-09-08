@@ -223,6 +223,7 @@ const Whiteboards = () => {
                     <Plus className="h-4 w-4 mr-1" />
                   )}
                   New Whiteboard
+                  {!isPro && <ProFeatureTag feature="Collaborative whiteboards" variant="icon" className="ml-2 bg-primary-foreground/20 text-primary-foreground" />}
                 </Button>
               </div>
             </div>
