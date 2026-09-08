@@ -540,6 +540,15 @@ All colors MUST be HSL.
   }
 }
 /* Assistant markdown content */
+.prose-assistant,
+.prose-assistant p,
+.prose-assistant li,
+.prose-assistant h2,
+.prose-assistant h3,
+.prose-assistant code {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
 .prose-assistant p { margin: 0 0 0.5rem 0; }
 .prose-assistant p:last-child { margin-bottom: 0; }
 .prose-assistant ul { margin: 0.25rem 0 0.5rem 1.25rem; list-style: disc; }
@@ -549,7 +558,7 @@ All colors MUST be HSL.
 .prose-assistant h3 { font-size: 0.95rem; font-weight: 600; margin: 0.5rem 0 0.25rem; }
 .prose-assistant code { background: hsl(var(--muted)); padding: 0.1rem 0.35rem; border-radius: 0.25rem; font-size: 0.85em; }
 .prose-assistant pre { background: hsl(var(--muted)); padding: 0.75rem; border-radius: 0.5rem; overflow-x: auto; margin: 0.5rem 0; }
-.prose-assistant pre code { background: transparent; padding: 0; }
+.prose-assistant pre code { background: transparent; padding: 0; overflow-wrap: normal; word-wrap: normal; }
 .prose-assistant strong { font-weight: 600; }
 
 /* ============================================================
