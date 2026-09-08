@@ -9,7 +9,7 @@ import { Plus, Loader2, Upload, X, Eye, EyeOff, BellOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useOnboarding } from "@/contexts/OnboardingContext";
-import { ALL_GRADES, getStreamsForGrade, getSubjectsForGrade, COUNTRIES, isAdultGrade } from "@/lib/constants";
+import { ALL_GRADES, getStreamsForGrade, getSubjectsForGrade, COUNTRIES } from "@/lib/constants";
 
 const RichTextEditor = lazy(() => import("./RichTextEditor"));
 
