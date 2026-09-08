@@ -24,15 +24,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-// Helper to truncate content for logged out users
-const truncateContent = (html: string, maxLength: number = 200): string => {
-  const textOnly = html.replace(/<[^>]*>/g, '');
-  if (textOnly.length <= maxLength) return html;
-  const truncatedText = textOnly.substring(0, maxLength);
-  const lastSpace = truncatedText.lastIndexOf(' ');
-  const breakPoint = lastSpace > maxLength * 0.7 ? lastSpace : maxLength;
-  return textOnly.substring(0, breakPoint) + '...';
-};
 
 interface Post {
   id: string;
@@ -105,8 +96,11 @@ const Post = () => {
   }, [loading, post, location.hash, comments.length]);
 
   useEffect(() => {
+    loadComments();
+  }, [id]);
+
+  useEffect(() => {
     if (user) {
-      loadComments();
       checkUserVote();
       checkAdminStatus();
       checkBookmarkStatus();
@@ -502,28 +496,11 @@ const Post = () => {
                   {new Date(post.created_at).toLocaleDateString()}
                 </p>
 
-                {/* Content - truncated for logged out users */}
-                {user ? (
-                  <div 
-                    className="prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
-                  />
-                ) : (
-                  <div className="space-y-3">
-                    <p className="text-foreground leading-relaxed">
-                      {truncateContent(post.content)}
-                    </p>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => navigate("/auth")}
-                      className="gap-2"
-                    >
-                      <LogIn className="h-4 w-4" />
-                      Sign in to read full post
-                    </Button>
-                  </div>
-                )}
+                {/* Content - publicly readable */}
+                <div
+                  className="prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
+                />
 
                 <div className="flex flex-wrap items-center gap-1 sm:gap-2 pt-4 border-t">
                   <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3" onClick={handleShare}>
@@ -577,11 +554,11 @@ const Post = () => {
         </Card>
         </div>
 
-        {/* Comments section - only for logged in users */}
-        {user ? (
-          <div ref={commentsRef} className="mt-6 space-y-4">
-            <h2 className="text-xl font-semibold">Comments ({comments.length})</h2>
+        {/* Comments section - readable by everyone, writable when signed in */}
+        <div ref={commentsRef} className="mt-6 space-y-4">
+          <h2 className="text-xl font-semibold">Comments ({comments.length})</h2>
 
+          {user ? (
             <form onSubmit={handleComment} className="space-y-2">
               <Textarea
                 placeholder="What are your thoughts?"
@@ -594,6 +571,20 @@ const Post = () => {
                 Comment
               </Button>
             </form>
+          ) : (
+            <Card>
+              <CardContent className="py-6 text-center">
+                <Lock className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+                <p className="text-muted-foreground mb-4">
+                  Sign in to join the discussion and reply to this post.
+                </p>
+                <Button onClick={() => navigate("/auth")} className="gap-2">
+                  <LogIn className="h-4 w-4" />
+                  Sign In
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
             <div className="space-y-3">
               {comments.map((comment) => (
@@ -635,23 +626,11 @@ const Post = () => {
                   </CardContent>
                 </Card>
               ))}
+              {comments.length === 0 && (
+                <p className="text-muted-foreground">No comments yet.</p>
+              )}
             </div>
-          </div>
-        ) : (
-          <Card className="mt-6">
-            <CardContent className="py-8 text-center">
-              <Lock className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">Sign in to view comments</h3>
-              <p className="text-muted-foreground mb-4">
-                Join the discussion by signing in to your account
-              </p>
-              <Button onClick={() => navigate("/auth")} className="gap-2">
-                <LogIn className="h-4 w-4" />
-                Sign In
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+        </div>
       </div>
     </div>
   );
