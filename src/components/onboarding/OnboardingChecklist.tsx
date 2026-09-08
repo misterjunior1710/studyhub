@@ -129,11 +129,12 @@ const OnboardingChecklist = () => {
   return (
     <div
       className={cn(
-        "fixed z-40 max-w-[calc(100vw-1rem)] animate-slide-in-right",
-        !pos && "top-20 right-2 sm:right-4",
+        "fixed z-20 max-w-[calc(100vw-1rem)] animate-slide-in-right",
+        !pos && "left-2 sm:left-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:bottom-4",
       )}
       style={positionedStyle}
     >
+
       <Card
         ref={cardRef}
         className={cn(
