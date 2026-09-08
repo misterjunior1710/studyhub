@@ -96,8 +96,11 @@ const Post = () => {
   }, [loading, post, location.hash, comments.length]);
 
   useEffect(() => {
+    loadComments();
+  }, [id]);
+
+  useEffect(() => {
     if (user) {
-      loadComments();
       checkUserVote();
       checkAdminStatus();
       checkBookmarkStatus();
