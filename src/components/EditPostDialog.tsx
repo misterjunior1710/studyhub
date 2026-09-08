@@ -123,8 +123,9 @@ const EditPostDialog = ({
         }
       }
 
-      const updates: Record<string, string> = {
+      const updates: Record<string, string | boolean> = {
         updated_at: new Date().toISOString(),
+        is_mature: isMature,
       };
 
       if (canEditContent) {
@@ -205,7 +206,6 @@ const EditPostDialog = ({
                   setGrade(value);
                   if (isAdultGrade(value) !== isAdultGrade(grade)) {
                     setStream("");
-                    setConfirmAdult(false);
                   }
                 }}
               >
@@ -247,25 +247,24 @@ const EditPostDialog = ({
             </div>
           </div>
 
-          {adultSelected && (
-            <label className="flex items-start gap-3 rounded-md border border-warning/40 bg-warning/10 p-3 text-sm">
-              <input
-                type="checkbox"
-                className="mt-1"
-                checked={confirmAdult}
-                onChange={(e) => setConfirmAdult(e.target.checked)}
-              />
-              <span className="flex-1">
-                <span className="flex items-center gap-2 font-medium">
-                  <AlertTriangle className="h-4 w-4" aria-hidden="true" />
-                  This post will be tagged {grade}
-                </span>
-                <span className="text-muted-foreground">
-                  Posts tagged 18+ are hidden from students. Only keep this if the post really is for adult learners.
-                </span>
+          <label className="flex items-start gap-3 rounded-md border border-warning/40 bg-warning/10 p-3 text-sm">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={isMature}
+              onChange={(e) => setIsMature(e.target.checked)}
+            />
+            <span className="flex-1">
+              <span className="flex items-center gap-2 font-medium">
+                <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+                This post contains mature (18+) content
               </span>
-            </label>
-          )}
+              <span className="text-muted-foreground">
+                Only tick this if the post itself isn't suitable for students — it will be hidden from them. The level tag above doesn't hide anything.
+              </span>
+            </span>
+          </label>
+
 
           <div className="flex gap-2 justify-end">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
