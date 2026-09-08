@@ -320,7 +320,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
                   setSubject("");
                 }
                 setGrade(value);
-                setConfirmAdult(false);
               }} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Select grade" />
@@ -371,22 +370,21 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
             </div>
           </div>
 
-          {isAdultGrade(grade) && (
-            <label className="flex items-start gap-3 rounded-md border border-warning/40 bg-warning/10 p-3 text-sm">
-              <input
-                type="checkbox"
-                className="mt-1"
-                checked={confirmAdult}
-                onChange={(e) => setConfirmAdult(e.target.checked)}
-              />
-              <span className="flex-1">
-                <span className="block font-medium">This post will be tagged “{grade}”</span>
-                <span className="text-muted-foreground">
-                  Posts tagged 18+ are hidden from students. Tick to confirm, or choose your school/college level above.
-                </span>
+          <label className="flex items-start gap-3 rounded-md border border-warning/40 bg-warning/10 p-3 text-sm">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={confirmAdult}
+              onChange={(e) => setConfirmAdult(e.target.checked)}
+            />
+            <span className="flex-1">
+              <span className="block font-medium">This post contains mature (18+) content</span>
+              <span className="text-muted-foreground">
+                Only tick this if the post itself isn't suitable for students — it will be hidden from them. Your own level tag doesn't hide anything.
               </span>
-            </label>
-          )}
+            </span>
+          </label>
+
 
 
           {/* Privacy & Notification Options */}
