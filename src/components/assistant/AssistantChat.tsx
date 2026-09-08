@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { renderAssistantMarkdown } from "@/lib/assistantMarkdown";
 import { useAssistantMessages, type AssistantMessage } from "@/hooks/useAssistant";
 import { cn } from "@/lib/utils";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 import { extractFiles, buildAttachmentsPrompt, type AttachmentImage } from "@/lib/extractFileContent";
 
 const SUGGESTIONS = [
@@ -33,6 +34,7 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
   const navigate = useNavigate();
   const location = useLocation();
   const { messages, setMessages, refresh } = useAssistantMessages(threadId);
+  const { recordEngagement } = useOnboarding();
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -52,6 +54,9 @@ export const AssistantChat = ({ threadId, onThreadCreated, onAfterSend, classNam
   const send = useCallback(async (text: string, files?: File[]) => {
     if ((!text.trim() && (!files || files.length === 0)) || sending) return;
     if (!user) { toast.error("Sign in to chat with the assistant"); return; }
+
+    // Real engagement: a message is actually being sent.
+    recordEngagement("nova");
 
     let userMessage = text.trim();
     let messageForAI = text.trim();

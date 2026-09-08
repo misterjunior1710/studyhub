@@ -157,8 +157,10 @@ const StudyMode = () => {
       return;
     }
     setIsRunning(true);
+    // Real engagement: the timer is actually running, not just the tab opened.
+    recordEngagement("pomodoro");
     await createSession.mutateAsync();
-  }, [user, navigate, createSession]);
+  }, [user, navigate, createSession, recordEngagement]);
 
   const pauseTimer = useCallback(() => setIsRunning(false), []);
 
