@@ -44,6 +44,7 @@ import { toast } from "sonner";
 import AdminModerationPanel from "@/components/AdminModerationPanel";
 import BanAppealDialog from "@/components/BanAppealDialog";
 import { applyThemeColor } from "@/hooks/useThemePersistence";
+import ProFeatureTag from "@/components/pro/ProFeatureTag";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 
@@ -667,9 +668,7 @@ const Settings = () => {
                               <p className="text-sm font-medium flex items-center gap-1.5">
                                 {theme.label}
                                 {theme.pro && (
-                                  <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-primary">
-                                    Pro
-                                  </span>
+                                  <ProFeatureTag feature={`${theme.label} theme`} />
                                 )}
                               </p>
                               <p className="text-xs text-muted-foreground">{theme.description}</p>

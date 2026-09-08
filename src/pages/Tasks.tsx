@@ -13,6 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTasks, FREE_TASK_LIMIT } from "@/hooks/useTasks";
 import { useAuth } from "@/contexts/AuthContext";
+import ProFeatureTag from "@/components/pro/ProFeatureTag";
 import { useSubscription } from "@/hooks/useSubscription";
 import { TaskRow } from "@/components/tasks/TaskRow";
 import { TaskEditorDialog } from "@/components/tasks/TaskEditorDialog";
@@ -185,8 +186,8 @@ const Tasks = () => {
             <TabsTrigger value="today">Today</TabsTrigger>
             <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
             <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="kanban" className="gap-1">Kanban{!isPro && <Lock className="h-3 w-3" aria-label="Pro feature" />}</TabsTrigger>
-            <TabsTrigger value="calendar" className="gap-1">Calendar{!isPro && <Lock className="h-3 w-3" aria-label="Pro feature" />}</TabsTrigger>
+            <TabsTrigger value="kanban" className="gap-1">Kanban{!isPro && <ProFeatureTag feature="Kanban board" variant="icon" />}</TabsTrigger>
+            <TabsTrigger value="calendar" className="gap-1">Calendar{!isPro && <ProFeatureTag feature="Calendar view" variant="icon" />}</TabsTrigger>
             <TabsTrigger value="completed">Done</TabsTrigger>
           </TabsList>
 
