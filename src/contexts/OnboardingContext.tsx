@@ -20,11 +20,15 @@ interface OnboardingContextType {
   dismissCelebration: () => void;
   isOnboardingComplete: boolean;
   snoozeOnboarding: () => void;
+  /** Called when the user actually uses a core feature (not just visits it). */
+  recordEngagement: (feature: string) => void;
 }
 
 const OnboardingContext = createContext<OnboardingContextType | null>(null);
 
 const SNOOZE_KEY = "studyhub_onboarding_snooze_until";
+const DISMISS_KEY = "studyhub_onboarding_dismissed_v1";
+const ENGAGED_KEY = "studyhub_onboarding_engaged_v1";
 const SNOOZE_HOURS = 4;
 
 const getSnoozeUntil = (): number | null => {
@@ -38,6 +42,13 @@ const getSnoozeUntil = (): number | null => {
     return null;
   }
 };
+
+const readFlag = (key: string): boolean => {
+  try { return localStorage.getItem(key) !== null; } catch { return false; }
+};
+
+/** Permanently hidden: user closed it, or already used a core feature. */
+const isHiddenForGood = (): boolean => readFlag(DISMISS_KEY) || readFlag(ENGAGED_KEY);
 
 const isSnoozed = (): boolean => {
   const until = getSnoozeUntil();
@@ -135,7 +146,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         setShowWelcome(false);
         setShowChecklist(false);
       } else {
-        if (isSnoozed()) {
+        if (isSnoozed() || isHiddenForGood()) {
           setShowWelcome(false);
           setShowChecklist(false);
         } else {
@@ -221,6 +232,18 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   );
 
   const dismissChecklist = useCallback(() => {
+    // Manual close is permanent — it must not come back on the next visit.
+    try { localStorage.setItem(DISMISS_KEY, new Date().toISOString()); } catch {}
+    setShowWelcome(false);
+    setShowChecklist(false);
+  }, []);
+
+  // Fired only by real usage of a core feature (timer actually started, Nova
+  // message actually sent, post actually created) — never by visiting a tab.
+  const recordEngagement = useCallback((feature: string) => {
+    if (readFlag(ENGAGED_KEY)) return;
+    try { localStorage.setItem(ENGAGED_KEY, feature); } catch {}
+    setShowWelcome(false);
     setShowChecklist(false);
   }, []);
 
@@ -250,6 +273,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         completeTask,
         dismissChecklist,
         snoozeOnboarding,
+        recordEngagement,
         dismissCelebration,
         isOnboardingComplete,
       }}

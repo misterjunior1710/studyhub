@@ -32,7 +32,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [quietMode, setQuietMode] = useState(false);
   const [confirmAdult, setConfirmAdult] = useState(false);
-  const { completeTask } = useOnboarding();
+  const { completeTask, recordEngagement } = useOnboarding();
 
   const subjects = getSubjectsForGrade(grade);
   const grades = ALL_GRADES;
@@ -192,6 +192,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
 
       toast.success("Post is live! 🎉");
       completeTask("post");
+      recordEngagement("post");
       setTitle("");
       setContent("");
       setSubject("");
