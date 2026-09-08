@@ -434,7 +434,14 @@ const Auth = () => {
               <p className="text-sm text-muted-foreground">Your study crew is waiting 📚</p>
             </div>
 
+            {featureNote && (
+              <div className="mb-4 rounded-lg border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-foreground">
+                {featureNote}
+              </div>
+            )}
+
             <Card className="animate-fade-in shadow-xl border-primary/10 bg-card/80 backdrop-blur-xl">
+
               <CardHeader className="text-center hidden lg:block">
                 <CardTitle className="text-2xl font-bold">Welcome to StudyHub</CardTitle>
                 <CardDescription>Log in or create a free account to get started</CardDescription>
