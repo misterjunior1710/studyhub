@@ -10,9 +10,9 @@ interface UpgradeWallProps {
 }
 
 const DEFAULT_HIGHLIGHTS = [
-  "Enhanced Nova AI assistant",
-  "Advanced flashcards, quizzes & mind maps",
-  "Collaborative whiteboards & docs",
+  "Unlimited Nova AI messages",
+  "Unlimited AI-generated flashcards, quizzes & mind maps",
+  "Unlimited collaborative whiteboards & docs",
   "Premium themes & Pro badge",
 ];
 
