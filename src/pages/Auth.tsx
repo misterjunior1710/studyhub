@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useCountryDetect } from "@/hooks/useCountryDetect";
@@ -52,8 +52,27 @@ const passwordSchema = z
   .string()
   .min(6, "Your password needs at least 6 characters — make it strong!")
   .max(72, "Whoa, that's too long! Keep it under 72 characters");
+const SAFE_NEXT = /^\/(?!\/)[A-Za-z0-9\-_/?=&.]*$/;
+
+const FEATURE_NOTES: Record<string, string> = {
+  "/assistant": "Nova AI is free with an account — sign in or join to start chatting.",
+  "/notes": "Sign in to create and save your notes.",
+  "/tasks": "Sign in to plan your tasks and deadlines.",
+  "/calendar": "Sign in to see your study calendar.",
+  "/missions": "Sign in to take on missions and earn XP.",
+  "/friends": "Sign in to find classmates and chat.",
+  "/saved": "Sign in to see the posts you saved.",
+  "/whiteboards": "Sign in to open collaborative whiteboards.",
+  "/study": "Sign in to use flashcards, quizzes and the Pomodoro timer.",
+  "/content-generator": "Sign in to generate study material with AI.",
+};
+
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const rawNext = searchParams.get("next") || "";
+  const nextPath = SAFE_NEXT.test(rawNext) ? rawNext : "/feed";
+  const featureNote = FEATURE_NOTES[nextPath.split("?")[0]] || "";
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [resendEmail, setResendEmail] = useState("");
@@ -167,7 +186,7 @@ const Auth = () => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate("/feed");
+        navigate(nextPath);
       }
     });
   }, [navigate]);
@@ -239,7 +258,7 @@ const Auth = () => {
       });
       if (error) throw error;
       toast.success("You're back! Time to hit the books 📚");
-      navigate("/feed");
+      navigate(nextPath);
 
     } catch (error: any) {
       if (error.message?.includes("Email not confirmed")) {
@@ -314,7 +333,7 @@ const Auth = () => {
       });
       if (result.error) throw result.error;
       if (result.redirected) return;
-      navigate("/feed");
+      navigate(nextPath);
     } catch (error: any) {
       toast.error(error.message || "Google sign-in hit a snag. Try again?");
     }
@@ -327,7 +346,7 @@ const Auth = () => {
       });
       if (result.error) throw result.error;
       if (result.redirected) return;
-      navigate("/feed");
+      navigate(nextPath);
     } catch (error: any) {
       toast.error(error.message || "Apple sign-in hit a snag. Try again?");
     }
@@ -415,7 +434,14 @@ const Auth = () => {
               <p className="text-sm text-muted-foreground">Your study crew is waiting 📚</p>
             </div>
 
+            {featureNote && (
+              <div className="mb-4 rounded-lg border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-foreground">
+                {featureNote}
+              </div>
+            )}
+
             <Card className="animate-fade-in shadow-xl border-primary/10 bg-card/80 backdrop-blur-xl">
+
               <CardHeader className="text-center hidden lg:block">
                 <CardTitle className="text-2xl font-bold">Welcome to StudyHub</CardTitle>
                 <CardDescription>Log in or create a free account to get started</CardDescription>

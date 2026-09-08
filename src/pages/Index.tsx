@@ -282,7 +282,7 @@ const Index = () => {
               {quickActions.map((action, index) => (
                 <Card
                   key={action.label}
-                  className={`card-interactive border-border/50 overflow-hidden group w-[calc(50%-0.375rem)] sm:w-[calc(33.333%-0.667rem)] lg:w-[calc(16.666%-0.834rem)] ${quickActionsVisible ? "opacity-0 animate-stagger-in" : "opacity-0"}`}
+                  className={`card-interactive border-border/50 overflow-hidden group w-[calc(50%-0.375rem)] sm:w-[calc(33.333%-0.667rem)] lg:w-[calc(25%-0.75rem)] ${quickActionsVisible ? "opacity-0 animate-stagger-in" : "opacity-0"}`}
                   style={{ animationDelay: `${index * 60}ms` }}
                   onClick={() => navigate(action.href)}
                 >
@@ -304,7 +304,7 @@ const Index = () => {
 
 
         {/* What is StudyHub Section */}
-        <section ref={featuresRef} className="py-20">
+        <section ref={featuresRef} className="py-12 sm:py-16">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center mb-12">
               <h2
@@ -384,7 +384,7 @@ const Index = () => {
 
 
         {/* Testimonials Section */}
-        <section ref={testimonialsRef} className="py-20">
+        <section ref={testimonialsRef} className="py-12 sm:py-16">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center mb-12">
               <h2
@@ -444,7 +444,7 @@ const Index = () => {
         </section>
 
         {/* Transparency / About Section — required for Google OAuth verification */}
-        <section ref={aboutRef} id="about" className="py-20">
+        <section ref={aboutRef} id="about" className="py-12 sm:py-16">
           <div
             className={`container mx-auto px-4 max-w-3xl space-y-6 ${aboutVisible ? "animate-soft-in" : "opacity-0"}`}
           >
@@ -516,7 +516,7 @@ const Index = () => {
         <div ref={ctaRef} aria-hidden="true" />
 
         {/* Why StudyHub vs alternatives */}
-        <section className="py-20">
+        <section className="py-12 sm:py-16">
           <div className="container mx-auto px-4 max-w-5xl">
             <div className="text-center mb-10">
               <h2 className="text-2xl sm:text-3xl font-bold mb-3">StudyHub vs Alternatives</h2>
@@ -580,7 +580,7 @@ const Index = () => {
         </section>
 
         {/* Elfsight Google Reviews + closing CTA */}
-        <section id="reviews" ref={reviewsRef} className="py-20">
+        <section id="reviews" ref={reviewsRef} className="py-12 sm:py-16">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl sm:text-2xl font-semibold mb-2">What students say</h2>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">Real reviews from the community.</p>
@@ -600,7 +600,7 @@ const Index = () => {
         </section>
 
         {/* FAQ — kills top objections */}
-        <section className="py-20 border-t border-border/40">
+        <section className="py-12 sm:py-16 border-t border-border/40">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="text-center mb-10">
               <h2 className="text-2xl sm:text-3xl font-bold mb-3">Frequently asked questions</h2>

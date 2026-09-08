@@ -152,7 +152,7 @@ const App = () => (
                 {!skipHeavyBg && (
                   <Suspense fallback={null}>
                     <BackgroundGradientAnimation
-                      containerClassName="fixed inset-0 -z-10 h-screen w-screen motion-reduce:hidden"
+                      containerClassName="fixed inset-0 -z-10 h-full w-full overflow-hidden motion-reduce:hidden"
                     />
                   </Suspense>
                 )}

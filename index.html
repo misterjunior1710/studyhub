@@ -241,8 +241,8 @@
         </div>
       </div>
 
-      <!-- Hero skeleton — mirrors the live headline so the main text paints immediately -->
-      <div class="sh-fallback" style="padding: 60px 24px 40px; text-align: center;">
+      <!-- Hero skeleton — mirrors the live headline so the main text paints immediately (home route only) -->
+      <div id="skeleton-hero" class="sh-fallback" style="padding: 60px 24px 40px; text-align: center;">
         <span style="display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(79,70,229,0.10); color: #4f46e5; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 18px;">The student-only platform</span>
         <h1 style="font-family: 'EB Garamond', ui-serif, Georgia, serif; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 12px;">
           <span style="display: block;">Study Smarter.</span>
@@ -263,6 +263,16 @@
         <div class="skeleton-bar" style="width: 100%; height: 140px;"></div>
       </div>
     </div>
+    <script>
+      // The hero copy only belongs on the home route — hide it everywhere else
+      // so deep links and refreshes don't flash the homepage headline.
+      (function () {
+        if (window.location.pathname !== "/") {
+          var hero = document.getElementById("skeleton-hero");
+          if (hero) hero.style.display = "none";
+        }
+      })();
+    </script>
 
     <div id="root">
       <!-- Static fallback content for SEO crawlers and no-JS users - mirrors live StudyHub™ branding -->
