@@ -621,7 +621,7 @@ const Index = () => {
         </section>
 
         <Testimonials />
-        <Footer />
+        <Footer showIndieAppCircleBadges />
       </div>
     </ReactLenis>
   );

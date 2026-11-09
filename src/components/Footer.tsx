@@ -2,7 +2,11 @@ import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import StudyHubLogo from "@/components/StudyHubLogo";
 
-const Footer = () => {
+interface FooterProps {
+  showIndieAppCircleBadges?: boolean;
+}
+
+const Footer = ({ showIndieAppCircleBadges = false }: FooterProps) => {
   return (
     <footer className="border-t border-border/40 bg-card/30 pb-16 md:pb-0">
       <div className="container mx-auto px-4 py-8">
@@ -340,6 +344,13 @@ const Footer = () => {
             </div>
           </div>
         </div>
+
+        {showIndieAppCircleBadges && (
+          <div className="mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3">
+            <a href="https://www.indieappcircle.com/apps/j57d9scwdsc2b0y81bn779hq0d870wd1?utm_source=badge&utm_content=proof&ref=1Gwk2d" target="_blank" rel="noopener"><img src="https://www.indieappcircle.com/badge/j57d9scwdsc2b0y81bn779hq0d870wd1.svg?theme=dark&variant=proof" alt="Tested by real indie developers on IndieAppCircle" width={240} height={54} style={{ border: 0 }} /></a>
+            <a href="https://www.indieappcircle.com/apps/j57d9scwdsc2b0y81bn779hq0d870wd1?utm_source=badge&ref=1Gwk2d" target="_blank" rel="noopener"><img src="https://www.indieappcircle.com/badge/j57d9scwdsc2b0y81bn779hq0d870wd1.svg?theme=dark" alt="Give us feedback on IndieAppCircle" width={216} height={54} style={{ border: 0 }} /></a>
+          </div>
+        )}
 
         <div className="mt-8 pt-6 border-t border-border/40 flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="text-sm text-muted-foreground text-center sm:text-left space-y-1">
