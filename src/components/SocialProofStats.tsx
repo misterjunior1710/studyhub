@@ -3,15 +3,15 @@ import { Card } from "@/components/ui/card";
 import { Eye, MousePointerClick, Percent, TrendingUp, Sparkles } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
-// Real metrics from Google Search Console (last updated August 2026)
+// Real metrics from the supplied Google Search Console snapshot (updated November 9, 2026)
 const METRICS = [
-  { key: "impressions", label: "Total impressions", value: 47400, suffix: "", icon: Eye, format: "compact" as const },
-  { key: "clicks", label: "Total clicks", value: 2000, suffix: "", icon: MousePointerClick, format: "compact" as const },
-  { key: "ctr", label: "Average CTR", value: 4.2, suffix: "%", icon: Percent, format: "decimal" as const },
+  { key: "impressions", label: "Total impressions", value: 141000, suffix: "", icon: Eye, format: "compact" as const },
+  { key: "clicks", label: "Total clicks", value: 21700, suffix: "", icon: MousePointerClick, format: "compact" as const },
+  { key: "ctr", label: "Average CTR", value: 15.4, suffix: "%", icon: Percent, format: "decimal" as const },
   {
     key: "position",
     label: "Avg. search position",
-    value: 8.2,
+    value: 5.4,
     suffix: "",
     icon: TrendingUp,
     format: "decimal" as const,
@@ -84,7 +84,7 @@ const StatCell = memo(function StatCell({
 
 const SocialProofStats = memo(function SocialProofStats() {
   const [ref, visible] = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
-  const heroCount = useCountUp(47400, visible);
+  const heroCount = useCountUp(141000, visible);
 
 
   return (
@@ -135,7 +135,7 @@ const SocialProofStats = memo(function SocialProofStats() {
           </div>
 
           <p className="text-[11px] text-muted-foreground">
-            Source: Google Search Console · last updated August 2026
+            Source: Google Search Console · last updated November 9, 2026
           </p>
         </div>
       </Card>
