@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 interface PageTransitionProps {
@@ -7,12 +7,16 @@ interface PageTransitionProps {
 
 const PageTransition = ({ children }: PageTransitionProps) => {
   const location = useLocation();
-  const [isVisible, setIsVisible] = useState(false);
+  // Paint the initial document immediately; animate subsequent navigation only.
+  const [isVisible, setIsVisible] = useState(true);
+  const previousPath = useRef(location.pathname);
 
   useEffect(() => {
     // Scroll to top on route change (except browser back/forward)
     window.scrollTo({ top: 0, left: 0 });
     
+    if (previousPath.current === location.pathname) return;
+    previousPath.current = location.pathname;
     setIsVisible(false);
     const timer = requestAnimationFrame(() => {
       setIsVisible(true);

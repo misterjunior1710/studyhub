@@ -1,16 +1,18 @@
 import { cn } from "@/lib/utils";
-import logoUrl from "@/assets/studyhub-logo.png";
+import logoAsset from "@/assets/studyhub-logo.webp.asset.json";
+
+const logoUrl = logoAsset.url;
 
 interface StudyHubLogoProps {
   className?: string;
-  /** When true, renders the original PNG as-is instead of theme-tinted. */
+  /** When true, renders the original colors instead of theme-tinted. */
   original?: boolean;
   title?: string;
 }
 
 /**
  * Theme-adaptive StudyHub logo.
- * Uses the original PNG as a CSS mask and fills it with a gradient built from
+ * Uses the optimized logo as a CSS mask and fills it with a gradient built from
  * the active theme tokens (--primary -> --accent), so the logo automatically
  * recolors with every theme.
  */
@@ -20,8 +22,9 @@ const StudyHubLogo = ({ className, original = false, title = "StudyHub logo" }: 
       <img
         src={logoUrl}
         alt={title}
-        width={512}
-        height={512}
+        width={256}
+        height={209}
+        loading="eager"
         className={cn("object-contain shrink-0", className)}
       />
     );

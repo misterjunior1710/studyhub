@@ -26,8 +26,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Preload above-the-fold hero image (logo) -->
-    <link rel="preload" as="image" href="/studyhub-logo.png" fetchpriority="high" />
+    <!-- The hero LCP is text; preload only the actual above-the-fold logo mask. -->
+    <link rel="preload" as="image" type="image/webp" href="/__l5e/assets-v1/f6387fad-3d35-4821-b170-3263169fc48c/studyhub-logo.webp" fetchpriority="high" crossorigin />
+    <!-- Warm the two fonts used by the visible text, not the whole font family. -->
+    <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/lato/v25/S6uyw4BMUTPHjx4wXg.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/lato/v25/S6u9w4BMUTPHh6UVSwiPGQ.woff2" crossorigin />
 
     <!-- Non-blocking font loading with font-display: swap -->
     <link
@@ -249,7 +252,7 @@
           <span style="display: block; background: linear-gradient(135deg, #4f46e5, #ec4899); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: #4f46e5;">Ace Everything.</span>
         </h1>
         <p style="font-size: 1.125rem; max-width: 620px; margin: 0 auto 28px;">
-          The free, student-only hub where you ask questions, join study squads, and get unstuck fast — powered by Nova AI and built for every grade, subject, and curriculum.
+          The student-only hub where you ask questions, join study squads, and get unstuck fast — free to join, with optional Pro features. Powered by Nova AI and built for every grade, subject, and curriculum.
         </p>
         <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
           <span class="sh-btn">Join free in 30 seconds</span>
@@ -306,7 +309,7 @@
           <header style="border-bottom: 1px solid #e5e5e5; background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);">
             <div style="max-width: 1280px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
               <a href="/" style="display: flex; align-items: center; gap: 10px; color: inherit;">
-                <img src="/studyhub-logo.png" alt="StudyHub logo" width="32" height="32" style="border-radius: 8px;" />
+                <img src="/__l5e/assets-v1/f6387fad-3d35-4821-b170-3263169fc48c/studyhub-logo.webp" crossorigin="anonymous" alt="StudyHub logo" width="32" height="32" style="border-radius: 8px;" />
                 <strong style="font-family: 'EB Garamond', serif; font-size: 1.35rem; letter-spacing: -0.01em;">StudyHub<sup style="font-size: 0.55em;">™</sup></strong>
               </a>
               <nav class="sh-topnav" style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 0.95rem;">
@@ -405,7 +408,7 @@
     <!-- Noscript fallback for crawlers/users without JS -->
     <noscript>
       <div style="font-family: 'Lato', system-ui, sans-serif; max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem; text-align: center; color: #171717;">
-        <img src="/studyhub-logo.png" alt="StudyHub logo" width="48" height="48" style="border-radius: 10px;" />
+        <img src="/__l5e/assets-v1/f6387fad-3d35-4821-b170-3263169fc48c/studyhub-logo.webp" crossorigin="anonymous" alt="StudyHub logo" width="48" height="48" style="border-radius: 10px;" />
         <h1 style="font-family: 'EB Garamond', serif; font-size: 2.25rem; margin: 12px 0 8px;">StudyHub™</h1>
         <p style="font-size: 1.1rem; margin-bottom: 20px;"><strong>Study Smarter. Ace Everything.</strong></p>
         <p>A student-only discussion platform for school life, questions, and studying.</p>

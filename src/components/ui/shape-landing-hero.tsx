@@ -144,7 +144,8 @@ function HeroGeometric({
             </span>
           </motion.div>
 
-          <motion.div custom={1} variants={fadeUpVariants} initial="hidden" animate="visible">
+          {/* LCP text must not wait for a motion transform or entrance delay. */}
+          <div>
             <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 md:mb-8 tracking-tight leading-tight">
               <span className="block bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/80">
                 {title1}
@@ -157,13 +158,13 @@ function HeroGeometric({
                 {title2}
               </span>
             </h1>
-          </motion.div>
+          </div>
 
-          <motion.div custom={2} variants={fadeUpVariants} initial="hidden" animate="visible">
+          <div>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
               {description}
             </p>
-          </motion.div>
+          </div>
 
           {children && (
             <motion.div custom={3} variants={fadeUpVariants} initial="hidden" animate="visible">
