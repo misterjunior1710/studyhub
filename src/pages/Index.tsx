@@ -2,6 +2,7 @@ import { memo, useMemo, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Testimonials from "@/components/Testimonials";
 
 import SEOHead, { StructuredData, getOrganizationSchema, getCommunitySchema, getFAQSchema } from "@/components/SEOHead";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
@@ -619,6 +620,7 @@ const Index = () => {
           </div>
         </section>
 
+        <Testimonials />
         <Footer />
       </div>
     </ReactLenis>
