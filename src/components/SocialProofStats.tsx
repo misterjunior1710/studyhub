@@ -5,8 +5,8 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 // Real metrics from the supplied Google Search Console snapshot (updated November 9, 2026)
 const METRICS = [
-  { key: "impressions", label: "Total impressions", value: 141000, suffix: "", icon: Eye, format: "compact" as const },
-  { key: "clicks", label: "Total clicks", value: 21700, suffix: "", icon: MousePointerClick, format: "compact" as const },
+  { key: "impressions", label: "Total impressions", value: 150000, suffix: "", icon: Eye, format: "compact" as const },
+  { key: "clicks", label: "Total clicks", value: 24000, suffix: "", icon: MousePointerClick, format: "compact" as const },
   { key: "ctr", label: "Average CTR", value: 15.4, suffix: "%", icon: Percent, format: "decimal" as const },
   {
     key: "position",
@@ -84,7 +84,8 @@ const StatCell = memo(function StatCell({
 
 const SocialProofStats = memo(function SocialProofStats() {
   const [ref, visible] = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
-  const heroCount = useCountUp(141000, visible);
+  const impressionsCount = useCountUp(150000, visible);
+  const clicksCount = useCountUp(24000, visible);
 
 
   return (
@@ -116,14 +117,34 @@ const SocialProofStats = memo(function SocialProofStats() {
                 <Sparkles className="h-3 w-3" aria-hidden="true" />
                 Trusted since Launch
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight leading-tight">
-                <span className="tabular-nums text-primary">{formatValue(heroCount, "compact")}+</span>{" "}
-                <span className="text-foreground">searches served since Launch</span>
-              </h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Real students finding StudyHub through Google — and the numbers are growing every day{" "}
-                <span aria-hidden="true">🚀</span>
-              </p>
+              <div className="flex flex-col sm:flex-row sm:items-start gap-5 sm:gap-10">
+                <div>
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight leading-tight">
+                    <span className="tabular-nums text-primary">
+                      {formatValue(impressionsCount, "int")}+
+                    </span>
+                    <span className="block text-sm font-medium text-foreground mt-1">
+                      Google Search impressions
+                    </span>
+                  </h2>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    times StudyHub appeared in Google results
+                  </p>
+                </div>
+                <div>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight leading-tight">
+                    <span className="tabular-nums text-primary">
+                      {formatValue(clicksCount, "int")}+
+                    </span>
+                    <span className="block text-sm font-medium text-foreground mt-1">
+                      Clicks from Google Search
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    students who found us on Google
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -135,7 +156,7 @@ const SocialProofStats = memo(function SocialProofStats() {
           </div>
 
           <p className="text-[11px] text-muted-foreground">
-            Source: Google Search Console · last updated November 9, 2026
+            Source: Google Search Console, web search, 2026.
           </p>
         </div>
       </Card>
