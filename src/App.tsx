@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import OfflineBanner from "@/components/OfflineBanner";
+import SiteNoticeBanner from "@/components/SiteNoticeBanner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
@@ -147,7 +148,8 @@ const App = () => (
               <OfflineBanner />
               <Toaster />
               <Sonner />
-              
+              <SiteNoticeBanner />
+
               <BrowserRouter>
                 {!skipHeavyBg && (
                   <Suspense fallback={null}>
